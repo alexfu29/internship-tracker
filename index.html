@@ -1,0 +1,1325 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Internship Tracker</title>
+<meta name="description" content="Cold contacts and applications for Summer 2027 internships — one tap to log, one table to read.">
+<meta name="theme-color" content="#2a78d6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1a1a19" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Internships">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%232a78d6'/%3E%3Ctext x='50' y='68' font-size='52' text-anchor='middle' fill='white' font-family='sans-serif'%3EI%3C/text%3E%3C/svg%3E">
+<style>
+  /* ============================================================
+     DESIGN TOKENS
+     Surfaces / ink / status palette taken unchanged from the
+     validated reference palette (dataviz skill). Status steps are
+     FIXED, never themed: they are the same four hexes in light and
+     dark, each clearing 3:1 on its own surface. On the light
+     surface `warning`/`serious` are sub-3:1 by design, which is why
+     every status in this app ships as a colored dot + a text label
+     and never as color alone.
+
+     No categorical series exist in this app (no charts, no multi-
+     series marks), so the categorical validator does not apply.
+     --accent is the single UI accent, not a series color.
+     ============================================================ */
+  :root {
+    color-scheme: light;
+    --surface-1:      #fcfcfb;
+    --surface-2:      #f9f9f7;
+    --surface-3:      #f1f0ec;
+    --text-primary:   #0b0b0b;
+    --text-secondary: #52514e;
+    --text-muted:     #898781;
+    --gridline:       #e1e0d9;
+    --baseline:       #c3c2b7;
+    --border:         rgba(11,11,11,0.10);
+
+    --accent:      #2a78d6;
+    --accent-ink:  #ffffff;
+
+    /* Status (reserved — never reused for anything but state) */
+    --status-good:     #0ca30c;
+    --status-warning:  #fab219;
+    --status-critical: #d03b3b;
+
+    /* Alert surface pairs (contrast-checked against their own text) */
+    --red-bg:   #fdeceb;
+    --red-ink:  #7a1414;
+    --amber-bg: #fdf3df;
+    --amber-ink:#6b4a00;
+
+    --radius: 14px;
+    --tap: 44px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:where(:not([data-theme="light"])) {
+      color-scheme: dark;
+      --surface-1:      #1a1a19;
+      --surface-2:      #0d0d0d;
+      --surface-3:      #232320;
+      --text-primary:   #ffffff;
+      --text-secondary: #c3c2b7;
+      --text-muted:     #898781;
+      --gridline:       #2c2c2a;
+      --baseline:       #383835;
+      --border:         rgba(255,255,255,0.12);
+
+      --accent:      #3987e5;
+      --accent-ink:  #0b0b0b;
+
+      --status-good:     #0ca30c;
+      --status-warning:  #fab219;
+      --status-critical: #d03b3b;
+
+      --red-bg:   #3a1616;
+      --red-ink:  #ff9d9d;
+      --amber-bg: #332a10;
+      --amber-ink:#ffd479;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --surface-1:      #1a1a19;
+    --surface-2:      #0d0d0d;
+    --surface-3:      #232320;
+    --text-primary:   #ffffff;
+    --text-secondary: #c3c2b7;
+    --text-muted:     #898781;
+    --gridline:       #2c2c2a;
+    --baseline:       #383835;
+    --border:         rgba(255,255,255,0.12);
+
+    --accent:      #3987e5;
+    --accent-ink:  #0b0b0b;
+
+    --status-good:     #0ca30c;
+    --status-warning:  #fab219;
+    --status-critical: #d03b3b;
+
+    --red-bg:   #3a1616;
+    --red-ink:  #ff9d9d;
+    --amber-bg: #332a10;
+    --amber-ink:#ffd479;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--surface-2);
+    color: var(--text-primary);
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.4;
+    padding-bottom: 48px;
+  }
+  .wrap { max-width: 640px; margin: 0 auto; padding: 0 14px; }
+
+  /* ---------- Header ---------- */
+  header.app-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 14px 6px; max-width: 640px; margin: 0 auto;
+  }
+  header.app-header h1 { font-size: 1.25rem; margin: 0; letter-spacing: -0.01em; }
+  header.app-header h1 .sub {
+    display: block; font-size: 0.7rem; font-weight: 400;
+    color: var(--text-muted); letter-spacing: 0;
+  }
+  button.icon-btn {
+    background: var(--surface-1); border: 1px solid var(--border);
+    border-radius: 50%; width: var(--tap); height: var(--tap);
+    font-size: 1.1rem; cursor: pointer; color: var(--text-primary);
+    display: flex; align-items: center; justify-content: center; flex: 0 0 auto;
+  }
+  button.icon-btn:active { transform: scale(0.94); }
+
+  /* ---------- Banners ---------- */
+  .banner {
+    margin: 8px auto; max-width: 612px; padding: 10px 12px;
+    border-radius: 10px; font-size: 0.85rem;
+    display: flex; align-items: flex-start; gap: 8px; justify-content: space-between;
+  }
+  .banner-red   { background: var(--red-bg);   color: var(--red-ink);   border: 1px solid var(--status-critical); }
+  .banner-amber { background: var(--amber-bg); color: var(--amber-ink); border: 1px solid #c98500; }
+  .banner button.dismiss {
+    background: none; border: none; font-size: 1rem; cursor: pointer;
+    color: inherit; line-height: 1; padding: 2px 4px;
+    /* a 20px glyph is a bad thumb target — give it real hit area */
+    min-width: 32px; min-height: 32px; flex: 0 0 auto;
+  }
+  .banner strong { display: block; margin-bottom: 2px; }
+
+  /* ---------- Cards ---------- */
+  .card {
+    background: var(--surface-1); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 16px; margin: 14px 0;
+  }
+  .card > h2 {
+    font-size: 0.95rem; margin: 0 0 10px; color: var(--text-secondary);
+    font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em;
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  }
+  .card > h2 .count {
+    font-size: 0.8rem; font-weight: 600; color: var(--text-muted);
+    font-variant-numeric: tabular-nums; text-transform: none; letter-spacing: 0;
+  }
+  .hint { font-size: 0.76rem; color: var(--text-muted); margin: 8px 0 0; }
+  .empty { font-size: 0.85rem; color: var(--text-muted); margin: 4px 0 0; }
+
+  /* ---------- Nudge card (critical state) ---------- */
+  .card.nudge-card { border-left: 4px solid var(--status-critical); }
+  .card.nudge-card > h2 { color: var(--status-critical); }
+  .nudge-row {
+    padding: 10px; border-radius: 10px; background: var(--red-bg);
+    color: var(--red-ink); margin-bottom: 8px;
+  }
+  .nudge-row:last-child { margin-bottom: 0; }
+  .nudge-row .who { font-weight: 600; font-size: 0.92rem; }
+  .nudge-row .meta { font-size: 0.78rem; opacity: 0.9; margin-top: 2px; }
+  .nudge-row .acts { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .nudge-row .acts button {
+    flex: 1 1 auto; min-height: 40px; padding: 6px 10px; font-size: 0.78rem;
+    font-weight: 600; border-radius: 8px; cursor: pointer;
+    border: 1px solid currentColor; background: transparent; color: inherit;
+  }
+  .nudge-row .acts button:active { transform: scale(0.97); }
+
+  /* ---------- Stat tiles ---------- */
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  @media (max-width: 420px) { .stats { grid-template-columns: repeat(2, 1fr); } }
+  .stat {
+    background: var(--surface-1); border: 1px solid var(--border);
+    border-radius: 12px; padding: 10px 12px;
+  }
+  .stat .label { font-size: 0.68rem; color: var(--text-secondary); }
+  .stat .value { font-size: 1.5rem; font-weight: 600; letter-spacing: -0.02em; line-height: 1.15; }
+  .stat .sub { font-size: 0.66rem; color: var(--text-muted); }
+
+  /* ---------- Log buttons + forms ---------- */
+  .log-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  @media (max-width: 380px) { .log-btns { grid-template-columns: 1fr; } }
+  .log-btns button {
+    min-height: 52px; border-radius: 12px; border: 1px solid var(--border);
+    background: var(--surface-3); color: var(--text-primary);
+    font-size: 0.9rem; font-weight: 600; cursor: pointer;
+  }
+  .log-btns button.on { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+  .log-btns button:active { transform: scale(0.98); }
+
+  form.logform { display: none; margin-top: 14px; }
+  form.logform.open { display: block; }
+  .field { margin-bottom: 10px; }
+  .field label { display: block; font-size: 0.78rem; color: var(--text-secondary); margin-bottom: 4px; }
+  .field label .opt { color: var(--text-muted); font-weight: 400; }
+  .field input[type=text], .field input[type=date], .field input[type=email],
+  .field input[type=url], .field textarea, select {
+    width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border);
+    background: var(--surface-2); color: var(--text-primary);
+    font-size: 0.9rem; font-family: inherit; min-height: var(--tap);
+  }
+  .field textarea { min-height: 60px; resize: vertical; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  @media (max-width: 380px) { .row2 { grid-template-columns: 1fr; } }
+
+  /* segmented control — "how did you reach out" */
+  .seg { display: flex; flex-wrap: wrap; gap: 6px; }
+  .seg label {
+    flex: 1 1 auto; text-align: center; padding: 9px 8px; border-radius: 8px;
+    border: 1px solid var(--border); background: var(--surface-2);
+    font-size: 0.8rem; cursor: pointer; margin: 0; color: var(--text-primary);
+    min-height: 40px; display: flex; align-items: center; justify-content: center;
+  }
+  .seg input { position: absolute; opacity: 0; width: 0; height: 0; }
+  .seg input:checked + span { font-weight: 600; }
+  .seg label:has(input:checked) {
+    background: var(--accent); color: var(--accent-ink); border-color: var(--accent);
+  }
+  .seg label:focus-within { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+  button.primary {
+    width: 100%; padding: 12px; border-radius: 10px; border: none;
+    background: var(--accent); color: var(--accent-ink);
+    font-weight: 600; font-size: 0.9rem; cursor: pointer; min-height: var(--tap);
+  }
+  button.secondary {
+    width: 100%; padding: 11px; border-radius: 10px; border: 1px solid var(--border);
+    background: var(--surface-2); color: var(--text-primary);
+    font-weight: 600; font-size: 0.9rem; cursor: pointer; min-height: var(--tap);
+  }
+  button.primary:active, button.secondary:active { transform: scale(0.99); }
+  .form-err {
+    font-size: 0.8rem; color: var(--red-ink); background: var(--red-bg);
+    border: 1px solid var(--status-critical); border-radius: 8px;
+    padding: 8px 10px; margin-bottom: 10px; display: none;
+  }
+  .form-err.show { display: block; }
+
+  /* ---------- Update panel ---------- */
+  #updatePanel { margin-top: 12px; display: none; }
+  #updatePanel.open { display: block; }
+  .upd-head { font-weight: 600; font-size: 0.95rem; }
+  .upd-meta { font-size: 0.78rem; color: var(--text-secondary); margin-top: 2px; }
+  .upd-acts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+  @media (max-width: 380px) { .upd-acts { grid-template-columns: 1fr; } }
+  .upd-acts button {
+    min-height: var(--tap); padding: 10px; border-radius: 10px;
+    border: 1px solid var(--border); background: var(--surface-2);
+    color: var(--text-primary); font-size: 0.82rem; font-weight: 600; cursor: pointer;
+  }
+  .upd-acts button.on { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+  .upd-acts button.danger { color: var(--red-ink); border-color: var(--status-critical); }
+  .upd-acts button:active { transform: scale(0.98); }
+  .upd-acts .wide { grid-column: 1 / -1; }
+
+  /* ---------- Tables ---------- */
+  .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 0 -4px; }
+  table { border-collapse: collapse; width: 100%; font-size: 0.82rem; }
+  thead th {
+    text-align: left; font-size: 0.68rem; text-transform: uppercase;
+    letter-spacing: 0.04em; color: var(--text-muted); font-weight: 600;
+    padding: 0 8px 6px; border-bottom: 1px solid var(--baseline); white-space: nowrap;
+  }
+  tbody td { padding: 9px 8px; border-bottom: 1px solid var(--gridline); vertical-align: top; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr.is-closed { opacity: 0.5; }
+  tbody tr.tappable { cursor: pointer; }
+  tbody tr.tappable:active { background: var(--surface-3); }
+  td .primary-cell { font-weight: 600; color: var(--text-primary); }
+  td .sub-cell { color: var(--text-secondary); font-size: 0.76rem; }
+  td.date { font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--text-secondary); }
+
+  /* status chip: colored dot carries the state, the words carry the meaning */
+  .chip { display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
+  .chip .dot {
+    width: 9px; height: 9px; border-radius: 50%; flex: 0 0 9px;
+    box-shadow: 0 0 0 2px var(--surface-1);
+  }
+  .chip .txt { color: var(--text-secondary); font-size: 0.76rem; }
+  .chip.good     .dot { background: var(--status-good); }
+  .chip.critical .dot { background: var(--status-critical); }
+  .chip.critical .txt { color: var(--text-primary); font-weight: 600; }
+  .chip.neutral  .dot { background: var(--baseline); }
+  .chip.muted    .dot { background: transparent; box-shadow: 0 0 0 1px var(--baseline); }
+
+  /* ---------- Footer / drawer ---------- */
+  footer.app-footer {
+    text-align: center; font-size: 0.7rem; color: var(--text-muted);
+    padding: 20px 14px 8px;
+  }
+  .drawer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 40; display: none; }
+  .drawer-overlay.open { display: block; }
+  .drawer {
+    position: fixed; top: 0; right: 0; bottom: 0; width: min(360px, 90vw);
+    background: var(--surface-1); z-index: 41; transform: translateX(100%);
+    transition: transform 0.25s ease; overflow-y: auto; padding: 16px;
+    box-shadow: -4px 0 20px rgba(0,0,0,0.2);
+  }
+  .drawer.open { transform: translateX(0); }
+  .drawer h2 { font-size: 1.05rem; margin-top: 0; }
+  .drawer label { display: block; font-size: 0.8rem; color: var(--text-secondary); margin: 12px 0 4px; }
+  .drawer input[type=text], .drawer input[type=password] {
+    width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border);
+    background: var(--surface-2); color: var(--text-primary); font-size: 0.9rem;
+    min-height: var(--tap);
+  }
+  .drawer button.primary { margin-top: 14px; }
+  .drawer button.secondary { margin-top: 8px; }
+  .drawer .close-x { position: absolute; top: 10px; right: 10px; }
+  .drawer .sync-status {
+    font-size: 0.78rem; color: var(--text-muted); margin-top: 10px; white-space: pre-wrap;
+  }
+  .drawer hr { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
+  .drawer .file-import { font-size: 0.82rem; }
+  @media (prefers-reduced-motion: reduce) {
+    .drawer { transition: none; }
+    button:active, .nudge-row .acts button:active { transform: none; }
+  }
+</style>
+</head>
+<body>
+
+<div id="fatalBanner"></div>
+
+<header class="app-header">
+  <h1>Internship Tracker<span class="sub">Summer 2027</span></h1>
+  <button class="icon-btn" id="settingsBtn" aria-label="Settings" title="Settings">⚙️</button>
+</header>
+
+<div id="banners"></div>
+
+<main class="wrap">
+
+  <!-- Needs a nudge (renders only when non-empty) -->
+  <div id="nudgeMount"></div>
+
+  <!-- Stats -->
+  <div class="stats" id="stats"></div>
+
+  <!-- Log -->
+  <section class="card">
+    <h2>Log something</h2>
+    <div class="log-btns">
+      <button type="button" id="btnShowContact">＋ Cold contact</button>
+      <button type="button" id="btnShowApp">＋ Application</button>
+    </div>
+
+    <form class="logform" id="contactForm" autocomplete="off">
+      <div class="form-err" id="contactErr" role="alert"></div>
+      <div class="field">
+        <label for="cName">Who did you contact?</label>
+        <input type="text" id="cName" placeholder="e.g. Jane Doe" required>
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label for="cCompany">Company <span class="opt">(optional)</span></label>
+          <input type="text" id="cCompany" list="companyList" placeholder="e.g. Delsys">
+        </div>
+        <div class="field">
+          <label for="cRole">Their role <span class="opt">(optional)</span></label>
+          <input type="text" id="cRole" placeholder="e.g. R&amp;D lead">
+        </div>
+      </div>
+      <div class="field">
+        <label>How did you reach out?</label>
+        <div class="seg" id="cChannelSeg">
+          <label><input type="radio" name="cChannel" value="Email" checked><span>Email</span></label>
+          <label><input type="radio" name="cChannel" value="LinkedIn"><span>LinkedIn</span></label>
+          <label><input type="radio" name="cChannel" value="In person"><span>In person</span></label>
+          <label><input type="radio" name="cChannel" value="Phone"><span>Phone</span></label>
+          <label><input type="radio" name="cChannel" value="Other"><span>Other</span></label>
+        </div>
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label for="cEmail">Their email <span class="opt">(optional)</span></label>
+          <input type="email" id="cEmail" placeholder="jane@company.com">
+        </div>
+        <div class="field">
+          <label for="cDate">Date contacted</label>
+          <input type="date" id="cDate">
+        </div>
+      </div>
+      <div class="field">
+        <label for="cNote">Note <span class="opt">(optional)</span></label>
+        <textarea id="cNote" placeholder="What you asked about, who referred you…"></textarea>
+      </div>
+      <button type="submit" class="primary">Save contact</button>
+      <p class="hint">Reminder flag turns red after 7 days with no reply.</p>
+    </form>
+
+    <form class="logform" id="appForm" autocomplete="off">
+      <div class="form-err" id="appErr" role="alert"></div>
+      <div class="field">
+        <label for="aCompany">What company did you apply to?</label>
+        <input type="text" id="aCompany" list="companyList" placeholder="e.g. Delsys" required>
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label for="aRole">Role <span class="opt">(optional)</span></label>
+          <input type="text" id="aRole" placeholder="e.g. Wearable EMG Intern">
+        </div>
+        <div class="field">
+          <label for="aDate">Date applied</label>
+          <input type="date" id="aDate">
+        </div>
+      </div>
+      <div class="field">
+        <label for="aLink">Posting link <span class="opt">(optional)</span></label>
+        <input type="url" id="aLink" placeholder="https://…">
+      </div>
+      <div class="field">
+        <label for="aNote">Note <span class="opt">(optional)</span></label>
+        <textarea id="aNote" placeholder="Where you found it, referral, portal used…"></textarea>
+      </div>
+      <button type="submit" class="primary">Save application</button>
+    </form>
+
+    <datalist id="companyList"></datalist>
+  </section>
+
+  <!-- Update an existing entry -->
+  <section class="card">
+    <h2>Update someone</h2>
+    <label for="entrySelect" style="display:block;font-size:0.78rem;color:var(--text-secondary);margin-bottom:4px">
+      Pick a contact or application
+    </label>
+    <select id="entrySelect"></select>
+    <div id="updatePanel"></div>
+    <p class="empty" id="updateEmpty">Nothing logged yet — add a contact or an application above.</p>
+  </section>
+
+  <!-- Tables -->
+  <section class="card">
+    <h2>People contacted <span class="count" id="contactCount"></span></h2>
+    <div class="table-scroll" id="contactTableMount"></div>
+  </section>
+
+  <section class="card">
+    <h2>Applications <span class="count" id="appCount"></span></h2>
+    <div class="table-scroll" id="appTableMount"></div>
+  </section>
+
+</main>
+
+<footer class="app-footer">Internship Tracker · Summer 2027 · Boston / NYC</footer>
+
+<div class="drawer-overlay" id="drawerOverlay"></div>
+<div class="drawer" id="drawer" aria-hidden="true">
+  <button class="icon-btn close-x" id="drawerClose" aria-label="Close settings">✕</button>
+  <h2>Settings</h2>
+
+  <label for="patInput">GitHub token</label>
+  <input type="password" id="patInput" placeholder="github_pat_…" autocomplete="off">
+
+  <label for="ownerInput">GitHub user</label>
+  <input type="text" id="ownerInput" placeholder="e.g. alexfu29">
+
+  <label for="repoInput">Repository</label>
+  <input type="text" id="repoInput" placeholder="internship-tracker">
+
+  <button class="primary" id="saveSettingsBtn">Save settings</button>
+  <button class="secondary" id="testSyncBtn">Test sync</button>
+  <div class="sync-status" id="syncStatus"></div>
+
+  <hr>
+  <div class="file-import">
+    <p style="margin:0 0 8px;color:var(--text-secondary)">Backup without a token:</p>
+    <button class="secondary" id="exportBtn">Export JSON</button>
+    <label for="importInput" style="margin-top:10px">Import JSON</label>
+    <input type="file" id="importInput" accept="application/json">
+  </div>
+  <hr>
+  <label for="showClosed" style="display:flex;align-items:center;gap:8px;margin:0">
+    <input type="checkbox" id="showClosed" style="width:auto;min-height:0">
+    <span>Show closed entries in the tables</span>
+  </label>
+  <hr>
+  <p style="font-size:0.72rem;color:var(--text-muted)">
+    The token is stored only on this device (localStorage). It is never sent anywhere
+    except directly to api.github.com.
+  </p>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ============================================================
+     0. FAIL LOUDLY
+     Any uncaught error puts a visible banner at the top of the
+     screen rather than leaving a silently half-rendered app.
+     ============================================================ */
+  function fatal(msg) {
+    var el = document.getElementById("fatalBanner");
+    if (!el) return;
+    el.innerHTML = '<div class="banner banner-red" role="alert"><div><strong>Something broke</strong>' +
+      escapeHtml(String(msg)) + '</div></div>';
+  }
+  window.addEventListener("error", function (e) { fatal(e.message || "unknown error"); });
+  window.addEventListener("unhandledrejection", function (e) {
+    fatal((e.reason && e.reason.message) || String(e.reason));
+  });
+
+  function escapeHtml(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+
+  /* ============================================================
+     1. DATES
+     All date math is on LOCAL calendar dates stored as
+     "YYYY-MM-DD" strings. Never UTC — a 7-day rule that flips at
+     8pm local would be a bug you'd only notice at 2am.
+     ============================================================ */
+  var NUDGE_DAYS = 7;
+
+  function atMidnight(d) { return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
+  function isoDate(d) {
+    return d.getFullYear() + "-" +
+      String(d.getMonth() + 1).padStart(2, "0") + "-" +
+      String(d.getDate()).padStart(2, "0");
+  }
+  function parseYmd(s) {
+    if (!s || !/^\d{4}-\d{2}-\d{2}$/.test(s)) return null;
+    return atMidnight(new Date(s + "T12:00:00"));
+  }
+  function daysBetween(a, b) { return Math.round((atMidnight(b) - atMidnight(a)) / 86400000); }
+
+  var today = atMidnight(new Date());
+  // Debug: ?d=2026-09-15 renders as if it were that date (local).
+  var dOverride = new URLSearchParams(location.search).get("d");
+  if (dOverride && /^\d{4}-\d{2}-\d{2}$/.test(dOverride)) {
+    today = atMidnight(new Date(dOverride + "T12:00:00"));
+  }
+  var TODAY = isoDate(today);
+
+  var MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  function fmtShort(ymd) {
+    var d = parseYmd(ymd);
+    if (!d) return "—";
+    return MONTHS[d.getMonth()] + " " + d.getDate();
+  }
+  function ageDays(ymd) {
+    var d = parseYmd(ymd);
+    if (!d) return 0;
+    return Math.max(0, daysBetween(d, today));
+  }
+
+  /* ============================================================
+     2. STORAGE / DATA MODEL
+     {
+       version, updated,
+       contacts: { id: { name, company, role, channel, email, date,
+                         note, responded, respondedOn, meetingOn,
+                         nudgedOn: [ymd], closed, deleted, updated } },
+       apps:     { id: { company, role, date, link, note, responded,
+                         respondedOn, meetingOn, closed, deleted, updated } }
+     }
+     Every entry carries its own `updated` stamp; sync merges
+     per-entry last-write-wins. `deleted: true` is a tombstone, so a
+     delete on the phone isn't resurrected by the laptop.
+     ============================================================ */
+  var DATA_KEY = "intern-data";
+  var PAT_KEY = "intern-pat";
+  var SETTINGS_KEY = "intern-settings";
+
+  function emptyData() {
+    return { version: 1, updated: new Date().toISOString(), contacts: {}, apps: {} };
+  }
+  function loadData() {
+    try {
+      var raw = localStorage.getItem(DATA_KEY);
+      if (!raw) return emptyData();
+      var p = JSON.parse(raw);
+      if (!p || typeof p !== "object") return emptyData();
+      if (!p.contacts) p.contacts = {};
+      if (!p.apps) p.apps = {};
+      return p;
+    } catch (e) { return emptyData(); }
+  }
+  function saveData() {
+    DATA.updated = new Date().toISOString();
+    try { localStorage.setItem(DATA_KEY, JSON.stringify(DATA)); }
+    catch (e) { fatal("Could not save to this device's storage: " + e.message); }
+    scheduleSync();
+  }
+  var DATA = loadData();
+
+  function loadSettings() {
+    try { return JSON.parse(localStorage.getItem(SETTINGS_KEY)) || {}; }
+    catch (e) { return {}; }
+  }
+  function saveSettings(s) { localStorage.setItem(SETTINGS_KEY, JSON.stringify(s)); }
+  var SETTINGS = loadSettings();
+
+  function getPAT() { return localStorage.getItem(PAT_KEY) || ""; }
+  function setPAT(v) {
+    if (v) localStorage.setItem(PAT_KEY, v);
+    else localStorage.removeItem(PAT_KEY);
+  }
+
+  function detectOwnerRepo() {
+    var host = location.hostname;
+    if (host.endsWith(".github.io")) {
+      var owner = host.split(".")[0];
+      var parts = location.pathname.split("/").filter(Boolean);
+      return { owner: owner, repo: parts.length ? parts[0] : "" };
+    }
+    return { owner: SETTINGS.owner || "", repo: SETTINGS.repo || "" };
+  }
+
+  function newId() {
+    return Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 8);
+  }
+
+  /* ---- accessors that filter tombstones ---- */
+  function liveList(bag) {
+    return Object.keys(bag)
+      .filter(function (id) { return !bag[id].deleted; })
+      .map(function (id) {
+        var e = bag[id];
+        return Object.assign({ id: id }, e);
+      })
+      .sort(function (a, b) {
+        if (a.date !== b.date) return a.date < b.date ? 1 : -1; // newest first
+        return (b.updated || "") < (a.updated || "") ? -1 : 1;
+      });
+  }
+  function contacts() { return liveList(DATA.contacts); }
+  function apps() { return liveList(DATA.apps); }
+
+  function touch(entry) { entry.updated = new Date().toISOString(); }
+
+  /* ============================================================
+     3. BANNERS
+     ============================================================ */
+  var bannersEl = document.getElementById("banners");
+  var sessionDismissed = {};
+  var redBannerMsg = null;
+
+  function renderBanners() {
+    var html = "";
+    if (redBannerMsg) {
+      // Deliberately NOT dismissible: it clears only when a sync call
+      // actually succeeds. A silent sync failure is the one thing this
+      // app must never do.
+      html += '<div class="banner banner-red" role="alert"><div><strong>Sync error</strong>' +
+        escapeHtml(redBannerMsg) + '</div></div>';
+    }
+    if (!getPAT() && !sessionDismissed.amber) {
+      html += '<div class="banner banner-amber"><div><strong>Not syncing</strong>' +
+        'Add a GitHub token in settings to sync across devices. Everything still saves on this device.' +
+        '</div><button class="dismiss" data-dismiss="amber" aria-label="Dismiss">✕</button></div>';
+    }
+    bannersEl.innerHTML = html;
+    bannersEl.querySelectorAll("[data-dismiss]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        sessionDismissed[btn.getAttribute("data-dismiss")] = true;
+        renderBanners();
+      });
+    });
+  }
+  function setRedBanner(msg) { redBannerMsg = msg; renderBanners(); }
+  function clearRedBanner() { redBannerMsg = null; renderBanners(); }
+
+  /* ============================================================
+     4. DERIVED STATE — status + the 7-day nudge rule
+     ============================================================ */
+  // The clock restarts every time you send a reminder, so a chased
+  // contact goes quiet for another 7 days instead of nagging forever.
+  function lastTouchOn(c) {
+    var d = c.date;
+    (c.nudgedOn || []).forEach(function (n) { if (n > d) d = n; });
+    return d;
+  }
+  function daysSilent(c) { return ageDays(lastTouchOn(c)); }
+
+  function needsNudge(c) {
+    return !c.responded && !c.closed && !c.meetingOn && daysSilent(c) >= NUDGE_DAYS;
+  }
+  function dueNudges() {
+    return contacts().filter(needsNudge).sort(function (a, b) {
+      return daysSilent(b) - daysSilent(a); // most overdue first
+    });
+  }
+
+  // Status chips always pair a colored dot with words — the color is
+  // never the only carrier of meaning.
+  function statusOf(e, isContact) {
+    if (e.closed) return { tone: "muted", text: "Closed" };
+    if (e.meetingOn) {
+      var md = parseYmd(e.meetingOn);
+      var future = md && daysBetween(today, md) >= 0;
+      return { tone: "good", text: (future ? "Meeting " : "Met ") + fmtShort(e.meetingOn) };
+    }
+    if (e.responded) return { tone: "good", text: "Replied" };
+    var d = ageDays(e.date);
+    if (isContact && needsNudge(e)) {
+      return { tone: "critical", text: "Nudge — " + daysSilent(e) + "d silent" };
+    }
+    if (d === 0) return { tone: "neutral", text: isContact ? "Sent today" : "Applied today" };
+    return { tone: "neutral", text: "Waiting " + d + "d" };
+  }
+
+  function chipHtml(st) {
+    return '<span class="chip ' + st.tone + '"><span class="dot"></span>' +
+      '<span class="txt">' + escapeHtml(st.text) + '</span></span>';
+  }
+
+  /* ============================================================
+     5. RENDER
+     Each region renders into its own mount so typing in a form is
+     never wiped by an unrelated re-render.
+     ============================================================ */
+  function renderStats() {
+    var cs = contacts(), as = apps();
+    var all = cs.concat(as);
+    var replies = all.filter(function (e) { return e.responded || e.meetingOn; }).length;
+    var meetings = all.filter(function (e) { return !!e.meetingOn; }).length;
+    var rate = all.length ? Math.round((replies / all.length) * 100) : 0;
+
+    var tiles = [
+      { label: "Contacts", value: cs.length, sub: cs.length ? "people reached" : "none yet" },
+      { label: "Applications", value: as.length, sub: as.length ? "submitted" : "none yet" },
+      { label: "Replies", value: replies, sub: all.length ? rate + "% of " + all.length : "—" },
+      { label: "Meetings", value: meetings, sub: meetings ? "booked or held" : "none yet" }
+    ];
+    document.getElementById("stats").innerHTML = tiles.map(function (t) {
+      return '<div class="stat"><div class="label">' + t.label + '</div>' +
+        '<div class="value">' + t.value + '</div>' +
+        '<div class="sub">' + escapeHtml(t.sub) + '</div></div>';
+    }).join("");
+  }
+
+  function renderNudges() {
+    var mount = document.getElementById("nudgeMount");
+    var due = dueNudges();
+    if (!due.length) { mount.innerHTML = ""; return; }
+    var html = '<section class="card nudge-card"><h2>⚠ Needs a nudge' +
+      '<span class="count">' + due.length + '</span></h2>';
+    due.forEach(function (c) {
+      var since = fmtShort(lastTouchOn(c));
+      var nudged = (c.nudgedOn || []).length;
+      html += '<div class="nudge-row"><div class="who">' + escapeHtml(c.name) +
+        (c.company ? ' <span style="font-weight:400">· ' + escapeHtml(c.company) + '</span>' : '') +
+        '</div><div class="meta">' + daysSilent(c) + ' days since ' +
+        (nudged ? 'your last reminder' : escapeHtml(c.channel || 'contact')) + ' (' + since + ')' +
+        (c.email ? ' · ' + escapeHtml(c.email) : '') +
+        (nudged ? ' · ' + nudged + ' reminder' + (nudged > 1 ? 's' : '') + ' sent' : '') +
+        '</div><div class="acts">' +
+        '<button data-act="nudged" data-id="' + c.id + '">Reminder sent</button>' +
+        '<button data-act="replied" data-id="' + c.id + '">They replied</button>' +
+        '<button data-act="close" data-id="' + c.id + '">Drop it</button>' +
+        '</div></div>';
+    });
+    html += '<p class="hint">"Reminder sent" restarts the 7-day clock. Nothing is emailed for you.</p>';
+    html += '</section>';
+    mount.innerHTML = html;
+
+    mount.querySelectorAll("button[data-act]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var c = DATA.contacts[btn.getAttribute("data-id")];
+        if (!c) return;
+        var act = btn.getAttribute("data-act");
+        if (act === "nudged") { c.nudgedOn = (c.nudgedOn || []).concat([TODAY]); }
+        else if (act === "replied") { c.responded = true; c.respondedOn = TODAY; }
+        else if (act === "close") { c.closed = true; }
+        touch(c); saveData(); render();
+      });
+    });
+  }
+
+  function tableHtml(rows, cols, emptyMsg) {
+    if (!rows.length) return '<p class="empty">' + escapeHtml(emptyMsg) + '</p>';
+    var html = '<table><thead><tr>';
+    cols.forEach(function (c) { html += '<th>' + escapeHtml(c.head) + '</th>'; });
+    html += '</tr></thead><tbody>';
+    rows.forEach(function (r) {
+      html += '<tr class="tappable' + (r.closed ? ' is-closed' : '') +
+        '" data-select="' + escapeHtml(r.selectKey) + '">';
+      cols.forEach(function (c) { html += '<td class="' + (c.cls || "") + '">' + c.cell(r) + '</td>'; });
+      html += '</tr>';
+    });
+    return html + '</tbody></table>';
+  }
+
+  function renderTables() {
+    var showClosed = !!SETTINGS.showClosed;
+    var cs = contacts().filter(function (c) { return showClosed || !c.closed; });
+    var as = apps().filter(function (a) { return showClosed || !a.closed; });
+
+    cs.forEach(function (c) { c.selectKey = "c:" + c.id; });
+    as.forEach(function (a) { a.selectKey = "a:" + a.id; });
+
+    document.getElementById("contactCount").textContent =
+      contacts().length ? cs.length + " shown" : "";
+    document.getElementById("appCount").textContent =
+      apps().length ? as.length + " shown" : "";
+
+    document.getElementById("contactTableMount").innerHTML = tableHtml(cs, [
+      { head: "Who", cell: function (r) {
+          return '<div class="primary-cell">' + escapeHtml(r.name) + '</div>' +
+            (r.company || r.role
+              ? '<div class="sub-cell">' + escapeHtml([r.company, r.role].filter(Boolean).join(" · ")) + '</div>'
+              : '');
+        } },
+      { head: "How", cell: function (r) {
+          return '<span class="sub-cell">' + escapeHtml(r.channel || "—") + '</span>';
+        } },
+      { head: "Sent", cls: "date", cell: function (r) { return fmtShort(r.date); } },
+      { head: "Status", cell: function (r) { return chipHtml(statusOf(r, true)); } }
+    ], "No cold contacts logged yet.");
+
+    document.getElementById("appTableMount").innerHTML = tableHtml(as, [
+      { head: "Company", cell: function (r) {
+          return '<div class="primary-cell">' + escapeHtml(r.company) + '</div>' +
+            (r.role ? '<div class="sub-cell">' + escapeHtml(r.role) + '</div>' : '');
+        } },
+      { head: "Applied", cls: "date", cell: function (r) { return fmtShort(r.date); } },
+      { head: "Status", cell: function (r) { return chipHtml(statusOf(r, false)); } }
+    ], "No applications logged yet.");
+
+    // Tapping a row jumps to it in the update dropdown.
+    document.querySelectorAll("tr[data-select]").forEach(function (tr) {
+      tr.addEventListener("click", function () {
+        var sel = document.getElementById("entrySelect");
+        sel.value = tr.getAttribute("data-select");
+        renderUpdatePanel();
+        sel.scrollIntoView({ block: "center", behavior: "smooth" });
+      });
+    });
+  }
+
+  function renderCompanyList() {
+    var seen = {};
+    contacts().forEach(function (c) { if (c.company) seen[c.company] = true; });
+    apps().forEach(function (a) { if (a.company) seen[a.company] = true; });
+    document.getElementById("companyList").innerHTML =
+      Object.keys(seen).sort().map(function (n) {
+        return '<option value="' + escapeHtml(n) + '"></option>';
+      }).join("");
+  }
+
+  /* ---- the dropdown of everything logged ---- */
+  function renderEntrySelect() {
+    var sel = document.getElementById("entrySelect");
+    var prev = sel.value;
+    var cs = contacts(), as = apps();
+    var empty = !cs.length && !as.length;
+
+    document.getElementById("updateEmpty").style.display = empty ? "block" : "none";
+    sel.style.display = empty ? "none" : "block";
+    document.querySelector('label[for="entrySelect"]').style.display = empty ? "none" : "block";
+    if (empty) { sel.innerHTML = ""; renderUpdatePanel(); return; }
+
+    var html = '<option value="">— pick one —</option>';
+    if (cs.length) {
+      html += '<optgroup label="People contacted">';
+      cs.forEach(function (c) {
+        html += '<option value="c:' + c.id + '">' +
+          escapeHtml(c.name + (c.company ? " · " + c.company : "") + "  (" + fmtShort(c.date) + ")") +
+          '</option>';
+      });
+      html += '</optgroup>';
+    }
+    if (as.length) {
+      html += '<optgroup label="Applications">';
+      as.forEach(function (a) {
+        html += '<option value="a:' + a.id + '">' +
+          escapeHtml(a.company + (a.role ? " · " + a.role : "") + "  (" + fmtShort(a.date) + ")") +
+          '</option>';
+      });
+      html += '</optgroup>';
+    }
+    sel.innerHTML = html;
+    // keep the selection across a re-render if it still exists
+    if (prev && sel.querySelector('option[value="' + prev.replace(/"/g, '\\"') + '"]')) {
+      sel.value = prev;
+    }
+  }
+
+  function selectedEntry() {
+    var v = document.getElementById("entrySelect").value;
+    if (!v) return null;
+    var isContact = v.charAt(0) === "c";
+    var id = v.slice(2);
+    var bag = isContact ? DATA.contacts : DATA.apps;
+    var e = bag[id];
+    if (!e || e.deleted) return null;
+    return { kind: isContact ? "contact" : "app", id: id, e: e, isContact: isContact };
+  }
+
+  function renderUpdatePanel() {
+    var panel = document.getElementById("updatePanel");
+    var sel = selectedEntry();
+    if (!sel) { panel.className = ""; panel.innerHTML = ""; return; }
+    var e = sel.e;
+    var st = statusOf(e, sel.isContact);
+
+    var head = sel.isContact
+      ? escapeHtml(e.name) + (e.company ? ' <span style="font-weight:400;color:var(--text-secondary)">· ' + escapeHtml(e.company) + '</span>' : '')
+      : escapeHtml(e.company) + (e.role ? ' <span style="font-weight:400;color:var(--text-secondary)">· ' + escapeHtml(e.role) + '</span>' : '');
+
+    var metaBits = [];
+    if (sel.isContact) {
+      metaBits.push((e.channel || "Contacted") + " on " + fmtShort(e.date));
+      if (e.role) metaBits.push(e.role);
+      if (e.email) metaBits.push(e.email);
+      if ((e.nudgedOn || []).length) {
+        metaBits.push((e.nudgedOn.length) + " reminder" + (e.nudgedOn.length > 1 ? "s" : "") +
+          " (last " + fmtShort(e.nudgedOn[e.nudgedOn.length - 1]) + ")");
+      }
+    } else {
+      metaBits.push("Applied " + fmtShort(e.date));
+    }
+    if (e.respondedOn) metaBits.push("replied " + fmtShort(e.respondedOn));
+
+    var html = '<div class="upd-head">' + head + '</div>' +
+      '<div class="upd-meta">' + escapeHtml(metaBits.join(" · ")) + '</div>' +
+      '<div class="upd-meta" style="margin-top:6px">' + chipHtml(st) + '</div>';
+
+    if (e.link) {
+      html += '<div class="upd-meta" style="margin-top:6px"><a href="' + escapeHtml(e.link) +
+        '" target="_blank" rel="noopener">Open posting ↗</a></div>';
+    }
+    if (e.note) {
+      html += '<div class="upd-meta" style="margin-top:6px;white-space:pre-wrap">' +
+        escapeHtml(e.note) + '</div>';
+    }
+
+    html += '<div class="field wide" style="margin-top:12px">' +
+      '<label for="updMeeting">Meeting date <span class="opt">(blank = no meeting)</span></label>' +
+      '<input type="date" id="updMeeting" value="' + escapeHtml(e.meetingOn || "") + '"></div>';
+
+    html += '<div class="upd-acts">' +
+      '<button data-u="replied" class="' + (e.responded ? "on" : "") + '">' +
+        (e.responded ? "✓ Replied" : "Mark replied") + '</button>';
+    if (sel.isContact) {
+      html += '<button data-u="nudged">Reminder sent today</button>';
+    } else {
+      html += '<button data-u="noreply">Clear reply</button>';
+    }
+    html += '<button data-u="close" class="' + (e.closed ? "on" : "") + '">' +
+        (e.closed ? "✓ Closed — reopen" : "Close it") + '</button>' +
+      '<button data-u="delete" class="danger">Delete</button>' +
+      '</div>';
+
+    panel.innerHTML = html;
+    panel.className = "open";
+
+    panel.querySelector("#updMeeting").addEventListener("change", function () {
+      var v = this.value;
+      e.meetingOn = v || null;
+      touch(e); saveData(); render();
+    });
+
+    panel.querySelectorAll("button[data-u]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var act = btn.getAttribute("data-u");
+        if (act === "replied") {
+          e.responded = !e.responded;
+          e.respondedOn = e.responded ? TODAY : null;
+        } else if (act === "noreply") {
+          e.responded = false; e.respondedOn = null;
+        } else if (act === "nudged") {
+          e.nudgedOn = (e.nudgedOn || []).concat([TODAY]);
+        } else if (act === "close") {
+          e.closed = !e.closed;
+        } else if (act === "delete") {
+          var what = sel.isContact ? e.name : e.company;
+          if (!confirm("Delete “" + what + "” for good? This also removes it on your other devices.")) return;
+          // Tombstone rather than a hard delete: a plain `delete` would
+          // be undone by the next sync from another device.
+          e.deleted = true; touch(e); saveData();
+          document.getElementById("entrySelect").value = "";
+          render();
+          return;
+        }
+        touch(e); saveData(); render();
+      });
+    });
+  }
+
+  function render() {
+    renderBanners();
+    renderStats();
+    renderNudges();
+    renderCompanyList();
+    renderEntrySelect();
+    renderUpdatePanel();
+    renderTables();
+  }
+
+  /* ============================================================
+     6. LOG FORMS
+     ============================================================ */
+  var contactForm = document.getElementById("contactForm");
+  var appForm = document.getElementById("appForm");
+  var btnShowContact = document.getElementById("btnShowContact");
+  var btnShowApp = document.getElementById("btnShowApp");
+
+  function openForm(which) {
+    var openC = which === "contact" && !contactForm.classList.contains("open");
+    var openA = which === "app" && !appForm.classList.contains("open");
+    contactForm.classList.toggle("open", openC);
+    appForm.classList.toggle("open", openA);
+    btnShowContact.classList.toggle("on", openC);
+    btnShowApp.classList.toggle("on", openA);
+    if (openC) { document.getElementById("cDate").value = TODAY; document.getElementById("cName").focus(); }
+    if (openA) { document.getElementById("aDate").value = TODAY; document.getElementById("aCompany").focus(); }
+  }
+  btnShowContact.addEventListener("click", function () { openForm("contact"); });
+  btnShowApp.addEventListener("click", function () { openForm("app"); });
+
+  function showErr(elId, msg) {
+    var el = document.getElementById(elId);
+    el.textContent = msg;
+    el.classList.add("show");
+  }
+  function clearErr(elId) { document.getElementById(elId).classList.remove("show"); }
+
+  contactForm.addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    clearErr("contactErr");
+    var name = document.getElementById("cName").value.trim();
+    if (!name) { showErr("contactErr", "A name is required — that's the whole point of the row."); return; }
+    var dateVal = document.getElementById("cDate").value || TODAY;
+    if (!parseYmd(dateVal)) { showErr("contactErr", "That date isn't valid."); return; }
+    var channelEl = contactForm.querySelector('input[name="cChannel"]:checked');
+
+    DATA.contacts[newId()] = {
+      name: name,
+      company: document.getElementById("cCompany").value.trim(),
+      role: document.getElementById("cRole").value.trim(),
+      channel: channelEl ? channelEl.value : "Other",
+      email: document.getElementById("cEmail").value.trim(),
+      date: dateVal,
+      note: document.getElementById("cNote").value.trim(),
+      responded: false, respondedOn: null, meetingOn: null,
+      nudgedOn: [], closed: false, deleted: false,
+      updated: new Date().toISOString()
+    };
+    saveData();
+    contactForm.reset();
+    openForm("contact"); // collapses it
+    render();
+  });
+
+  appForm.addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    clearErr("appErr");
+    var company = document.getElementById("aCompany").value.trim();
+    if (!company) { showErr("appErr", "A company name is required."); return; }
+    var dateVal = document.getElementById("aDate").value || TODAY;
+    if (!parseYmd(dateVal)) { showErr("appErr", "That date isn't valid."); return; }
+
+    DATA.apps[newId()] = {
+      company: company,
+      role: document.getElementById("aRole").value.trim(),
+      date: dateVal,
+      link: document.getElementById("aLink").value.trim(),
+      note: document.getElementById("aNote").value.trim(),
+      responded: false, respondedOn: null, meetingOn: null,
+      closed: false, deleted: false,
+      updated: new Date().toISOString()
+    };
+    saveData();
+    appForm.reset();
+    openForm("app"); // collapses it
+    render();
+  });
+
+  document.getElementById("entrySelect").addEventListener("change", renderUpdatePanel);
+
+  /* ============================================================
+     7. SYNC — data/log.json in this repo, via a fine-grained PAT
+     ============================================================ */
+  var SYNC_PATH = "data/log.json";
+  var lastKnownSha = null;
+  var syncTimer = null;
+
+  function apiBase(owner, repo) {
+    return "https://api.github.com/repos/" + owner + "/" + repo + "/contents/" + SYNC_PATH;
+  }
+  function b64Encode(str) { return btoa(unescape(encodeURIComponent(str))); }
+  function b64Decode(str) { return decodeURIComponent(escape(atob(str))); }
+
+  // Per-entry last-write-wins on `updated`. An entry missing a stamp
+  // loses to one that has it; if neither has one, remote wins so two
+  // devices converge instead of ping-ponging.
+  function mergeBag(remote, local) {
+    var out = {};
+    var ids = {};
+    Object.keys(remote || {}).forEach(function (k) { ids[k] = true; });
+    Object.keys(local || {}).forEach(function (k) { ids[k] = true; });
+    Object.keys(ids).forEach(function (id) {
+      var r = remote && remote[id], l = local && local[id];
+      if (r && l) out[id] = (l.updated || "") > (r.updated || "") ? l : r;
+      else out[id] = r || l;
+    });
+    return out;
+  }
+  function mergeData(remote, local) {
+    return {
+      version: 1,
+      updated: new Date().toISOString(),
+      contacts: mergeBag(remote && remote.contacts, local && local.contacts),
+      apps: mergeBag(remote && remote.apps, local && local.apps)
+    };
+  }
+  function dataEquals(a, b) {
+    return JSON.stringify(a.contacts) === JSON.stringify(b.contacts) &&
+      JSON.stringify(a.apps) === JSON.stringify(b.apps);
+  }
+
+  function syncPull(showStatus) {
+    var pat = getPAT();
+    if (!pat) { renderBanners(); return Promise.resolve(); }
+    var or = detectOwnerRepo();
+    if (!or.owner || !or.repo) {
+      setRedBanner("owner/repo not configured. Add them in settings.");
+      return Promise.resolve();
+    }
+    return fetch(apiBase(or.owner, or.repo), {
+      headers: { "Accept": "application/vnd.github+json", "Authorization": "Bearer " + pat }
+    }).then(function (resp) {
+      if (resp.status === 404) {
+        lastKnownSha = null;
+        clearRedBanner();
+        if (showStatus) setSyncStatus("data/log.json doesn't exist yet — it'll be created on first save.");
+        return;
+      }
+      if (!resp.ok) {
+        return resp.text().then(function (t) {
+          throw new Error(resp.status + " " + resp.statusText + " — " + t.slice(0, 200));
+        });
+      }
+      return resp.json().then(function (json) {
+        lastKnownSha = json.sha;
+        var remote;
+        try { remote = JSON.parse(b64Decode(json.content.replace(/\n/g, ""))); }
+        catch (e) { throw new Error("Could not read data/log.json (invalid JSON)."); }
+        var merged = mergeData(remote, DATA);
+        DATA = merged;
+        localStorage.setItem(DATA_KEY, JSON.stringify(DATA));
+        clearRedBanner();
+        render();
+        if (!dataEquals(merged, remote)) return syncPush(showStatus);
+        if (showStatus) {
+          setSyncStatus("Synced. (" + contacts().length + " contacts, " + apps().length + " applications)");
+        }
+      });
+    }).catch(function (err) {
+      setRedBanner(err.message || String(err));
+      if (showStatus) setSyncStatus("Error: " + (err.message || String(err)));
+    });
+  }
+
+  function syncPush(showStatus) {
+    var pat = getPAT();
+    if (!pat) return Promise.resolve();
+    var or = detectOwnerRepo();
+    if (!or.owner || !or.repo) {
+      setRedBanner("owner/repo not configured. Add them in settings.");
+      return Promise.resolve();
+    }
+    var body = { message: "sync internship log", content: b64Encode(JSON.stringify(DATA, null, 2)) };
+    if (lastKnownSha) body.sha = lastKnownSha;
+    return fetch(apiBase(or.owner, or.repo), {
+      method: "PUT",
+      headers: {
+        "Accept": "application/vnd.github+json",
+        "Authorization": "Bearer " + pat,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(body)
+    }).then(function (resp) {
+      if (!resp.ok) {
+        return resp.text().then(function (t) {
+          throw new Error(resp.status + " " + resp.statusText + " — " + t.slice(0, 200));
+        });
+      }
+      return resp.json().then(function (json) {
+        if (json.content && json.content.sha) lastKnownSha = json.content.sha;
+        clearRedBanner();
+        if (showStatus) setSyncStatus("Saved to GitHub.");
+      });
+    }).catch(function (err) {
+      setRedBanner(err.message || String(err));
+      if (showStatus) setSyncStatus("Error: " + (err.message || String(err)));
+    });
+  }
+
+  // 10s debounce: every push is a real commit, and toggling a couple of
+  // statuses in a row shouldn't make a commit each. Nothing is at risk
+  // while we wait — localStorage already has it, and an unsent change
+  // goes up on the next open.
+  function scheduleSync() {
+    if (!getPAT()) return;
+    if (syncTimer) clearTimeout(syncTimer);
+    syncTimer = setTimeout(function () { syncTimer = null; syncPush(false); }, 10000);
+  }
+  document.addEventListener("visibilitychange", function () {
+    if (document.visibilityState === "hidden" && syncTimer) {
+      clearTimeout(syncTimer); syncTimer = null; syncPush(false);
+    }
+  });
+  function setSyncStatus(msg) {
+    var el = document.getElementById("syncStatus");
+    if (el) el.textContent = msg;
+  }
+
+  /* ============================================================
+     8. SETTINGS DRAWER
+     ============================================================ */
+  var drawer = document.getElementById("drawer");
+  var overlay = document.getElementById("drawerOverlay");
+  function openDrawer() {
+    var or = detectOwnerRepo();
+    document.getElementById("patInput").value = getPAT();
+    document.getElementById("ownerInput").value = or.owner || "";
+    document.getElementById("repoInput").value = or.repo || "";
+    document.getElementById("showClosed").checked = !!SETTINGS.showClosed;
+    drawer.classList.add("open"); overlay.classList.add("open");
+    drawer.setAttribute("aria-hidden", "false");
+  }
+  function closeDrawer() {
+    drawer.classList.remove("open"); overlay.classList.remove("open");
+    drawer.setAttribute("aria-hidden", "true");
+    setSyncStatus("");
+  }
+  document.getElementById("settingsBtn").addEventListener("click", openDrawer);
+  document.getElementById("drawerClose").addEventListener("click", closeDrawer);
+  overlay.addEventListener("click", closeDrawer);
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && drawer.classList.contains("open")) closeDrawer();
+  });
+
+  document.getElementById("saveSettingsBtn").addEventListener("click", function () {
+    setPAT(document.getElementById("patInput").value.trim());
+    SETTINGS.owner = document.getElementById("ownerInput").value.trim();
+    SETTINGS.repo = document.getElementById("repoInput").value.trim();
+    saveSettings(SETTINGS);
+    setSyncStatus("Saved. Syncing…");
+    renderBanners();
+    lastKnownSha = null;
+    syncPull(true);
+  });
+  document.getElementById("testSyncBtn").addEventListener("click", function () {
+    setSyncStatus("Testing…");
+    lastKnownSha = null;
+    syncPull(true);
+  });
+  document.getElementById("showClosed").addEventListener("change", function () {
+    SETTINGS.showClosed = this.checked;
+    saveSettings(SETTINGS);
+    renderTables();
+  });
+
+  document.getElementById("exportBtn").addEventListener("click", function () {
+    var blob = new Blob([JSON.stringify(DATA, null, 2)], { type: "application/json" });
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "internship-log-" + TODAY + ".json";
+    a.click();
+    URL.revokeObjectURL(a.href);
+  });
+  document.getElementById("importInput").addEventListener("change", function (ev) {
+    var file = ev.target.files && ev.target.files[0];
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function () {
+      try {
+        var incoming = JSON.parse(reader.result);
+        if (!incoming || (!incoming.contacts && !incoming.apps)) {
+          throw new Error("That file has no contacts or applications in it.");
+        }
+        DATA = mergeData(incoming, DATA);
+        localStorage.setItem(DATA_KEY, JSON.stringify(DATA));
+        scheduleSync();
+        render();
+        setSyncStatus("Imported and merged. " + contacts().length + " contacts, " + apps().length + " applications.");
+      } catch (e) {
+        setSyncStatus("Import failed: " + e.message);
+      }
+      ev.target.value = "";
+    };
+    reader.onerror = function () { setSyncStatus("Import failed: could not read the file."); };
+    reader.readAsText(file);
+  });
+
+  /* ============================================================
+     9. BOOT
+     ============================================================ */
+  document.getElementById("cDate").value = TODAY;
+  document.getElementById("aDate").value = TODAY;
+  render();
+  if (getPAT()) syncPull(false);
+})();
+</script>
+</body></html>
