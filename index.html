@@ -251,6 +251,7 @@
     font-weight: 600; font-size: 0.9rem; cursor: pointer; min-height: var(--tap);
   }
   button.primary:active, button.secondary:active { transform: scale(0.99); }
+  #copyOutreachBtn { margin-top: 8px; }
   .form-err {
     font-size: 0.8rem; color: var(--red-ink); background: var(--red-bg);
     border: 1px solid var(--status-critical); border-radius: 8px;
@@ -332,6 +333,19 @@
   .drawer .sync-status {
     font-size: 0.78rem; color: var(--text-muted); margin-top: 10px; white-space: pre-wrap;
   }
+  .drawer .tpl-help { font-size: 0.74rem; color: var(--text-muted); margin: 6px 0; }
+  .drawer .tpl-help code {
+    background: var(--surface-3); border-radius: 4px; padding: 1px 4px;
+    font-size: 0.72rem; white-space: nowrap;
+  }
+  .drawer textarea.tpl {
+    width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border);
+    background: var(--surface-2); color: var(--text-primary);
+    font-size: 0.82rem; font-family: inherit; line-height: 1.45; resize: vertical;
+  }
+  /* copy buttons echo their result in place — a copy you can't confirm is a copy you don't trust */
+  button.copied { background: var(--status-good) !important; color: #ffffff !important;
+                  border-color: var(--status-good) !important; }
   .drawer hr { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
   .drawer .file-import { font-size: 0.82rem; }
   @media (prefers-reduced-motion: reduce) {
@@ -353,6 +367,9 @@
 
 <main class="wrap">
 
+  <!-- Shown only if the clipboard is blocked, so a draft is never lost -->
+  <div id="draftFallback"></div>
+
   <!-- Needs a nudge (renders only when non-empty) -->
   <div id="nudgeMount"></div>
 
@@ -371,16 +388,16 @@
       <div class="form-err" id="contactErr" role="alert"></div>
       <div class="field">
         <label for="cName">Who did you contact?</label>
-        <input type="text" id="cName" placeholder="e.g. Jane Doe" required>
+        <input type="text" id="cName" required>
       </div>
       <div class="row2">
         <div class="field">
           <label for="cCompany">Company <span class="opt">(optional)</span></label>
-          <input type="text" id="cCompany" list="companyList" placeholder="e.g. Delsys">
+          <input type="text" id="cCompany" list="companyList">
         </div>
         <div class="field">
           <label for="cRole">Their role <span class="opt">(optional)</span></label>
-          <input type="text" id="cRole" placeholder="e.g. R&amp;D lead">
+          <input type="text" id="cRole">
         </div>
       </div>
       <div class="field">
@@ -388,15 +405,13 @@
         <div class="seg" id="cChannelSeg">
           <label><input type="radio" name="cChannel" value="Email" checked><span>Email</span></label>
           <label><input type="radio" name="cChannel" value="LinkedIn"><span>LinkedIn</span></label>
-          <label><input type="radio" name="cChannel" value="In person"><span>In person</span></label>
-          <label><input type="radio" name="cChannel" value="Phone"><span>Phone</span></label>
           <label><input type="radio" name="cChannel" value="Other"><span>Other</span></label>
         </div>
       </div>
       <div class="row2">
         <div class="field">
           <label for="cEmail">Their email <span class="opt">(optional)</span></label>
-          <input type="email" id="cEmail" placeholder="jane@company.com">
+          <input type="email" id="cEmail">
         </div>
         <div class="field">
           <label for="cDate">Date contacted</label>
@@ -405,22 +420,24 @@
       </div>
       <div class="field">
         <label for="cNote">Note <span class="opt">(optional)</span></label>
-        <textarea id="cNote" placeholder="What you asked about, who referred you…"></textarea>
+        <textarea id="cNote"></textarea>
       </div>
       <button type="submit" class="primary">Save contact</button>
-      <p class="hint">Reminder flag turns red after 7 days with no reply.</p>
+      <button type="button" class="secondary" id="copyOutreachBtn">📋 Copy outreach draft</button>
+      <p class="hint">Copy the draft, paste it into your own email, customise, send — then save.
+        Edit the template in settings. Reminder flag turns red after 7 days with no reply.</p>
     </form>
 
     <form class="logform" id="appForm" autocomplete="off">
       <div class="form-err" id="appErr" role="alert"></div>
       <div class="field">
         <label for="aCompany">What company did you apply to?</label>
-        <input type="text" id="aCompany" list="companyList" placeholder="e.g. Delsys" required>
+        <input type="text" id="aCompany" list="companyList" required>
       </div>
       <div class="row2">
         <div class="field">
           <label for="aRole">Role <span class="opt">(optional)</span></label>
-          <input type="text" id="aRole" placeholder="e.g. Wearable EMG Intern">
+          <input type="text" id="aRole">
         </div>
         <div class="field">
           <label for="aDate">Date applied</label>
@@ -429,11 +446,11 @@
       </div>
       <div class="field">
         <label for="aLink">Posting link <span class="opt">(optional)</span></label>
-        <input type="url" id="aLink" placeholder="https://…">
+        <input type="url" id="aLink">
       </div>
       <div class="field">
         <label for="aNote">Note <span class="opt">(optional)</span></label>
-        <textarea id="aNote" placeholder="Where you found it, referral, portal used…"></textarea>
+        <textarea id="aNote"></textarea>
       </div>
       <button type="submit" class="primary">Save application</button>
     </form>
@@ -484,6 +501,32 @@
   <button class="primary" id="saveSettingsBtn">Save settings</button>
   <button class="secondary" id="testSyncBtn">Test sync</button>
   <div class="sync-status" id="syncStatus"></div>
+
+  <hr>
+  <h2 style="font-size:0.95rem">Email drafts</h2>
+  <p class="tpl-help">
+    Your own wording, kept here so you never leave the app to find it. Tap
+    <strong>Copy draft</strong> anywhere in the tracker and the filled-in text goes
+    to your clipboard — paste it into your mail app, tweak it, send it.
+    Nothing is ever sent for you.
+  </p>
+  <p class="tpl-help">
+    Placeholders get replaced automatically:
+    <code>{first}</code> <code>{name}</code> <code>{company}</code>
+    <code>{role}</code> <code>{date}</code> <code>{days}</code>
+    <code>{channel}</code>. Anything with no value on file comes through as
+    <code>[company]</code> so you spot the gap instead of sending a blank.
+  </p>
+
+  <label for="tplOutreach">First-contact draft</label>
+  <textarea id="tplOutreach" class="tpl" rows="10"></textarea>
+
+  <label for="tplFollowup">Follow-up draft <span style="color:var(--text-muted)">(the 7-day nudge)</span></label>
+  <textarea id="tplFollowup" class="tpl" rows="10"></textarea>
+
+  <button class="primary" id="doneTplBtn">Done editing drafts</button>
+  <button class="secondary" id="resetTplBtn">Reset to defaults</button>
+  <div class="sync-status" id="tplStatus"></div>
 
   <hr>
   <div class="file-import">
@@ -617,6 +660,126 @@
   function saveSettings(s) { localStorage.setItem(SETTINGS_KEY, JSON.stringify(s)); }
   var SETTINGS = loadSettings();
 
+  /* ---- email draft templates ----------------------------------
+     Seeded with real wording rather than lorem so the first copy is
+     already sendable; edit them in settings. Kept in SETTINGS (not in
+     the synced log) so a draft rewrite never touches contact data.
+     ------------------------------------------------------------- */
+  var DEFAULT_TPL = {
+    outreach:
+      "Subject: BU mechanical engineering student — Summer 2027 internship at {company}\n" +
+      "\n" +
+      "Hi {first},\n" +
+      "\n" +
+      "I'm a mechanical engineering student at Boston University working on biosensors,\n" +
+      "wearables and human-machine interaction. I've been following what {company} is\n" +
+      "doing and it lines up closely with the work I want to be doing.\n" +
+      "\n" +
+      "I'm looking for a Summer 2027 internship and wanted to ask whether your team\n" +
+      "takes interns — or if there's someone better placed for me to talk to.\n" +
+      "\n" +
+      "Happy to send my resume. Thanks for your time.\n" +
+      "\n" +
+      "Best,\n" +
+      "Alex",
+    followup:
+      "Subject: Following up — Summer 2027 internship at {company}\n" +
+      "\n" +
+      "Hi {first},\n" +
+      "\n" +
+      "I reached out on {date} about internship opportunities at {company} and wanted to\n" +
+      "follow up in case my note landed at a busy moment.\n" +
+      "\n" +
+      "I'm still very interested — I'm a mechanical engineering student at Boston\n" +
+      "University focused on biosensors and human-machine interaction, and I'd love to\n" +
+      "hear about anything opening up for Summer 2027.\n" +
+      "\n" +
+      "Happy to send my resume, or to find 15 minutes whenever suits you.\n" +
+      "\n" +
+      "Thanks,\n" +
+      "Alex"
+  };
+  function tplFor(kind) {
+    var t = SETTINGS.templates && SETTINGS.templates[kind];
+    return (typeof t === "string" && t.length) ? t : DEFAULT_TPL[kind];
+  }
+
+  // A missing value becomes a visible [placeholder] rather than an empty
+  // gap — you notice "at [company]" before you hit send; you don't
+  // notice "at .".
+  function fillTemplate(tpl, vals) {
+    return tpl.replace(/\{(\w+)\}/g, function (whole, key) {
+      var v = vals[key];
+      if (v === undefined || v === null || String(v).trim() === "") return "[" + key + "]";
+      return String(v);
+    });
+  }
+  function firstNameOf(name) {
+    return String(name || "").trim().split(/\s+/)[0] || "";
+  }
+  function draftValues(c) {
+    return {
+      name: c.name, first: firstNameOf(c.name), company: c.company,
+      role: c.role, channel: c.channel,
+      date: c.date ? fmtShort(c.date) : "",
+      days: c.date ? String(daysSilent(c)) : ""
+    };
+  }
+
+  /* ---- clipboard: succeed quietly, fail loudly ---- */
+  function copyText(text, btn) {
+    function ok() {
+      if (!btn) return;
+      var prev = btn.textContent;
+      btn.textContent = "✓ Copied";
+      btn.classList.add("copied");
+      setTimeout(function () { btn.textContent = prev; btn.classList.remove("copied"); }, 1600);
+    }
+    function fallback() {
+      // execCommand path for non-secure contexts (e.g. opening the file
+      // directly off disk, where navigator.clipboard is unavailable).
+      try {
+        var ta = document.createElement("textarea");
+        ta.value = text;
+        ta.setAttribute("readonly", "");
+        ta.style.position = "fixed";
+        ta.style.top = "-1000px";
+        document.body.appendChild(ta);
+        ta.select();
+        var worked = document.execCommand("copy");
+        document.body.removeChild(ta);
+        if (worked) { ok(); return; }
+      } catch (e) { /* fall through to the loud path */ }
+      // Nothing worked — never pretend it did. Show the text so it is
+      // still selectable by hand.
+      showDraftFallback(text);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(ok, fallback);
+    } else {
+      fallback();
+    }
+  }
+
+  function showDraftFallback(text) {
+    var host = document.getElementById("draftFallback");
+    host.innerHTML =
+      '<div class="card" style="border-color:var(--status-critical)">' +
+      '<h2 style="color:var(--status-critical)">Copy failed — select it by hand</h2>' +
+      '<p class="hint" style="margin-top:0">This browser blocked clipboard access. The draft is below.</p>' +
+      '<textarea class="tpl" rows="14" readonly style="width:100%;padding:10px;border-radius:8px;' +
+      'border:1px solid var(--border);background:var(--surface-2);color:var(--text-primary);' +
+      'font-size:0.82rem;font-family:inherit;line-height:1.45"></textarea>' +
+      '<button class="secondary" id="draftFallbackClose">Close</button></div>';
+    var ta = host.querySelector("textarea");
+    ta.value = text;
+    ta.focus(); ta.select();
+    host.querySelector("#draftFallbackClose").addEventListener("click", function () {
+      host.innerHTML = "";
+    });
+    host.scrollIntoView({ block: "center", behavior: "smooth" });
+  }
+
   function getPAT() { return localStorage.getItem(PAT_KEY) || ""; }
   function setPAT(v) {
     if (v) localStorage.setItem(PAT_KEY, v);
@@ -699,6 +862,18 @@
   }
   function daysSilent(c) { return ageDays(lastTouchOn(c)); }
 
+  // "Reminder sent today" is a toggle, not an append: tapping it twice
+  // undoes it instead of stacking duplicate dates (and quietly pushing
+  // the 7-day clock out with no way back).
+  function remindedToday(c) { return (c.nudgedOn || []).indexOf(TODAY) !== -1; }
+  function toggleRemindedToday(c) {
+    if (remindedToday(c)) {
+      c.nudgedOn = (c.nudgedOn || []).filter(function (n) { return n !== TODAY; });
+    } else {
+      c.nudgedOn = (c.nudgedOn || []).concat([TODAY]);
+    }
+  }
+
   function needsNudge(c) {
     return !c.responded && !c.closed && !c.meetingOn && daysSilent(c) >= NUDGE_DAYS;
   }
@@ -772,12 +947,14 @@
         (c.email ? ' · ' + escapeHtml(c.email) : '') +
         (nudged ? ' · ' + nudged + ' reminder' + (nudged > 1 ? 's' : '') + ' sent' : '') +
         '</div><div class="acts">' +
+        '<button data-act="copy" data-id="' + c.id + '">📋 Copy draft</button>' +
         '<button data-act="nudged" data-id="' + c.id + '">Reminder sent</button>' +
         '<button data-act="replied" data-id="' + c.id + '">They replied</button>' +
         '<button data-act="close" data-id="' + c.id + '">Drop it</button>' +
         '</div></div>';
     });
-    html += '<p class="hint">"Reminder sent" restarts the 7-day clock. Nothing is emailed for you.</p>';
+    html += '<p class="hint">Copy the draft, paste it into your mail app, send it — then tap ' +
+      '"Reminder sent" to restart the 7-day clock. Nothing is emailed for you.</p>';
     html += '</section>';
     mount.innerHTML = html;
 
@@ -786,7 +963,13 @@
         var c = DATA.contacts[btn.getAttribute("data-id")];
         if (!c) return;
         var act = btn.getAttribute("data-act");
-        if (act === "nudged") { c.nudgedOn = (c.nudgedOn || []).concat([TODAY]); }
+        // Copy is read-only: it must not silently mark the reminder sent,
+        // because copying is not sending.
+        if (act === "copy") {
+          copyText(fillTemplate(tplFor("followup"), draftValues(c)), btn);
+          return;
+        }
+        if (act === "nudged") { toggleRemindedToday(c); }
         else if (act === "replied") { c.responded = true; c.respondedOn = TODAY; }
         else if (act === "close") { c.closed = true; }
         touch(c); saveData(); render();
@@ -960,7 +1143,9 @@
       '<button data-u="replied" class="' + (e.responded ? "on" : "") + '">' +
         (e.responded ? "✓ Replied" : "Mark replied") + '</button>';
     if (sel.isContact) {
-      html += '<button data-u="nudged">Reminder sent today</button>';
+      html += '<button data-u="nudged" class="' + (remindedToday(e) ? "on" : "") + '">' +
+        (remindedToday(e) ? "✓ Reminder sent today" : "Reminder sent today") + '</button>' +
+        '<button data-u="copyfollow" class="wide">📋 Copy follow-up draft</button>';
     } else {
       html += '<button data-u="noreply">Clear reply</button>';
     }
@@ -981,13 +1166,17 @@
     panel.querySelectorAll("button[data-u]").forEach(function (btn) {
       btn.addEventListener("click", function () {
         var act = btn.getAttribute("data-u");
+        if (act === "copyfollow") {
+          copyText(fillTemplate(tplFor("followup"), draftValues(e)), btn);
+          return;
+        }
         if (act === "replied") {
           e.responded = !e.responded;
           e.respondedOn = e.responded ? TODAY : null;
         } else if (act === "noreply") {
           e.responded = false; e.respondedOn = null;
         } else if (act === "nudged") {
-          e.nudgedOn = (e.nudgedOn || []).concat([TODAY]);
+          toggleRemindedToday(e);
         } else if (act === "close") {
           e.closed = !e.closed;
         } else if (act === "delete") {
@@ -1092,6 +1281,19 @@
     appForm.reset();
     openForm("app"); // collapses it
     render();
+  });
+
+  // Reads the form as it stands, so you can copy the draft, send it, and
+  // only then hit Save — no need to save first just to get the wording.
+  document.getElementById("copyOutreachBtn").addEventListener("click", function () {
+    var vals = draftValues({
+      name: document.getElementById("cName").value.trim(),
+      company: document.getElementById("cCompany").value.trim(),
+      role: document.getElementById("cRole").value.trim(),
+      channel: (contactForm.querySelector('input[name="cChannel"]:checked') || {}).value,
+      date: document.getElementById("cDate").value || TODAY
+    });
+    copyText(fillTemplate(tplFor("outreach"), vals), this);
   });
 
   document.getElementById("entrySelect").addEventListener("change", renderUpdatePanel);
@@ -1245,8 +1447,16 @@
     document.getElementById("ownerInput").value = or.owner || "";
     document.getElementById("repoInput").value = or.repo || "";
     document.getElementById("showClosed").checked = !!SETTINGS.showClosed;
+    document.getElementById("tplOutreach").value = tplFor("outreach");
+    document.getElementById("tplFollowup").value = tplFor("followup");
+    setTplStatus("");
+    tplWarned = false;
     drawer.classList.add("open"); overlay.classList.add("open");
     drawer.setAttribute("aria-hidden", "false");
+  }
+  function setTplStatus(msg) {
+    var el = document.getElementById("tplStatus");
+    if (el) el.textContent = msg;
   }
   function closeDrawer() {
     drawer.classList.remove("open"); overlay.classList.remove("open");
@@ -1279,6 +1489,47 @@
     SETTINGS.showClosed = this.checked;
     saveSettings(SETTINGS);
     renderTables();
+  });
+
+  // "Done" saves and closes. If it spots a typo'd placeholder it holds the
+  // drawer open once to say so, then respects a second tap — warn, don't
+  // block. Saving always happens either way, so nothing typed is lost.
+  var tplWarned = false;
+  document.getElementById("doneTplBtn").addEventListener("click", function () {
+    SETTINGS.templates = {
+      outreach: document.getElementById("tplOutreach").value,
+      followup: document.getElementById("tplFollowup").value
+    };
+    saveSettings(SETTINGS);
+    render();
+
+    var known = { first: 1, name: 1, company: 1, role: 1, date: 1, days: 1, channel: 1 };
+    var unknown = [];
+    [SETTINGS.templates.outreach, SETTINGS.templates.followup].forEach(function (t) {
+      (String(t).match(/\{(\w+)\}/g) || []).forEach(function (m) {
+        var k = m.slice(1, -1);
+        if (!known[k] && unknown.indexOf(m) === -1) unknown.push(m);
+      });
+    });
+
+    if (unknown.length && !tplWarned) {
+      tplWarned = true;
+      setTplStatus("Saved — but " + unknown.join(", ") + " isn't a placeholder I recognise, so it " +
+        "will appear literally in the email. Known: {first} {name} {company} {role} {date} " +
+        "{days} {channel}. Tap Done again to keep it as-is.");
+      return;
+    }
+    tplWarned = false;
+    closeDrawer();
+  });
+
+  document.getElementById("resetTplBtn").addEventListener("click", function () {
+    if (!confirm("Replace both drafts with the built-in defaults? Your wording will be lost.")) return;
+    delete SETTINGS.templates;
+    saveSettings(SETTINGS);
+    document.getElementById("tplOutreach").value = tplFor("outreach");
+    document.getElementById("tplFollowup").value = tplFor("followup");
+    setTplStatus("Reset to the built-in drafts.");
   });
 
   document.getElementById("exportBtn").addEventListener("click", function () {

@@ -29,7 +29,7 @@ Two logs, two tables.
 |---|---|
 | Who | required — the person's name |
 | Company / their role | optional |
-| How you reached out | Email · LinkedIn · In person · Phone · Other |
+| How you reached out | Email · LinkedIn · Other |
 | Their email | optional; shown on the nudge row so you can copy it |
 | Date contacted | defaults to today |
 | Note | optional |
@@ -55,18 +55,65 @@ A contact goes red when **all** of these hold: no reply, no meeting booked, not
 closed, and 7+ days since the last time you touched it. Those rows collect in a
 red **"Needs a nudge"** card at the top of the screen with three buttons:
 
-- **Reminder sent** — logs today and **restarts the 7-day clock**, so a contact
-  you're actively chasing goes quiet for another week instead of nagging forever.
-  The reminder count and last-reminder date show on the row.
+- **📋 Copy draft** — puts your follow-up wording on the clipboard, filled in with
+  this person's details. Paste into your mail app, tweak, send. Copying is *not*
+  sending, so it deliberately leaves the reminder state untouched.
+- **Reminder sent** — a **toggle**. On, it logs today and **restarts the 7-day
+  clock**, so a contact you're actively chasing goes quiet for another week
+  instead of nagging forever. Tap it again to undo (tapped it by mistake, or they
+  replied before you actually sent). The reminder count and last-reminder date
+  show on the row.
 - **They replied** — marks it replied, clears it from the list.
 - **Drop it** — closes the entry; it stops being chased and dims in the table.
 
-Nothing is emailed for you. The app flags who needs a follow-up; you write and
-send it yourself.
+Nothing is emailed for you. The app flags who needs a follow-up; you send it.
 
 Applications deliberately **do not** get a red flag — a quiet application at day
 7 is normal, and flagging it would train you to ignore red. They show a plain
 "Waiting N days" instead.
+
+## Email drafts
+
+Both draft templates live in **Settings → Email drafts**, so the wording is in the
+same app as the reminder — you never navigate somewhere else to find it. Two
+templates: **first-contact** and **follow-up**. Both ship with real, sendable
+wording (BU mech-e, biosensors/HMI, Summer 2027); edit them to taste, then hit
+**Done editing drafts** — that saves and closes the drawer in one tap. **Reset to
+defaults** puts the built-in wording back.
+
+Where the copy buttons are:
+
+| Button | Where | Uses |
+|---|---|---|
+| 📋 Copy outreach draft | on the Cold contact form | the name/company you've *just typed* — copy, send, then Save |
+| 📋 Copy draft | on each red nudge row | that person's follow-up |
+| 📋 Copy follow-up draft | in "Update someone" | the selected contact's follow-up |
+
+Placeholders substituted automatically:
+
+| | |
+|---|---|
+| `{first}` | first name only — for "Hi Sam," |
+| `{name}` | full name |
+| `{company}` `{role}` `{channel}` | as logged |
+| `{date}` | date you first contacted them (e.g. Jul 25) |
+| `{days}` | days since your last contact or reminder |
+
+A placeholder with **no value on file** comes through as a visible `[company]`
+rather than an empty gap — you notice `at [company]` before sending; you don't
+notice `at .`.
+
+A typo like `{Company}` can't quietly ship as literal text either: the first tap
+of **Done** names the unrecognised placeholder and keeps the drawer open so you
+can fix it; a second tap accepts it as-is. Either way your text is already saved,
+so nothing you typed is at risk while it warns you.
+
+Templates are stored per-device in `localStorage`, **not** in the synced log — so
+rewriting your drafts never touches contact data, and it also means you re-enter
+them on each device.
+
+If the browser blocks clipboard access, the app doesn't pretend it worked: it
+shows the draft in a red panel with the text selected so you can copy it by hand.
 
 ## Status colors
 
