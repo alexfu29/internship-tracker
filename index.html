@@ -307,6 +307,7 @@
   .chip.critical .dot { background: var(--status-critical); }
   .chip.critical .txt { color: var(--text-primary); font-weight: 600; }
   .chip.neutral  .dot { background: var(--baseline); }
+  .chip.warning  .dot { background: var(--status-warning); }
   .chip.muted    .dot { background: transparent; box-shadow: 0 0 0 1px var(--baseline); }
 
   /* ---------- Footer / drawer ---------- */
@@ -384,7 +385,7 @@
     <h2>Log something</h2>
     <div class="log-btns">
       <button type="button" id="btnShowContact">＋ Cold contact</button>
-      <button type="button" id="btnShowApp">＋ Application</button>
+      <button type="button" id="btnShowApp">＋ Add company</button>
     </div>
 
     <form class="logform" id="contactForm" autocomplete="off">
@@ -434,8 +435,15 @@
     <form class="logform" id="appForm" autocomplete="off">
       <div class="form-err" id="appErr" role="alert"></div>
       <div class="field">
-        <label for="aCompany">What company did you apply to?</label>
+        <label for="aCompany">Company</label>
         <input type="text" id="aCompany" list="companyList" required>
+      </div>
+      <div class="field">
+        <label>Applied yet?</label>
+        <div class="seg" id="aAppliedSeg">
+          <label><input type="radio" name="aApplied" value="no" checked><span>Not yet</span></label>
+          <label><input type="radio" name="aApplied" value="yes"><span>Applied</span></label>
+        </div>
       </div>
       <div class="row2">
         <div class="field">
@@ -443,19 +451,21 @@
           <input type="text" id="aRole">
         </div>
         <div class="field">
-          <label for="aDate">Date applied</label>
+          <label for="aDate">Date</label>
           <input type="date" id="aDate">
         </div>
       </div>
       <div class="field">
-        <label for="aLink">Posting link <span class="opt">(optional)</span></label>
+        <label for="aLink">Careers page or posting link <span class="opt">(optional)</span></label>
         <input type="url" id="aLink">
       </div>
       <div class="field">
         <label for="aNote">Note <span class="opt">(optional)</span></label>
         <textarea id="aNote"></textarea>
       </div>
-      <button type="submit" class="primary">Save application</button>
+      <button type="submit" class="primary">Save company</button>
+      <p class="hint">Add companies as you find them, then flip "Applied" once you've
+        actually applied. Flip it later from "Update someone".</p>
     </form>
 
     <datalist id="companyList"></datalist>
@@ -465,11 +475,11 @@
   <section class="card">
     <h2>Update someone</h2>
     <label for="entrySelect" style="display:block;font-size:0.78rem;color:var(--text-secondary);margin-bottom:4px">
-      Pick a contact or application
+      Pick a contact or company
     </label>
     <select id="entrySelect"></select>
     <div id="updatePanel"></div>
-    <p class="empty" id="updateEmpty">Nothing logged yet — add a contact or an application above.</p>
+    <p class="empty" id="updateEmpty">Nothing logged yet — add a contact or a company above.</p>
   </section>
 
   <!-- Tables -->
@@ -479,7 +489,8 @@
   </section>
 
   <section class="card">
-    <h2>Applications <span class="count" id="appCount"></span></h2>
+    <h2>Companies <span class="count" id="appCount"></span></h2>
+    <div id="aiPromptMount"></div>
     <div class="table-scroll" id="appTableMount"></div>
   </section>
 
@@ -886,10 +897,17 @@
     });
   }
 
+  // Entries created before the "Add company" change were all real
+  // applications, so a missing flag means applied — never re-interpret old
+  // rows as un-applied. New rows always write the flag explicitly.
+  function isApplied(a) { return a.applied !== false; }
+
   // Status chips always pair a colored dot with words — the color is
   // never the only carrier of meaning.
   function statusOf(e, isContact) {
     if (e.closed) return { tone: "muted", text: "Closed" };
+    // A tracked-but-not-applied company is a to-do, not a waiting game.
+    if (!isContact && !isApplied(e)) return { tone: "warning", text: "Not applied" };
     if (e.meetingOn) {
       var md = parseYmd(e.meetingOn);
       var future = md && daysBetween(today, md) >= 0;
@@ -916,15 +934,19 @@
      ============================================================ */
   function renderStats() {
     var cs = contacts(), as = apps();
-    var all = cs.concat(as);
-    var replies = all.filter(function (e) { return e.responded || e.meetingOn; }).length;
-    var meetings = all.filter(function (e) { return !!e.meetingOn; }).length;
-    var rate = all.length ? Math.round((replies / all.length) * 100) : 0;
+    var applied = as.filter(isApplied);
+    // Only things you've actually sent can come back to you — a company you
+    // merely bookmarked must not drag the reply rate down.
+    var sent = cs.concat(applied);
+    var replies = sent.filter(function (e) { return e.responded || e.meetingOn; }).length;
+    var meetings = sent.filter(function (e) { return !!e.meetingOn; }).length;
+    var rate = sent.length ? Math.round((replies / sent.length) * 100) : 0;
 
     var tiles = [
       { label: "Contacts", value: cs.length, sub: cs.length ? "people reached" : "none yet" },
-      { label: "Applications", value: as.length, sub: as.length ? "submitted" : "none yet" },
-      { label: "Replies", value: replies, sub: all.length ? rate + "% of " + all.length : "—" },
+      { label: "Applied", value: applied.length,
+        sub: as.length ? "of " + as.length + " compan" + (as.length === 1 ? "y" : "ies") : "none yet" },
+      { label: "Replies", value: replies, sub: sent.length ? rate + "% of " + sent.length : "—" },
       { label: "Meetings", value: meetings, sub: meetings ? "booked or held" : "none yet" }
     ];
     document.getElementById("stats").innerHTML = tiles.map(function (t) {
@@ -1026,9 +1048,11 @@
           return '<div class="primary-cell">' + escapeHtml(r.company) + '</div>' +
             (r.role ? '<div class="sub-cell">' + escapeHtml(r.role) + '</div>' : '');
         } },
-      { head: "Applied", cls: "date", cell: function (r) { return fmtShort(r.date); } },
+      { head: "Date", cls: "date", cell: function (r) { return fmtShort(r.date); } },
       { head: "Status", cell: function (r) { return chipHtml(statusOf(r, false)); } }
-    ], "No applications logged yet.");
+    ], "No companies logged yet.");
+
+    renderAiPrompt();
 
     // Tapping a row jumps to it in the update dropdown.
     document.querySelectorAll("tr[data-select]").forEach(function (tr) {
@@ -1038,6 +1062,78 @@
         renderUpdatePanel();
         sel.scrollIntoView({ block: "center", behavior: "smooth" });
       });
+    });
+  }
+
+  /* ---- "Copy AI prompt" for companies not applied to yet -------
+     Written to fight the two ways this task actually fails: the model
+     answering from memory instead of opening the careers page, and the
+     model inventing a plausible-looking job URL. Hence the explicit
+     source rule, the no-guessing rule, and asking for "none found"
+     as a legitimate answer.
+     ------------------------------------------------------------- */
+  function pendingCompanies() {
+    return apps().filter(function (a) { return !isApplied(a) && !a.closed; });
+  }
+
+  function buildAiPrompt(list) {
+    var lines = list.map(function (a, i) {
+      var bits = [a.company];
+      if (a.role) bits.push("role of interest: " + a.role);
+      if (a.link) bits.push(a.link);
+      if (a.note) bits.push("my note: " + a.note);
+      return (i + 1) + ". " + bits.join(" — ");
+    }).join("\n");
+
+    return "" +
+"I'm a mechanical engineering undergraduate at Boston University looking for a\n" +
+"PAID Summer 2027 internship (roughly June–August 2027) in the Boston or New York\n" +
+"City metro area. I'm interested in mechanical engineering, biomedical engineering,\n" +
+"biosensors, wearables, human factors, and human-machine interaction. I'll be\n" +
+"applying as a sophomore/junior-eligible student.\n" +
+"\n" +
+"For each company below, open its OFFICIAL careers/jobs page and check whether it\n" +
+"currently lists an internship or co-op that fits:\n" +
+"\n" + lines + "\n" +
+"\n" +
+"For each company, report:\n" +
+"- Company name\n" +
+"- Status: OPEN NOW / OPENS LATER / NONE FOUND\n" +
+"- Exact job title as posted\n" +
+"- Location, and whether it's onsite, hybrid or remote\n" +
+"- Application deadline if one is stated\n" +
+"- Direct link to the specific posting\n" +
+"- Eligibility restrictions (class year, citizenship/work authorization, must be\n" +
+"  enrolled, GPA)\n" +
+"- Whether it's paid, if the posting says\n" +
+"\n" +
+"Rules — please follow these exactly:\n" +
+"1. Use each company's own careers site as the source of truth. Job aggregators\n" +
+"   (Indeed, LinkedIn, Glassdoor) go stale and list roles that are already closed.\n" +
+"2. Do NOT guess, construct, or pattern-match URLs. Only give me a link you\n" +
+"   actually loaded. If you can't find a real posting link, say so plainly.\n" +
+"3. \"NONE FOUND\" is a useful, correct answer. Don't pad the list with unrelated\n" +
+"   roles or full-time positions to seem thorough.\n" +
+"4. If a company posts many jobs, include only internships/co-ops relevant to\n" +
+"   mechanical or biomedical engineering and the areas above.\n" +
+"5. If postings aren't up yet, tell me the month they historically open and where\n" +
+"   the site says to watch.\n" +
+"6. Flag anything that would disqualify me as a rising junior, or that requires US\n" +
+"   citizenship, since some of these are defense-adjacent.\n" +
+"\n" +
+"Format the answer as one compact table, most promising first, then a short list\n" +
+"of anything you couldn't verify and why.";
+  }
+
+  function renderAiPrompt() {
+    var mount = document.getElementById("aiPromptMount");
+    var list = pendingCompanies();
+    if (!list.length) { mount.innerHTML = ""; return; }
+    mount.innerHTML =
+      '<button class="secondary" id="copyAiBtn" style="margin-bottom:12px">' +
+      '📋 Copy AI prompt (' + list.length + ' not applied)</button>';
+    document.getElementById("copyAiBtn").addEventListener("click", function () {
+      copyText(buildAiPrompt(pendingCompanies()), this);
     });
   }
 
@@ -1074,7 +1170,7 @@
       html += '</optgroup>';
     }
     if (as.length) {
-      html += '<optgroup label="Applications">';
+      html += '<optgroup label="Companies">';
       as.forEach(function (a) {
         html += '<option value="a:' + a.id + '">' +
           escapeHtml(a.company + (a.role ? " · " + a.role : "") + "  (" + fmtShort(a.date) + ")") +
@@ -1121,7 +1217,8 @@
           " (last " + fmtShort(e.nudgedOn[e.nudgedOn.length - 1]) + ")");
       }
     } else {
-      metaBits.push("Applied " + fmtShort(e.date));
+      metaBits.push(isApplied(e) ? "Applied " + fmtShort(e.date) : "Added " + fmtShort(e.date));
+      if (e.role) metaBits.push(e.role);
     }
     if (e.respondedOn) metaBits.push("replied " + fmtShort(e.respondedOn));
 
@@ -1142,8 +1239,13 @@
       '<label for="updMeeting">Meeting date <span class="opt">(blank = no meeting)</span></label>' +
       '<input type="date" id="updMeeting" value="' + escapeHtml(e.meetingOn || "") + '"></div>';
 
-    html += '<div class="upd-acts">' +
-      '<button data-u="replied" class="' + (e.responded ? "on" : "") + '">' +
+    html += '<div class="upd-acts">';
+    // The whole point of tracking a company before applying: flip it later.
+    if (!sel.isContact) {
+      html += '<button data-u="applied" class="wide ' + (isApplied(e) ? "on" : "") + '">' +
+        (isApplied(e) ? "✓ Applied" : "Mark as applied") + '</button>';
+    }
+    html += '<button data-u="replied" class="' + (e.responded ? "on" : "") + '">' +
         (e.responded ? "✓ Replied" : "Mark replied") + '</button>';
     if (sel.isContact) {
       html += '<button data-u="nudged" class="' + (remindedToday(e) ? "on" : "") + '">' +
@@ -1181,7 +1283,12 @@
           renderUpdatePanel();
           return;
         }
-        if (act === "replied") {
+        if (act === "applied") {
+          e.applied = !isApplied(e);
+          // Stamp the date you actually applied, so "Waiting Nd" counts from
+          // the application rather than from when you bookmarked the company.
+          if (e.applied) e.date = TODAY;
+        } else if (act === "replied") {
           e.responded = !e.responded;
           e.respondedOn = e.responded ? TODAY : null;
         } else if (act === "noreply") {
@@ -1278,8 +1385,10 @@
     var dateVal = document.getElementById("aDate").value || TODAY;
     if (!parseYmd(dateVal)) { showErr("appErr", "That date isn't valid."); return; }
 
+    var appliedEl = appForm.querySelector('input[name="aApplied"]:checked');
     DATA.apps[newId()] = {
       company: company,
+      applied: !!(appliedEl && appliedEl.value === "yes"),
       role: document.getElementById("aRole").value.trim(),
       date: dateVal,
       link: document.getElementById("aLink").value.trim(),

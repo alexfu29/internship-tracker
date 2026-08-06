@@ -34,15 +34,42 @@ Two logs, two tables.
 | Date contacted | defaults to today |
 | Note | optional |
 
-**Applications** — where you applied:
+**Companies** — every company you've looked at, applied or not:
 
 | Field | Notes |
 |---|---|
 | Company | required |
+| **Applied yet?** | **Not yet** (default) or **Applied** — flip it later from "Update someone" |
 | Role | optional |
-| Date applied | defaults to today |
-| Posting link | optional; becomes a tappable link |
+| Date | defaults to today |
+| Careers page or posting link | optional; becomes a tappable link |
 | Note | optional |
+
+The point is that a company enters the list the moment you *notice* it, not when
+you apply. Add it with **Not yet**, and flip the toggle once you've actually
+applied — which re-stamps the date, so "waiting N days" counts from the
+application rather than from when you bookmarked it.
+
+## Copy AI prompt
+
+Above the Companies table, whenever anything is still unapplied, there's a
+**📋 Copy AI prompt (N not applied)** button. It builds a prompt listing exactly
+those companies — with the role, link and note you saved as hints — and asks an AI
+to check each company's careers page for mechanical/biomedical engineering
+internships. Paste it into Claude (or anything with web access).
+
+The prompt is written against the two ways this task actually fails: the model
+answering from memory instead of opening the page, and the model inventing a
+plausible-looking job URL. So it pins the company's own careers site as the source
+of truth, forbids constructing links, and makes **"NONE FOUND" an explicitly
+correct answer** so there's no pressure to pad the list. It also carries your real
+search parameters (paid, Summer 2027, Boston/NYC, sophomore/junior-eligible) and
+asks it to flag citizenship requirements, since some of these are
+defense-adjacent.
+
+The stat row counts **Applied** out of companies tracked, and the reply rate is
+measured only against things you actually sent — a bookmarked company can't reply,
+so it never drags the percentage down.
 
 Both kinds carry the same two follow-up states: **replied** (yes/no) and
 **meeting** (a date). Set either from the "Update someone" dropdown, which lists
@@ -128,6 +155,7 @@ grayscale, and a glance in bright sun:
 | Dot | Means |
 |---|---|
 | red | needs a nudge (7+ days silent) |
+| amber | company tracked but **not applied yet** — a to-do, not a waiting game |
 | green | replied, or a meeting is set |
 | gray filled | waiting, under 7 days |
 | gray outline | closed |
