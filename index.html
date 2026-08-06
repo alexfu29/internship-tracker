@@ -273,6 +273,9 @@
   }
   .upd-acts button.on { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
   .upd-acts button.danger { color: var(--red-ink); border-color: var(--status-critical); }
+  .upd-acts button.done {
+    background: var(--accent); color: var(--accent-ink); border-color: var(--accent);
+  }
   .upd-acts button:active { transform: scale(0.98); }
   .upd-acts .wide { grid-column: 1 / -1; }
 
@@ -1152,6 +1155,7 @@
     html += '<button data-u="close" class="' + (e.closed ? "on" : "") + '">' +
         (e.closed ? "✓ Closed — reopen" : "Close it") + '</button>' +
       '<button data-u="delete" class="danger">Delete</button>' +
+      '<button data-u="done" class="wide done">Done</button>' +
       '</div>';
 
     panel.innerHTML = html;
@@ -1168,6 +1172,13 @@
         var act = btn.getAttribute("data-u");
         if (act === "copyfollow") {
           copyText(fillTemplate(tplFor("followup"), draftValues(e)), btn);
+          return;
+        }
+        // Every change above already saved on tap, so Done just closes the
+        // panel — it is an exit, not a save. Nothing to lose by tapping it.
+        if (act === "done") {
+          document.getElementById("entrySelect").value = "";
+          renderUpdatePanel();
           return;
         }
         if (act === "replied") {

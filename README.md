@@ -47,7 +47,11 @@ Two logs, two tables.
 Both kinds carry the same two follow-up states: **replied** (yes/no) and
 **meeting** (a date). Set either from the "Update someone" dropdown, which lists
 every person and company you've logged, grouped. Tapping any table row jumps
-straight to that entry in the dropdown.
+straight to that entry in the dropdown, and **Done** closes the panel when you've
+finished with that person.
+
+Every control in that panel saves the moment you tap it, so **Done is an exit,
+not a save** — there is no way to lose an edit by closing without it.
 
 ## The 7-day rule
 
