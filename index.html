@@ -539,8 +539,28 @@
   <textarea id="tplFollowup" class="tpl" rows="10"></textarea>
 
   <button class="primary" id="doneTplBtn">Done editing drafts</button>
-  <button class="secondary" id="resetTplBtn">Reset to defaults</button>
+  <button class="secondary" id="resetTplBtn">Reset drafts to defaults</button>
   <div class="sync-status" id="tplStatus"></div>
+
+  <hr>
+  <h2 style="font-size:0.95rem">AI research prompt</h2>
+  <p class="tpl-help">
+    What the <strong>Copy AI prompt</strong> button sends. <code>{companies}</code> is
+    replaced with your numbered list of companies you haven't applied to, including
+    the role, link and note you saved for each.
+  </p>
+  <p class="tpl-help">
+    Keep <code>{companies}</code> somewhere in the text. If you delete it the list
+    gets appended at the end instead, so the prompt still works — but it reads better
+    where you put it.
+  </p>
+
+  <label for="aiPromptInput">Prompt</label>
+  <textarea id="aiPromptInput" class="tpl" rows="14"></textarea>
+
+  <button class="primary" id="doneAiBtn">Done editing prompt</button>
+  <button class="secondary" id="resetAiBtn">Reset prompt to default</button>
+  <div class="sync-status" id="aiStatus"></div>
 
   <hr>
   <div class="file-import">
@@ -1059,6 +1079,7 @@
       tr.addEventListener("click", function () {
         var sel = document.getElementById("entrySelect");
         sel.value = tr.getAttribute("data-select");
+        editingKey = null;
         renderUpdatePanel();
         sel.scrollIntoView({ block: "center", behavior: "smooth" });
       });
@@ -1076,16 +1097,17 @@
     return apps().filter(function (a) { return !isApplied(a) && !a.closed; });
   }
 
-  function buildAiPrompt(list) {
-    var lines = list.map(function (a, i) {
+  function companyLines(list) {
+    return list.map(function (a, i) {
       var bits = [a.company];
       if (a.role) bits.push("role of interest: " + a.role);
       if (a.link) bits.push(a.link);
       if (a.note) bits.push("my note: " + a.note);
       return (i + 1) + ". " + bits.join(" — ");
     }).join("\n");
+  }
 
-    return "" +
+  var DEFAULT_AI_PROMPT = "" +
 "I'm a mechanical engineering undergraduate at Boston University looking for a\n" +
 "PAID Summer 2027 internship (roughly June–August 2027) in the Boston or New York\n" +
 "City metro area. I'm interested in mechanical engineering, biomedical engineering,\n" +
@@ -1094,7 +1116,8 @@
 "\n" +
 "For each company below, open its OFFICIAL careers/jobs page and check whether it\n" +
 "currently lists an internship or co-op that fits:\n" +
-"\n" + lines + "\n" +
+"\n" +
+"{companies}\n" +
 "\n" +
 "For each company, report:\n" +
 "- Company name\n" +
@@ -1123,6 +1146,19 @@
 "\n" +
 "Format the answer as one compact table, most promising first, then a short list\n" +
 "of anything you couldn't verify and why.";
+
+  function aiPromptTpl() {
+    var t = SETTINGS.aiPrompt;
+    return (typeof t === "string" && t.trim().length) ? t : DEFAULT_AI_PROMPT;
+  }
+
+  function buildAiPrompt(list) {
+    var lines = companyLines(list);
+    var tpl = aiPromptTpl();
+    // If {companies} got deleted while editing, append the list rather than
+    // handing over a research prompt with nothing to research.
+    if (tpl.indexOf("{companies}") === -1) return tpl + "\n\nCompanies:\n" + lines;
+    return tpl.split("{companies}").join(lines);
   }
 
   function renderAiPrompt() {
@@ -1196,12 +1232,74 @@
     return { kind: isContact ? "contact" : "app", id: id, e: e, isContact: isContact };
   }
 
+  /* ---- full field editing -------------------------------------
+     Labels here are deliberately word-for-word the same as the ones on
+     the logging forms, so a field never means one thing when you add it
+     and something else when you fix it.
+     ------------------------------------------------------------- */
+  var editingKey = null;   // selectKey currently in edit mode, or null
+
+  // Base channels are Email / LinkedIn / Other, but an older entry may hold
+  // "In person" or "Phone". Keep whatever is stored as a selectable option
+  // rather than silently rewriting the row the moment it's opened.
+  function channelOptions(current) {
+    var base = ["Email", "LinkedIn", "Other"];
+    if (current && base.indexOf(current) === -1) base.unshift(current);
+    return base;
+  }
+
+  function editFormHtml(e, isContact) {
+    var h = '<div class="form-err" id="edErr" role="alert"></div>';
+    if (isContact) {
+      h += '<div class="field"><label for="edName">Who did you contact?</label>' +
+        '<input type="text" id="edName" value="' + escapeHtml(e.name || "") + '" required></div>' +
+        '<div class="row2">' +
+        '<div class="field"><label for="edCompany">Company <span class="opt">(optional)</span></label>' +
+        '<input type="text" id="edCompany" list="companyList" value="' + escapeHtml(e.company || "") + '"></div>' +
+        '<div class="field"><label for="edRole">Their role <span class="opt">(optional)</span></label>' +
+        '<input type="text" id="edRole" value="' + escapeHtml(e.role || "") + '"></div>' +
+        '</div>' +
+        '<div class="field"><label>How did you reach out?</label><div class="seg">' +
+        channelOptions(e.channel).map(function (c) {
+          return '<label><input type="radio" name="edChannel" value="' + escapeHtml(c) + '"' +
+            (c === (e.channel || "Email") ? " checked" : "") + '><span>' + escapeHtml(c) + '</span></label>';
+        }).join("") +
+        '</div></div>' +
+        '<div class="row2">' +
+        '<div class="field"><label for="edEmail">Their email <span class="opt">(optional)</span></label>' +
+        '<input type="email" id="edEmail" value="' + escapeHtml(e.email || "") + '"></div>' +
+        '<div class="field"><label for="edDate">Date contacted</label>' +
+        '<input type="date" id="edDate" value="' + escapeHtml(e.date || "") + '"></div>' +
+        '</div>';
+    } else {
+      h += '<div class="field"><label for="edCompany">Company</label>' +
+        '<input type="text" id="edCompany" list="companyList" value="' + escapeHtml(e.company || "") + '" required></div>' +
+        '<div class="row2">' +
+        '<div class="field"><label for="edRole">Role <span class="opt">(optional)</span></label>' +
+        '<input type="text" id="edRole" value="' + escapeHtml(e.role || "") + '"></div>' +
+        // The date means different things either side of the Applied toggle.
+        '<div class="field"><label for="edDate">' + (isApplied(e) ? "Date applied" : "Date added") + '</label>' +
+        '<input type="date" id="edDate" value="' + escapeHtml(e.date || "") + '"></div>' +
+        '</div>' +
+        '<div class="field"><label for="edLink">Careers page or posting link <span class="opt">(optional)</span></label>' +
+        '<input type="url" id="edLink" value="' + escapeHtml(e.link || "") + '"></div>';
+    }
+    h += '<div class="field"><label for="edNote">Note <span class="opt">(optional)</span></label>' +
+      '<textarea id="edNote">' + escapeHtml(e.note || "") + '</textarea></div>' +
+      '<div class="upd-acts">' +
+      '<button data-u="savefields" class="wide done">Save changes</button>' +
+      '<button data-u="canceledit" class="wide">Cancel</button>' +
+      '</div>';
+    return h;
+  }
+
   function renderUpdatePanel() {
     var panel = document.getElementById("updatePanel");
     var sel = selectedEntry();
-    if (!sel) { panel.className = ""; panel.innerHTML = ""; return; }
+    if (!sel) { panel.className = ""; panel.innerHTML = ""; editingKey = null; return; }
     var e = sel.e;
     var st = statusOf(e, sel.isContact);
+    var myKey = (sel.isContact ? "c:" : "a:") + sel.id;
 
     var head = sel.isContact
       ? escapeHtml(e.name) + (e.company ? ' <span style="font-weight:400;color:var(--text-secondary)">· ' + escapeHtml(e.company) + '</span>' : '')
@@ -1221,6 +1319,17 @@
       if (e.role) metaBits.push(e.role);
     }
     if (e.respondedOn) metaBits.push("replied " + fmtShort(e.respondedOn));
+
+    // Edit mode swaps the whole body for the field form, so the panel never
+    // shows a stale read-only copy of what you're halfway through changing.
+    if (editingKey === myKey) {
+      panel.innerHTML = '<div class="upd-head">' + head + '</div>' +
+        '<div class="upd-meta" style="margin-bottom:10px">Editing details</div>' +
+        editFormHtml(e, sel.isContact);
+      panel.className = "open";
+      wireEditForm(panel, e, sel);
+      return;
+    }
 
     var html = '<div class="upd-head">' + head + '</div>' +
       '<div class="upd-meta">' + escapeHtml(metaBits.join(" · ")) + '</div>' +
@@ -1254,7 +1363,9 @@
     } else {
       html += '<button data-u="noreply">Clear reply</button>';
     }
-    html += '<button data-u="close" class="' + (e.closed ? "on" : "") + '">' +
+    html += '<button data-u="edit" class="wide">✎ Edit ' +
+        (sel.isContact ? "contact" : "company") + ' details</button>' +
+      '<button data-u="close" class="' + (e.closed ? "on" : "") + '">' +
         (e.closed ? "✓ Closed — reopen" : "Close it") + '</button>' +
       '<button data-u="delete" class="danger">Delete</button>' +
       '<button data-u="done" class="wide done">Done</button>' +
@@ -1280,6 +1391,12 @@
         // panel — it is an exit, not a save. Nothing to lose by tapping it.
         if (act === "done") {
           document.getElementById("entrySelect").value = "";
+          editingKey = null;
+          renderUpdatePanel();
+          return;
+        }
+        if (act === "edit") {
+          editingKey = myKey;
           renderUpdatePanel();
           return;
         }
@@ -1309,6 +1426,51 @@
         }
         touch(e); saveData(); render();
       });
+    });
+  }
+
+  function wireEditForm(panel, e, sel) {
+    function fail(msg) {
+      var el = panel.querySelector("#edErr");
+      el.textContent = msg;
+      el.classList.add("show");
+    }
+    function val(id) {
+      var el = panel.querySelector("#" + id);
+      return el ? el.value.trim() : "";
+    }
+
+    panel.querySelector('button[data-u="canceledit"]').addEventListener("click", function () {
+      editingKey = null;
+      renderUpdatePanel();
+    });
+
+    panel.querySelector('button[data-u="savefields"]').addEventListener("click", function () {
+      panel.querySelector("#edErr").classList.remove("show");
+      var dateVal = val("edDate");
+      if (!dateVal || !parseYmd(dateVal)) { fail("That date isn't valid."); return; }
+
+      if (sel.isContact) {
+        var name = val("edName");
+        if (!name) { fail("A name is required — that's the whole point of the row."); return; }
+        var ch = panel.querySelector('input[name="edChannel"]:checked');
+        e.name = name;
+        e.company = val("edCompany");
+        e.role = val("edRole");
+        e.channel = ch ? ch.value : (e.channel || "Other");
+        e.email = val("edEmail");
+      } else {
+        var company = val("edCompany");
+        if (!company) { fail("A company name is required."); return; }
+        e.company = company;
+        e.role = val("edRole");
+        e.link = val("edLink");
+      }
+      e.date = dateVal;
+      e.note = val("edNote");
+
+      editingKey = null;
+      touch(e); saveData(); render();
     });
   }
 
@@ -1416,7 +1578,12 @@
     copyText(fillTemplate(tplFor("outreach"), vals), this);
   });
 
-  document.getElementById("entrySelect").addEventListener("change", renderUpdatePanel);
+  // Switching entries always leaves edit mode, so you can't have a form open
+  // against a row you're no longer looking at.
+  document.getElementById("entrySelect").addEventListener("change", function () {
+    editingKey = null;
+    renderUpdatePanel();
+  });
 
   /* ============================================================
      7. SYNC — data/log.json in this repo, via a fine-grained PAT
@@ -1569,13 +1736,20 @@
     document.getElementById("showClosed").checked = !!SETTINGS.showClosed;
     document.getElementById("tplOutreach").value = tplFor("outreach");
     document.getElementById("tplFollowup").value = tplFor("followup");
+    document.getElementById("aiPromptInput").value = aiPromptTpl();
     setTplStatus("");
+    setAiStatus("");
     tplWarned = false;
+    aiWarned = false;
     drawer.classList.add("open"); overlay.classList.add("open");
     drawer.setAttribute("aria-hidden", "false");
   }
   function setTplStatus(msg) {
     var el = document.getElementById("tplStatus");
+    if (el) el.textContent = msg;
+  }
+  function setAiStatus(msg) {
+    var el = document.getElementById("aiStatus");
     if (el) el.textContent = msg;
   }
   function closeDrawer() {
@@ -1650,6 +1824,29 @@
     document.getElementById("tplOutreach").value = tplFor("outreach");
     document.getElementById("tplFollowup").value = tplFor("followup");
     setTplStatus("Reset to the built-in drafts.");
+  });
+
+  var aiWarned = false;
+  document.getElementById("doneAiBtn").addEventListener("click", function () {
+    SETTINGS.aiPrompt = document.getElementById("aiPromptInput").value;
+    saveSettings(SETTINGS);
+    render();
+    if (SETTINGS.aiPrompt.indexOf("{companies}") === -1 && !aiWarned) {
+      aiWarned = true;
+      setAiStatus("Saved — but {companies} is gone, so the company list will be appended " +
+        "at the end instead of sitting where you want it. Tap Done again to keep it as-is.");
+      return;
+    }
+    aiWarned = false;
+    closeDrawer();
+  });
+
+  document.getElementById("resetAiBtn").addEventListener("click", function () {
+    if (!confirm("Replace the AI prompt with the built-in default? Your wording will be lost.")) return;
+    delete SETTINGS.aiPrompt;
+    saveSettings(SETTINGS);
+    document.getElementById("aiPromptInput").value = aiPromptTpl();
+    setAiStatus("Reset to the built-in prompt.");
   });
 
   document.getElementById("exportBtn").addEventListener("click", function () {

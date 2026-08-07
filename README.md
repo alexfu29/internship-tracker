@@ -67,6 +67,12 @@ search parameters (paid, Summer 2027, Boston/NYC, sophomore/junior-eligible) and
 asks it to flag citizenship requirements, since some of these are
 defense-adjacent.
 
+The whole prompt is editable in **Settings → AI research prompt**, with the same
+Done / Reset pattern as the email drafts. `{companies}` is where your numbered list
+gets substituted. Delete it and the list is **appended at the end** rather than
+dropped, so the prompt can't end up with nothing to research — and the first tap of
+Done tells you it happened.
+
 The stat row counts **Applied** out of companies tracked, and the reply rate is
 measured only against things you actually sent — a bookmarked company can't reply,
 so it never drags the percentage down.
@@ -77,8 +83,22 @@ every person and company you've logged, grouped. Tapping any table row jumps
 straight to that entry in the dropdown, and **Done** closes the panel when you've
 finished with that person.
 
-Every control in that panel saves the moment you tap it, so **Done is an exit,
-not a save** — there is no way to lose an edit by closing without it.
+Every status control in that panel saves the moment you tap it, so **Done is an
+exit, not a save** — there is no way to lose an edit by closing without it.
+
+**✎ Edit contact details / ✎ Edit company details** opens every field for editing —
+name, company, role, how you reached out, email, date, link, note. Field labels are
+word-for-word the ones on the logging form, so a field never means one thing when
+you add it and something else when you fix it. The company date label follows the
+Applied toggle: **Date applied** when applied, **Date added** when not.
+
+Editing is a distinct mode with **Save changes** and **Cancel** — Cancel discards,
+and a missing name or company or an invalid date blocks the save with a message
+rather than writing a broken row. Editing fields never touches status: the Applied
+flag, replies, meetings and reminder history all survive a rename.
+
+If an older contact holds a channel that's no longer offered (`In person`, `Phone`),
+the edit form keeps it as a selected option instead of silently rewriting it.
 
 ## The 7-day rule
 
