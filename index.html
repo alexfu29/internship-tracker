@@ -414,8 +414,10 @@
       </div>
       <div class="row2">
         <div class="field">
-          <label for="cEmail">Their email <span class="opt">(optional)</span></label>
-          <input type="email" id="cEmail">
+          <!-- label follows the channel; type is text, not email, so a
+               LinkedIn URL isn't rejected for not looking like an address -->
+          <label for="cEmail" id="cEmailLabel">Their email <span class="opt">(optional)</span></label>
+          <input type="text" id="cEmail">
         </div>
         <div class="field">
           <label for="cDate">Date contacted</label>
@@ -1248,6 +1250,19 @@
     return base;
   }
 
+  // One stored field (`email`) holds whatever handle matches the channel — an
+  // address, a LinkedIn URL, a phone number. Only the label changes, so
+  // switching the channel never moves or loses what you already typed.
+  function handleLabel(channel) {
+    if (channel === "LinkedIn") return "LinkedIn profile";
+    if (channel === "Email") return "Their email";
+    if (channel === "Phone") return "Phone number";
+    return "Email or profile link";
+  }
+  function handleLabelHtml(channel) {
+    return escapeHtml(handleLabel(channel)) + ' <span class="opt">(optional)</span>';
+  }
+
   function editFormHtml(e, isContact) {
     var h = '<div class="form-err" id="edErr" role="alert"></div>';
     if (isContact) {
@@ -1266,8 +1281,9 @@
         }).join("") +
         '</div></div>' +
         '<div class="row2">' +
-        '<div class="field"><label for="edEmail">Their email <span class="opt">(optional)</span></label>' +
-        '<input type="email" id="edEmail" value="' + escapeHtml(e.email || "") + '"></div>' +
+        '<div class="field"><label for="edEmail" id="edEmailLabel">' +
+        handleLabelHtml(e.channel || "Email") + '</label>' +
+        '<input type="text" id="edEmail" value="' + escapeHtml(e.email || "") + '"></div>' +
         '<div class="field"><label for="edDate">Date contacted</label>' +
         '<input type="date" id="edDate" value="' + escapeHtml(e.date || "") + '"></div>' +
         '</div>';
@@ -1440,6 +1456,12 @@
       return el ? el.value.trim() : "";
     }
 
+    panel.querySelectorAll('input[name="edChannel"]').forEach(function (r) {
+      r.addEventListener("change", function () {
+        panel.querySelector("#edEmailLabel").innerHTML = handleLabelHtml(r.value);
+      });
+    });
+
     panel.querySelector('button[data-u="canceledit"]').addEventListener("click", function () {
       editingKey = null;
       renderUpdatePanel();
@@ -1499,11 +1521,24 @@
     appForm.classList.toggle("open", openA);
     btnShowContact.classList.toggle("on", openC);
     btnShowApp.classList.toggle("on", openA);
-    if (openC) { document.getElementById("cDate").value = TODAY; document.getElementById("cName").focus(); }
+    if (openC) {
+      document.getElementById("cDate").value = TODAY;
+      syncContactHandleLabel();
+      document.getElementById("cName").focus();
+    }
     if (openA) { document.getElementById("aDate").value = TODAY; document.getElementById("aCompany").focus(); }
   }
   btnShowContact.addEventListener("click", function () { openForm("contact"); });
   btnShowApp.addEventListener("click", function () { openForm("app"); });
+
+  function syncContactHandleLabel() {
+    var ch = contactForm.querySelector('input[name="cChannel"]:checked');
+    document.getElementById("cEmailLabel").innerHTML =
+      handleLabelHtml(ch ? ch.value : "Email");
+  }
+  contactForm.querySelectorAll('input[name="cChannel"]').forEach(function (r) {
+    r.addEventListener("change", syncContactHandleLabel);
+  });
 
   function showErr(elId, msg) {
     var el = document.getElementById(elId);
@@ -1535,6 +1570,7 @@
     };
     saveData();
     contactForm.reset();
+    syncContactHandleLabel(); // reset re-checks Email; keep the label honest
     openForm("contact"); // collapses it
     render();
   });

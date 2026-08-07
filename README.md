@@ -30,9 +30,25 @@ Two logs, two tables.
 | Who | required — the person's name |
 | Company / their role | optional |
 | How you reached out | Email · LinkedIn · Other |
+| Their contact handle | label follows the channel — see below |
 | Their email | optional; shown on the nudge row so you can copy it |
 | Date contacted | defaults to today |
 | Note | optional |
+
+The contact-handle field **relabels itself from the channel** you pick, live, in both
+the logging form and the edit form:
+
+| Channel | Label |
+|---|---|
+| Email | Their email |
+| LinkedIn | LinkedIn profile |
+| Other | Email or profile link |
+| Phone *(legacy rows only)* | Phone number |
+
+It's a plain text field with **no format validation**, so a LinkedIn URL, a phone
+number or a bare handle all go in without the browser rejecting it for not looking
+like an email address. Under the hood it's still one stored field, so switching the
+channel relabels it without moving or clearing what you already typed.
 
 **Companies** — every company you've looked at, applied or not:
 
