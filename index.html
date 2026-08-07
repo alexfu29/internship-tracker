@@ -252,12 +252,6 @@
   }
   button.primary:active, button.secondary:active { transform: scale(0.99); }
   #copyOutreachBtn { margin-top: 8px; }
-  .form-err {
-    font-size: 0.8rem; color: var(--red-ink); background: var(--red-bg);
-    border: 1px solid var(--status-critical); border-radius: 8px;
-    padding: 8px 10px; margin-bottom: 10px; display: none;
-  }
-  .form-err.show { display: block; }
 
   /* ---------- Update panel ---------- */
   #updatePanel { margin-top: 12px; display: none; }
@@ -389,10 +383,9 @@
     </div>
 
     <form class="logform" id="contactForm" autocomplete="off">
-      <div class="form-err" id="contactErr" role="alert"></div>
       <div class="field">
         <label for="cName">Who did you contact?</label>
-        <input type="text" id="cName" required>
+        <input type="text" id="cName">
       </div>
       <div class="row2">
         <div class="field">
@@ -435,10 +428,9 @@
     </form>
 
     <form class="logform" id="appForm" autocomplete="off">
-      <div class="form-err" id="appErr" role="alert"></div>
       <div class="field">
         <label for="aCompany">Company</label>
-        <input type="text" id="aCompany" list="companyList" required>
+        <input type="text" id="aCompany" list="companyList">
       </div>
       <div class="field">
         <label>Applied yet?</label>
@@ -459,7 +451,7 @@
       </div>
       <div class="field">
         <label for="aLink">Careers page or posting link <span class="opt">(optional)</span></label>
-        <input type="url" id="aLink">
+        <input type="text" id="aLink">
       </div>
       <div class="field">
         <label for="aNote">Note <span class="opt">(optional)</span></label>
@@ -911,6 +903,7 @@
   }
 
   function needsNudge(c) {
+    if (!parseYmd(c.date)) return false;   // nothing to count from
     return !c.responded && !c.closed && !c.meetingOn && daysSilent(c) >= NUDGE_DAYS;
   }
   function dueNudges() {
@@ -924,6 +917,12 @@
   // rows as un-applied. New rows always write the flag explicitly.
   function isApplied(a) { return a.applied !== false; }
 
+  // Nothing is a required field, so a row can have no name or no company.
+  // It still needs a handle in every list, otherwise it becomes an
+  // unselectable blank line you can't even delete.
+  function nameOf(c) { return (c.name || "").trim() || "(no name)"; }
+  function companyOf(a) { return (a.company || "").trim() || "(no company)"; }
+
   // Status chips always pair a colored dot with words — the color is
   // never the only carrier of meaning.
   function statusOf(e, isContact) {
@@ -936,6 +935,9 @@
       return { tone: "good", text: (future ? "Meeting " : "Met ") + fmtShort(e.meetingOn) };
     }
     if (e.responded) return { tone: "good", text: "Replied" };
+    // No date means the 7-day clock can't be computed — say so instead of
+    // quietly reporting day zero forever.
+    if (!parseYmd(e.date)) return { tone: "warning", text: "No date" };
     var d = ageDays(e.date);
     if (isContact && needsNudge(e)) {
       return { tone: "critical", text: "Nudge — " + daysSilent(e) + "d silent" };
@@ -987,7 +989,7 @@
     due.forEach(function (c) {
       var since = fmtShort(lastTouchOn(c));
       var nudged = (c.nudgedOn || []).length;
-      html += '<div class="nudge-row"><div class="who">' + escapeHtml(c.name) +
+      html += '<div class="nudge-row"><div class="who">' + escapeHtml(nameOf(c)) +
         (c.company ? ' <span style="font-weight:400">· ' + escapeHtml(c.company) + '</span>' : '') +
         '</div><div class="meta">' + daysSilent(c) + ' days since ' +
         (nudged ? 'your last reminder' : escapeHtml(c.channel || 'contact')) + ' (' + since + ')' +
@@ -1053,7 +1055,7 @@
 
     document.getElementById("contactTableMount").innerHTML = tableHtml(cs, [
       { head: "Who", cell: function (r) {
-          return '<div class="primary-cell">' + escapeHtml(r.name) + '</div>' +
+          return '<div class="primary-cell">' + escapeHtml(nameOf(r)) + '</div>' +
             (r.company || r.role
               ? '<div class="sub-cell">' + escapeHtml([r.company, r.role].filter(Boolean).join(" · ")) + '</div>'
               : '');
@@ -1067,7 +1069,7 @@
 
     document.getElementById("appTableMount").innerHTML = tableHtml(as, [
       { head: "Company", cell: function (r) {
-          return '<div class="primary-cell">' + escapeHtml(r.company) + '</div>' +
+          return '<div class="primary-cell">' + escapeHtml(companyOf(r)) + '</div>' +
             (r.role ? '<div class="sub-cell">' + escapeHtml(r.role) + '</div>' : '');
         } },
       { head: "Date", cls: "date", cell: function (r) { return fmtShort(r.date); } },
@@ -1101,7 +1103,7 @@
 
   function companyLines(list) {
     return list.map(function (a, i) {
-      var bits = [a.company];
+      var bits = [companyOf(a)];
       if (a.role) bits.push("role of interest: " + a.role);
       if (a.link) bits.push(a.link);
       if (a.note) bits.push("my note: " + a.note);
@@ -1202,7 +1204,7 @@
       html += '<optgroup label="People contacted">';
       cs.forEach(function (c) {
         html += '<option value="c:' + c.id + '">' +
-          escapeHtml(c.name + (c.company ? " · " + c.company : "") + "  (" + fmtShort(c.date) + ")") +
+          escapeHtml(nameOf(c) + (c.company ? " · " + c.company : "") + "  (" + fmtShort(c.date) + ")") +
           '</option>';
       });
       html += '</optgroup>';
@@ -1211,7 +1213,7 @@
       html += '<optgroup label="Companies">';
       as.forEach(function (a) {
         html += '<option value="a:' + a.id + '">' +
-          escapeHtml(a.company + (a.role ? " · " + a.role : "") + "  (" + fmtShort(a.date) + ")") +
+          escapeHtml(companyOf(a) + (a.role ? " · " + a.role : "") + "  (" + fmtShort(a.date) + ")") +
           '</option>';
       });
       html += '</optgroup>';
@@ -1264,10 +1266,10 @@
   }
 
   function editFormHtml(e, isContact) {
-    var h = '<div class="form-err" id="edErr" role="alert"></div>';
+    var h = "";
     if (isContact) {
       h += '<div class="field"><label for="edName">Who did you contact?</label>' +
-        '<input type="text" id="edName" value="' + escapeHtml(e.name || "") + '" required></div>' +
+        '<input type="text" id="edName" value="' + escapeHtml(e.name || "") + '"></div>' +
         '<div class="row2">' +
         '<div class="field"><label for="edCompany">Company <span class="opt">(optional)</span></label>' +
         '<input type="text" id="edCompany" list="companyList" value="' + escapeHtml(e.company || "") + '"></div>' +
@@ -1289,7 +1291,7 @@
         '</div>';
     } else {
       h += '<div class="field"><label for="edCompany">Company</label>' +
-        '<input type="text" id="edCompany" list="companyList" value="' + escapeHtml(e.company || "") + '" required></div>' +
+        '<input type="text" id="edCompany" list="companyList" value="' + escapeHtml(e.company || "") + '"></div>' +
         '<div class="row2">' +
         '<div class="field"><label for="edRole">Role <span class="opt">(optional)</span></label>' +
         '<input type="text" id="edRole" value="' + escapeHtml(e.role || "") + '"></div>' +
@@ -1298,7 +1300,7 @@
         '<input type="date" id="edDate" value="' + escapeHtml(e.date || "") + '"></div>' +
         '</div>' +
         '<div class="field"><label for="edLink">Careers page or posting link <span class="opt">(optional)</span></label>' +
-        '<input type="url" id="edLink" value="' + escapeHtml(e.link || "") + '"></div>';
+        '<input type="text" id="edLink" value="' + escapeHtml(e.link || "") + '"></div>';
     }
     h += '<div class="field"><label for="edNote">Note <span class="opt">(optional)</span></label>' +
       '<textarea id="edNote">' + escapeHtml(e.note || "") + '</textarea></div>' +
@@ -1318,8 +1320,8 @@
     var myKey = (sel.isContact ? "c:" : "a:") + sel.id;
 
     var head = sel.isContact
-      ? escapeHtml(e.name) + (e.company ? ' <span style="font-weight:400;color:var(--text-secondary)">· ' + escapeHtml(e.company) + '</span>' : '')
-      : escapeHtml(e.company) + (e.role ? ' <span style="font-weight:400;color:var(--text-secondary)">· ' + escapeHtml(e.role) + '</span>' : '');
+      ? escapeHtml(nameOf(e)) + (e.company ? ' <span style="font-weight:400;color:var(--text-secondary)">· ' + escapeHtml(e.company) + '</span>' : '')
+      : escapeHtml(companyOf(e)) + (e.role ? ' <span style="font-weight:400;color:var(--text-secondary)">· ' + escapeHtml(e.role) + '</span>' : '');
 
     var metaBits = [];
     if (sel.isContact) {
@@ -1431,7 +1433,7 @@
         } else if (act === "close") {
           e.closed = !e.closed;
         } else if (act === "delete") {
-          var what = sel.isContact ? e.name : e.company;
+          var what = sel.isContact ? nameOf(e) : companyOf(e);
           if (!confirm("Delete “" + what + "” for good? This also removes it on your other devices.")) return;
           // Tombstone rather than a hard delete: a plain `delete` would
           // be undone by the next sync from another device.
@@ -1446,11 +1448,6 @@
   }
 
   function wireEditForm(panel, e, sel) {
-    function fail(msg) {
-      var el = panel.querySelector("#edErr");
-      el.textContent = msg;
-      el.classList.add("show");
-    }
     function val(id) {
       var el = panel.querySelector("#" + id);
       return el ? el.value.trim() : "";
@@ -1467,28 +1464,23 @@
       renderUpdatePanel();
     });
 
+    // Nothing is refused. A blank name or company saves and shows as
+    // "(no name)" / "(no company)" in the lists, and a blank date shows as an
+    // amber "No date" chip — visible gaps rather than a form that argues.
     panel.querySelector('button[data-u="savefields"]').addEventListener("click", function () {
-      panel.querySelector("#edErr").classList.remove("show");
-      var dateVal = val("edDate");
-      if (!dateVal || !parseYmd(dateVal)) { fail("That date isn't valid."); return; }
-
       if (sel.isContact) {
-        var name = val("edName");
-        if (!name) { fail("A name is required — that's the whole point of the row."); return; }
         var ch = panel.querySelector('input[name="edChannel"]:checked');
-        e.name = name;
+        e.name = val("edName");
         e.company = val("edCompany");
         e.role = val("edRole");
         e.channel = ch ? ch.value : (e.channel || "Other");
         e.email = val("edEmail");
       } else {
-        var company = val("edCompany");
-        if (!company) { fail("A company name is required."); return; }
-        e.company = company;
+        e.company = val("edCompany");
         e.role = val("edRole");
         e.link = val("edLink");
       }
-      e.date = dateVal;
+      e.date = val("edDate");
       e.note = val("edNote");
 
       editingKey = null;
@@ -1540,24 +1532,15 @@
     r.addEventListener("change", syncContactHandleLabel);
   });
 
-  function showErr(elId, msg) {
-    var el = document.getElementById(elId);
-    el.textContent = msg;
-    el.classList.add("show");
-  }
-  function clearErr(elId) { document.getElementById(elId).classList.remove("show"); }
-
   contactForm.addEventListener("submit", function (ev) {
     ev.preventDefault();
-    clearErr("contactErr");
-    var name = document.getElementById("cName").value.trim();
-    if (!name) { showErr("contactErr", "A name is required — that's the whole point of the row."); return; }
-    var dateVal = document.getElementById("cDate").value || TODAY;
-    if (!parseYmd(dateVal)) { showErr("contactErr", "That date isn't valid."); return; }
+    // No field is enforced. Whatever is in the form gets saved as-is; gaps
+    // show up in the list rather than blocking the save.
+    var dateVal = document.getElementById("cDate").value;
     var channelEl = contactForm.querySelector('input[name="cChannel"]:checked');
 
     DATA.contacts[newId()] = {
-      name: name,
+      name: document.getElementById("cName").value.trim(),
       company: document.getElementById("cCompany").value.trim(),
       role: document.getElementById("cRole").value.trim(),
       channel: channelEl ? channelEl.value : "Other",
@@ -1577,15 +1560,10 @@
 
   appForm.addEventListener("submit", function (ev) {
     ev.preventDefault();
-    clearErr("appErr");
-    var company = document.getElementById("aCompany").value.trim();
-    if (!company) { showErr("appErr", "A company name is required."); return; }
-    var dateVal = document.getElementById("aDate").value || TODAY;
-    if (!parseYmd(dateVal)) { showErr("appErr", "That date isn't valid."); return; }
-
+    var dateVal = document.getElementById("aDate").value;
     var appliedEl = appForm.querySelector('input[name="aApplied"]:checked');
     DATA.apps[newId()] = {
-      company: company,
+      company: document.getElementById("aCompany").value.trim(),
       applied: !!(appliedEl && appliedEl.value === "yes"),
       role: document.getElementById("aRole").value.trim(),
       date: dateVal,

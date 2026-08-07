@@ -27,12 +27,11 @@ Two logs, two tables.
 
 | Field | Notes |
 |---|---|
-| Who | required — the person's name |
+| Who | the person's name (not required) |
 | Company / their role | optional |
 | How you reached out | Email · LinkedIn · Other |
-| Their contact handle | label follows the channel — see below |
-| Their email | optional; shown on the nudge row so you can copy it |
-| Date contacted | defaults to today |
+| Their contact handle | label follows the channel — see below; shown on the nudge row so you can copy it |
+| Date contacted | prefilled with today |
 | Note | optional |
 
 The contact-handle field **relabels itself from the channel** you pick, live, in both
@@ -54,7 +53,7 @@ channel relabels it without moving or clearing what you already typed.
 
 | Field | Notes |
 |---|---|
-| Company | required |
+| Company | no longer required — see "No field is enforced" |
 | **Applied yet?** | **Not yet** (default) or **Applied** — flip it later from "Update someone" |
 | Role | optional |
 | Date | defaults to today |
@@ -108,13 +107,30 @@ word-for-word the ones on the logging form, so a field never means one thing whe
 you add it and something else when you fix it. The company date label follows the
 Applied toggle: **Date applied** when applied, **Date added** when not.
 
-Editing is a distinct mode with **Save changes** and **Cancel** — Cancel discards,
-and a missing name or company or an invalid date blocks the save with a message
-rather than writing a broken row. Editing fields never touches status: the Applied
-flag, replies, meetings and reminder history all survive a rename.
+Editing is a distinct mode with **Save changes** and **Cancel** — Cancel discards.
+Editing fields never touches status: the Applied flag, replies, meetings and
+reminder history all survive a rename.
 
 If an older contact holds a channel that's no longer offered (`In person`, `Phone`),
 the edit form keeps it as a selected option instead of silently rewriting it.
+
+## No field is enforced
+
+**Nothing is required and no field validates its format.** No red "this is
+required" message, no browser rejecting a value for not looking like an email or a
+URL. Paste a LinkedIn URL into the handle field, a bare `draper.com/careers` with no
+`https://` into the link, or save a completely empty row — it all goes in.
+
+The tradeoff is that gaps have to be *visible* instead of prevented, so:
+
+- A row with no name or no company lists as **(no name)** / **(no company)** rather
+  than a blank line you can't select or delete.
+- A row with no date shows an amber **No date** chip. It doesn't pretend the date is
+  today, and it never fires the 7-day reminder — there's nothing to count from. Fill
+  the date in and it starts behaving normally.
+
+Dates are still a date picker rather than free text, since the 7-day rule is
+computed from them.
 
 ## The 7-day rule
 
@@ -192,6 +208,7 @@ grayscale, and a glance in bright sun:
 |---|---|
 | red | needs a nudge (7+ days silent) |
 | amber | company tracked but **not applied yet** — a to-do, not a waiting game |
+| amber | **no date** on the row, so the 7-day clock can't run |
 | green | replied, or a meeting is set |
 | gray filled | waiting, under 7 days |
 | gray outline | closed |
