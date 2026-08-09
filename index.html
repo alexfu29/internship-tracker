@@ -288,6 +288,15 @@
   tbody tr.tappable:active { background: var(--surface-3); }
   td .primary-cell { font-weight: 600; color: var(--text-primary); }
   td .sub-cell { color: var(--text-secondary); font-size: 0.76rem; }
+  /* cold-email + connection chips: wrap rather than widen the table */
+  .cell-flags { display: flex; flex-wrap: wrap; gap: 2px 10px; margin-top: 3px; }
+  /* the link is a tap target inside an already-tappable row, so give it real
+     height and its own underline instead of letting it read as plain text */
+  .cell-link { margin-top: 3px; }
+  .cell-link a {
+    display: inline-block; font-size: 0.76rem; padding: 3px 0;
+    color: var(--accent); text-decoration: underline; word-break: break-word;
+  }
   td.date { font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--text-secondary); }
 
   /* status chip: colored dot carries the state, the words carry the meaning */
@@ -940,18 +949,43 @@
   function isConnected(a) { return a.connected === true; }
 
   // Two independent facts the single status chip can't carry — a company can
-  // be un-applied and still be one you've emailed and heard back from. Shown
-  // as icon *plus words*, never icon alone.
-  function flagsText(a) {
-    var bits = [];
-    if (isColdEmailed(a)) bits.push("✉ Cold emailed");
-    if (isConnected(a)) bits.push("🤝 Connected");
-    return bits;
+  // be un-applied and still be one you've emailed and heard back from.
+  //
+  // Both are rendered in *both* states, never only when true: "nothing shown"
+  // would be ambiguous between "no cold email yet" and "this row predates the
+  // flag", and the whole question you're scanning for is which companies you
+  // still owe an email. The negatives are gray, not amber — they're a fact to
+  // read, not an alarm, and amber is reserved for things demanding action.
+  function companyFlagChips(a) {
+    return [
+      isColdEmailed(a) ? { tone: "good", text: "Cold emailed" }
+                       : { tone: "muted", text: "No cold email" },
+      isConnected(a) ? { tone: "good", text: "Connected" }
+                     : { tone: "muted", text: "No connection" }
+    ];
   }
   function flagsHtml(a) {
-    var bits = flagsText(a);
-    if (!bits.length) return "";
-    return '<div class="sub-cell">' + escapeHtml(bits.join(" · ")) + '</div>';
+    return '<div class="cell-flags">' +
+      companyFlagChips(a).map(chipHtml).join("") + '</div>';
+  }
+
+  // A saved link is only "easy access" if it actually opens. Bare domains go
+  // in without a scheme on purpose (nothing is enforced), but a bare href
+  // resolves against github.io and 404s — so add the scheme at render time
+  // rather than rewriting what you typed. Anything carrying some other scheme
+  // isn't made clickable at all.
+  function linkHref(raw) {
+    var s = (raw || "").trim();
+    if (!s) return "";
+    if (/^https?:\/\//i.test(s)) return s;
+    if (/^[a-z][a-z0-9+.-]*:/i.test(s)) return "";
+    return "https://" + s;
+  }
+  function linkHtml(a, label) {
+    var href = linkHref(a.link);
+    if (!href) return "";
+    return '<div class="cell-link"><a href="' + escapeHtml(href) +
+      '" target="_blank" rel="noopener">' + label + '</a></div>';
   }
 
   // Nothing is a required field, so a row can have no name or no company.
@@ -1108,7 +1142,8 @@
       { head: "Company", cell: function (r) {
           return '<div class="primary-cell">' + escapeHtml(companyOf(r)) + '</div>' +
             (r.role ? '<div class="sub-cell">' + escapeHtml(r.role) + '</div>' : '') +
-            flagsHtml(r);
+            flagsHtml(r) +
+            linkHtml(r, "🔗 Open posting ↗");
         } },
       { head: "Date", cls: "date", cell: function (r) { return fmtShort(r.date); } },
       { head: "Status", cell: function (r) { return chipHtml(statusOf(r, false)); } }
@@ -1118,7 +1153,10 @@
 
     // Tapping a row jumps to it in the update dropdown.
     document.querySelectorAll("tr[data-select]").forEach(function (tr) {
-      tr.addEventListener("click", function () {
+      tr.addEventListener("click", function (ev) {
+        // The posting link sits inside a tappable row: tapping the link must
+        // open the posting, not hijack it into selecting the row.
+        if (ev.target.closest && ev.target.closest("a")) return;
         var sel = document.getElementById("entrySelect");
         sel.value = tr.getAttribute("data-select");
         editingKey = null;
@@ -1373,7 +1411,6 @@
     } else {
       metaBits.push(isApplied(e) ? "Applied " + fmtShort(e.date) : "Added " + fmtShort(e.date));
       if (e.role) metaBits.push(e.role);
-      metaBits = metaBits.concat(flagsText(e));
     }
     if (e.respondedOn) metaBits.push("replied " + fmtShort(e.respondedOn));
 
@@ -1392,10 +1429,10 @@
       '<div class="upd-meta">' + escapeHtml(metaBits.join(" · ")) + '</div>' +
       '<div class="upd-meta" style="margin-top:6px">' + chipHtml(st) + '</div>';
 
-    if (e.link) {
-      html += '<div class="upd-meta" style="margin-top:6px"><a href="' + escapeHtml(e.link) +
-        '" target="_blank" rel="noopener">Open posting ↗</a></div>';
-    }
+    // Same two chips as the table, so a company reads the same either place.
+    if (!sel.isContact) html += flagsHtml(e);
+
+    html += linkHtml(e, "🔗 Open posting ↗");
     if (e.note) {
       html += '<div class="upd-meta" style="margin-top:6px;white-space:pre-wrap">' +
         escapeHtml(e.note) + '</div>';

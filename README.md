@@ -85,12 +85,15 @@ Where they show up:
 - On the **Add company** form, as two segmented controls defaulting to **Not yet**.
 - In **Update someone**, as **Cold emails sent** / **Connection made** buttons that
   toggle — tap once to set, tap again to undo a mis-tap.
-- Under the company name in the table, and in the update panel's meta line, as
-  **✉ Cold emailed** and **🤝 Connected**. Icon *plus words*, so the icon is never
-  the only thing carrying the meaning.
+- Under the company name in the table, and in the update panel, as a pair of chips.
 
-A company you've never flipped shows no line at all — the absence of a flag is a
-blank, not a "no", so the table doesn't fill up with negatives.
+Both chips render in **both** states — `Cold emailed` / `No cold email`, `Connected`
+/ `No connection` — rather than appearing only when true. Showing nothing for "no"
+would be ambiguous between *not yet* and *this row predates the flag*, and "who
+have I not emailed yet" is the exact question you're scanning the table to answer.
+
+The negatives are **gray, not amber**. They're a fact to read, not an alarm — amber
+and red stay reserved for things actually demanding action, so they keep their bite.
 
 These are per-*company*. The cold-contact table is still where individual people
 and the 7-day nudge live; **Cold emails sent** on a company is the coarse "have I
@@ -98,6 +101,18 @@ approached this place at all" answer you want when scanning the list.
 
 A company row created before these toggles existed has neither flag set, which is
 read as **not yet** for both — unlike `applied`, no old row ever meant otherwise.
+
+### The posting link, one tap away
+
+If a company has a **Careers page or posting link**, the table row carries a
+**🔗 Open posting ↗** link straight to it, so you don't have to select the company
+just to get at the URL. It opens in a new tab, and tapping it does *not* also
+select the row — the row's tap-to-select is suppressed over the link.
+
+Because nothing is enforced, a link can be saved as a bare `draper.com/careers`
+with no `https://`. That's normalised **at render time only** — the scheme is added
+to the link you tap, and what you typed is left exactly as you typed it. A value
+carrying some other scheme isn't made clickable at all.
 
 ## Copy AI prompt
 
@@ -245,7 +260,7 @@ grayscale, and a glance in bright sun:
 | amber | **no date** on the row, so the 7-day clock can't run |
 | green | replied, or a meeting is set |
 | gray filled | waiting, under 7 days |
-| gray outline | closed |
+| gray outline | closed; or a company flag still at **no** (no cold email, no connection) |
 
 Light and dark mode both follow the OS setting.
 
