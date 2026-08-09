@@ -441,6 +441,22 @@
       </div>
       <div class="row2">
         <div class="field">
+          <label>Cold emails sent?</label>
+          <div class="seg" id="aColdSeg">
+            <label><input type="radio" name="aCold" value="no" checked><span>Not yet</span></label>
+            <label><input type="radio" name="aCold" value="yes"><span>Sent</span></label>
+          </div>
+        </div>
+        <div class="field">
+          <label>Connection made?</label>
+          <div class="seg" id="aConnSeg">
+            <label><input type="radio" name="aConn" value="no" checked><span>Not yet</span></label>
+            <label><input type="radio" name="aConn" value="yes"><span>Connected</span></label>
+          </div>
+        </div>
+      </div>
+      <div class="row2">
+        <div class="field">
           <label for="aRole">Role <span class="opt">(optional)</span></label>
           <input type="text" id="aRole">
         </div>
@@ -459,7 +475,7 @@
       </div>
       <button type="submit" class="primary">Save company</button>
       <p class="hint">Add companies as you find them, then flip "Applied" once you've
-        actually applied. Flip it later from "Update someone".</p>
+        actually applied. All three toggles flip later from "Update someone".</p>
     </form>
 
     <datalist id="companyList"></datalist>
@@ -917,6 +933,27 @@
   // rows as un-applied. New rows always write the flag explicitly.
   function isApplied(a) { return a.applied !== false; }
 
+  // These two are the opposite case from `applied`: no older row ever carried
+  // them, so a missing key honestly means "no" and false is the safe default.
+  // Read them only through these helpers so that stays in one place.
+  function isColdEmailed(a) { return a.coldEmailed === true; }
+  function isConnected(a) { return a.connected === true; }
+
+  // Two independent facts the single status chip can't carry — a company can
+  // be un-applied and still be one you've emailed and heard back from. Shown
+  // as icon *plus words*, never icon alone.
+  function flagsText(a) {
+    var bits = [];
+    if (isColdEmailed(a)) bits.push("✉ Cold emailed");
+    if (isConnected(a)) bits.push("🤝 Connected");
+    return bits;
+  }
+  function flagsHtml(a) {
+    var bits = flagsText(a);
+    if (!bits.length) return "";
+    return '<div class="sub-cell">' + escapeHtml(bits.join(" · ")) + '</div>';
+  }
+
   // Nothing is a required field, so a row can have no name or no company.
   // It still needs a handle in every list, otherwise it becomes an
   // unselectable blank line you can't even delete.
@@ -1070,7 +1107,8 @@
     document.getElementById("appTableMount").innerHTML = tableHtml(as, [
       { head: "Company", cell: function (r) {
           return '<div class="primary-cell">' + escapeHtml(companyOf(r)) + '</div>' +
-            (r.role ? '<div class="sub-cell">' + escapeHtml(r.role) + '</div>' : '');
+            (r.role ? '<div class="sub-cell">' + escapeHtml(r.role) + '</div>' : '') +
+            flagsHtml(r);
         } },
       { head: "Date", cls: "date", cell: function (r) { return fmtShort(r.date); } },
       { head: "Status", cell: function (r) { return chipHtml(statusOf(r, false)); } }
@@ -1335,6 +1373,7 @@
     } else {
       metaBits.push(isApplied(e) ? "Applied " + fmtShort(e.date) : "Added " + fmtShort(e.date));
       if (e.role) metaBits.push(e.role);
+      metaBits = metaBits.concat(flagsText(e));
     }
     if (e.respondedOn) metaBits.push("replied " + fmtShort(e.respondedOn));
 
@@ -1371,6 +1410,12 @@
     if (!sel.isContact) {
       html += '<button data-u="applied" class="wide ' + (isApplied(e) ? "on" : "") + '">' +
         (isApplied(e) ? "✓ Applied" : "Mark as applied") + '</button>';
+      // Independent of Applied: you can email a company you never apply to,
+      // and land a connection at one whose posting isn't open yet.
+      html += '<button data-u="cold" class="' + (isColdEmailed(e) ? "on" : "") + '">' +
+        (isColdEmailed(e) ? "✓ Cold emails sent" : "Cold emails sent") + '</button>';
+      html += '<button data-u="conn" class="' + (isConnected(e) ? "on" : "") + '">' +
+        (isConnected(e) ? "✓ Connection made" : "Connection made") + '</button>';
     }
     html += '<button data-u="replied" class="' + (e.responded ? "on" : "") + '">' +
         (e.responded ? "✓ Replied" : "Mark replied") + '</button>';
@@ -1423,6 +1468,12 @@
           // Stamp the date you actually applied, so "Waiting Nd" counts from
           // the application rather than from when you bookmarked the company.
           if (e.applied) e.date = TODAY;
+        } else if (act === "cold") {
+          // Deliberately does not re-stamp the date: that date belongs to the
+          // application, and the companies table has no 7-day nudge to restart.
+          e.coldEmailed = !isColdEmailed(e);
+        } else if (act === "conn") {
+          e.connected = !isConnected(e);
         } else if (act === "replied") {
           e.responded = !e.responded;
           e.respondedOn = e.responded ? TODAY : null;
@@ -1562,9 +1613,13 @@
     ev.preventDefault();
     var dateVal = document.getElementById("aDate").value;
     var appliedEl = appForm.querySelector('input[name="aApplied"]:checked');
+    var coldEl = appForm.querySelector('input[name="aCold"]:checked');
+    var connEl = appForm.querySelector('input[name="aConn"]:checked');
     DATA.apps[newId()] = {
       company: document.getElementById("aCompany").value.trim(),
       applied: !!(appliedEl && appliedEl.value === "yes"),
+      coldEmailed: !!(coldEl && coldEl.value === "yes"),
+      connected: !!(connEl && connEl.value === "yes"),
       role: document.getElementById("aRole").value.trim(),
       date: dateVal,
       link: document.getElementById("aLink").value.trim(),

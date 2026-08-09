@@ -55,6 +55,8 @@ channel relabels it without moving or clearing what you already typed.
 |---|---|
 | Company | no longer required — see "No field is enforced" |
 | **Applied yet?** | **Not yet** (default) or **Applied** — flip it later from "Update someone" |
+| **Cold emails sent?** | **Not yet** (default) or **Sent** — did you email anyone there |
+| **Connection made?** | **Not yet** (default) or **Connected** — did that outreach actually land |
 | Role | optional |
 | Date | defaults to today |
 | Careers page or posting link | optional; becomes a tappable link |
@@ -64,6 +66,38 @@ The point is that a company enters the list the moment you *notice* it, not when
 you apply. Add it with **Not yet**, and flip the toggle once you've actually
 applied — which re-stamps the date, so "waiting N days" counts from the
 application rather than from when you bookmarked it.
+
+### The three company toggles are independent
+
+**Applied**, **Cold emails sent** and **Connection made** are three separate
+questions and none of them implies another. You can email a company you never end
+up applying to, land a conversation somewhere whose posting isn't open yet, or
+apply cold to a place you know nobody at. So each is its own toggle rather than
+one "progress" stage, and flipping one never moves the others.
+
+Only **Applied** re-stamps the date and feeds the stat row, the "Copy AI prompt"
+list, and the reply rate. The other two are pure flags: they don't touch the date
+(the companies table has no 7-day nudge to restart) and they don't change the
+status chip.
+
+Where they show up:
+
+- On the **Add company** form, as two segmented controls defaulting to **Not yet**.
+- In **Update someone**, as **Cold emails sent** / **Connection made** buttons that
+  toggle — tap once to set, tap again to undo a mis-tap.
+- Under the company name in the table, and in the update panel's meta line, as
+  **✉ Cold emailed** and **🤝 Connected**. Icon *plus words*, so the icon is never
+  the only thing carrying the meaning.
+
+A company you've never flipped shows no line at all — the absence of a flag is a
+blank, not a "no", so the table doesn't fill up with negatives.
+
+These are per-*company*. The cold-contact table is still where individual people
+and the 7-day nudge live; **Cold emails sent** on a company is the coarse "have I
+approached this place at all" answer you want when scanning the list.
+
+A company row created before these toggles existed has neither flag set, which is
+read as **not yet** for both — unlike `applied`, no old row ever meant otherwise.
 
 ## Copy AI prompt
 
@@ -108,8 +142,8 @@ you add it and something else when you fix it. The company date label follows th
 Applied toggle: **Date applied** when applied, **Date added** when not.
 
 Editing is a distinct mode with **Save changes** and **Cancel** — Cancel discards.
-Editing fields never touches status: the Applied flag, replies, meetings and
-reminder history all survive a rename.
+Editing fields never touches status: the Applied / Cold emails sent / Connection
+made flags, replies, meetings and reminder history all survive a rename.
 
 If an older contact holds a channel that's no longer offered (`In person`, `Phone`),
 the edit form keeps it as a selected option instead of silently rewriting it.
