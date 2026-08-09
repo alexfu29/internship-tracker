@@ -216,56 +216,79 @@
   form.logform { display: none; }
   form.logform.open { display: block; }
 
-  /* ---------- Left workspace panel ----------
-     The log forms used to expand inline, which pushed the tables down the page
-     every time you opened one. This is a fixed panel on the left instead: the
-     page behind it never moves, and there's no dimming overlay, so the tables
-     stay readable while you type. It deliberately doesn't span the viewport. */
-  .side-panel {
-    position: fixed; top: 0; left: 0; bottom: 0; z-index: 38;
-    width: min(400px, 88vw);
+  /* ---------- Log modal, centred ----------
+     The forms used to expand inline, which shoved the tables down the page.
+     This is a centred dialog instead: the page behind never reflows, and the
+     form sits where you're already looking rather than off at one edge. */
+  .modal {
+    position: fixed; z-index: 42;
+    top: 50%; left: 50%; transform: translate(-50%, -48%) scale(0.98);
+    width: min(520px, calc(100vw - 28px));
+    max-height: min(84vh, 760px);
     display: flex; flex-direction: column;
-    background: var(--surface-1); border-right: 1px solid var(--border);
-    box-shadow: 4px 0 22px rgba(0,0,0,0.28);
-    transform: translateX(-101%);
-    transition: transform 0.22s ease;
-    visibility: hidden;
+    background: var(--surface-1); border: 1px solid var(--border);
+    border-radius: var(--radius); box-shadow: 0 18px 48px rgba(0,0,0,0.42);
+    opacity: 0; visibility: hidden;
+    transition: opacity 0.16s ease, transform 0.16s ease;
   }
-  .side-panel.open { transform: translateX(0); visibility: visible; }
-  .side-panel-head {
+  .modal.open {
+    transform: translate(-50%, -50%) scale(1); opacity: 1; visibility: visible;
+  }
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.45);
+    z-index: 41; display: none;
+  }
+  .modal-overlay.open { display: block; }
+  .modal-head {
     display: flex; align-items: center; justify-content: space-between;
     gap: 10px; padding: 14px 16px 10px; border-bottom: 1px solid var(--border);
   }
-  .side-panel-head h2 {
+  .modal-head h2 {
     margin: 0; font-size: 0.95rem; font-weight: 600; color: var(--text-secondary);
     text-transform: uppercase; letter-spacing: 0.03em;
   }
   /* the body scrolls, the header stays put, so Save is never stranded */
-  .side-panel-body { flex: 1 1 auto; overflow-y: auto; padding: 14px 16px 24px; }
-  /* room to actually write in — the whole point of moving off the inline form */
-  .side-panel-body .field textarea { min-height: 110px; }
+  .modal-body { flex: 1 1 auto; overflow-y: auto; padding: 14px 16px 20px; }
+  .modal-body .field textarea { min-height: 90px; }
 
-  /* the workspace is the mirror image, on the right, so both can be open at
-     once: form on the left, scratchpad on the right, tables in between */
-  .side-panel-right {
-    left: auto; right: 0;
-    border-right: none; border-left: 1px solid var(--border);
-    box-shadow: -4px 0 22px rgba(0,0,0,0.28);
-    transform: translateX(101%);
+  /* ---------- Workspace popup ----------
+     One per entry, opened from the 📝 beside that entry's name. A small popup
+     pinned to the right, not a full-height drawer: it's meant to sit beside
+     what you're reading. No overlay — the tables stay live behind it. */
+  .ws-pop {
+    position: fixed; z-index: 39; top: 72px; right: 16px;
+    width: min(340px, calc(100vw - 32px));
+    height: min(400px, calc(100vh - 96px));
+    display: flex; flex-direction: column;
+    background: var(--surface-1); border: 1px solid var(--border);
+    border-radius: var(--radius); box-shadow: 0 14px 36px rgba(0,0,0,0.38);
+    opacity: 0; visibility: hidden; transform: translateY(-6px);
+    transition: opacity 0.16s ease, transform 0.16s ease;
   }
-  .workspace-body { display: flex; flex-direction: column; gap: 10px; }
-  /* fills whatever height is left — a scratchpad you have to scroll at 3 lines
-     is the tiny box this was meant to replace */
-  .workspace-body textarea {
-    flex: 1 1 auto; width: 100%; min-height: 240px; padding: 10px;
+  .ws-pop.open { opacity: 1; visibility: visible; transform: translateY(0); }
+  .ws-pop-head {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 8px; padding: 10px 12px 8px; border-bottom: 1px solid var(--border);
+  }
+  .ws-pop-head h2 {
+    margin: 0; font-size: 0.82rem; font-weight: 600; color: var(--text-secondary);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .ws-pop-head .icon-btn { width: 32px; height: 32px; font-size: 0.9rem; }
+  .ws-pop-body {
+    flex: 1 1 auto; display: flex; flex-direction: column; gap: 8px;
+    padding: 10px 12px 12px; min-height: 0;
+  }
+  .ws-pop-body textarea {
+    flex: 1 1 auto; width: 100%; padding: 9px; min-height: 0;
     border-radius: 8px; border: 1px solid var(--border);
     background: var(--surface-2); color: var(--text-primary);
-    font-size: 0.9rem; font-family: inherit; line-height: 1.5; resize: none;
+    font-size: 0.88rem; font-family: inherit; line-height: 1.5; resize: none;
   }
-  .ws-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-  .ws-foot button.secondary { width: auto; padding: 8px 12px; margin: 0; flex: 0 0 auto; }
-  .ws-saved { font-size: 0.72rem; color: var(--text-muted); }
-  .header-btns { display: flex; gap: 8px; }
+  .ws-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .ws-foot button.secondary { width: auto; padding: 6px 10px; margin: 0; flex: 0 0 auto;
+    min-height: 34px; font-size: 0.78rem; }
+  .ws-saved { font-size: 0.7rem; color: var(--text-muted); }
   .field { margin-bottom: 10px; }
   .field label { display: block; font-size: 0.78rem; color: var(--text-secondary); margin-bottom: 4px; }
   .field label .opt { color: var(--text-muted); font-weight: 400; }
@@ -310,7 +333,20 @@
   /* ---------- Update panel ---------- */
   #updatePanel { margin-top: 12px; display: none; }
   #updatePanel.open { display: block; }
-  .upd-head { font-weight: 600; font-size: 0.95rem; }
+  .upd-head {
+    font-weight: 600; font-size: 0.95rem;
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  }
+  .upd-head .upd-title { min-width: 0; }
+  .upd-head .ws-btn { width: 38px; height: 38px; font-size: 1rem; }
+  /* a dot, not a different icon: the button means the same thing either way,
+     it just tells you something's already in there */
+  .upd-head .ws-btn.has { position: relative; border-color: var(--accent); }
+  .upd-head .ws-btn.has::after {
+    content: ""; position: absolute; top: 3px; right: 3px;
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--accent); box-shadow: 0 0 0 2px var(--surface-1);
+  }
   .upd-meta { font-size: 0.78rem; color: var(--text-secondary); margin-top: 2px; }
   .upd-acts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
   @media (max-width: 380px) { .upd-acts { grid-template-columns: 1fr; } }
@@ -468,7 +504,7 @@
   .drawer hr { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
   .drawer .file-import { font-size: 0.82rem; }
   @media (prefers-reduced-motion: reduce) {
-    .drawer, .side-panel { transition: none; }
+    .drawer, .modal, .ws-pop { transition: none; }
     button:active, .nudge-row .acts button:active { transform: none; }
   }
 </style>
@@ -479,10 +515,7 @@
 
 <header class="app-header">
   <h1>Internship Tracker<span class="sub">Summer 2027</span></h1>
-  <div class="header-btns">
-    <button class="icon-btn" id="workspaceBtn" aria-label="Workspace" title="Workspace">📝</button>
-    <button class="icon-btn" id="settingsBtn" aria-label="Settings" title="Settings">⚙️</button>
-  </div>
+  <button class="icon-btn" id="settingsBtn" aria-label="Settings" title="Settings">⚙️</button>
 </header>
 
 <div id="banners"></div>
@@ -538,12 +571,13 @@
 
 <!-- Log forms live in a left side panel, not inline under the buttons: opening
      one used to push the whole page down and shove the tables out of view. -->
-<aside class="side-panel" id="logPanel" aria-hidden="true" aria-label="Log something">
-  <div class="side-panel-head">
+<div class="modal-overlay" id="logOverlay"></div>
+<aside class="modal" id="logPanel" aria-hidden="true" aria-label="Log something">
+  <div class="modal-head">
     <h2 id="logPanelTitle">Cold contact</h2>
     <button type="button" class="icon-btn" id="logPanelClose" aria-label="Close panel">✕</button>
   </div>
-  <div class="side-panel-body">
+  <div class="modal-body">
     <form class="logform" id="contactForm" autocomplete="off">
       <div class="field">
         <label for="cName">Who did you contact?</label>
@@ -643,18 +677,18 @@
     <datalist id="companyList"></datalist>
   </div>
 </aside>
-<!-- Workspace: a scratchpad on the right, deliberately not tied to any one
-     entry and not part of the synced log. Pairs with the log panel on the
-     left so you can draft while you fill a form in. -->
-<aside class="side-panel side-panel-right" id="workspacePanel" aria-hidden="true" aria-label="Workspace">
-  <div class="side-panel-head">
-    <h2>Workspace</h2>
+<!-- Workspace: one per contact and per company, opened by the 📝 next to that
+     entry's name. A small popup on the right rather than a full-height drawer —
+     it's meant to sit beside what you're looking at, not replace it. -->
+<aside class="ws-pop" id="workspacePanel" aria-hidden="true" aria-label="Workspace">
+  <div class="ws-pop-head">
+    <h2 id="workspaceTitle">Workspace</h2>
     <button type="button" class="icon-btn" id="workspaceClose" aria-label="Close workspace">✕</button>
   </div>
-  <div class="side-panel-body workspace-body">
-    <textarea id="workspaceText" aria-label="Workspace scratchpad"></textarea>
+  <div class="ws-pop-body">
+    <textarea id="workspaceText" aria-label="Workspace notes for this entry"></textarea>
     <div class="ws-foot">
-      <span class="ws-saved" id="workspaceSaved">Saves as you type · this device only</span>
+      <span class="ws-saved" id="workspaceSaved">Saves as you type</span>
       <button type="button" class="secondary" id="workspaceCopy">📋 Copy</button>
     </div>
   </div>
@@ -1570,9 +1604,16 @@
     var st = statusOf(e, sel.isContact);
     var myKey = (sel.isContact ? "c:" : "a:") + sel.id;
 
-    var head = sel.isContact
+    var title = sel.isContact
       ? escapeHtml(nameOf(e)) + (e.company ? ' <span style="font-weight:400;color:var(--text-secondary)">· ' + escapeHtml(e.company) + '</span>' : '')
       : escapeHtml(companyOf(e)) + (e.role ? ' <span style="font-weight:400;color:var(--text-secondary)">· ' + escapeHtml(e.role) + '</span>' : '');
+    // The workspace belongs to this entry, so its button lives on this entry's
+    // name rather than in the app header. The dot says there's already
+    // something written in there, without opening it to find out.
+    var head = '<span class="upd-title">' + title + '</span>' +
+      '<button type="button" class="icon-btn ws-btn' + (hasWorkspace(e) ? " has" : "") +
+      '" data-u="workspace" title="Notes for this ' +
+      (sel.isContact ? "contact" : "company") + '" aria-label="Notes">📝</button>';
 
     var metaBits = [];
     if (sel.isContact) {
@@ -1592,7 +1633,9 @@
     // Edit mode swaps the whole body for the field form, so the panel never
     // shows a stale read-only copy of what you're halfway through changing.
     if (editingKey === myKey) {
-      panel.innerHTML = '<div class="upd-head">' + head + '</div>' +
+      // No 📝 while editing fields: this head's buttons aren't wired in edit
+      // mode, and a dead button is worse than no button.
+      panel.innerHTML = '<div class="upd-head"><span class="upd-title">' + title + '</span></div>' +
         '<div class="upd-meta" style="margin-bottom:10px">Editing details</div>' +
         editFormHtml(e, sel.isContact);
       panel.className = "open";
@@ -1675,6 +1718,12 @@
           renderUpdatePanel();
           return;
         }
+        if (act === "workspace") {
+          // Toggle: a second tap on the same entry's 📝 puts it away.
+          if (wsOpenFor && wsOpenFor.id === sel.id) closeWorkspace();
+          else openWorkspaceFor(sel);
+          return;
+        }
         if (act === "applied") {
           e.applied = !isApplied(e);
           // Stamp the date you actually applied, so "Waiting Nd" counts from
@@ -1698,6 +1747,9 @@
         } else if (act === "delete") {
           var what = sel.isContact ? nameOf(e) : companyOf(e);
           if (!confirm("Delete “" + what + "” for good? This also removes it on your other devices.")) return;
+          // Its workspace goes with it — don't leave a popup open writing
+          // into an entry that no longer exists.
+          if (wsOpenFor && wsOpenFor.id === sel.id) hideWorkspace();
           // Tombstone rather than a hard delete: a plain `delete` would
           // be undone by the next sync from another device.
           e.deleted = true; touch(e); saveData();
@@ -1770,6 +1822,7 @@
   var btnShowApp = document.getElementById("btnShowApp");
 
   var logPanel = document.getElementById("logPanel");
+  var logOverlay = document.getElementById("logOverlay");
   var logPanelTitle = document.getElementById("logPanelTitle");
 
   function openForm(which) {
@@ -1784,13 +1837,15 @@
     // the form already open still means "close it", which is what the submit
     // handlers rely on to put the panel away after a save.
     var panelOpen = openC || openA;
-    // Mirror of the workspace rule: on a phone the two panels can't share.
-    if (panelOpen && window.innerWidth < 900) setWorkspace(false);
+    // The modal's backdrop would leave the workspace popup stranded behind a
+    // dim sheet, so put it away first rather than half-showing it.
+    if (panelOpen) closeWorkspace();
     logPanel.classList.toggle("open", panelOpen);
+    logOverlay.classList.toggle("open", panelOpen);
     logPanel.setAttribute("aria-hidden", panelOpen ? "false" : "true");
     if (panelOpen) logPanelTitle.textContent = openC ? "Cold contact" : "Add company";
     // Scroll back to the top on reopen, so you never land mid-form.
-    if (panelOpen) logPanel.querySelector(".side-panel-body").scrollTop = 0;
+    if (panelOpen) logPanel.querySelector(".modal-body").scrollTop = 0;
 
     if (openC) {
       document.getElementById("cDate").value = TODAY;
@@ -1806,66 +1861,85 @@
   btnShowContact.addEventListener("click", function () { openForm("contact"); });
   btnShowApp.addEventListener("click", function () { openForm("app"); });
   document.getElementById("logPanelClose").addEventListener("click", closeLogPanel);
+  logOverlay.addEventListener("click", closeLogPanel);
 
-  /* ---- Workspace: a scratchpad on the right ---------------------
-     Its own store, not part of DATA: it never rides the sync to a public
-     repo, and rewriting it can't touch a contact. Same reasoning as the
-     email templates being per-device.
+  /* ---- Workspace: one per contact, one per company ---------------
+     Stored on the entry itself, so it travels with that entry across
+     devices and goes away when the entry is deleted. That does mean it
+     syncs like everything else — same as the Note field.
      --------------------------------------------------------------- */
-  var WS_KEY = "intern-workspace";
-  var wsPanel = document.getElementById("workspacePanel");
+  var wsPop = document.getElementById("workspacePanel");
   var wsText = document.getElementById("workspaceText");
   var wsSaved = document.getElementById("workspaceSaved");
+  var wsTitle = document.getElementById("workspaceTitle");
   var wsTimer = null;
+  var wsOpenFor = null;   // { bag, id } of the entry the popup is editing
 
-  try { wsText.value = localStorage.getItem(WS_KEY) || ""; } catch (e) {}
+  function hasWorkspace(e) { return !!(e.workspace || "").trim(); }
 
-  function setWorkspace(open) {
-    wsPanel.classList.toggle("open", open);
-    wsPanel.setAttribute("aria-hidden", open ? "false" : "true");
-    SETTINGS.wsOpen = open;
-    saveSettings(SETTINGS);
-    // Two 88vw panels on a phone would bury each other, so on a narrow
-    // screen the two are mutually exclusive rather than silently stacked.
-    if (open && window.innerWidth < 900) closeLogPanel();
-    if (open) wsText.focus();
+  function wsEntry() {
+    if (!wsOpenFor) return null;
+    var e = DATA[wsOpenFor.bag] && DATA[wsOpenFor.bag][wsOpenFor.id];
+    return e && !e.deleted ? e : null;
   }
-  document.getElementById("workspaceBtn").addEventListener("click", function () {
-    setWorkspace(!wsPanel.classList.contains("open"));
-  });
-  document.getElementById("workspaceClose").addEventListener("click", function () {
-    setWorkspace(false);
-  });
+
+  // Writes straight to the entry. Deliberately does NOT re-render: a render
+  // rebuilds the update panel and would yank focus out mid-sentence.
+  function flushWorkspace() {
+    clearTimeout(wsTimer);
+    var e = wsEntry();
+    if (!e) return false;
+    if (e.workspace === wsText.value) return true;
+    e.workspace = wsText.value;
+    touch(e);
+    saveData();
+    return true;
+  }
+
+  function openWorkspaceFor(sel) {
+    wsOpenFor = { bag: sel.isContact ? "contacts" : "apps", id: sel.id };
+    wsText.value = sel.e.workspace || "";
+    wsTitle.textContent = sel.isContact ? nameOf(sel.e) : companyOf(sel.e);
+    wsSaved.textContent = "Saves as you type";
+    wsPop.classList.add("open");
+    wsPop.setAttribute("aria-hidden", "false");
+    wsText.focus();
+  }
+  function hideWorkspace() {
+    clearTimeout(wsTimer);
+    wsPop.classList.remove("open");
+    wsPop.setAttribute("aria-hidden", "true");
+    wsOpenFor = null;
+  }
+  function closeWorkspace() {
+    if (!wsPop.classList.contains("open")) return;
+    flushWorkspace();
+    hideWorkspace();
+    render();   // safe now: nothing is focused inside the popup any more
+  }
+
   wsText.addEventListener("input", function () {
     wsSaved.textContent = "Saving…";
     clearTimeout(wsTimer);
     wsTimer = setTimeout(function () {
-      try {
-        localStorage.setItem(WS_KEY, wsText.value);
-        wsSaved.textContent = "Saved · this device only";
-      } catch (e) {
-        // Never claim a save that didn't happen.
-        wsSaved.textContent = "⚠ Could not save — copy your text out";
-      }
+      // Never claim a save that didn't happen — if the entry vanished
+      // (deleted on another device mid-edit), say so instead.
+      wsSaved.textContent = flushWorkspace()
+        ? "Saved"
+        : "⚠ Entry is gone — copy your text out";
     }, 400);
   });
-  // Flush on the way out; a debounce that loses the last sentence is worse
-  // than no autosave at all.
-  window.addEventListener("pagehide", function () {
-    try { localStorage.setItem(WS_KEY, wsText.value); } catch (e) {}
-  });
+  // A debounce that loses the last sentence is worse than no autosave at all.
+  window.addEventListener("pagehide", flushWorkspace);
+  document.getElementById("workspaceClose").addEventListener("click", closeWorkspace);
   document.getElementById("workspaceCopy").addEventListener("click", function () {
     copyText(wsText.value, this);
   });
-  if (SETTINGS.wsOpen) {
-    wsPanel.classList.add("open");
-    wsPanel.setAttribute("aria-hidden", "false");
-  }
 
   document.addEventListener("keydown", function (ev) {
     if (ev.key !== "Escape") return;
     if (logPanel.classList.contains("open")) closeLogPanel();
-    else if (wsPanel.classList.contains("open")) setWorkspace(false);
+    else if (wsPop.classList.contains("open")) closeWorkspace();
   });
 
   function syncContactHandleLabel() {
@@ -1945,6 +2019,9 @@
   // against a row you're no longer looking at.
   document.getElementById("entrySelect").addEventListener("change", function () {
     editingKey = null;
+    // The workspace belongs to whoever was selected, so it doesn't follow you
+    // to the next entry — that's how you'd type notes onto the wrong person.
+    closeWorkspace();
     renderUpdatePanel();
   });
 

@@ -126,7 +126,7 @@ space in front of it. Every cell is `nowrap`, so when it doesn't fit the table g
 
 The page is capped at **640px** — sized to what the row actually needs (~500px)
 rather than to the screen. Stretching it wider only spread dead space across the
-card, and the narrow column leaves room either side for the two panels.
+card.
 
 On a phone the row still has to fit, so under 620px the company name truncates with
 an ellipsis, the gutters tighten, and the link drops to a bare 🔗. That's deliberate:
@@ -147,60 +147,57 @@ with no `https://`. That's normalised **at render time only** — the scheme is 
 to the link you tap, and what you typed is left exactly as you typed it. A value
 carrying some other scheme isn't made clickable at all.
 
-## Two side panels
+## Per-entry workspaces
 
-The app is a narrow centre column with a panel on each side, so the tables stay
-visible and in place while you work:
+Every contact and every company has **its own workspace** — a bigger, free-form
+notes area that belongs to that one entry. Pick the entry in **Update someone** and
+tap the **📝** next to its name.
 
-```
-┌──────────────┬───────────────────────┬──────────────┐
-│  Cold contact│   stats · nudges      │  Workspace   │
-│  Add company │   contacts · companies│  (scratchpad)│
-│   ← ＋ buttons│                       │  📝 header → │
-└──────────────┴───────────────────────┴──────────────┘
-```
+It opens as a **small popup on the right**: 340×400, deliberately not a full-height
+drawer and not a takeover. The tables stay live and readable behind it — no dimming
+— and the page underneath never moves, so nothing reflows while you write.
 
-Neither panel moves the page: it's the same layout underneath whether they're open
-or shut, so nothing reflows or scrolls away. Neither covers the screen — 400px on a
-laptop, 88% of the width on a phone — and neither dims what's behind it. On a phone
-there isn't room for both, so opening one closes the other; on a laptop both can be
-open at once. **Escape** closes the log panel first, then the workspace.
-
-## The workspace
-
-**📝** in the header opens a **scratchpad on the right**. It's one free-text area —
-same idea as a Note field, but it belongs to you rather than to any one contact or
-company, and it doesn't close when you save a form. Somewhere to draft an email,
-park a phone number, or keep a list of who to chase.
-
-- **Saves as you type**, debounced, and flushed again when you background the app.
-  The label under the box says `Saving…` then `Saved`, and says so plainly if the
-  browser refuses the write instead of claiming a save that didn't happen.
-- **Stays open across reloads** — if you left it open, it's open next time.
+- **Saves as you type**, debounced, straight onto that entry. The label reads
+  `Saving…` then `Saved`.
+- Pending text is **flushed on the way out** — closing the popup, switching entries,
+  or backgrounding the app all commit what you typed, so a mid-sentence debounce
+  can't drop it.
+- If the entry has since been deleted (say, on another device), it says
+  `⚠ Entry is gone — copy your text out` rather than claiming a save that didn't
+  happen.
+- The **📝 button shows a dot** when there's already something written in there, so
+  you can tell without opening it.
 - **📋 Copy** puts the whole thing on the clipboard.
-- It is **not** part of the synced log. It lives in `localStorage` under
-  `intern-workspace` on that one device, for the same reason the email templates do:
-  it never rides the sync into a public repo, and rewriting it can't touch contact
-  data. The flip side is that it doesn't follow you to another device.
+- Tapping the same 📝 again puts it away, as does **✕** or **Escape**.
 
-## The logging panel
+The workspace **does not follow the dropdown**. Selecting a different entry closes
+it (after saving) instead of re-pointing at someone else — that's how you'd end up
+typing notes onto the wrong person.
 
-**＋ Cold contact** and **＋ Add company** open a **panel on the left side of the
-screen** — a workspace you type into while the rest of the app stays where it is.
+This is separate from the form's short **Note** field, which stays where it is. The
+note is the one-line "how did this go"; the workspace is where you draft the actual
+email or keep a running log.
 
-It used to be a form that expanded inline underneath the two buttons, which shoved
-the tables down the page every time you opened it. Now:
+**It lives on the entry, so it syncs** like every other field, and it's deleted when
+the entry is. That also means it lands in `data/log.json` — see the note about that
+file being public if you sync to a public repo.
 
-- The page behind the panel **does not move**. Nothing reflows, nothing scrolls
-  away, and the tables are still there when you close it.
+## The logging form
+
+**＋ Cold contact** and **＋ Add company** open a **centred dialog**.
+
+The form used to expand inline underneath the two buttons, which shoved the tables
+down the page every time you opened it. Now it opens over the middle of the screen,
+where you're already looking, and the page behind it never reflows.
+
 - The header stays put while the body scrolls, so **Save** is never stranded
   off-screen in a long form.
-- The **Note** field keeps its place at the bottom of the form, and it's much taller
-  here than it was inline — the extra room is most of the point.
+- The **Note** field keeps its place at the bottom of the form.
 
-Both buttons drive the same panel and it only ever shows one form: tapping the other
-button swaps the contents and retitles the header. Close it by tapping the same
-button again, the **✕**, or **Escape**. Saving closes it for you.
+Both buttons drive the same dialog and it only ever shows one form: tapping the
+other button swaps the contents and retitles the header. Close it by tapping the
+same button again, the **✕**, **Escape**, or by tapping outside it. Saving closes it
+for you.
 
 ## Copy AI prompt
 
