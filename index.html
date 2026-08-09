@@ -212,8 +212,37 @@
   .log-btns button.on { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
   .log-btns button:active { transform: scale(0.98); }
 
-  form.logform { display: none; margin-top: 14px; }
+  form.logform { display: none; }
   form.logform.open { display: block; }
+
+  /* ---------- Left workspace panel ----------
+     The log forms used to expand inline, which pushed the tables down the page
+     every time you opened one. This is a fixed panel on the left instead: the
+     page behind it never moves, and there's no dimming overlay, so the tables
+     stay readable while you type. It deliberately doesn't span the viewport. */
+  .side-panel {
+    position: fixed; top: 0; left: 0; bottom: 0; z-index: 38;
+    width: min(440px, 88vw);
+    display: flex; flex-direction: column;
+    background: var(--surface-1); border-right: 1px solid var(--border);
+    box-shadow: 4px 0 22px rgba(0,0,0,0.28);
+    transform: translateX(-101%);
+    transition: transform 0.22s ease;
+    visibility: hidden;
+  }
+  .side-panel.open { transform: translateX(0); visibility: visible; }
+  .side-panel-head {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 10px; padding: 14px 16px 10px; border-bottom: 1px solid var(--border);
+  }
+  .side-panel-head h2 {
+    margin: 0; font-size: 0.95rem; font-weight: 600; color: var(--text-secondary);
+    text-transform: uppercase; letter-spacing: 0.03em;
+  }
+  /* the body scrolls, the header stays put, so Save is never stranded */
+  .side-panel-body { flex: 1 1 auto; overflow-y: auto; padding: 14px 16px 24px; }
+  /* room to actually write in — the whole point of moving off the inline form */
+  .side-panel-body .field textarea { min-height: 110px; }
   .field { margin-bottom: 10px; }
   .field label { display: block; font-size: 0.78rem; color: var(--text-secondary); margin-bottom: 4px; }
   .field label .opt { color: var(--text-muted); font-weight: 400; }
@@ -323,12 +352,15 @@
     table.companies td, table.companies th { padding-left: 5px; padding-right: 5px; }
     td.linkcol .cell-link a .lbl { display: none; }
   }
-  /* the link column soaks up all leftover width, which packs company, date
-     and status against the left edge and pins the posting hard right */
-  th.linkcol, td.linkcol { width: 100%; text-align: right; }
+  /* Every real column shrinks to its content and a trailing spacer soaks up
+     the leftover width. Giving the slack to the link column instead pinned the
+     posting to the far edge, which on a wide screen left a lake of dead space
+     between the status and the link. The row now reads as one compact group. */
+  th.linkcol, td.linkcol { white-space: nowrap; }
+  th.spacer, td.spacer { width: 100%; padding: 0; }
   /* flex, not inline-block: an inline-block anchor sits on the text baseline
      and the strut's descender space silently adds ~10px to every row */
-  td.linkcol .cell-link { display: flex; justify-content: flex-end; margin: 0; }
+  td.linkcol .cell-link { display: flex; justify-content: flex-start; margin: 0; }
   /* the row itself is tappable (it selects the company), so the link needs a
      tap target big enough not to lose to it. Give the padding to the anchor
      instead of the cell: full-height target, same 38px row. */
@@ -413,7 +445,7 @@
   .drawer hr { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
   .drawer .file-import { font-size: 0.82rem; }
   @media (prefers-reduced-motion: reduce) {
-    .drawer { transition: none; }
+    .drawer, .side-panel { transition: none; }
     button:active, .nudge-row .acts button:active { transform: none; }
   }
 </style>
@@ -448,6 +480,44 @@
       <button type="button" id="btnShowApp">＋ Add company</button>
     </div>
 
+  </section>
+
+  <!-- Update an existing entry -->
+  <section class="card">
+    <h2>Update someone</h2>
+    <label for="entrySelect" style="display:block;font-size:0.78rem;color:var(--text-secondary);margin-bottom:4px">
+      Pick a contact or company
+    </label>
+    <select id="entrySelect"></select>
+    <div id="updatePanel"></div>
+    <p class="empty" id="updateEmpty">Nothing logged yet — add a contact or a company above.</p>
+  </section>
+
+  <!-- Tables -->
+  <section class="card">
+    <h2>People contacted <span class="count" id="contactCount"></span></h2>
+    <div class="table-scroll" id="contactTableMount"></div>
+  </section>
+
+  <section class="card">
+    <h2>Companies <span class="count" id="appCount"></span></h2>
+    <div id="aiPromptMount"></div>
+    <div class="table-scroll" id="appTableMount"></div>
+    <div class="dot-legend" id="appLegend"></div>
+  </section>
+
+</main>
+
+<footer class="app-footer">Internship Tracker · Summer 2027 · Boston / NYC</footer>
+
+<!-- Log forms live in a left side panel, not inline under the buttons: opening
+     one used to push the whole page down and shove the tables out of view. -->
+<aside class="side-panel" id="logPanel" aria-hidden="true" aria-label="Log something">
+  <div class="side-panel-head">
+    <h2 id="logPanelTitle">Cold contact</h2>
+    <button type="button" class="icon-btn" id="logPanelClose" aria-label="Close panel">✕</button>
+  </div>
+  <div class="side-panel-body">
     <form class="logform" id="contactForm" autocomplete="off">
       <div class="field">
         <label for="cName">Who did you contact?</label>
@@ -545,36 +615,8 @@
     </form>
 
     <datalist id="companyList"></datalist>
-  </section>
-
-  <!-- Update an existing entry -->
-  <section class="card">
-    <h2>Update someone</h2>
-    <label for="entrySelect" style="display:block;font-size:0.78rem;color:var(--text-secondary);margin-bottom:4px">
-      Pick a contact or company
-    </label>
-    <select id="entrySelect"></select>
-    <div id="updatePanel"></div>
-    <p class="empty" id="updateEmpty">Nothing logged yet — add a contact or a company above.</p>
-  </section>
-
-  <!-- Tables -->
-  <section class="card">
-    <h2>People contacted <span class="count" id="contactCount"></span></h2>
-    <div class="table-scroll" id="contactTableMount"></div>
-  </section>
-
-  <section class="card">
-    <h2>Companies <span class="count" id="appCount"></span></h2>
-    <div id="aiPromptMount"></div>
-    <div class="table-scroll" id="appTableMount"></div>
-    <div class="dot-legend" id="appLegend"></div>
-  </section>
-
-</main>
-
-<footer class="app-footer">Internship Tracker · Summer 2027 · Boston / NYC</footer>
-
+  </div>
+</aside>
 <div class="drawer-overlay" id="drawerOverlay"></div>
 <div class="drawer" id="drawer" aria-hidden="true">
   <button class="icon-btn close-x" id="drawerClose" aria-label="Close settings">✕</button>
@@ -1228,7 +1270,9 @@
         } },
       { head: "Date", cls: "date", cell: function (r) { return fmtShort(r.date); } },
       { head: "Status", cls: "status", cell: function (r) { return chipHtml(statusOf(r, false)); } },
-      { head: "Link", cls: "linkcol", cell: function (r) { return linkHtml(r, " Open ↗"); } }
+      { head: "Link", cls: "linkcol", cell: function (r) { return linkHtml(r, " Open ↗"); } },
+      // Absorbs the leftover width so the columns above stay packed together.
+      { head: "", cls: "spacer", cell: function () { return ""; } }
     ], "No companies logged yet.", "companies");
 
     document.getElementById("appLegend").innerHTML = apps().length
@@ -1682,6 +1726,9 @@
   var btnShowContact = document.getElementById("btnShowContact");
   var btnShowApp = document.getElementById("btnShowApp");
 
+  var logPanel = document.getElementById("logPanel");
+  var logPanelTitle = document.getElementById("logPanelTitle");
+
   function openForm(which) {
     var openC = which === "contact" && !contactForm.classList.contains("open");
     var openA = which === "app" && !appForm.classList.contains("open");
@@ -1689,6 +1736,17 @@
     appForm.classList.toggle("open", openA);
     btnShowContact.classList.toggle("on", openC);
     btnShowApp.classList.toggle("on", openA);
+
+    // The panel is open exactly when one of the forms is. Calling openForm with
+    // the form already open still means "close it", which is what the submit
+    // handlers rely on to put the panel away after a save.
+    var panelOpen = openC || openA;
+    logPanel.classList.toggle("open", panelOpen);
+    logPanel.setAttribute("aria-hidden", panelOpen ? "false" : "true");
+    if (panelOpen) logPanelTitle.textContent = openC ? "Cold contact" : "Add company";
+    // Scroll back to the top on reopen, so you never land mid-form.
+    if (panelOpen) logPanel.querySelector(".side-panel-body").scrollTop = 0;
+
     if (openC) {
       document.getElementById("cDate").value = TODAY;
       syncContactHandleLabel();
@@ -1696,8 +1754,16 @@
     }
     if (openA) { document.getElementById("aDate").value = TODAY; document.getElementById("aCompany").focus(); }
   }
+  function closeLogPanel() {
+    if (contactForm.classList.contains("open")) openForm("contact");
+    else if (appForm.classList.contains("open")) openForm("app");
+  }
   btnShowContact.addEventListener("click", function () { openForm("contact"); });
   btnShowApp.addEventListener("click", function () { openForm("app"); });
+  document.getElementById("logPanelClose").addEventListener("click", closeLogPanel);
+  document.addEventListener("keydown", function (ev) {
+    if (ev.key === "Escape" && logPanel.classList.contains("open")) closeLogPanel();
+  });
 
   function syncContactHandleLabel() {
     var ch = contactForm.querySelector('input[name="cChannel"]:checked');

@@ -114,14 +114,15 @@ read as **not yet** for both — unlike `applied`, no old row ever meant otherwi
 A company row is exactly **one line tall** and reads left to right:
 
 ```
-Delsys  Wearable EMG Intern  ●○      Aug 9   ● Not applied            🔗 Open ↗
-└ name and role ─────────────┘ dots  └ date and status, packed left ┘  └ hard right
+Delsys  Wearable EMG Intern  ●○   Aug 9   ● Not applied   🔗 Open ↗
+└ name and role ─────────────┘ dots  └ date, status, link — one compact group ┘
 ```
 
-Nothing stacks. The link column absorbs all the leftover width, which is what packs
-the company, date and status against the left edge and pins the posting to the far
-right. Every cell is `nowrap`, so when it doesn't fit the table gets **wider, never
-taller** — and the page itself is 880px rather than 640px to give it that room.
+Nothing stacks. Every real column shrinks to its content and an empty trailing
+column soaks up whatever width is left, so the row stays packed together on the
+left instead of the link being flung to the right-hand edge with a stretch of dead
+space in front of it. Every cell is `nowrap`, so when it doesn't fit the table gets
+**wider, never taller** — and the page itself is 880px rather than 640px for room.
 
 On a phone the row still has to fit, so under 620px the company name truncates with
 an ellipsis, the gutters tighten, and the link drops to a bare 🔗. That's deliberate:
@@ -131,7 +132,7 @@ Tap the row to see the full name and role in the update panel.
 ### The posting link, one tap away
 
 If a company has a **Careers page or posting link**, the row carries a link straight
-to it at the right-hand end, so you don't have to select the company just to get at
+to it as the last column, so you don't have to select the company just to get at
 the URL. It opens in a new tab, and tapping it does *not* also select the row — the
 row's tap-to-select is suppressed over the link. The link's tap target is padded to
 most of the row height, since it's competing with a row that does something else
@@ -141,6 +142,28 @@ Because nothing is enforced, a link can be saved as a bare `draper.com/careers`
 with no `https://`. That's normalised **at render time only** — the scheme is added
 to the link you tap, and what you typed is left exactly as you typed it. A value
 carrying some other scheme isn't made clickable at all.
+
+## The logging panel
+
+**＋ Cold contact** and **＋ Add company** open a **panel on the left side of the
+screen** — a workspace you type into while the rest of the app stays where it is.
+
+It used to be a form that expanded inline underneath the two buttons, which shoved
+the tables down the page every time you opened it. Now:
+
+- The page behind the panel **does not move**. Nothing reflows, nothing scrolls
+  away, and the tables are still there when you close it.
+- It **doesn't cover the screen** — 440px on a laptop, 88% of the width on a phone,
+  so there's always a visible strip of the app behind it.
+- There's **no dimming overlay**, deliberately. It's a workspace, not a modal.
+- The header stays put while the body scrolls, so **Save** is never stranded
+  off-screen in a long form.
+- The **Note** field keeps its place at the bottom of the form, and it's much taller
+  here than it was inline — the extra room is most of the point.
+
+Both buttons drive the same panel and it only ever shows one form: tapping the other
+button swaps the contents and retitles the header. Close it by tapping the same
+button again, the **✕**, or **Escape**. Saving closes it for you.
 
 ## Copy AI prompt
 
