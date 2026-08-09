@@ -348,12 +348,21 @@
     background: var(--accent); box-shadow: 0 0 0 2px var(--surface-1);
   }
   .upd-meta { font-size: 0.78rem; color: var(--text-secondary); margin-top: 2px; }
-  .upd-acts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
-  @media (max-width: 380px) { .upd-acts { grid-template-columns: 1fr; } }
+  /* Buttons wrap in a flex row at their natural width instead of being
+     stretched into a 2-up grid — a fixed grid forced long labels to wrap
+     inside the button, which is what made them unreadable. Labels are short
+     and each one says what it does on its own. */
+  .upd-group { margin-top: 12px; }
+  .upd-group-label {
+    display: block; font-size: 0.64rem; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.06em; color: var(--text-muted); margin-bottom: 5px;
+  }
+  .upd-acts { display: flex; flex-wrap: wrap; gap: 6px; }
   .upd-acts button {
-    min-height: var(--tap); padding: 10px; border-radius: 10px;
+    flex: 0 0 auto; min-height: 36px; padding: 6px 11px; border-radius: 8px;
     border: 1px solid var(--border); background: var(--surface-2);
-    color: var(--text-primary); font-size: 0.82rem; font-weight: 600; cursor: pointer;
+    color: var(--text-primary); font-size: 0.78rem; font-weight: 600;
+    cursor: pointer; white-space: nowrap; line-height: 1.2;
   }
   .upd-acts button.on { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
   .upd-acts button.danger { color: var(--red-ink); border-color: var(--status-critical); }
@@ -361,7 +370,6 @@
     background: var(--accent); color: var(--accent-ink); border-color: var(--accent);
   }
   .upd-acts button:active { transform: scale(0.98); }
-  .upd-acts .wide { grid-column: 1 / -1; }
 
   /* ---------- Tables ---------- */
   .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 0 -4px; }
@@ -376,6 +384,14 @@
   tbody tr.is-closed { opacity: 0.5; }
   tbody tr.tappable { cursor: pointer; }
   tbody tr.tappable:active { background: var(--surface-3); }
+  /* the row you opened, and the panel that drops out of it */
+  tbody tr.is-open > td { background: var(--surface-3); border-bottom: none; }
+  tbody tr.detail-row > td { padding: 0 0 12px; border-bottom: 1px solid var(--gridline); }
+  tbody tr.detail-row .detail-wrap {
+    background: var(--surface-3); border-radius: 0 0 10px 10px;
+    padding: 2px 12px 12px;
+  }
+  tbody tr.detail-row:last-child > td { border-bottom: none; }
   td .primary-cell { font-weight: 600; color: var(--text-primary); }
   td .sub-cell { color: var(--text-secondary); font-size: 0.76rem; }
   /* chips with words — update panel only, where vertical room is cheap */
@@ -548,7 +564,9 @@
       Pick a contact or company
     </label>
     <select id="entrySelect"></select>
-    <div id="updatePanel"></div>
+    <!-- The panel only sits here when the selected entry has no visible row
+         to sit under; normally it's moved into the table. -->
+    <div id="updatePanelHome"><div id="updatePanel"></div></div>
     <p class="empty" id="updateEmpty">Nothing logged yet — add a contact or a company above.</p>
   </section>
 
@@ -1309,6 +1327,7 @@
   }
 
   function renderTables() {
+    homeUpdatePanel();   // rebuilding the tables would otherwise destroy it
     var showClosed = !!SETTINGS.showClosed;
     var cs = contacts().filter(function (c) { return showClosed || !c.closed; });
     var as = apps().filter(function (a) { return showClosed || !a.closed; });
@@ -1360,7 +1379,9 @@
 
     renderAiPrompt();
 
-    // Tapping a row jumps to it in the update dropdown.
+    // Tapping a row opens it in place, directly underneath itself. It
+    // deliberately does not scroll: you tapped something you could already
+    // see, so moving the page out from under you is never what you wanted.
     document.querySelectorAll("tr[data-select]").forEach(function (tr) {
       tr.addEventListener("click", function (ev) {
         // The posting link sits inside a tappable row: tapping the link must
@@ -1369,10 +1390,72 @@
         var sel = document.getElementById("entrySelect");
         sel.value = tr.getAttribute("data-select");
         editingKey = null;
+        closeWorkspace();
         renderUpdatePanel();
-        sel.scrollIntoView({ block: "center", behavior: "smooth" });
       });
     });
+
+    placeUpdatePanel();
+  }
+
+  /* ---- the panel lives under the row it belongs to ---------------
+     It used to sit in the "Update someone" card near the top, so opening
+     an entry threw you back up the page and you lost your place in the
+     table. The panel is one element that gets physically moved into a
+     detail row beneath its own entry — same markup, same handlers, just
+     re-parented, so nothing about how it works had to change.
+     ---------------------------------------------------------------- */
+  function rowFor(selectKey) {
+    if (!selectKey) return null;
+    return document.querySelector('tr[data-select="' + selectKey.replace(/"/g, '\\"') + '"]');
+  }
+
+  // Tables are rebuilt by innerHTML, which would destroy the panel along with
+  // the row it's sitting in. Park it at home first, every time.
+  function homeUpdatePanel() {
+    var panel = document.getElementById("updatePanel");
+    var home = document.getElementById("updatePanelHome");
+    if (panel && home && panel.parentNode !== home) home.appendChild(panel);
+  }
+
+  function placeUpdatePanel() {
+    var panel = document.getElementById("updatePanel");
+    if (!panel) return;
+    // Detach before clearing, or removing the old detail row takes the panel.
+    homeUpdatePanel();
+    document.querySelectorAll("tr.detail-row").forEach(function (tr) {
+      if (tr.parentNode) tr.parentNode.removeChild(tr);
+    });
+    document.querySelectorAll("tr.is-open").forEach(function (tr) {
+      tr.classList.remove("is-open");
+    });
+
+    // No selection, or the row is hidden (a closed entry with "show closed"
+    // off): leave the panel in the card rather than dropping it on the floor.
+    var row = rowFor(document.getElementById("entrySelect").value);
+    if (!row || !panel.classList.contains("open")) return;
+
+    row.classList.add("is-open");
+    var tr = document.createElement("tr");
+    tr.className = "detail-row";
+    var td = document.createElement("td");
+    td.colSpan = row.children.length;
+    var wrap = document.createElement("div");
+    wrap.className = "detail-wrap";
+    wrap.appendChild(panel);
+    td.appendChild(wrap);
+    tr.appendChild(td);
+    row.parentNode.insertBefore(tr, row.nextSibling);
+  }
+
+  // Picking from the dropdown can land on a row far off-screen, so that one
+  // does scroll — but only when the row isn't already in front of you.
+  function revealSelectedRow() {
+    var row = rowFor(document.getElementById("entrySelect").value);
+    if (!row) return;
+    var r = row.getBoundingClientRect();
+    if (r.top >= 0 && r.bottom <= window.innerHeight) return;
+    row.scrollIntoView({ block: "center", behavior: "smooth" });
   }
 
   /* ---- "Copy AI prompt" for companies not applied to yet -------
@@ -1589,17 +1672,31 @@
     }
     h += '<div class="field"><label for="edNote">Note <span class="opt">(optional)</span></label>' +
       '<textarea id="edNote">' + escapeHtml(e.note || "") + '</textarea></div>' +
-      '<div class="upd-acts">' +
-      '<button data-u="savefields" class="wide done">Save changes</button>' +
-      '<button data-u="canceledit" class="wide">Cancel</button>' +
-      '</div>';
+      '<div class="upd-group"><div class="upd-acts">' +
+      '<button data-u="savefields" class="done">Save changes</button>' +
+      '<button data-u="canceledit">Cancel</button>' +
+      '</div></div>';
     return h;
+  }
+
+  // A toggle reads as a fact with a ✓ when it's true; an action reads as a
+  // verb. Keeping the two shapes apart is what makes the panel scannable.
+  function toggleBtn(act, on, label) {
+    return '<button data-u="' + act + '" class="tgl' + (on ? " on" : "") + '">' +
+      (on ? "✓ " : "") + escapeHtml(label) + '</button>';
+  }
+  function actionBtn(act, label, cls) {
+    return '<button data-u="' + act + '" class="' + (cls || "") + '">' + label + '</button>';
   }
 
   function renderUpdatePanel() {
     var panel = document.getElementById("updatePanel");
     var sel = selectedEntry();
-    if (!sel) { panel.className = ""; panel.innerHTML = ""; editingKey = null; return; }
+    if (!sel) {
+      panel.className = ""; panel.innerHTML = ""; editingKey = null;
+      placeUpdatePanel();
+      return;
+    }
     var e = sel.e;
     var st = statusOf(e, sel.isContact);
     var myKey = (sel.isContact ? "c:" : "a:") + sel.id;
@@ -1639,6 +1736,7 @@
         '<div class="upd-meta" style="margin-bottom:10px">Editing details</div>' +
         editFormHtml(e, sel.isContact);
       panel.className = "open";
+      placeUpdatePanel();
       wireEditForm(panel, e, sel);
       return;
     }
@@ -1660,37 +1758,36 @@
       '<label for="updMeeting">Meeting date <span class="opt">(blank = no meeting)</span></label>' +
       '<input type="date" id="updMeeting" value="' + escapeHtml(e.meetingOn || "") + '"></div>';
 
-    html += '<div class="upd-acts">';
-    // The whole point of tracking a company before applying: flip it later.
+    // Two groups, because the buttons answer two different questions:
+    // "what's true about this?" and "what do I want to do to it?". Toggles
+    // are nouns and carry a ✓ when on; actions are verbs. Labels are short
+    // enough not to wrap, which is what made the old grid unreadable.
+    html += '<div class="upd-group"><span class="upd-group-label">Status</span>' +
+      '<div class="upd-acts">';
     if (!sel.isContact) {
-      html += '<button data-u="applied" class="wide ' + (isApplied(e) ? "on" : "") + '">' +
-        (isApplied(e) ? "✓ Applied" : "Mark as applied") + '</button>';
+      // The whole point of tracking a company before applying: flip it later.
+      html += toggleBtn("applied", isApplied(e), "Applied");
       // Independent of Applied: you can email a company you never apply to,
       // and land a connection at one whose posting isn't open yet.
-      html += '<button data-u="cold" class="' + (isColdEmailed(e) ? "on" : "") + '">' +
-        (isColdEmailed(e) ? "✓ Cold emails sent" : "Cold emails sent") + '</button>';
-      html += '<button data-u="conn" class="' + (isConnected(e) ? "on" : "") + '">' +
-        (isConnected(e) ? "✓ Connection made" : "Connection made") + '</button>';
+      html += toggleBtn("cold", isColdEmailed(e), "Cold emails");
+      html += toggleBtn("conn", isConnected(e), "Connection");
     }
-    html += '<button data-u="replied" class="' + (e.responded ? "on" : "") + '">' +
-        (e.responded ? "✓ Replied" : "Mark replied") + '</button>';
-    if (sel.isContact) {
-      html += '<button data-u="nudged" class="' + (remindedToday(e) ? "on" : "") + '">' +
-        (remindedToday(e) ? "✓ Reminder sent today" : "Reminder sent today") + '</button>' +
-        '<button data-u="copyfollow" class="wide">📋 Copy follow-up draft</button>';
-    } else {
-      html += '<button data-u="noreply">Clear reply</button>';
-    }
-    html += '<button data-u="edit" class="wide">✎ Edit ' +
-        (sel.isContact ? "contact" : "company") + ' details</button>' +
-      '<button data-u="close" class="' + (e.closed ? "on" : "") + '">' +
-        (e.closed ? "✓ Closed — reopen" : "Close it") + '</button>' +
-      '<button data-u="delete" class="danger">Delete</button>' +
-      '<button data-u="done" class="wide done">Done</button>' +
-      '</div>';
+    html += toggleBtn("replied", !!e.responded, "Replied");
+    if (sel.isContact) html += toggleBtn("nudged", remindedToday(e), "Reminder sent");
+    html += '</div></div>';
+
+    html += '<div class="upd-group"><span class="upd-group-label">Actions</span>' +
+      '<div class="upd-acts">';
+    if (sel.isContact) html += actionBtn("copyfollow", "📋 Copy draft");
+    html += actionBtn("edit", "✎ Edit");
+    html += actionBtn("close", e.closed ? "Reopen" : "Close");
+    html += actionBtn("delete", "Delete", "danger");
+    html += actionBtn("done", "Done", "done");
+    html += '</div></div>';
 
     panel.innerHTML = html;
     panel.className = "open";
+    placeUpdatePanel();
 
     panel.querySelector("#updMeeting").addEventListener("change", function () {
       var v = this.value;
@@ -1738,8 +1835,6 @@
         } else if (act === "replied") {
           e.responded = !e.responded;
           e.respondedOn = e.responded ? TODAY : null;
-        } else if (act === "noreply") {
-          e.responded = false; e.respondedOn = null;
         } else if (act === "nudged") {
           toggleRemindedToday(e);
         } else if (act === "close") {
@@ -2023,6 +2118,7 @@
     // to the next entry — that's how you'd type notes onto the wrong person.
     closeWorkspace();
     renderUpdatePanel();
+    revealSelectedRow();
   });
 
   /* ============================================================

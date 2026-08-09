@@ -150,8 +150,8 @@ carrying some other scheme isn't made clickable at all.
 ## Per-entry workspaces
 
 Every contact and every company has **its own workspace** — a bigger, free-form
-notes area that belongs to that one entry. Pick the entry in **Update someone** and
-tap the **📝** next to its name.
+notes area that belongs to that one entry. Open the entry and tap the **📝** next to
+its name.
 
 It opens as a **small popup on the right**: 340×400, deliberately not a full-height
 drawer and not a takeover. The tables stay live and readable behind it — no dimming
@@ -226,11 +226,40 @@ The stat row counts **Applied** out of companies tracked, and the reply rate is
 measured only against things you actually sent — a bookmarked company can't reply,
 so it never drags the percentage down.
 
-Both kinds carry the same two follow-up states: **replied** (yes/no) and
-**meeting** (a date). Set either from the "Update someone" dropdown, which lists
-every person and company you've logged, grouped. Tapping any table row jumps
-straight to that entry in the dropdown, and **Done** closes the panel when you've
-finished with that person.
+## Opening an entry
+
+**Tap any row and it opens in place — right underneath itself.** The page does not
+scroll, the row does not move, and you keep your place in the table. Editing fields,
+flipping a toggle and saving all happen there too; none of them throw you back to
+the top.
+
+Under the hood it's one panel that gets physically moved into a detail row beneath
+its own entry, so the inline version is identical to what you'd get anywhere else —
+same fields, same buttons, same behaviour.
+
+The **Update someone** dropdown still lists everything you've logged, grouped, for
+reaching an entry that isn't on screen. Picking from it does scroll — but only when
+the row isn't already in front of you.
+
+If the selected entry has no visible row (a closed entry with "show closed" off),
+the panel falls back to sitting in the dropdown's card rather than disappearing.
+
+### The buttons
+
+They're split into two groups, because they answer two different questions:
+
+| Group | Shape | Examples |
+|---|---|---|
+| **Status** | a fact, with a ✓ when it's true | `Applied` · `Cold emails` · `Connection` · `Replied` · `Reminder sent` |
+| **Actions** | a verb | `✎ Edit` · `📋 Copy draft` · `Close` · `Delete` · `Done` |
+
+Every label is short enough to sit on one line at its natural width, and the buttons
+wrap like text instead of being stretched into a fixed two-column grid — that grid
+was what forced long labels to wrap *inside* the button and turned the panel into a
+wall of half-legible text. Each label now says what it does on its own.
+
+Both kinds of entry carry the same two follow-up states: **replied** (yes/no) and
+**meeting** (a date). **Done** closes the panel when you've finished with that entry.
 
 Every status control in that panel saves the moment you tap it, so **Done is an
 exit, not a save** — there is no way to lose an edit by closing without it.
