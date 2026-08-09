@@ -122,7 +122,11 @@ Nothing stacks. Every real column shrinks to its content and an empty trailing
 column soaks up whatever width is left, so the row stays packed together on the
 left instead of the link being flung to the right-hand edge with a stretch of dead
 space in front of it. Every cell is `nowrap`, so when it doesn't fit the table gets
-**wider, never taller** — and the page itself is 880px rather than 640px for room.
+**wider, never taller**.
+
+The page is capped at **640px** — sized to what the row actually needs (~500px)
+rather than to the screen. Stretching it wider only spread dead space across the
+card, and the narrow column leaves room either side for the two panels.
 
 On a phone the row still has to fit, so under 620px the company name truncates with
 an ellipsis, the gutters tighten, and the link drops to a bare 🔗. That's deliberate:
@@ -143,6 +147,42 @@ with no `https://`. That's normalised **at render time only** — the scheme is 
 to the link you tap, and what you typed is left exactly as you typed it. A value
 carrying some other scheme isn't made clickable at all.
 
+## Two side panels
+
+The app is a narrow centre column with a panel on each side, so the tables stay
+visible and in place while you work:
+
+```
+┌──────────────┬───────────────────────┬──────────────┐
+│  Cold contact│   stats · nudges      │  Workspace   │
+│  Add company │   contacts · companies│  (scratchpad)│
+│   ← ＋ buttons│                       │  📝 header → │
+└──────────────┴───────────────────────┴──────────────┘
+```
+
+Neither panel moves the page: it's the same layout underneath whether they're open
+or shut, so nothing reflows or scrolls away. Neither covers the screen — 400px on a
+laptop, 88% of the width on a phone — and neither dims what's behind it. On a phone
+there isn't room for both, so opening one closes the other; on a laptop both can be
+open at once. **Escape** closes the log panel first, then the workspace.
+
+## The workspace
+
+**📝** in the header opens a **scratchpad on the right**. It's one free-text area —
+same idea as a Note field, but it belongs to you rather than to any one contact or
+company, and it doesn't close when you save a form. Somewhere to draft an email,
+park a phone number, or keep a list of who to chase.
+
+- **Saves as you type**, debounced, and flushed again when you background the app.
+  The label under the box says `Saving…` then `Saved`, and says so plainly if the
+  browser refuses the write instead of claiming a save that didn't happen.
+- **Stays open across reloads** — if you left it open, it's open next time.
+- **📋 Copy** puts the whole thing on the clipboard.
+- It is **not** part of the synced log. It lives in `localStorage` under
+  `intern-workspace` on that one device, for the same reason the email templates do:
+  it never rides the sync into a public repo, and rewriting it can't touch contact
+  data. The flip side is that it doesn't follow you to another device.
+
 ## The logging panel
 
 **＋ Cold contact** and **＋ Add company** open a **panel on the left side of the
@@ -153,9 +193,6 @@ the tables down the page every time you opened it. Now:
 
 - The page behind the panel **does not move**. Nothing reflows, nothing scrolls
   away, and the tables are still there when you close it.
-- It **doesn't cover the screen** — 440px on a laptop, 88% of the width on a phone,
-  so there's always a visible strip of the app behind it.
-- There's **no dimming overlay**, deliberately. It's a workspace, not a modal.
 - The header stays put while the body scrolls, so **Save** is never stranded
   off-screen in a long form.
 - The **Note** field keeps its place at the bottom of the form, and it's much taller
