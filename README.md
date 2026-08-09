@@ -84,16 +84,23 @@ Where they show up:
 
 - On the **Add company** form, as two segmented controls defaulting to **Not yet**.
 - In **Update someone**, as **Cold emails sent** / **Connection made** buttons that
-  toggle — tap once to set, tap again to undo a mis-tap.
-- Under the company name in the table, and in the update panel, as a pair of chips.
+  toggle — tap once to set, tap again to undo a mis-tap, plus a pair of chips with
+  the state spelled out in words.
+- In the companies table, as **two small dots** next to the company name.
 
-Both chips render in **both** states — `Cold emailed` / `No cold email`, `Connected`
-/ `No connection` — rather than appearing only when true. Showing nothing for "no"
-would be ambiguous between *not yet* and *this row predates the flag*, and "who
-have I not emailed yet" is the exact question you're scanning the table to answer.
+Both states always render — never just the positive. Showing nothing for "no" would
+be ambiguous between *not yet* and *this row predates the flag*, and "who have I not
+emailed yet" is the exact question you're scanning the table to answer.
 
 The negatives are **gray, not amber**. They're a fact to read, not an alarm — amber
 and red stay reserved for things actually demanding action, so they keep their bite.
+
+In the table the words are compressed to dots to keep the row one line tall, which
+is a real accessibility cost, so it's paid back three ways: each dot carries its
+full text as a **tooltip**, the same text is there for **screen readers**, and a
+**legend** sits under the table (`● done · ○ not yet · 1st dot = cold email, 2nd =
+connection`). The meaning is compressed, not thrown away. The update panel still
+spells both out in words, so there's always somewhere the state is unambiguous.
 
 These are per-*company*. The cold-contact table is still where individual people
 and the 7-day nudge live; **Cold emails sent** on a company is the coarse "have I
@@ -102,12 +109,33 @@ approached this place at all" answer you want when scanning the list.
 A company row created before these toggles existed has neither flag set, which is
 read as **not yet** for both — unlike `applied`, no old row ever meant otherwise.
 
+### One line per company
+
+A company row is exactly **one line tall** and reads left to right:
+
+```
+Delsys  Wearable EMG Intern  ●○      Aug 9   ● Not applied            🔗 Open ↗
+└ name and role ─────────────┘ dots  └ date and status, packed left ┘  └ hard right
+```
+
+Nothing stacks. The link column absorbs all the leftover width, which is what packs
+the company, date and status against the left edge and pins the posting to the far
+right. Every cell is `nowrap`, so when it doesn't fit the table gets **wider, never
+taller** — and the page itself is 880px rather than 640px to give it that room.
+
+On a phone the row still has to fit, so under 620px the company name truncates with
+an ellipsis, the gutters tighten, and the link drops to a bare 🔗. That's deliberate:
+a shortened name beats having to scroll sideways to find out whether there's a link.
+Tap the row to see the full name and role in the update panel.
+
 ### The posting link, one tap away
 
-If a company has a **Careers page or posting link**, the table row carries a
-**🔗 Open posting ↗** link straight to it, so you don't have to select the company
-just to get at the URL. It opens in a new tab, and tapping it does *not* also
-select the row — the row's tap-to-select is suppressed over the link.
+If a company has a **Careers page or posting link**, the row carries a link straight
+to it at the right-hand end, so you don't have to select the company just to get at
+the URL. It opens in a new tab, and tapping it does *not* also select the row — the
+row's tap-to-select is suppressed over the link. The link's tap target is padded to
+most of the row height, since it's competing with a row that does something else
+when you tap it.
 
 Because nothing is enforced, a link can be saved as a bare `draper.com/careers`
 with no `https://`. That's normalised **at render time only** — the scheme is added

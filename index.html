@@ -117,12 +117,14 @@
     line-height: 1.4;
     padding-bottom: 48px;
   }
-  .wrap { max-width: 640px; margin: 0 auto; padding: 0 14px; }
+  /* wider than the old 640 so the one-line company row has somewhere to go
+     before it starts scrolling sideways; on a phone the viewport still wins */
+  .wrap { max-width: 880px; margin: 0 auto; padding: 0 14px; }
 
   /* ---------- Header ---------- */
   header.app-header {
     display: flex; align-items: center; justify-content: space-between;
-    padding: 14px 14px 6px; max-width: 640px; margin: 0 auto;
+    padding: 14px 14px 6px; max-width: 880px; margin: 0 auto;
   }
   header.app-header h1 { font-size: 1.25rem; margin: 0; letter-spacing: -0.01em; }
   header.app-header h1 .sub {
@@ -139,7 +141,7 @@
 
   /* ---------- Banners ---------- */
   .banner {
-    margin: 8px auto; max-width: 612px; padding: 10px 12px;
+    margin: 8px auto; max-width: 852px; padding: 10px 12px;
     border-radius: 10px; font-size: 0.85rem;
     display: flex; align-items: flex-start; gap: 8px; justify-content: space-between;
   }
@@ -288,14 +290,69 @@
   tbody tr.tappable:active { background: var(--surface-3); }
   td .primary-cell { font-weight: 600; color: var(--text-primary); }
   td .sub-cell { color: var(--text-secondary); font-size: 0.76rem; }
-  /* cold-email + connection chips: wrap rather than widen the table */
-  .cell-flags { display: flex; flex-wrap: wrap; gap: 2px 10px; margin-top: 3px; }
-  /* the link is a tap target inside an already-tappable row, so give it real
-     height and its own underline instead of letting it read as plain text */
-  .cell-link { margin-top: 3px; }
+  /* chips with words — update panel only, where vertical room is cheap */
+  .cell-flags { display: flex; flex-wrap: wrap; gap: 2px 10px; margin-top: 6px; }
+  .cell-link { margin-top: 6px; }
   .cell-link a {
     display: inline-block; font-size: 0.76rem; padding: 3px 0;
     color: var(--accent); text-decoration: underline; word-break: break-word;
+  }
+
+  /* ---------- Companies table: one line per row ----------
+     Every cell is nowrap and the row never stacks, so height is fixed at a
+     single line. When that doesn't fit, .table-scroll scrolls sideways —
+     the table gets wider, never taller. */
+  table.companies td, table.companies th { white-space: nowrap; }
+  /* height acts as a minimum on a cell (border-box, so this is the whole row):
+     keeps rows with no posting link the same height as rows that have one, so
+     the list doesn't look ragged */
+  table.companies td {
+    padding-top: 7px; padding-bottom: 7px; vertical-align: middle; height: 38px;
+  }
+  td.company .co-wrap { display: flex; align-items: center; }
+  /* only the words truncate — the dots are pinned and never get clipped */
+  td.company .co-text { overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+  td.company .flag-dots { flex: 0 0 auto; }
+  td.company .co-name { font-weight: 600; color: var(--text-primary); }
+  td.company .co-role { color: var(--text-secondary); font-size: 0.76rem; margin-left: 6px; }
+  /* on a phone, cap the name, tighten the gutters and drop the link's words so
+     date, status and the posting all stay on screen — a truncated name beats
+     having to scroll sideways to find the link */
+  @media (max-width: 620px) {
+    td.company { max-width: 34vw; }
+    table.companies td, table.companies th { padding-left: 5px; padding-right: 5px; }
+    td.linkcol .cell-link a .lbl { display: none; }
+  }
+  /* the link column soaks up all leftover width, which packs company, date
+     and status against the left edge and pins the posting hard right */
+  th.linkcol, td.linkcol { width: 100%; text-align: right; }
+  /* flex, not inline-block: an inline-block anchor sits on the text baseline
+     and the strut's descender space silently adds ~10px to every row */
+  td.linkcol .cell-link { display: flex; justify-content: flex-end; margin: 0; }
+  /* the row itself is tappable (it selects the company), so the link needs a
+     tap target big enough not to lose to it. Give the padding to the anchor
+     instead of the cell: full-height target, same 38px row. */
+  table.companies td.linkcol { padding-top: 0; padding-bottom: 0; }
+  td.linkcol .cell-link a { padding: 8px 0 8px 8px; }
+  th.date, td.date, th.status, td.status { padding-left: 6px; padding-right: 6px; }
+
+  /* compact flag dots: same 9px as the status chip dot, words moved into the
+     tooltip, the screen-reader text and the legend below the table */
+  .flag-dots { display: inline-flex; gap: 5px; margin-left: 8px; vertical-align: middle; }
+  .flag-dot {
+    width: 9px; height: 9px; border-radius: 50%; display: inline-block;
+    box-shadow: 0 0 0 2px var(--surface-1);
+  }
+  .flag-dot.on  { background: var(--status-good); }
+  .flag-dot.off { background: transparent; box-shadow: 0 0 0 1px var(--baseline); }
+  .dot-legend {
+    display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 10px;
+    font-size: 0.7rem; color: var(--text-muted);
+  }
+  .dot-legend .lg { display: inline-flex; align-items: center; gap: 5px; }
+  .sr-only {
+    position: absolute; width: 1px; height: 1px; overflow: hidden;
+    clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap;
   }
   td.date { font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--text-secondary); }
 
@@ -511,6 +568,7 @@
     <h2>Companies <span class="count" id="appCount"></span></h2>
     <div id="aiPromptMount"></div>
     <div class="table-scroll" id="appTableMount"></div>
+    <div class="dot-legend" id="appLegend"></div>
   </section>
 
 </main>
@@ -964,9 +1022,22 @@
                      : { tone: "muted", text: "No connection" }
     ];
   }
+  // Full chips, for the update panel where there's room for words.
   function flagsHtml(a) {
     return '<div class="cell-flags">' +
       companyFlagChips(a).map(chipHtml).join("") + '</div>';
+  }
+
+  // Table version: the same two states as bare dots, so a row stays one line
+  // tall. Dropping the words is a real accessibility cost, so each dot carries
+  // its full text as a tooltip and as screen-reader-only text, and a legend
+  // sits under the table — the meaning is compressed, not thrown away.
+  function flagDotsHtml(a) {
+    return '<span class="flag-dots">' + companyFlagChips(a).map(function (f) {
+      return '<span class="flag-dot ' + (f.tone === "good" ? "on" : "off") +
+        '" title="' + escapeHtml(f.text) + '">' +
+        '<span class="sr-only">' + escapeHtml(f.text) + '</span></span>';
+    }).join("") + '</span>';
   }
 
   // A saved link is only "easy access" if it actually opens. Bare domains go
@@ -981,11 +1052,16 @@
     if (/^[a-z][a-z0-9+.-]*:/i.test(s)) return "";
     return "https://" + s;
   }
+  // The 🔗 always shows; the words next to it are dropped by CSS on a narrow
+  // screen so the whole row still fits. The tooltip and the screen-reader text
+  // carry the meaning either way, so the icon is never alone in what it says.
   function linkHtml(a, label) {
     var href = linkHref(a.link);
     if (!href) return "";
     return '<div class="cell-link"><a href="' + escapeHtml(href) +
-      '" target="_blank" rel="noopener">' + label + '</a></div>';
+      '" target="_blank" rel="noopener" title="Open posting">🔗' +
+      '<span class="lbl">' + escapeHtml(label) + '</span>' +
+      '<span class="sr-only">Open posting</span></a></div>';
   }
 
   // Nothing is a required field, so a row can have no name or no company.
@@ -1097,10 +1173,12 @@
     });
   }
 
-  function tableHtml(rows, cols, emptyMsg) {
+  function tableHtml(rows, cols, emptyMsg, cls) {
     if (!rows.length) return '<p class="empty">' + escapeHtml(emptyMsg) + '</p>';
-    var html = '<table><thead><tr>';
-    cols.forEach(function (c) { html += '<th>' + escapeHtml(c.head) + '</th>'; });
+    var html = '<table class="' + (cls || "") + '"><thead><tr>';
+    cols.forEach(function (c) {
+      html += '<th class="' + (c.cls || "") + '">' + escapeHtml(c.head) + '</th>';
+    });
     html += '</tr></thead><tbody>';
     rows.forEach(function (r) {
       html += '<tr class="tappable' + (r.closed ? ' is-closed' : '') +
@@ -1139,15 +1217,25 @@
     ], "No cold contacts logged yet.");
 
     document.getElementById("appTableMount").innerHTML = tableHtml(as, [
-      { head: "Company", cell: function (r) {
-          return '<div class="primary-cell">' + escapeHtml(companyOf(r)) + '</div>' +
-            (r.role ? '<div class="sub-cell">' + escapeHtml(r.role) + '</div>' : '') +
-            flagsHtml(r) +
-            linkHtml(r, "🔗 Open posting ↗");
+      // One line per company: name + role + the two flag dots, then date and
+      // status packed left, with the link column absorbing the slack so the
+      // posting always sits hard right.
+      { head: "Company", cls: "company", cell: function (r) {
+          return '<div class="co-wrap"><span class="co-text">' +
+            '<span class="co-name">' + escapeHtml(companyOf(r)) + '</span>' +
+            (r.role ? '<span class="co-role">' + escapeHtml(r.role) + '</span>' : '') +
+            '</span>' + flagDotsHtml(r) + '</div>';
         } },
       { head: "Date", cls: "date", cell: function (r) { return fmtShort(r.date); } },
-      { head: "Status", cell: function (r) { return chipHtml(statusOf(r, false)); } }
-    ], "No companies logged yet.");
+      { head: "Status", cls: "status", cell: function (r) { return chipHtml(statusOf(r, false)); } },
+      { head: "Link", cls: "linkcol", cell: function (r) { return linkHtml(r, " Open ↗"); } }
+    ], "No companies logged yet.", "companies");
+
+    document.getElementById("appLegend").innerHTML = apps().length
+      ? '<span class="lg"><span class="flag-dot on"></span>done</span>' +
+        '<span class="lg"><span class="flag-dot off"></span>not yet</span>' +
+        '<span class="lg">1st dot = cold email · 2nd = connection</span>'
+      : "";
 
     renderAiPrompt();
 
@@ -1432,7 +1520,7 @@
     // Same two chips as the table, so a company reads the same either place.
     if (!sel.isContact) html += flagsHtml(e);
 
-    html += linkHtml(e, "🔗 Open posting ↗");
+    html += linkHtml(e, " Open posting ↗");
     if (e.note) {
       html += '<div class="upd-meta" style="margin-top:6px;white-space:pre-wrap">' +
         escapeHtml(e.note) + '</div>';
