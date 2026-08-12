@@ -255,8 +255,9 @@
      One per entry, opened from the 📝 beside that entry's name. A small popup
      pinned to the right, not a full-height drawer: it's meant to sit beside
      what you're reading. No overlay — the tables stay live behind it. */
+  /* above the dialog (42) — the notes are opened from inside it */
   .ws-pop {
-    position: fixed; z-index: 39; top: 72px; right: 16px;
+    position: fixed; z-index: 43; top: 72px; right: 16px;
     width: min(340px, calc(100vw - 32px));
     height: min(400px, calc(100vh - 96px));
     display: flex; flex-direction: column;
@@ -331,8 +332,12 @@
   #copyOutreachBtn { margin-top: 8px; }
 
   /* ---------- Update panel ---------- */
-  #updatePanel { margin-top: 12px; display: none; }
-  #updatePanel.open { display: block; }
+  /* the non-field half of the edit dialog, below the form */
+  #editExtras { display: none; }
+  #editExtras.open {
+    display: block; margin-top: 4px; padding-top: 12px;
+    border-top: 1px solid var(--border);
+  }
   .upd-head {
     font-weight: 600; font-size: 0.95rem;
     display: flex; align-items: center; justify-content: space-between; gap: 10px;
@@ -384,14 +389,6 @@
   tbody tr.is-closed { opacity: 0.5; }
   tbody tr.tappable { cursor: pointer; }
   tbody tr.tappable:active { background: var(--surface-3); }
-  /* the row you opened, and the panel that drops out of it */
-  tbody tr.is-open > td { background: var(--surface-3); border-bottom: none; }
-  tbody tr.detail-row > td { padding: 0 0 12px; border-bottom: 1px solid var(--gridline); }
-  tbody tr.detail-row .detail-wrap {
-    background: var(--surface-3); border-radius: 0 0 10px 10px;
-    padding: 2px 12px 12px;
-  }
-  tbody tr.detail-row:last-child > td { border-bottom: none; }
   td .primary-cell { font-weight: 600; color: var(--text-primary); }
   td .sub-cell { color: var(--text-secondary); font-size: 0.76rem; }
   /* chips with words — update panel only, where vertical room is cheap */
@@ -418,16 +415,28 @@
   td.who .co-role { color: var(--text-secondary); font-size: 0.76rem; margin-left: 6px; }
   td.who .co-text { overflow: hidden; text-overflow: ellipsis; min-width: 0; white-space: nowrap; }
 
-  /* grab bars, left of the name. touch-action:none so dragging the handle
-     drags the row instead of scrolling the page */
+  /* Grab bars, left of the name. The bars are drawn in CSS rather than set as
+     a glyph so they can't land as a tofu box in a font without ⠿, and the span
+     is a real 24x34 tap target rather than the size of the ink. */
   .drag-handle {
-    flex: 0 0 auto; margin-right: 7px; color: var(--text-muted);
-    font-size: 0.95rem; line-height: 1; cursor: grab;
+    flex: 0 0 auto; width: 24px; height: 34px; margin-right: 2px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: grab; color: var(--text-muted);
     touch-action: none; user-select: none; -webkit-user-select: none;
-    padding: 4px 2px;
+    -webkit-tap-highlight-color: transparent;
   }
-  .drag-handle:active { cursor: grabbing; color: var(--text-secondary); }
-  tbody tr.dragging { opacity: 0.55; background: var(--surface-3); }
+  .drag-handle::before {
+    content: ""; display: block; width: 12px; height: 10px;
+    background: linear-gradient(to bottom,
+      currentColor 0 2px, transparent 2px 4px,
+      currentColor 4px 6px, transparent 6px 8px,
+      currentColor 8px 10px);
+  }
+  .drag-handle:hover { color: var(--text-secondary); }
+  .drag-handle:active { cursor: grabbing; color: var(--accent); }
+  tbody tr.dragging { opacity: 0.6; background: var(--surface-3); }
+  /* while a drag is live, nothing else on the page should be selectable */
+  body.is-dragging { user-select: none; -webkit-user-select: none; cursor: grabbing; }
 
   /* tapping the date header switches between date order and your own */
   th.sortcol { cursor: pointer; user-select: none; }
@@ -576,19 +585,6 @@
 
   </section>
 
-  <!-- Update an existing entry -->
-  <section class="card">
-    <h2>Update someone</h2>
-    <label for="entrySelect" style="display:block;font-size:0.78rem;color:var(--text-secondary);margin-bottom:4px">
-      Pick a contact or company
-    </label>
-    <select id="entrySelect"></select>
-    <!-- The panel only sits here when the selected entry has no visible row
-         to sit under; normally it's moved into the table. -->
-    <div id="updatePanelHome"><div id="updatePanel"></div></div>
-    <p class="empty" id="updateEmpty">Nothing logged yet — add a contact or a company above.</p>
-  </section>
-
   <!-- Tables -->
   <section class="card">
     <h2>People contacted <span class="count" id="contactCount"></span></h2>
@@ -708,8 +704,12 @@
       </div>
       <button type="submit" class="primary">Save company</button>
       <p class="hint">Add companies as you find them, then flip "Applied" once you've
-        actually applied. All three toggles flip later from "Update someone".</p>
+        actually applied. Tap any row later to change all of this.</p>
     </form>
+
+    <!-- Everything that isn't a form field: status you can flip, and the
+         actions on this entry. Only shown when the dialog is editing. -->
+    <div id="editExtras"></div>
 
     <datalist id="companyList"></datalist>
   </div>
@@ -1397,23 +1397,26 @@
     return best;
   }
 
+  // Move/up are bound to `window`, not to the handle. Binding them to the
+  // handle only works if setPointerCapture succeeds, and when it doesn't the
+  // drag silently does nothing the moment the pointer leaves that ~14px span —
+  // which is exactly how this failed the first time round.
   function enableDrag(mountId, kind) {
     var tbody = document.querySelector("#" + mountId + " tbody");
     if (!tbody) return;
     tbody.querySelectorAll(".drag-handle").forEach(function (h) {
       h.addEventListener("pointerdown", function (ev) {
-        var row = h.parentNode.closest ? h.closest("tr[data-select]") : null;
+        if (ev.button != null && ev.button !== 0) return;   // left/touch only
+        var row = h.closest("tr[data-select]");
         if (!row) return;
-        // Don't let the press fall through to the row's open-in-place tap.
         ev.preventDefault();
         ev.stopPropagation();
-        // An open panel sits in a detail row between the rows being moved,
-        // so put it away first and let the reorder see only real rows.
-        detachUpdatePanel();
         row.classList.add("dragging");
+        document.body.classList.add("is-dragging");
         var moved = false;
 
         function onMove(mv) {
+          if (mv.cancelable) mv.preventDefault();   // don't scroll the page
           moved = true;
           var after = rowAfter(tbody, mv.clientY);
           if (after === row) return;
@@ -1421,25 +1424,34 @@
           else tbody.appendChild(row);
         }
         function onUp() {
-          h.removeEventListener("pointermove", onMove);
-          h.removeEventListener("pointerup", onUp);
-          h.removeEventListener("pointercancel", onUp);
-          try { h.releasePointerCapture(ev.pointerId); } catch (err) {}
+          window.removeEventListener("pointermove", onMove);
+          window.removeEventListener("pointerup", onUp);
+          window.removeEventListener("pointercancel", onUp);
           row.classList.remove("dragging");
+          document.body.classList.remove("is-dragging");
           // Dragging *is* the switch to your own order — no extra step.
           if (moved) {
             setCustomOrder(kind, rowIdsIn(tbody));
             setSortMode(kind, "custom");
+            // Swallow the click this press turns into, so letting go doesn't
+            // also open the row you just dropped. A timestamp, not a flag: a
+            // touch drag may produce no click at all, and a stuck flag would
+            // silently eat the next real tap.
+            dragEndedAt = Date.now();
           }
           render();
         }
-        try { h.setPointerCapture(ev.pointerId); } catch (err) {}
-        h.addEventListener("pointermove", onMove);
-        h.addEventListener("pointerup", onUp);
-        h.addEventListener("pointercancel", onUp);
+        window.addEventListener("pointermove", onMove, { passive: false });
+        window.addEventListener("pointerup", onUp);
+        window.addEventListener("pointercancel", onUp);
+      });
+      // A press that becomes a click must never reach the row underneath.
+      h.addEventListener("click", function (ev) {
+        ev.preventDefault(); ev.stopPropagation();
       });
     });
   }
+  var dragEndedAt = 0;
 
   // The ↓ is the whole indicator: present means sorted by date, absent means
   // your own order. One glyph rather than a control that needs explaining.
@@ -1483,7 +1495,6 @@
   }
 
   function renderTables() {
-    homeUpdatePanel();   // rebuilding the tables would otherwise destroy it
     var showClosed = !!SETTINGS.showClosed;
     var cs = applyOrder(contacts().filter(function (c) { return showClosed || !c.closed; }), "contacts");
     var as = applyOrder(apps().filter(function (a) { return showClosed || !a.closed; }), "apps");
@@ -1537,18 +1548,18 @@
 
     renderAiPrompt();
 
-    // Tapping a row opens it in place, directly underneath itself. It
-    // deliberately does not scroll: you tapped something you could already
-    // see, so moving the page out from under you is never what you wanted.
+    // Tapping a row opens that entry in the centre-screen dialog, in edit
+    // mode. Same dialog, same form as adding — just pre-filled.
     document.querySelectorAll("tr[data-select]").forEach(function (tr) {
       tr.addEventListener("click", function (ev) {
         // The posting link sits inside a tappable row: tapping the link must
-        // open the posting, not hijack it into selecting the row.
+        // open the posting, not hijack it into opening the entry.
         if (ev.target.closest && ev.target.closest("a")) return;
-        var sel = document.getElementById("entrySelect");
-        sel.value = tr.getAttribute("data-select");
-        closeWorkspace();
-        renderUpdatePanel();
+        if (ev.target.closest && ev.target.closest(".drag-handle")) return;
+        // Letting go of a drag fires a click on the row you dropped.
+        if (Date.now() - dragEndedAt < 400) return;
+        var key = tr.getAttribute("data-select");
+        openEditor(key.charAt(0) === "c" ? "contact" : "app", key.slice(2));
       });
     });
 
@@ -1556,73 +1567,6 @@
     wireSortHeader("appTableMount", "apps");
     enableDrag("contactTableMount", "contacts");
     enableDrag("appTableMount", "apps");
-
-    placeUpdatePanel();
-  }
-
-  /* ---- the panel lives under the row it belongs to ---------------
-     It used to sit in the "Update someone" card near the top, so opening
-     an entry threw you back up the page and you lost your place in the
-     table. The panel is one element that gets physically moved into a
-     detail row beneath its own entry — same markup, same handlers, just
-     re-parented, so nothing about how it works had to change.
-     ---------------------------------------------------------------- */
-  function rowFor(selectKey) {
-    if (!selectKey) return null;
-    return document.querySelector('tr[data-select="' + selectKey.replace(/"/g, '\\"') + '"]');
-  }
-
-  // Tables are rebuilt by innerHTML, which would destroy the panel along with
-  // the row it's sitting in. Park it at home first, every time.
-  function homeUpdatePanel() {
-    var panel = document.getElementById("updatePanel");
-    var home = document.getElementById("updatePanelHome");
-    if (panel && home && panel.parentNode !== home) home.appendChild(panel);
-  }
-
-  // Detach before clearing, or removing the old detail row takes the panel
-  // with it. Also used before a drag, so the reorder sees only real rows.
-  function detachUpdatePanel() {
-    homeUpdatePanel();
-    document.querySelectorAll("tr.detail-row").forEach(function (tr) {
-      if (tr.parentNode) tr.parentNode.removeChild(tr);
-    });
-    document.querySelectorAll("tr.is-open").forEach(function (tr) {
-      tr.classList.remove("is-open");
-    });
-  }
-
-  function placeUpdatePanel() {
-    var panel = document.getElementById("updatePanel");
-    if (!panel) return;
-    detachUpdatePanel();
-
-    // No selection, or the row is hidden (a closed entry with "show closed"
-    // off): leave the panel in the card rather than dropping it on the floor.
-    var row = rowFor(document.getElementById("entrySelect").value);
-    if (!row || !panel.classList.contains("open")) return;
-
-    row.classList.add("is-open");
-    var tr = document.createElement("tr");
-    tr.className = "detail-row";
-    var td = document.createElement("td");
-    td.colSpan = row.children.length;
-    var wrap = document.createElement("div");
-    wrap.className = "detail-wrap";
-    wrap.appendChild(panel);
-    td.appendChild(wrap);
-    tr.appendChild(td);
-    row.parentNode.insertBefore(tr, row.nextSibling);
-  }
-
-  // Picking from the dropdown can land on a row far off-screen, so that one
-  // does scroll — but only when the row isn't already in front of you.
-  function revealSelectedRow() {
-    var row = rowFor(document.getElementById("entrySelect").value);
-    if (!row) return;
-    var r = row.getBoundingClientRect();
-    if (r.top >= 0 && r.bottom <= window.innerHeight) return;
-    row.scrollIntoView({ block: "center", behavior: "smooth" });
   }
 
   /* ---- "Copy AI prompt" for companies not applied to yet -------
@@ -1722,55 +1666,6 @@
       }).join("");
   }
 
-  /* ---- the dropdown of everything logged ---- */
-  function renderEntrySelect() {
-    var sel = document.getElementById("entrySelect");
-    var prev = sel.value;
-    var cs = contacts(), as = apps();
-    var empty = !cs.length && !as.length;
-
-    document.getElementById("updateEmpty").style.display = empty ? "block" : "none";
-    sel.style.display = empty ? "none" : "block";
-    document.querySelector('label[for="entrySelect"]').style.display = empty ? "none" : "block";
-    if (empty) { sel.innerHTML = ""; renderUpdatePanel(); return; }
-
-    var html = '<option value="">— pick one —</option>';
-    if (cs.length) {
-      html += '<optgroup label="People contacted">';
-      cs.forEach(function (c) {
-        html += '<option value="c:' + c.id + '">' +
-          escapeHtml(nameOf(c) + (c.company ? " · " + c.company : "") + "  (" + fmtShort(c.date) + ")") +
-          '</option>';
-      });
-      html += '</optgroup>';
-    }
-    if (as.length) {
-      html += '<optgroup label="Companies">';
-      as.forEach(function (a) {
-        html += '<option value="a:' + a.id + '">' +
-          escapeHtml(companyOf(a) + (a.role ? " · " + a.role : "") + "  (" + fmtShort(a.date) + ")") +
-          '</option>';
-      });
-      html += '</optgroup>';
-    }
-    sel.innerHTML = html;
-    // keep the selection across a re-render if it still exists
-    if (prev && sel.querySelector('option[value="' + prev.replace(/"/g, '\\"') + '"]')) {
-      sel.value = prev;
-    }
-  }
-
-  function selectedEntry() {
-    var v = document.getElementById("entrySelect").value;
-    if (!v) return null;
-    var isContact = v.charAt(0) === "c";
-    var id = v.slice(2);
-    var bag = isContact ? DATA.contacts : DATA.apps;
-    var e = bag[id];
-    if (!e || e.deleted) return null;
-    return { kind: isContact ? "contact" : "app", id: id, e: e, isContact: isContact };
-  }
-
   // One stored field (`email`) holds whatever handle matches the channel — an
   // address, a LinkedIn URL, a phone number. Only the label changes, so
   // switching the channel never moves or loses what you already typed.
@@ -1787,164 +1682,14 @@
   // A toggle reads as a fact with a ✓ when it's true; an action reads as a
   // verb. Keeping the two shapes apart is what makes the panel scannable.
   function toggleBtn(act, on, label) {
-    return '<button data-u="' + act + '" class="tgl' + (on ? " on" : "") + '">' +
+    return '<button type="button" data-u="' + act + '" class="tgl' + (on ? " on" : "") + '">' +
       (on ? "✓ " : "") + escapeHtml(label) + '</button>';
   }
+  // type="button": these live inside the dialog next to a real form, and a
+  // bare <button> would submit it.
   function actionBtn(act, label, cls) {
-    return '<button data-u="' + act + '" class="' + (cls || "") + '">' + label + '</button>';
-  }
-
-  function renderUpdatePanel() {
-    var panel = document.getElementById("updatePanel");
-    var sel = selectedEntry();
-    if (!sel) {
-      panel.className = ""; panel.innerHTML = "";
-      placeUpdatePanel();
-      return;
-    }
-    var e = sel.e;
-    var st = statusOf(e, sel.isContact);
-
-
-    var title = sel.isContact
-      ? escapeHtml(nameOf(e)) + (e.company ? ' <span style="font-weight:400;color:var(--text-secondary)">· ' + escapeHtml(e.company) + '</span>' : '')
-      : escapeHtml(companyOf(e)) + (e.role ? ' <span style="font-weight:400;color:var(--text-secondary)">· ' + escapeHtml(e.role) + '</span>' : '');
-    // The workspace belongs to this entry, so its button lives on this entry's
-    // name rather than in the app header. The dot says there's already
-    // something written in there, without opening it to find out.
-    var head = '<span class="upd-title">' + title + '</span>' +
-      '<button type="button" class="icon-btn ws-btn' + (hasWorkspace(e) ? " has" : "") +
-      '" data-u="workspace" title="Notes for this ' +
-      (sel.isContact ? "contact" : "company") + '" aria-label="Notes">📝</button>';
-
-    var metaBits = [];
-    if (sel.isContact) {
-      metaBits.push((e.channel || "Contacted") + " on " + fmtShort(e.date));
-      if (e.role) metaBits.push(e.role);
-      if (e.email) metaBits.push(e.email);
-      if ((e.nudgedOn || []).length) {
-        metaBits.push((e.nudgedOn.length) + " reminder" + (e.nudgedOn.length > 1 ? "s" : "") +
-          " (last " + fmtShort(e.nudgedOn[e.nudgedOn.length - 1]) + ")");
-      }
-    } else {
-      metaBits.push(isApplied(e) ? "Applied " + fmtShort(e.date) : "Added " + fmtShort(e.date));
-      if (e.role) metaBits.push(e.role);
-    }
-    if (e.respondedOn) metaBits.push("replied " + fmtShort(e.respondedOn));
-
-    var html = '<div class="upd-head">' + head + '</div>' +
-      '<div class="upd-meta">' + escapeHtml(metaBits.join(" · ")) + '</div>' +
-      '<div class="upd-meta" style="margin-top:6px">' + chipHtml(st) + '</div>';
-
-    // Same two chips as the table, so a company reads the same either place.
-    if (!sel.isContact) html += flagsHtml(e);
-
-    html += linkHtml(e, " Open posting ↗");
-    if (e.note) {
-      html += '<div class="upd-meta" style="margin-top:6px;white-space:pre-wrap">' +
-        escapeHtml(e.note) + '</div>';
-    }
-
-    html += '<div class="field wide" style="margin-top:12px">' +
-      '<label for="updMeeting">Meeting date <span class="opt">(blank = no meeting)</span></label>' +
-      '<input type="date" id="updMeeting" value="' + escapeHtml(e.meetingOn || "") + '"></div>';
-
-    // Two groups, because the buttons answer two different questions:
-    // "what's true about this?" and "what do I want to do to it?". Toggles
-    // are nouns and carry a ✓ when on; actions are verbs. Labels are short
-    // enough not to wrap, which is what made the old grid unreadable.
-    html += '<div class="upd-group"><span class="upd-group-label">Status</span>' +
-      '<div class="upd-acts">';
-    if (!sel.isContact) {
-      // The whole point of tracking a company before applying: flip it later.
-      html += toggleBtn("applied", isApplied(e), "Applied");
-      // Independent of Applied: you can email a company you never apply to,
-      // and land a connection at one whose posting isn't open yet.
-      html += toggleBtn("cold", isColdEmailed(e), "Cold emails");
-      html += toggleBtn("conn", isConnected(e), "Connection");
-    }
-    html += toggleBtn("replied", !!e.responded, "Replied");
-    if (sel.isContact) html += toggleBtn("nudged", remindedToday(e), "Reminder sent");
-    html += '</div></div>';
-
-    html += '<div class="upd-group"><span class="upd-group-label">Actions</span>' +
-      '<div class="upd-acts">';
-    if (sel.isContact) html += actionBtn("copyfollow", "📋 Copy draft");
-    html += actionBtn("edit", "✎ Edit");
-    html += actionBtn("close", e.closed ? "Reopen" : "Close");
-    html += actionBtn("delete", "Delete", "danger");
-    html += actionBtn("done", "Done", "done");
-    html += '</div></div>';
-
-    panel.innerHTML = html;
-    panel.className = "open";
-    placeUpdatePanel();
-
-    panel.querySelector("#updMeeting").addEventListener("change", function () {
-      var v = this.value;
-      e.meetingOn = v || null;
-      touch(e); saveData(); render();
-    });
-
-    panel.querySelectorAll("button[data-u]").forEach(function (btn) {
-      btn.addEventListener("click", function () {
-        var act = btn.getAttribute("data-u");
-        if (act === "copyfollow") {
-          copyText(fillTemplate(tplFor("followup"), draftValues(e)), btn);
-          return;
-        }
-        // Every change above already saved on tap, so Done just closes the
-        // panel — it is an exit, not a save. Nothing to lose by tapping it.
-        if (act === "done") {
-          document.getElementById("entrySelect").value = "";
-          renderUpdatePanel();
-          return;
-        }
-        if (act === "edit") {
-          // Same dialog, same form as adding — just pre-filled.
-          setLogForm(sel.isContact ? "contact" : "app", sel);
-          return;
-        }
-        if (act === "workspace") {
-          // Toggle: a second tap on the same entry's 📝 puts it away.
-          if (wsOpenFor && wsOpenFor.id === sel.id) closeWorkspace();
-          else openWorkspaceFor(sel);
-          return;
-        }
-        if (act === "applied") {
-          e.applied = !isApplied(e);
-          // Stamp the date you actually applied, so "Waiting Nd" counts from
-          // the application rather than from when you bookmarked the company.
-          if (e.applied) e.date = TODAY;
-        } else if (act === "cold") {
-          // Deliberately does not re-stamp the date: that date belongs to the
-          // application, and the companies table has no 7-day nudge to restart.
-          e.coldEmailed = !isColdEmailed(e);
-        } else if (act === "conn") {
-          e.connected = !isConnected(e);
-        } else if (act === "replied") {
-          e.responded = !e.responded;
-          e.respondedOn = e.responded ? TODAY : null;
-        } else if (act === "nudged") {
-          toggleRemindedToday(e);
-        } else if (act === "close") {
-          e.closed = !e.closed;
-        } else if (act === "delete") {
-          var what = sel.isContact ? nameOf(e) : companyOf(e);
-          if (!confirm("Delete “" + what + "” for good? This also removes it on your other devices.")) return;
-          // Its workspace goes with it — don't leave a popup open writing
-          // into an entry that no longer exists.
-          if (wsOpenFor && wsOpenFor.id === sel.id) hideWorkspace();
-          // Tombstone rather than a hard delete: a plain `delete` would
-          // be undone by the next sync from another device.
-          e.deleted = true; touch(e); saveData();
-          document.getElementById("entrySelect").value = "";
-          render();
-          return;
-        }
-        touch(e); saveData(); render();
-      });
-    });
+    return '<button type="button" data-u="' + act + '" class="' + (cls || "") + '">' +
+      label + '</button>';
   }
 
   function render() {
@@ -1952,9 +1697,8 @@
     renderStats();
     renderNudges();
     renderCompanyList();
-    renderEntrySelect();
-    renderUpdatePanel();
     renderTables();
+    renderEditExtras();   // keeps the open dialog honest after any change
   }
 
   /* ============================================================
@@ -2045,13 +1789,11 @@
       ? { bag: editSel.isContact ? "contacts" : "apps", id: editSel.id }
       : null;
 
-    // The backdrop would leave the workspace popup stranded behind a dim
-    // sheet, so put it away rather than half-showing it.
-    if (panelOpen) closeWorkspace();
+    if (!panelOpen || !editSel) hideWorkspace();   // notes belong to one entry
     logPanel.classList.toggle("open", panelOpen);
     logOverlay.classList.toggle("open", panelOpen);
     logPanel.setAttribute("aria-hidden", panelOpen ? "false" : "true");
-    if (!panelOpen) { removeLegacyChannel(); return; }
+    if (!panelOpen) { removeLegacyChannel(); renderEditExtras(); return; }
 
     logPanel.querySelector(".modal-body").scrollTop = 0;   // never land mid-form
     logPanelTitle.textContent = editSel
@@ -2073,6 +1815,100 @@
       else { appForm.reset(); document.getElementById("aDate").value = TODAY; }
       document.getElementById("aCompany").focus();
     }
+    renderEditExtras();
+  }
+
+  /* ---- editing an entry ------------------------------------------
+     Tapping a row opens this dialog. Fields come from the same form used
+     to add; everything that isn't a field — status you can flip, the
+     notes popup, delete — renders underneath it in #editExtras.
+     ---------------------------------------------------------------- */
+  var editExtras = document.getElementById("editExtras");
+
+  function editEntry() {
+    if (!editingEntry) return null;
+    var e = DATA[editingEntry.bag] && DATA[editingEntry.bag][editingEntry.id];
+    return (e && !e.deleted) ? e : null;
+  }
+
+  function openEditor(which, id) {
+    var bag = which === "contact" ? DATA.contacts : DATA.apps;
+    var e = bag[id];
+    if (!e || e.deleted) return;
+    setLogForm(which, { isContact: which === "contact", id: id, e: e });
+  }
+
+  function renderEditExtras() {
+    var e = editEntry();
+    if (!e) { editExtras.innerHTML = ""; editExtras.className = ""; return; }
+    var isContact = editingEntry.bag === "contacts";
+    var st = statusOf(e, isContact);
+
+    var html = '<div class="upd-meta">' + chipHtml(st) + '</div>';
+    html += '<div class="field wide" style="margin-top:10px">' +
+      '<label for="updMeeting">Meeting date <span class="opt">(blank = no meeting)</span></label>' +
+      '<input type="date" id="updMeeting" value="' + escapeHtml(e.meetingOn || "") + '"></div>';
+
+    // Applied / cold emails / connection are already toggles on the company
+    // form itself, so only what the form can't say goes here.
+    html += '<div class="upd-group"><span class="upd-group-label">Status</span>' +
+      '<div class="upd-acts">' + toggleBtn("replied", !!e.responded, "Replied");
+    if (isContact) html += toggleBtn("nudged", remindedToday(e), "Reminder sent");
+    html += toggleBtn("close", !!e.closed, "Closed");
+    html += '</div></div>';
+
+    html += '<div class="upd-group"><span class="upd-group-label">Actions</span>' +
+      '<div class="upd-acts">' +
+      actionBtn("workspace", "📝 Notes" + (hasWorkspace(e) ? " ●" : ""));
+    if (isContact) html += actionBtn("copyfollow", "📋 Copy draft");
+    html += actionBtn("delete", "Delete", "danger") + '</div></div>';
+
+    editExtras.innerHTML = html;
+    editExtras.className = "open";
+
+    editExtras.querySelector("#updMeeting").addEventListener("change", function () {
+      var live = editEntry();
+      if (!live) return;
+      live.meetingOn = this.value || null;
+      touch(live); saveData(); render();
+    });
+
+    editExtras.querySelectorAll("button[data-u]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var live = editEntry();
+        if (!live) return;
+        var act = btn.getAttribute("data-u");
+        if (act === "copyfollow") {
+          copyText(fillTemplate(tplFor("followup"), draftValues(live)), btn);
+          return;
+        }
+        if (act === "workspace") {
+          if (wsOpenFor && wsOpenFor.id === editingEntry.id) closeWorkspace();
+          else openWorkspaceFor({ isContact: isContact, id: editingEntry.id, e: live });
+          return;
+        }
+        if (act === "delete") {
+          var what = isContact ? nameOf(live) : companyOf(live);
+          if (!confirm("Delete “" + what + "” for good? This also removes it on your other devices.")) return;
+          hideWorkspace();
+          // Tombstone rather than a hard delete: a plain `delete` would be
+          // undone by the next sync from another device.
+          live.deleted = true; touch(live); saveData();
+          setLogForm(null, null);
+          render();
+          return;
+        }
+        if (act === "replied") {
+          live.responded = !live.responded;
+          live.respondedOn = live.responded ? TODAY : null;
+        } else if (act === "nudged") {
+          toggleRemindedToday(live);
+        } else if (act === "close") {
+          live.closed = !live.closed;
+        }
+        touch(live); saveData(); render();
+      });
+    });
   }
 
   function toggleForm(which) {
@@ -2255,14 +2091,6 @@
       date: document.getElementById("cDate").value || TODAY
     });
     copyText(fillTemplate(tplFor("outreach"), vals), this);
-  });
-
-  document.getElementById("entrySelect").addEventListener("change", function () {
-    // The workspace belongs to whoever was selected, so it doesn't follow you
-    // to the next entry — that's how you'd type notes onto the wrong person.
-    closeWorkspace();
-    renderUpdatePanel();
-    revealSelectedRow();
   });
 
   /* ============================================================

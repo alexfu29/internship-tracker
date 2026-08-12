@@ -54,7 +54,7 @@ channel relabels it without moving or clearing what you already typed.
 | Field | Notes |
 |---|---|
 | Company | no longer required — see "No field is enforced" |
-| **Applied yet?** | **Not yet** (default) or **Applied** — flip it later from "Update someone" |
+| **Applied yet?** | **Not yet** (default) or **Applied** — tap the row later to flip it |
 | **Cold emails sent?** | **Not yet** (default) or **Sent** — did you email anyone there |
 | **Connection made?** | **Not yet** (default) or **Connected** — did that outreach actually land |
 | Role | optional |
@@ -83,9 +83,8 @@ status chip.
 Where they show up:
 
 - On the **Add company** form, as two segmented controls defaulting to **Not yet**.
-- In **Update someone**, as **Cold emails sent** / **Connection made** buttons that
-  toggle — tap once to set, tap again to undo a mis-tap, plus a pair of chips with
-  the state spelled out in words.
+- On the **edit form** you get by tapping a company row — the same two controls,
+  pre-filled with where that company currently stands.
 - In the companies table, as **two small dots** next to the company name.
 
 Both states always render — never just the positive. Showing nothing for "no" would
@@ -99,8 +98,8 @@ In the table the words are compressed to dots to keep the row one line tall, whi
 is a real accessibility cost, so it's paid back three ways: each dot carries its
 full text as a **tooltip**, the same text is there for **screen readers**, and a
 **legend** sits under the table (`● done · ○ not yet · 1st dot = cold email, 2nd =
-connection`). The meaning is compressed, not thrown away. The update panel still
-spells both out in words, so there's always somewhere the state is unambiguous.
+connection`). The meaning is compressed, not thrown away — tap the row and the edit
+form spells both out in words, so there's always somewhere the state is unambiguous.
 
 These are per-*company*. The cold-contact table is still where individual people
 and the 7-day nudge live; **Cold emails sent** on a company is the coarse "have I
@@ -131,7 +130,7 @@ card.
 On a phone the row still has to fit, so under 620px the company name truncates with
 an ellipsis, the gutters tighten, and the link drops to a bare 🔗. That's deliberate:
 a shortened name beats having to scroll sideways to find out whether there's a link.
-Tap the row to see the full name and role in the update panel.
+Tap the row to see the full name and role in the dialog.
 
 ### The posting link, one tap away
 
@@ -150,12 +149,12 @@ carrying some other scheme isn't made clickable at all.
 ## Per-entry workspaces
 
 Every contact and every company has **its own workspace** — a bigger, free-form
-notes area that belongs to that one entry. Open the entry and tap the **📝** next to
-its name.
+notes area that belongs to that one entry. Tap the row to open it, then **📝 Notes**
+in the dialog.
 
 It opens as a **small popup on the right**: 340×400, deliberately not a full-height
-drawer and not a takeover. The tables stay live and readable behind it — no dimming
-— and the page underneath never moves, so nothing reflows while you write.
+drawer and not a takeover. It sits above the dialog, so you can read the entry while
+writing about it, and the page underneath never moves.
 
 - **Saves as you type**, debounced, straight onto that entry. The label reads
   `Saving…` then `Saved`.
@@ -168,11 +167,10 @@ drawer and not a takeover. The tables stay live and readable behind it — no di
 - The **📝 button shows a dot** when there's already something written in there, so
   you can tell without opening it.
 - **📋 Copy** puts the whole thing on the clipboard.
-- Tapping the same 📝 again puts it away, as does **✕** or **Escape**.
+- Tapping **📝 Notes** again puts it away, as does **✕** or **Escape**.
 
-The workspace **does not follow the dropdown**. Selecting a different entry closes
-it (after saving) instead of re-pointing at someone else — that's how you'd end up
-typing notes onto the wrong person.
+The workspace never re-points at another entry: opening a different one closes it
+first, after saving. That's how notes would end up on the wrong person.
 
 This is separate from the form's short **Note** field, which stays where it is. The
 note is the one-line "how did this go"; the workspace is where you draft the actual
@@ -199,7 +197,7 @@ other button swaps the contents and retitles the header. Close it by tapping the
 same button again, the **✕**, **Escape**, or by tapping outside it. Saving closes it
 for you.
 
-**✎ Edit** opens this same dialog pre-filled — see "The buttons" above.
+Tapping a row opens this same dialog pre-filled — see "Opening an entry" below.
 
 ## Copy AI prompt
 
@@ -230,28 +228,43 @@ so it never drags the percentage down.
 
 ## Opening an entry
 
-**Tap any row and it opens in place — right underneath itself.** The page does not
-scroll, the row does not move, and you keep your place in the table. Editing fields,
-flipping a toggle and saving all happen there too; none of them throw you back to
-the top.
+**Tap any row and it opens in a dialog in the middle of the screen, in edit mode** —
+the same dialog and the same form you added it with, pre-filled. Only the title
+(`Edit contact` / `Edit company`), the button (`Save changes`) and what happens on
+save are different. There's one definition of what a contact or a company looks like,
+so the add form and the edit form can't drift apart.
 
-Under the hood it's one panel that gets physically moved into a detail row beneath
-its own entry, so the inline version is identical to what you'd get anywhere else —
-same fields, same buttons, same behaviour.
+There's no "pick someone from a dropdown" step and nothing unfolds inside the table.
+You tap the thing you want to change and it opens.
 
-The **Update someone** dropdown still lists everything you've logged, grouped, for
-reaching an entry that isn't on screen. Picking from it does scroll — but only when
-the row isn't already in front of you.
+Below the fields, the dialog carries everything that isn't a field:
 
-If the selected entry has no visible row (a closed entry with "show closed" off),
-the panel falls back to sitting in the dropdown's card rather than disappearing.
+| Group | Buttons |
+|---|---|
+| **Status** | `Replied` · `Reminder sent` *(contacts)* · `Closed` — each shows a ✓ when true |
+| **Actions** | `📝 Notes` · `📋 Copy draft` *(contacts)* · `Delete` |
+
+plus the **meeting date**. Those save the moment you tap them — **Save changes** is
+only for the fields, so there's no way to lose a status change by closing without it.
+`📝 Notes` shows a ● when that entry already has something in its workspace, and the
+notes popup opens *above* the dialog so you can read one while writing the other.
+
+Applied / Cold emails / Connection aren't repeated here: they're toggles on the
+company form itself, a few lines up.
+
+Editing fields never touches status. Only the keys the form owns are written back:
+replies, meetings, reminder history, closed and the workspace all survive a rename.
+
+If an older contact holds a channel that's no longer offered (`In person`, `Phone`),
+the form adds it back as a real, selected option instead of silently rewriting the
+row — and drops it again on close, so the Add form stays clean.
 
 ### Ordering the tables
 
 Both tables start **newest first**, and the **↓** next to `DATE` (or `SENT`) is the
 whole indicator: present means date order, absent means your own order.
 
-- **Drag the ⠿ bars** left of a name to move a row. Dragging *is* the switch to your
+- **Drag the bars** left of a name to move a row. Dragging *is* the switch to your
   own order — the ↓ disappears the moment you drop.
 - **Tap the date header** to go back to newest-first. Tap it again and you're back in
   your own order. It's a straight toggle between the two.
@@ -266,38 +279,15 @@ The order is a view preference: it lives in this device's `localStorage`, never 
 the entries, so reordering can't alter your data or ride the sync. It also means each
 device keeps its own arrangement.
 
-### The buttons
-
-They're split into two groups, because they answer two different questions:
-
-| Group | Shape | Examples |
-|---|---|---|
-| **Status** | a fact, with a ✓ when it's true | `Applied` · `Cold emails` · `Connection` · `Replied` · `Reminder sent` |
-| **Actions** | a verb | `✎ Edit` · `📋 Copy draft` · `Close` · `Delete` · `Done` |
-
-Every label is short enough to sit on one line at its natural width, and the buttons
-wrap like text instead of being stretched into a fixed two-column grid — that grid
-was what forced long labels to wrap *inside* the button and turned the panel into a
-wall of half-legible text. Each label now says what it does on its own.
-
-Both kinds of entry carry the same two follow-up states: **replied** (yes/no) and
-**meeting** (a date). **Done** closes the panel when you've finished with that entry.
-
-Every status control in that panel saves the moment you tap it, so **Done is an
-exit, not a save** — there is no way to lose an edit by closing without it.
-
-**✎ Edit** opens **the same dialog and the same form you added the entry with**,
-pre-filled — only the title (`Edit contact` / `Edit company`), the button
-(`Save changes`) and what happens on save are different. There is one definition of
-what a contact or a company looks like, so the add form and the edit form can't
-drift apart.
-
-Editing fields never touches status. Only the keys the form owns are written back:
-replies, meetings, reminder history, closed, and the workspace all survive a rename.
-
-If an older contact holds a channel that's no longer offered (`In person`, `Phone`),
-the form adds it back as a real, selected option instead of silently rewriting the
-row — and drops it again on close, so the Add form stays clean.
+**How the drag works**, because the first attempt didn't: the bars are a 24×34 tap
+target drawn in CSS rather than a `⠿` glyph, so they can't land as a tofu box in a
+font that lacks it. The drag runs on pointer events with `touch-action: none`, so a
+finger drags the row instead of scrolling the page. Crucially the move and release
+listeners are bound to `window`, not to the handle — bound to the handle they only
+fire while the pointer stays inside that 24px box, which is why nothing moved. And
+the click that a press turns into is ignored for 400ms after a drop, by timestamp
+rather than a flag, so letting go never also opens the row you just dropped and a
+touch drag that produces no click can't leave a flag stuck swallowing your next tap.
 
 ## No field is enforced
 
@@ -355,7 +345,7 @@ Where the copy buttons are:
 |---|---|---|
 | 📋 Copy outreach draft | on the Cold contact form | the name/company you've *just typed* — copy, send, then Save |
 | 📋 Copy draft | on each red nudge row | that person's follow-up |
-| 📋 Copy follow-up draft | in "Update someone" | the selected contact's follow-up |
+| 📋 Copy draft | in a contact's edit dialog | that contact's follow-up |
 
 Placeholders substituted automatically:
 
