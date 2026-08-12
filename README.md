@@ -259,6 +259,28 @@ If an older contact holds a channel that's no longer offered (`In person`, `Phon
 the form adds it back as a real, selected option instead of silently rewriting the
 row — and drops it again on close, so the Add form stays clean.
 
+### Closed entries
+
+Closing something takes it out of the live table and puts it in a collapsed list at
+the bottom of that same table: **▸ View closed contacts** / **▸ View closed
+companies**, with a count. Tap to expand, tap to collapse; each table remembers
+whether you left it open.
+
+The strip **isn't there at all until something is closed**, so an app you've never
+closed anything in looks exactly as it did.
+
+It's the same table underneath — same columns, built by the same code, so the two
+can't drift apart — with two deliberate differences: no drag handle and no sortable
+date header. An archive is for finding one thing, not for keeping in an order, so
+it always stays newest-first.
+
+Rows in it stay tappable. Open one and turn **Closed** off and it goes straight back
+to the live list, in its old position if you have a custom order.
+
+This replaces the old **Settings → "Show closed entries"** checkbox, which mixed
+closed rows in with live ones. Closed things should be out of the way *and* findable,
+which a single global toggle can't do.
+
 ### Ordering the tables
 
 Both tables start **newest first**, and the **↓** next to `DATE` (or `SENT`) is the
@@ -322,7 +344,8 @@ red **"Needs a nudge"** card at the top of the screen with three buttons:
   replied before you actually sent). The reminder count and last-reminder date
   show on the row.
 - **They replied** — marks it replied, clears it from the list.
-- **Drop it** — closes the entry; it stops being chased and dims in the table.
+- **Drop it** — closes the entry; it stops being chased and moves to the closed
+  list at the bottom of the table.
 
 Nothing is emailed for you. The app flags who needs a follow-up; you send it.
 
@@ -428,7 +451,9 @@ background the app.
 - **Accidentally deleted something?** Restore from an exported JSON, or edit
   `data/log.json` in the repo and flip that entry's `deleted` back to `false`
   (bump its `updated` so it wins the merge).
-- **Want closed entries back in the tables?** Settings → "Show closed entries."
+- **Looking for something you closed?** It's under **View closed contacts** /
+  **View closed companies** at the bottom of that table. Tap the row and turn
+  **Closed** off to put it back in the live list.
 
 ## A note on `data/log.json` being public
 

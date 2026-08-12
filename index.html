@@ -480,6 +480,31 @@
   }
   .flag-dot.on  { background: var(--status-good); }
   .flag-dot.off { background: transparent; box-shadow: 0 0 0 1px var(--baseline); }
+  /* ---------- Closed entries ----------
+     A quiet strip under each table. It has to be findable but must never
+     compete with the live list above it, so: no fill, muted text, and it
+     doesn't render at all until something is actually closed. */
+  .archive:empty { display: none; }
+  .archive { margin-top: 12px; border-top: 1px solid var(--gridline); padding-top: 10px; }
+  .archive-toggle {
+    display: flex; align-items: center; gap: 7px; width: 100%;
+    min-height: 38px; padding: 6px 8px; border-radius: 8px;
+    border: 1px solid transparent; background: transparent;
+    color: var(--text-secondary); font-size: 0.78rem; font-weight: 600;
+    font-family: inherit; cursor: pointer; text-align: left;
+  }
+  .archive-toggle:hover { background: var(--surface-2); }
+  .archive-toggle.on { color: var(--text-primary); }
+  .archive-toggle .caret { color: var(--text-muted); font-size: 0.7rem; width: 10px; }
+  .archive-toggle .n {
+    margin-left: auto; color: var(--text-muted); font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  /* closed rows are already dimmed by .is-closed; don't dim the whole block
+     again or the text stops being readable */
+  .archive-table { margin-top: 4px; }
+  .archive-table thead th { padding-top: 4px; }
+
   .dot-legend {
     display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 10px;
     font-size: 0.7rem; color: var(--text-muted);
@@ -589,6 +614,7 @@
   <section class="card">
     <h2>People contacted <span class="count" id="contactCount"></span></h2>
     <div class="table-scroll" id="contactTableMount"></div>
+    <div class="archive" id="contactArchive"></div>
   </section>
 
   <section class="card">
@@ -596,6 +622,7 @@
     <div id="aiPromptMount"></div>
     <div class="table-scroll" id="appTableMount"></div>
     <div class="dot-legend" id="appLegend"></div>
+    <div class="archive" id="appArchive"></div>
   </section>
 
 </main>
@@ -802,11 +829,6 @@
     <label for="importInput" style="margin-top:10px">Import JSON</label>
     <input type="file" id="importInput" accept="application/json">
   </div>
-  <hr>
-  <label for="showClosed" style="display:flex;align-items:center;gap:8px;margin:0">
-    <input type="checkbox" id="showClosed" style="width:auto;min-height:0">
-    <span>Show closed entries in the tables</span>
-  </label>
   <hr>
   <p style="font-size:0.72rem;color:var(--text-muted)">
     The token is stored only on this device (localStorage). It is never sent anywhere
@@ -1494,22 +1516,15 @@
     return html + '</tbody></table>';
   }
 
-  function renderTables() {
-    var showClosed = !!SETTINGS.showClosed;
-    var cs = applyOrder(contacts().filter(function (c) { return showClosed || !c.closed; }), "contacts");
-    var as = applyOrder(apps().filter(function (a) { return showClosed || !a.closed; }), "apps");
-
-    cs.forEach(function (c) { c.selectKey = "c:" + c.id; });
-    as.forEach(function (a) { a.selectKey = "a:" + a.id; });
-
-    document.getElementById("contactCount").textContent =
-      contacts().length ? cs.length + " shown" : "";
-    document.getElementById("appCount").textContent =
-      apps().length ? as.length + " shown" : "";
-
-    document.getElementById("contactTableMount").innerHTML = tableHtml(cs, [
+  /* Columns are built by a function so the live table and the closed-entries
+     table below it are the same table, not two that can drift apart. The
+     archive drops the drag handle and the sortable header: it's a place to
+     look something up, not a list you keep in an order. */
+  function contactCols(archive) {
+    return [
       { head: "Who", cls: "who", cell: function (r) {
-          return '<div class="co-wrap">' + dragHandleHtml() + '<span class="co-text">' +
+          return '<div class="co-wrap">' + (archive ? "" : dragHandleHtml()) +
+            '<span class="co-text">' +
             '<span class="co-name">' + escapeHtml(nameOf(r)) + '</span>' +
             (r.company || r.role
               ? '<span class="co-role">' + escapeHtml([r.company, r.role].filter(Boolean).join(" · ")) + '</span>'
@@ -1519,32 +1534,90 @@
       { head: "How", cell: function (r) {
           return '<span class="sub-cell">' + escapeHtml(r.channel || "—") + '</span>';
         } },
-      { head: "Sent", cls: "date sortcol", cell: function (r) { return fmtShort(r.date); } },
+      { head: "Sent", cls: archive ? "date" : "date sortcol", cell: function (r) { return fmtShort(r.date); } },
       { head: "Status", cell: function (r) { return chipHtml(statusOf(r, true)); } }
-    ], "No cold contacts logged yet.");
-
-    document.getElementById("appTableMount").innerHTML = tableHtml(as, [
-      // One line per company: name + role + the two flag dots, then date and
-      // status packed left, with the link column absorbing the slack so the
-      // posting always sits hard right.
+    ];
+  }
+  // One line per company: name + role + the two flag dots, then date and
+  // status packed left, with the link column absorbing the slack so the
+  // posting always sits hard right.
+  function appCols(archive) {
+    return [
       { head: "Company", cls: "company", cell: function (r) {
-          return '<div class="co-wrap">' + dragHandleHtml() + '<span class="co-text">' +
+          return '<div class="co-wrap">' + (archive ? "" : dragHandleHtml()) +
+            '<span class="co-text">' +
             '<span class="co-name">' + escapeHtml(companyOf(r)) + '</span>' +
             (r.role ? '<span class="co-role">' + escapeHtml(r.role) + '</span>' : '') +
             '</span>' + flagDotsHtml(r) + '</div>';
         } },
-      { head: "Date", cls: "date sortcol", cell: function (r) { return fmtShort(r.date); } },
+      { head: "Date", cls: archive ? "date" : "date sortcol", cell: function (r) { return fmtShort(r.date); } },
       { head: "Status", cls: "status", cell: function (r) { return chipHtml(statusOf(r, false)); } },
       { head: "Link", cls: "linkcol", cell: function (r) { return linkHtml(r, " Open ↗"); } },
       // Absorbs the leftover width so the columns above stay packed together.
       { head: "", cls: "spacer", cell: function () { return ""; } }
-    ], "No companies logged yet.", "companies");
+    ];
+  }
 
-    document.getElementById("appLegend").innerHTML = apps().length
+  /* ---- closed entries live in their own section, below --------------
+     Closing something should get it out of the way without pretending it
+     never happened, so it moves to a collapsed list at the bottom of its
+     own table rather than vanishing or cluttering the live one.
+     -------------------------------------------------------------------- */
+  function renderArchive(mountId, rows, settingKey, label, cols, tableCls) {
+    var mount = document.getElementById(mountId);
+    if (!rows.length) { mount.innerHTML = ""; return; }
+    var open = !!SETTINGS[settingKey];
+    mount.innerHTML =
+      '<button type="button" class="archive-toggle' + (open ? " on" : "") + '">' +
+        '<span class="caret">' + (open ? "▾" : "▸") + '</span>' +
+        (open ? "Hide" : "View") + " closed " + label +
+        ' <span class="n">' + rows.length + '</span></button>' +
+      (open
+        ? '<div class="table-scroll archive-table">' +
+            tableHtml(rows, cols, "", tableCls) + '</div>'
+        : "");
+    mount.querySelector(".archive-toggle").addEventListener("click", function () {
+      SETTINGS[settingKey] = !open;
+      saveSettings(SETTINGS);
+      render();
+    });
+  }
+
+  function renderTables() {
+    var all = { contacts: contacts(), apps: apps() };
+    var cs = applyOrder(all.contacts.filter(function (c) { return !c.closed; }), "contacts");
+    var as = applyOrder(all.apps.filter(function (a) { return !a.closed; }), "apps");
+    // Archives stay in date order — an archive is for finding things.
+    var csClosed = all.contacts.filter(function (c) { return !!c.closed; });
+    var asClosed = all.apps.filter(function (a) { return !!a.closed; });
+
+    [cs, csClosed].forEach(function (list) {
+      list.forEach(function (c) { c.selectKey = "c:" + c.id; });
+    });
+    [as, asClosed].forEach(function (list) {
+      list.forEach(function (a) { a.selectKey = "a:" + a.id; });
+    });
+
+    document.getElementById("contactCount").textContent =
+      all.contacts.length ? cs.length + " open" : "";
+    document.getElementById("appCount").textContent =
+      all.apps.length ? as.length + " open" : "";
+
+    document.getElementById("contactTableMount").innerHTML =
+      tableHtml(cs, contactCols(false), "No cold contacts logged yet.");
+    document.getElementById("appTableMount").innerHTML =
+      tableHtml(as, appCols(false), "No companies logged yet.", "companies");
+
+    document.getElementById("appLegend").innerHTML = as.length
       ? '<span class="lg"><span class="flag-dot on"></span>done</span>' +
         '<span class="lg"><span class="flag-dot off"></span>not yet</span>' +
         '<span class="lg">1st dot = cold email · 2nd = connection</span>'
       : "";
+
+    renderArchive("contactArchive", csClosed, "openClosedContacts",
+      "contacts", contactCols(true), "");
+    renderArchive("appArchive", asClosed, "openClosedApps",
+      "companies", appCols(true), "companies");
 
     renderAiPrompt();
 
@@ -2241,7 +2314,6 @@
     document.getElementById("patInput").value = getPAT();
     document.getElementById("ownerInput").value = or.owner || "";
     document.getElementById("repoInput").value = or.repo || "";
-    document.getElementById("showClosed").checked = !!SETTINGS.showClosed;
     document.getElementById("tplOutreach").value = tplFor("outreach");
     document.getElementById("tplFollowup").value = tplFor("followup");
     document.getElementById("aiPromptInput").value = aiPromptTpl();
@@ -2287,12 +2359,6 @@
     lastKnownSha = null;
     syncPull(true);
   });
-  document.getElementById("showClosed").addEventListener("change", function () {
-    SETTINGS.showClosed = this.checked;
-    saveSettings(SETTINGS);
-    renderTables();
-  });
-
   // "Done" saves and closes. If it spots a typo'd placeholder it holds the
   // drawer open once to say so, then respects a second tap — warn, don't
   // block. Saving always happens either way, so nothing typed is lost.
