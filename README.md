@@ -199,6 +199,8 @@ other button swaps the contents and retitles the header. Close it by tapping the
 same button again, the **✕**, **Escape**, or by tapping outside it. Saving closes it
 for you.
 
+**✎ Edit** opens this same dialog pre-filled — see "The buttons" above.
+
 ## Copy AI prompt
 
 Above the Companies table, whenever anything is still unapplied, there's a
@@ -244,6 +246,26 @@ the row isn't already in front of you.
 If the selected entry has no visible row (a closed entry with "show closed" off),
 the panel falls back to sitting in the dropdown's card rather than disappearing.
 
+### Ordering the tables
+
+Both tables start **newest first**, and the **↓** next to `DATE` (or `SENT`) is the
+whole indicator: present means date order, absent means your own order.
+
+- **Drag the ⠿ bars** left of a name to move a row. Dragging *is* the switch to your
+  own order — the ↓ disappears the moment you drop.
+- **Tap the date header** to go back to newest-first. Tap it again and you're back in
+  your own order. It's a straight toggle between the two.
+- **Both orders are remembered.** Rearranging doesn't destroy the date sort, and
+  sorting by date doesn't destroy your arrangement.
+
+Anything the saved order has never seen — added since you last dragged, or synced in
+from another device — appears at the **top** in date order rather than silently
+sinking to the bottom.
+
+The order is a view preference: it lives in this device's `localStorage`, never on
+the entries, so reordering can't alter your data or ride the sync. It also means each
+device keeps its own arrangement.
+
 ### The buttons
 
 They're split into two groups, because they answer two different questions:
@@ -264,18 +286,18 @@ Both kinds of entry carry the same two follow-up states: **replied** (yes/no) an
 Every status control in that panel saves the moment you tap it, so **Done is an
 exit, not a save** — there is no way to lose an edit by closing without it.
 
-**✎ Edit contact details / ✎ Edit company details** opens every field for editing —
-name, company, role, how you reached out, email, date, link, note. Field labels are
-word-for-word the ones on the logging form, so a field never means one thing when
-you add it and something else when you fix it. The company date label follows the
-Applied toggle: **Date applied** when applied, **Date added** when not.
+**✎ Edit** opens **the same dialog and the same form you added the entry with**,
+pre-filled — only the title (`Edit contact` / `Edit company`), the button
+(`Save changes`) and what happens on save are different. There is one definition of
+what a contact or a company looks like, so the add form and the edit form can't
+drift apart.
 
-Editing is a distinct mode with **Save changes** and **Cancel** — Cancel discards.
-Editing fields never touches status: the Applied / Cold emails sent / Connection
-made flags, replies, meetings and reminder history all survive a rename.
+Editing fields never touches status. Only the keys the form owns are written back:
+replies, meetings, reminder history, closed, and the workspace all survive a rename.
 
 If an older contact holds a channel that's no longer offered (`In person`, `Phone`),
-the edit form keeps it as a selected option instead of silently rewriting it.
+the form adds it back as a real, selected option instead of silently rewriting the
+row — and drops it again on close, so the Add form stays clean.
 
 ## No field is enforced
 

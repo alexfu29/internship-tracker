@@ -413,7 +413,26 @@
   table.companies td {
     padding-top: 7px; padding-bottom: 7px; vertical-align: middle; height: 38px;
   }
-  td.company .co-wrap { display: flex; align-items: center; }
+  td.company .co-wrap, td.who .co-wrap { display: flex; align-items: center; }
+  td.who .co-name { font-weight: 600; color: var(--text-primary); }
+  td.who .co-role { color: var(--text-secondary); font-size: 0.76rem; margin-left: 6px; }
+  td.who .co-text { overflow: hidden; text-overflow: ellipsis; min-width: 0; white-space: nowrap; }
+
+  /* grab bars, left of the name. touch-action:none so dragging the handle
+     drags the row instead of scrolling the page */
+  .drag-handle {
+    flex: 0 0 auto; margin-right: 7px; color: var(--text-muted);
+    font-size: 0.95rem; line-height: 1; cursor: grab;
+    touch-action: none; user-select: none; -webkit-user-select: none;
+    padding: 4px 2px;
+  }
+  .drag-handle:active { cursor: grabbing; color: var(--text-secondary); }
+  tbody tr.dragging { opacity: 0.55; background: var(--surface-3); }
+
+  /* tapping the date header switches between date order and your own */
+  th.sortcol { cursor: pointer; user-select: none; }
+  th.sortcol.active { color: var(--text-secondary); }
+  th.sortcol .sort-arrow { margin-left: 3px; font-size: 0.8rem; line-height: 1; }
   /* only the words truncate — the dots are pinned and never get clipped */
   td.company .co-text { overflow: hidden; text-overflow: ellipsis; min-width: 0; }
   td.company .flag-dots { flex: 0 0 auto; }
@@ -1064,6 +1083,49 @@
   function contacts() { return liveList(DATA.contacts); }
   function apps() { return liveList(DATA.apps); }
 
+  /* ---- table order: by date, or your own -------------------------
+     Both the mode and the hand-made order live in SETTINGS, i.e. in
+     this device's localStorage. Nothing here writes to an entry, so
+     reordering can't touch your data or ride the sync.
+     ---------------------------------------------------------------- */
+  function sortModeFor(kind) {
+    var m = SETTINGS.sortMode && SETTINGS.sortMode[kind];
+    return m === "custom" ? "custom" : "date";
+  }
+  function customOrderFor(kind) {
+    var o = SETTINGS.rowOrder && SETTINGS.rowOrder[kind];
+    return (o && o.length !== undefined && typeof o !== "string") ? o : null;
+  }
+  function setSortMode(kind, mode) {
+    if (!SETTINGS.sortMode) SETTINGS.sortMode = {};
+    SETTINGS.sortMode[kind] = mode;
+    saveSettings(SETTINGS);
+  }
+  function setCustomOrder(kind, ids) {
+    if (!SETTINGS.rowOrder) SETTINGS.rowOrder = {};
+    SETTINGS.rowOrder[kind] = ids;
+    saveSettings(SETTINGS);
+  }
+
+  // liveList already hands back newest-first, so date mode is a no-op.
+  function applyOrder(list, kind) {
+    if (sortModeFor(kind) !== "custom") return list;
+    var order = customOrderFor(kind);
+    if (!order) return list;
+    var pos = {};
+    order.forEach(function (id, i) { pos[id] = i; });
+    // Anything the saved order has never seen — added since, or synced in
+    // from another device — sits at the top in date order rather than
+    // silently vanishing to the bottom. Sort is stable, so ties hold.
+    return list.slice().sort(function (a, b) {
+      var pa = pos[a.id], pb = pos[b.id];
+      if (pa === undefined && pb === undefined) return 0;
+      if (pa === undefined) return -1;
+      if (pb === undefined) return 1;
+      return pa - pb;
+    });
+  }
+
   function touch(entry) { entry.updated = new Date().toISOString(); }
 
   /* ============================================================
@@ -1310,6 +1372,100 @@
     });
   }
 
+  function dragHandleHtml() {
+    return '<span class="drag-handle" title="Drag to reorder" aria-hidden="true">⠿</span>';
+  }
+
+  /* ---- drag to reorder, tap the date header to switch back --------
+     Pointer events rather than HTML5 drag-and-drop, because HTML5 DnD
+     doesn't fire on touch and this is mostly a phone app.
+     ---------------------------------------------------------------- */
+  function rowIdsIn(tbody) {
+    return Array.prototype.slice.call(tbody.querySelectorAll("tr[data-select]"))
+      .map(function (r) { return r.getAttribute("data-select").slice(2); });
+  }
+  // The row whose top half the pointer is currently above — insert before it.
+  function rowAfter(tbody, y) {
+    var rows = Array.prototype.slice.call(
+      tbody.querySelectorAll("tr[data-select]:not(.dragging)"));
+    var best = null, bestOffset = -Infinity;
+    rows.forEach(function (r) {
+      var box = r.getBoundingClientRect();
+      var offset = y - box.top - box.height / 2;
+      if (offset < 0 && offset > bestOffset) { bestOffset = offset; best = r; }
+    });
+    return best;
+  }
+
+  function enableDrag(mountId, kind) {
+    var tbody = document.querySelector("#" + mountId + " tbody");
+    if (!tbody) return;
+    tbody.querySelectorAll(".drag-handle").forEach(function (h) {
+      h.addEventListener("pointerdown", function (ev) {
+        var row = h.parentNode.closest ? h.closest("tr[data-select]") : null;
+        if (!row) return;
+        // Don't let the press fall through to the row's open-in-place tap.
+        ev.preventDefault();
+        ev.stopPropagation();
+        // An open panel sits in a detail row between the rows being moved,
+        // so put it away first and let the reorder see only real rows.
+        detachUpdatePanel();
+        row.classList.add("dragging");
+        var moved = false;
+
+        function onMove(mv) {
+          moved = true;
+          var after = rowAfter(tbody, mv.clientY);
+          if (after === row) return;
+          if (after) tbody.insertBefore(row, after);
+          else tbody.appendChild(row);
+        }
+        function onUp() {
+          h.removeEventListener("pointermove", onMove);
+          h.removeEventListener("pointerup", onUp);
+          h.removeEventListener("pointercancel", onUp);
+          try { h.releasePointerCapture(ev.pointerId); } catch (err) {}
+          row.classList.remove("dragging");
+          // Dragging *is* the switch to your own order — no extra step.
+          if (moved) {
+            setCustomOrder(kind, rowIdsIn(tbody));
+            setSortMode(kind, "custom");
+          }
+          render();
+        }
+        try { h.setPointerCapture(ev.pointerId); } catch (err) {}
+        h.addEventListener("pointermove", onMove);
+        h.addEventListener("pointerup", onUp);
+        h.addEventListener("pointercancel", onUp);
+      });
+    });
+  }
+
+  // The ↓ is the whole indicator: present means sorted by date, absent means
+  // your own order. One glyph rather than a control that needs explaining.
+  function wireSortHeader(mountId, kind) {
+    var th = document.querySelector("#" + mountId + " th.sortcol");
+    if (!th) return;
+    var byDate = sortModeFor(kind) === "date";
+    var label = th.textContent;
+    th.innerHTML = escapeHtml(label) + (byDate ? '<span class="sort-arrow">↓</span>' : "");
+    th.classList.toggle("active", byDate);
+    th.setAttribute("title", byDate
+      ? "Newest first — tap for your own order"
+      : "Your own order — tap to sort by date");
+    th.addEventListener("click", function () {
+      var next = sortModeFor(kind) === "date" ? "custom" : "date";
+      // Switching to your own order for the first time starts from what's
+      // on screen, so the list never jumps to something you didn't choose.
+      if (next === "custom" && !customOrderFor(kind)) {
+        var tbody = document.querySelector("#" + mountId + " tbody");
+        if (tbody) setCustomOrder(kind, rowIdsIn(tbody));
+      }
+      setSortMode(kind, next);
+      render();
+    });
+  }
+
   function tableHtml(rows, cols, emptyMsg, cls) {
     if (!rows.length) return '<p class="empty">' + escapeHtml(emptyMsg) + '</p>';
     var html = '<table class="' + (cls || "") + '"><thead><tr>';
@@ -1329,8 +1485,8 @@
   function renderTables() {
     homeUpdatePanel();   // rebuilding the tables would otherwise destroy it
     var showClosed = !!SETTINGS.showClosed;
-    var cs = contacts().filter(function (c) { return showClosed || !c.closed; });
-    var as = apps().filter(function (a) { return showClosed || !a.closed; });
+    var cs = applyOrder(contacts().filter(function (c) { return showClosed || !c.closed; }), "contacts");
+    var as = applyOrder(apps().filter(function (a) { return showClosed || !a.closed; }), "apps");
 
     cs.forEach(function (c) { c.selectKey = "c:" + c.id; });
     as.forEach(function (a) { a.selectKey = "a:" + a.id; });
@@ -1341,16 +1497,18 @@
       apps().length ? as.length + " shown" : "";
 
     document.getElementById("contactTableMount").innerHTML = tableHtml(cs, [
-      { head: "Who", cell: function (r) {
-          return '<div class="primary-cell">' + escapeHtml(nameOf(r)) + '</div>' +
+      { head: "Who", cls: "who", cell: function (r) {
+          return '<div class="co-wrap">' + dragHandleHtml() + '<span class="co-text">' +
+            '<span class="co-name">' + escapeHtml(nameOf(r)) + '</span>' +
             (r.company || r.role
-              ? '<div class="sub-cell">' + escapeHtml([r.company, r.role].filter(Boolean).join(" · ")) + '</div>'
-              : '');
+              ? '<span class="co-role">' + escapeHtml([r.company, r.role].filter(Boolean).join(" · ")) + '</span>'
+              : '') +
+            '</span></div>';
         } },
       { head: "How", cell: function (r) {
           return '<span class="sub-cell">' + escapeHtml(r.channel || "—") + '</span>';
         } },
-      { head: "Sent", cls: "date", cell: function (r) { return fmtShort(r.date); } },
+      { head: "Sent", cls: "date sortcol", cell: function (r) { return fmtShort(r.date); } },
       { head: "Status", cell: function (r) { return chipHtml(statusOf(r, true)); } }
     ], "No cold contacts logged yet.");
 
@@ -1359,12 +1517,12 @@
       // status packed left, with the link column absorbing the slack so the
       // posting always sits hard right.
       { head: "Company", cls: "company", cell: function (r) {
-          return '<div class="co-wrap"><span class="co-text">' +
+          return '<div class="co-wrap">' + dragHandleHtml() + '<span class="co-text">' +
             '<span class="co-name">' + escapeHtml(companyOf(r)) + '</span>' +
             (r.role ? '<span class="co-role">' + escapeHtml(r.role) + '</span>' : '') +
             '</span>' + flagDotsHtml(r) + '</div>';
         } },
-      { head: "Date", cls: "date", cell: function (r) { return fmtShort(r.date); } },
+      { head: "Date", cls: "date sortcol", cell: function (r) { return fmtShort(r.date); } },
       { head: "Status", cls: "status", cell: function (r) { return chipHtml(statusOf(r, false)); } },
       { head: "Link", cls: "linkcol", cell: function (r) { return linkHtml(r, " Open ↗"); } },
       // Absorbs the leftover width so the columns above stay packed together.
@@ -1389,11 +1547,15 @@
         if (ev.target.closest && ev.target.closest("a")) return;
         var sel = document.getElementById("entrySelect");
         sel.value = tr.getAttribute("data-select");
-        editingKey = null;
         closeWorkspace();
         renderUpdatePanel();
       });
     });
+
+    wireSortHeader("contactTableMount", "contacts");
+    wireSortHeader("appTableMount", "apps");
+    enableDrag("contactTableMount", "contacts");
+    enableDrag("appTableMount", "apps");
 
     placeUpdatePanel();
   }
@@ -1418,10 +1580,9 @@
     if (panel && home && panel.parentNode !== home) home.appendChild(panel);
   }
 
-  function placeUpdatePanel() {
-    var panel = document.getElementById("updatePanel");
-    if (!panel) return;
-    // Detach before clearing, or removing the old detail row takes the panel.
+  // Detach before clearing, or removing the old detail row takes the panel
+  // with it. Also used before a drag, so the reorder sees only real rows.
+  function detachUpdatePanel() {
     homeUpdatePanel();
     document.querySelectorAll("tr.detail-row").forEach(function (tr) {
       if (tr.parentNode) tr.parentNode.removeChild(tr);
@@ -1429,6 +1590,12 @@
     document.querySelectorAll("tr.is-open").forEach(function (tr) {
       tr.classList.remove("is-open");
     });
+  }
+
+  function placeUpdatePanel() {
+    var panel = document.getElementById("updatePanel");
+    if (!panel) return;
+    detachUpdatePanel();
 
     // No selection, or the row is hidden (a closed entry with "show closed"
     // off): leave the panel in the card rather than dropping it on the floor.
@@ -1604,22 +1771,6 @@
     return { kind: isContact ? "contact" : "app", id: id, e: e, isContact: isContact };
   }
 
-  /* ---- full field editing -------------------------------------
-     Labels here are deliberately word-for-word the same as the ones on
-     the logging forms, so a field never means one thing when you add it
-     and something else when you fix it.
-     ------------------------------------------------------------- */
-  var editingKey = null;   // selectKey currently in edit mode, or null
-
-  // Base channels are Email / LinkedIn / Other, but an older entry may hold
-  // "In person" or "Phone". Keep whatever is stored as a selectable option
-  // rather than silently rewriting the row the moment it's opened.
-  function channelOptions(current) {
-    var base = ["Email", "LinkedIn", "Other"];
-    if (current && base.indexOf(current) === -1) base.unshift(current);
-    return base;
-  }
-
   // One stored field (`email`) holds whatever handle matches the channel — an
   // address, a LinkedIn URL, a phone number. Only the label changes, so
   // switching the channel never moves or loses what you already typed.
@@ -1631,52 +1782,6 @@
   }
   function handleLabelHtml(channel) {
     return escapeHtml(handleLabel(channel)) + ' <span class="opt">(optional)</span>';
-  }
-
-  function editFormHtml(e, isContact) {
-    var h = "";
-    if (isContact) {
-      h += '<div class="field"><label for="edName">Who did you contact?</label>' +
-        '<input type="text" id="edName" value="' + escapeHtml(e.name || "") + '"></div>' +
-        '<div class="row2">' +
-        '<div class="field"><label for="edCompany">Company <span class="opt">(optional)</span></label>' +
-        '<input type="text" id="edCompany" list="companyList" value="' + escapeHtml(e.company || "") + '"></div>' +
-        '<div class="field"><label for="edRole">Their role <span class="opt">(optional)</span></label>' +
-        '<input type="text" id="edRole" value="' + escapeHtml(e.role || "") + '"></div>' +
-        '</div>' +
-        '<div class="field"><label>How did you reach out?</label><div class="seg">' +
-        channelOptions(e.channel).map(function (c) {
-          return '<label><input type="radio" name="edChannel" value="' + escapeHtml(c) + '"' +
-            (c === (e.channel || "Email") ? " checked" : "") + '><span>' + escapeHtml(c) + '</span></label>';
-        }).join("") +
-        '</div></div>' +
-        '<div class="row2">' +
-        '<div class="field"><label for="edEmail" id="edEmailLabel">' +
-        handleLabelHtml(e.channel || "Email") + '</label>' +
-        '<input type="text" id="edEmail" value="' + escapeHtml(e.email || "") + '"></div>' +
-        '<div class="field"><label for="edDate">Date contacted</label>' +
-        '<input type="date" id="edDate" value="' + escapeHtml(e.date || "") + '"></div>' +
-        '</div>';
-    } else {
-      h += '<div class="field"><label for="edCompany">Company</label>' +
-        '<input type="text" id="edCompany" list="companyList" value="' + escapeHtml(e.company || "") + '"></div>' +
-        '<div class="row2">' +
-        '<div class="field"><label for="edRole">Role <span class="opt">(optional)</span></label>' +
-        '<input type="text" id="edRole" value="' + escapeHtml(e.role || "") + '"></div>' +
-        // The date means different things either side of the Applied toggle.
-        '<div class="field"><label for="edDate">' + (isApplied(e) ? "Date applied" : "Date added") + '</label>' +
-        '<input type="date" id="edDate" value="' + escapeHtml(e.date || "") + '"></div>' +
-        '</div>' +
-        '<div class="field"><label for="edLink">Careers page or posting link <span class="opt">(optional)</span></label>' +
-        '<input type="text" id="edLink" value="' + escapeHtml(e.link || "") + '"></div>';
-    }
-    h += '<div class="field"><label for="edNote">Note <span class="opt">(optional)</span></label>' +
-      '<textarea id="edNote">' + escapeHtml(e.note || "") + '</textarea></div>' +
-      '<div class="upd-group"><div class="upd-acts">' +
-      '<button data-u="savefields" class="done">Save changes</button>' +
-      '<button data-u="canceledit">Cancel</button>' +
-      '</div></div>';
-    return h;
   }
 
   // A toggle reads as a fact with a ✓ when it's true; an action reads as a
@@ -1693,13 +1798,13 @@
     var panel = document.getElementById("updatePanel");
     var sel = selectedEntry();
     if (!sel) {
-      panel.className = ""; panel.innerHTML = ""; editingKey = null;
+      panel.className = ""; panel.innerHTML = "";
       placeUpdatePanel();
       return;
     }
     var e = sel.e;
     var st = statusOf(e, sel.isContact);
-    var myKey = (sel.isContact ? "c:" : "a:") + sel.id;
+
 
     var title = sel.isContact
       ? escapeHtml(nameOf(e)) + (e.company ? ' <span style="font-weight:400;color:var(--text-secondary)">· ' + escapeHtml(e.company) + '</span>' : '')
@@ -1726,20 +1831,6 @@
       if (e.role) metaBits.push(e.role);
     }
     if (e.respondedOn) metaBits.push("replied " + fmtShort(e.respondedOn));
-
-    // Edit mode swaps the whole body for the field form, so the panel never
-    // shows a stale read-only copy of what you're halfway through changing.
-    if (editingKey === myKey) {
-      // No 📝 while editing fields: this head's buttons aren't wired in edit
-      // mode, and a dead button is worse than no button.
-      panel.innerHTML = '<div class="upd-head"><span class="upd-title">' + title + '</span></div>' +
-        '<div class="upd-meta" style="margin-bottom:10px">Editing details</div>' +
-        editFormHtml(e, sel.isContact);
-      panel.className = "open";
-      placeUpdatePanel();
-      wireEditForm(panel, e, sel);
-      return;
-    }
 
     var html = '<div class="upd-head">' + head + '</div>' +
       '<div class="upd-meta">' + escapeHtml(metaBits.join(" · ")) + '</div>' +
@@ -1806,13 +1897,12 @@
         // panel — it is an exit, not a save. Nothing to lose by tapping it.
         if (act === "done") {
           document.getElementById("entrySelect").value = "";
-          editingKey = null;
           renderUpdatePanel();
           return;
         }
         if (act === "edit") {
-          editingKey = myKey;
-          renderUpdatePanel();
+          // Same dialog, same form as adding — just pre-filled.
+          setLogForm(sel.isContact ? "contact" : "app", sel);
           return;
         }
         if (act === "workspace") {
@@ -1857,47 +1947,6 @@
     });
   }
 
-  function wireEditForm(panel, e, sel) {
-    function val(id) {
-      var el = panel.querySelector("#" + id);
-      return el ? el.value.trim() : "";
-    }
-
-    panel.querySelectorAll('input[name="edChannel"]').forEach(function (r) {
-      r.addEventListener("change", function () {
-        panel.querySelector("#edEmailLabel").innerHTML = handleLabelHtml(r.value);
-      });
-    });
-
-    panel.querySelector('button[data-u="canceledit"]').addEventListener("click", function () {
-      editingKey = null;
-      renderUpdatePanel();
-    });
-
-    // Nothing is refused. A blank name or company saves and shows as
-    // "(no name)" / "(no company)" in the lists, and a blank date shows as an
-    // amber "No date" chip — visible gaps rather than a form that argues.
-    panel.querySelector('button[data-u="savefields"]').addEventListener("click", function () {
-      if (sel.isContact) {
-        var ch = panel.querySelector('input[name="edChannel"]:checked');
-        e.name = val("edName");
-        e.company = val("edCompany");
-        e.role = val("edRole");
-        e.channel = ch ? ch.value : (e.channel || "Other");
-        e.email = val("edEmail");
-      } else {
-        e.company = val("edCompany");
-        e.role = val("edRole");
-        e.link = val("edLink");
-      }
-      e.date = val("edDate");
-      e.note = val("edNote");
-
-      editingKey = null;
-      touch(e); saveData(); render();
-    });
-  }
-
   function render() {
     renderBanners();
     renderStats();
@@ -1920,41 +1969,123 @@
   var logOverlay = document.getElementById("logOverlay");
   var logPanelTitle = document.getElementById("logPanelTitle");
 
-  function openForm(which) {
-    var openC = which === "contact" && !contactForm.classList.contains("open");
-    var openA = which === "app" && !appForm.classList.contains("open");
+  var cChannelSeg = document.getElementById("cChannelSeg");
+  var contactSubmit = contactForm.querySelector('button[type="submit"]');
+  var appSubmit = appForm.querySelector('button[type="submit"]');
+  var contactHint = contactForm.querySelector(".hint");
+  var appHint = appForm.querySelector(".hint");
+
+  // { bag, id } while the modal is editing an existing entry, null when adding.
+  var editingEntry = null;
+
+  function setRadio(form, name, value) {
+    var el = form.querySelector('input[name="' + name + '"][value="' + value + '"]');
+    if (el) el.checked = true;
+  }
+
+  // An older contact can hold a channel that's no longer offered ("Phone",
+  // "In person"). Put it back as a real option rather than silently rewriting
+  // the row the moment it's opened for editing.
+  function removeLegacyChannel() {
+    var extra = cChannelSeg.querySelector(".legacy-channel");
+    if (extra) extra.parentNode.removeChild(extra);
+  }
+  function ensureChannelOption(channel) {
+    removeLegacyChannel();
+    if (!channel) return;
+    var q = 'input[name="cChannel"][value="' + channel.replace(/"/g, '\\"') + '"]';
+    if (cChannelSeg.querySelector(q)) return;
+    var lab = document.createElement("label");
+    lab.className = "legacy-channel";
+    lab.innerHTML = '<input type="radio" name="cChannel" value="' + escapeHtml(channel) +
+      '"><span>' + escapeHtml(channel) + '</span>';
+    cChannelSeg.insertBefore(lab, cChannelSeg.firstChild);
+    lab.querySelector("input").addEventListener("change", syncContactHandleLabel);
+  }
+
+  function fillContactForm(e) {
+    contactForm.reset();
+    ensureChannelOption(e.channel);
+    document.getElementById("cName").value = e.name || "";
+    document.getElementById("cCompany").value = e.company || "";
+    document.getElementById("cRole").value = e.role || "";
+    document.getElementById("cEmail").value = e.email || "";
+    document.getElementById("cDate").value = e.date || "";
+    document.getElementById("cNote").value = e.note || "";
+    setRadio(contactForm, "cChannel", e.channel || "Email");
+  }
+  function fillAppForm(e) {
+    appForm.reset();
+    document.getElementById("aCompany").value = e.company || "";
+    document.getElementById("aRole").value = e.role || "";
+    document.getElementById("aDate").value = e.date || "";
+    document.getElementById("aLink").value = e.link || "";
+    document.getElementById("aNote").value = e.note || "";
+    setRadio(appForm, "aApplied", isApplied(e) ? "yes" : "no");
+    setRadio(appForm, "aCold", isColdEmailed(e) ? "yes" : "no");
+    setRadio(appForm, "aConn", isConnected(e) ? "yes" : "no");
+  }
+
+  /* Editing opens the very same form as adding, in the very same dialog —
+     one definition of what a contact or a company looks like, so the two
+     can never drift apart. Only the title, the submit label and what
+     happens on save differ. */
+  function setLogForm(which, editSel) {
+    var openC = which === "contact";
+    var openA = which === "app";
+    var panelOpen = openC || openA;
+
     contactForm.classList.toggle("open", openC);
     appForm.classList.toggle("open", openA);
-    btnShowContact.classList.toggle("on", openC);
-    btnShowApp.classList.toggle("on", openA);
+    // The ＋ buttons only light up for adding; an edit isn't "add mode".
+    btnShowContact.classList.toggle("on", openC && !editSel);
+    btnShowApp.classList.toggle("on", openA && !editSel);
 
-    // The panel is open exactly when one of the forms is. Calling openForm with
-    // the form already open still means "close it", which is what the submit
-    // handlers rely on to put the panel away after a save.
-    var panelOpen = openC || openA;
-    // The modal's backdrop would leave the workspace popup stranded behind a
-    // dim sheet, so put it away first rather than half-showing it.
+    editingEntry = (panelOpen && editSel)
+      ? { bag: editSel.isContact ? "contacts" : "apps", id: editSel.id }
+      : null;
+
+    // The backdrop would leave the workspace popup stranded behind a dim
+    // sheet, so put it away rather than half-showing it.
     if (panelOpen) closeWorkspace();
     logPanel.classList.toggle("open", panelOpen);
     logOverlay.classList.toggle("open", panelOpen);
     logPanel.setAttribute("aria-hidden", panelOpen ? "false" : "true");
-    if (panelOpen) logPanelTitle.textContent = openC ? "Cold contact" : "Add company";
-    // Scroll back to the top on reopen, so you never land mid-form.
-    if (panelOpen) logPanel.querySelector(".modal-body").scrollTop = 0;
+    if (!panelOpen) { removeLegacyChannel(); return; }
+
+    logPanel.querySelector(".modal-body").scrollTop = 0;   // never land mid-form
+    logPanelTitle.textContent = editSel
+      ? (openC ? "Edit contact" : "Edit company")
+      : (openC ? "Cold contact" : "Add company");
+    contactSubmit.textContent = editSel ? "Save changes" : "Save contact";
+    appSubmit.textContent = editSel ? "Save changes" : "Save company";
+    // The hints are about adding; they'd be wrong advice while editing.
+    contactHint.style.display = editSel ? "none" : "";
+    appHint.style.display = editSel ? "none" : "";
 
     if (openC) {
-      document.getElementById("cDate").value = TODAY;
+      if (editSel) fillContactForm(editSel.e);
+      else { contactForm.reset(); removeLegacyChannel(); document.getElementById("cDate").value = TODAY; }
       syncContactHandleLabel();
       document.getElementById("cName").focus();
+    } else {
+      if (editSel) fillAppForm(editSel.e);
+      else { appForm.reset(); document.getElementById("aDate").value = TODAY; }
+      document.getElementById("aCompany").focus();
     }
-    if (openA) { document.getElementById("aDate").value = TODAY; document.getElementById("aCompany").focus(); }
   }
-  function closeLogPanel() {
-    if (contactForm.classList.contains("open")) openForm("contact");
-    else if (appForm.classList.contains("open")) openForm("app");
+
+  function toggleForm(which) {
+    var form = which === "contact" ? contactForm : appForm;
+    // Tapping ＋ while that form is open in *edit* mode switches to adding
+    // rather than closing — otherwise the button would look broken.
+    var already = form.classList.contains("open") && !editingEntry;
+    setLogForm(already ? null : which, null);
   }
-  btnShowContact.addEventListener("click", function () { openForm("contact"); });
-  btnShowApp.addEventListener("click", function () { openForm("app"); });
+  function closeLogPanel() { setLogForm(null, null); }
+
+  btnShowContact.addEventListener("click", function () { toggleForm("contact"); });
+  btnShowApp.addEventListener("click", function () { toggleForm("app"); });
   document.getElementById("logPanelClose").addEventListener("click", closeLogPanel);
   logOverlay.addEventListener("click", closeLogPanel);
 
@@ -2046,54 +2177,70 @@
     r.addEventListener("change", syncContactHandleLabel);
   });
 
+  // Copies only the keys the form owns onto an existing entry. Replies,
+  // meetings, reminder history, closed, the workspace and the sync timestamp
+  // are status, not fields — editing a name must never disturb them.
+  function applyFields(entry, fields) {
+    Object.keys(fields).forEach(function (k) { entry[k] = fields[k]; });
+    touch(entry);
+  }
+
   contactForm.addEventListener("submit", function (ev) {
     ev.preventDefault();
     // No field is enforced. Whatever is in the form gets saved as-is; gaps
     // show up in the list rather than blocking the save.
-    var dateVal = document.getElementById("cDate").value;
     var channelEl = contactForm.querySelector('input[name="cChannel"]:checked');
-
-    DATA.contacts[newId()] = {
+    var fields = {
       name: document.getElementById("cName").value.trim(),
       company: document.getElementById("cCompany").value.trim(),
       role: document.getElementById("cRole").value.trim(),
       channel: channelEl ? channelEl.value : "Other",
       email: document.getElementById("cEmail").value.trim(),
-      date: dateVal,
-      note: document.getElementById("cNote").value.trim(),
-      responded: false, respondedOn: null, meetingOn: null,
-      nudgedOn: [], closed: false, deleted: false,
-      updated: new Date().toISOString()
+      date: document.getElementById("cDate").value,
+      note: document.getElementById("cNote").value.trim()
     };
+
+    if (editingEntry) {
+      var e = DATA.contacts[editingEntry.id];
+      if (e && !e.deleted) applyFields(e, fields);
+    } else {
+      fields.responded = false; fields.respondedOn = null; fields.meetingOn = null;
+      fields.nudgedOn = []; fields.closed = false; fields.deleted = false;
+      fields.updated = new Date().toISOString();
+      DATA.contacts[newId()] = fields;
+    }
     saveData();
-    contactForm.reset();
-    syncContactHandleLabel(); // reset re-checks Email; keep the label honest
-    openForm("contact"); // collapses it
+    setLogForm(null, null);
     render();
   });
 
   appForm.addEventListener("submit", function (ev) {
     ev.preventDefault();
-    var dateVal = document.getElementById("aDate").value;
     var appliedEl = appForm.querySelector('input[name="aApplied"]:checked');
     var coldEl = appForm.querySelector('input[name="aCold"]:checked');
     var connEl = appForm.querySelector('input[name="aConn"]:checked');
-    DATA.apps[newId()] = {
+    var fields = {
       company: document.getElementById("aCompany").value.trim(),
       applied: !!(appliedEl && appliedEl.value === "yes"),
       coldEmailed: !!(coldEl && coldEl.value === "yes"),
       connected: !!(connEl && connEl.value === "yes"),
       role: document.getElementById("aRole").value.trim(),
-      date: dateVal,
+      date: document.getElementById("aDate").value,
       link: document.getElementById("aLink").value.trim(),
-      note: document.getElementById("aNote").value.trim(),
-      responded: false, respondedOn: null, meetingOn: null,
-      closed: false, deleted: false,
-      updated: new Date().toISOString()
+      note: document.getElementById("aNote").value.trim()
     };
+
+    if (editingEntry) {
+      var a = DATA.apps[editingEntry.id];
+      if (a && !a.deleted) applyFields(a, fields);
+    } else {
+      fields.responded = false; fields.respondedOn = null; fields.meetingOn = null;
+      fields.closed = false; fields.deleted = false;
+      fields.updated = new Date().toISOString();
+      DATA.apps[newId()] = fields;
+    }
     saveData();
-    appForm.reset();
-    openForm("app"); // collapses it
+    setLogForm(null, null);
     render();
   });
 
@@ -2110,10 +2257,7 @@
     copyText(fillTemplate(tplFor("outreach"), vals), this);
   });
 
-  // Switching entries always leaves edit mode, so you can't have a form open
-  // against a row you're no longer looking at.
   document.getElementById("entrySelect").addEventListener("change", function () {
-    editingKey = null;
     // The workspace belongs to whoever was selected, so it doesn't follow you
     // to the next entry — that's how you'd type notes onto the wrong person.
     closeWorkspace();
