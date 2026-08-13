@@ -458,13 +458,34 @@ wording (BU mech-e, biosensors/HMI, Summer 2027); edit them to taste, then hit
 **Done editing drafts** — that saves and closes the drawer in one tap. **Reset to
 defaults** puts the built-in wording back.
 
-Where the copy buttons are:
+### Five drafts, and you never pick one
 
-| Button | Where | Uses |
+There are **five** templates on two axes — the channel you're writing in, and
+whether this is the first message or a chase:
+
+| | First message | Follow-up |
 |---|---|---|
-| 📋 Copy outreach draft | on the Cold contact form | the name/company you've *just typed* — copy, send, then Save |
-| 📋 Copy draft | on each red nudge row | that person's follow-up |
-| 📋 Copy draft | in a contact's edit dialog | that contact's follow-up |
+| **Email** | Email · first message | Email · follow-up |
+| **LinkedIn** | LinkedIn · first message *(applied / not applied)* | LinkedIn · follow-up |
+
+A LinkedIn note and a cold email are not the same piece of writing — one goes in
+a connection request and has to be short — so they're separate templates rather
+than one draft you reword every time.
+
+**The app picks from the contact's channel**, so there's no dropdown and no
+choosing. The LinkedIn first message has two versions and the **Companies** table
+decides between them: marked **Applied** gets the "I recently applied…" wording,
+anything else gets the one that makes no such claim.
+
+Every copy button **names what it will actually hand you**, and relabels itself
+live as you change the channel — `📋 Copy draft` told you nothing about whether
+you were about to paste an email into a connection request:
+
+| Button | Where | Gives you |
+|---|---|---|
+| 📋 Copy first email / 📋 Copy LinkedIn note | on the Cold contact form | the first message, from what you've *just typed* — copy, send, then Save |
+| 📋 Copy email follow-up / 📋 Copy LinkedIn follow-up | on each red nudge row | that person's chase, in their channel |
+| 📋 Copy LinkedIn note · 📋 Copy LinkedIn follow-up | in a contact's edit dialog | both, for that contact |
 
 Placeholders substituted automatically:
 
@@ -632,6 +653,34 @@ perfectly happily — the heading is just "Join LinkedIn". Without that check a
 challenge page becomes a confidently wrong contact, which is worse than a failed
 read, so any page that looks like a wall is forced to `unverified`.
 
+Each created contact also gets **the draft already written into its workspace**,
+ready to send. Six people with six empty workspaces is six more things to do by
+hand, which was the thing this was meant to save.
+
+### Searching for free, on your own machine
+
+**Every hosted search API refuses a browser.** Brave and the public SearXNG
+instances send no CORS header, Google's Custom Search JSON API is closed to new
+signups, and DuckDuckGo's free API returns instant answers rather than web
+results. All four tested, not assumed.
+
+What does work is **a SearXNG you run yourself** — no key, no quota, and the
+query never leaves your machine:
+
+```bash
+docker run -d -p 8888:8080 searxng/searxng
+```
+
+Add `json` to `search.formats` in its `settings.yml`, allow this page's origin,
+and put `http://localhost:8888` into **Settings → My own search engine**. A
+**🔎 Search with my own engine** button then appears on the Find contacts dialog.
+
+It's also *better* than asking a model for this particular job: the profile links
+come straight out of a search index, so they can't be invented — which is the
+exact failure the verify stage exists to catch. The trade-off is that it only
+works on the machine running it, so keep an API key if you want this on your
+phone.
+
 **With no API key saved it still works.** The button copies the research prompt
 for you to run in Claude and paste the reply back; both routes go through the same
 parser and the same review step, so the manual one can't drift from the automatic
@@ -673,6 +722,7 @@ that blanking the field disables them**, both visible in Settings:
 |---|---|---|---|
 | the **profile reader** (`https://r.jina.ai/` by default) | reading a public profile from a URL | the profile URL you paste | clearing the field — then only pasted page text is parsed, with no request |
 | `api.anthropic.com` | the search behind 🔍 Find contacts | the company name and role | clearing the API key — Find contacts switches to copy-and-paste |
+| **your own SearXNG** | the same search, locally | nothing leaves your machine | clearing the URL |
 
 Both keys are stored **only on that device** (`intern-ai-key`, and `readerKey` in
 `intern-settings`), never ride the sync, and are only ever sent to their own

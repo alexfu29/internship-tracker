@@ -422,6 +422,17 @@
   .fr .cl a { color: var(--accent); word-break: break-all; }
   .finder-progress { font-size: 0.78rem; color: var(--text-secondary); }
 
+  /* Which draft goes where, and what fills in — a grid because both are
+     lookups, and prose made you hold two axes in your head at once. */
+  .tpl-map { border-collapse: collapse; margin: 8px 0 12px; font-size: 0.74rem; width: 100%; }
+  .tpl-map th, .tpl-map td {
+    border: 1px solid var(--gridline); padding: 5px 7px;
+    color: var(--text-secondary); text-align: left; vertical-align: top;
+  }
+  .tpl-map th { color: var(--text-primary); font-weight: 600; background: var(--surface-3); }
+  .tpl-map.ph td:first-child { white-space: nowrap; width: 1%; }
+  .tpl-map code { font-size: 0.72rem; }
+
   button.primary {
     width: 100%; padding: 12px; border-radius: 10px; border: none;
     background: var(--accent); color: var(--accent-ink);
@@ -927,39 +938,63 @@
   <div class="sync-status" id="syncStatus"></div>
 
   <hr>
-  <h2 style="font-size:0.95rem">Email drafts</h2>
+  <h2 style="font-size:0.95rem">Drafts</h2>
   <p class="tpl-help">
-    Your own wording, kept here so you never leave the app to find it. Tap
-    <strong>Copy draft</strong> anywhere in the tracker and the filled-in text goes
-    to your clipboard — paste it into your mail app, tweak it, send it.
+    Your own wording, kept here so you never leave the app to find it. Every
+    <strong>📋 Copy</strong> button fills one of these in and puts it on your clipboard.
     Nothing is ever sent for you.
   </p>
   <p class="tpl-help">
-    Placeholders get replaced automatically:
-    <code>{first}</code> <code>{name}</code> <code>{company}</code>
-    <code>{role}</code> <code>{date}</code> <code>{days}</code>
-    <code>{channel}</code> <code>{internship}</code> <code>{learn}</code>.
-    Anything with no value on file comes through as
-    <code>[company]</code> so you spot the gap instead of sending a blank.
-  </p>
-  <p class="tpl-help">
-    <code>{role}</code> is the person's bucket — <strong>Hiring</strong>,
-    <strong>VP Eng</strong> or <strong>BU Eng</strong>. <code>{internship}</code> is the
-    role <em>you</em> applied to, taken from that company's row.
-    <code>{learn}</code> becomes “you” for a recruiter and “your work” for an engineer.
+    <strong>Which draft you get is decided by the contact's channel</strong>, so you
+    never have to pick: a <strong>LinkedIn</strong> contact gets the LinkedIn wording, anything
+    else gets the email. The buttons say which one they'll hand you.
   </p>
 
-  <label for="tplOutreach">First-contact draft</label>
+  <table class="tpl-map">
+    <tr><th></th><th>First message</th><th>Follow-up</th></tr>
+    <tr><th>Email</th><td>First email</td><td>Email follow-up</td></tr>
+    <tr><th>LinkedIn</th><td>LinkedIn note<br><span class="opt">applied / not applied</span></td><td>LinkedIn follow-up</td></tr>
+  </table>
+
+  <p class="tpl-help">
+    The LinkedIn first message has two versions and the app picks between them from
+    your <strong>Companies</strong> table: if that company is marked <strong>Applied</strong> you get the
+    “I recently applied…” wording, otherwise you get one that makes no such claim.
+  </p>
+
+  <p class="tpl-help"><strong>What fills in automatically:</strong></p>
+  <table class="tpl-map ph">
+    <tr><td><code>{first}</code></td><td>first name only — “Hi Sam,”</td></tr>
+    <tr><td><code>{name}</code></td><td>their full name</td></tr>
+    <tr><td><code>{company}</code></td><td>the company on the contact</td></tr>
+    <tr><td><code>{internship}</code></td><td>the job <em>you</em> applied to, read off that company's row</td></tr>
+    <tr><td><code>{role}</code></td><td>who they are — <strong>Hiring</strong>, <strong>VP Eng</strong> or <strong>BU Eng</strong></td></tr>
+    <tr><td><code>{learn}</code></td><td>“you” for a recruiter, “your work” for an engineer</td></tr>
+    <tr><td><code>{date}</code></td><td>when you first contacted them</td></tr>
+    <tr><td><code>{days}</code></td><td>days since your last contact or reminder</td></tr>
+    <tr><td><code>{channel}</code></td><td>Email / LinkedIn / Other, as logged</td></tr>
+  </table>
+  <p class="tpl-help">
+    <code>{role}</code> and <code>{internship}</code> are easy to mix up and are not the same
+    thing — <code>{role}</code> is <em>their</em> job, <code>{internship}</code> is <em>yours</em>.
+    Anything with no value on file comes through as a visible <code>[company]</code> so you
+    spot the gap instead of sending a blank.
+  </p>
+
+  <label for="tplOutreach">Email · first message</label>
   <textarea id="tplOutreach" class="tpl" rows="10"></textarea>
 
-  <label for="tplFollowup">Follow-up draft <span style="color:var(--text-muted)">(the 7-day nudge)</span></label>
+  <label for="tplFollowup">Email · follow-up <span style="color:var(--text-muted)">(the 7-day nudge)</span></label>
   <textarea id="tplFollowup" class="tpl" rows="10"></textarea>
 
-  <label for="tplApplied">LinkedIn note — already applied</label>
+  <label for="tplApplied">LinkedIn · first message — <em>already applied there</em></label>
   <textarea id="tplApplied" class="tpl" rows="9"></textarea>
 
-  <label for="tplConnect">LinkedIn note — not applied <span style="color:var(--text-muted)">(claims nothing)</span></label>
+  <label for="tplConnect">LinkedIn · first message — <em>not applied</em> <span style="color:var(--text-muted)">(claims nothing)</span></label>
   <textarea id="tplConnect" class="tpl" rows="9"></textarea>
+
+  <label for="tplLiFollowup">LinkedIn · follow-up</label>
+  <textarea id="tplLiFollowup" class="tpl" rows="9"></textarea>
 
   <button class="primary" id="doneTplBtn">Done editing drafts</button>
   <button class="secondary" id="resetTplBtn">Reset drafts to defaults</button>
@@ -997,6 +1032,24 @@
     review step either way. The key is stored on this device only and goes nowhere except
     <code>api.anthropic.com</code>.
   </p>
+
+  <p class="tpl-help">
+    <strong>Free and local, if you'd rather.</strong> Every hosted search API refuses a
+    browser — Brave and the public SearXNG instances send no CORS header, and Google's
+    JSON API is closed to new signups. A <strong>SearXNG you run yourself</strong> has none of
+    those problems: no key, no quota, and the query never leaves your machine. It also
+    beats asking a model, because the profile links come out of a real search index and
+    so can't be invented.
+  </p>
+  <p class="tpl-help">
+    <code>docker run -d -p 8888:8080 searxng/searxng</code>, then in its
+    <code>settings.yml</code> add <code>json</code> to <code>search.formats</code> and allow this
+    page's origin. Put <code>http://localhost:8888</code> below. It only works on the machine
+    running it, so keep the API key for your phone.
+  </p>
+
+  <label for="searchInput">My own search engine <span style="color:var(--text-muted)">(SearXNG URL)</span></label>
+  <input type="text" id="searchInput" placeholder="http://localhost:8888">
 
   <label for="aiKeyInput">Anthropic API key <span style="color:var(--text-muted)">(optional)</span></label>
   <input type="password" id="aiKeyInput" placeholder="sk-ant-…" autocomplete="off">
@@ -1217,7 +1270,18 @@
       "\n" +
       "Would you be down for a quick zoom meeting to connect?\n" +
       "\n" +
-      "I'm available daily after 6:30pm and Sundays after 2pm."
+      "I'm available daily after 6:30pm and Sundays after 2pm.",
+    // The chase, on LinkedIn. Kept separate from the email follow-up because
+    // it has to stay short and can't open with a subject line.
+    liFollowup:
+      "Hi {first},\n" +
+      "\n" +
+      "Following up on my note from {date} — I know it's a busy time of year.\n" +
+      "\n" +
+      "I'm still very interested in {company} for Summer 2027 and would love to hear\n" +
+      "about {learn} whenever suits you.\n" +
+      "\n" +
+      "Still free daily after 6:30pm and Sundays after 2pm if a quick call is easier."
   };
   function tplFor(kind) {
     var t = SETTINGS.templates && SETTINGS.templates[kind];
@@ -1506,6 +1570,23 @@
   // to talk about the work. One placeholder rather than four forked templates.
   function learnFor(role) { return role === "Hiring" ? "you" : "your work"; }
 
+  /* ---- which draft, for whom ------------------------------------
+     Five templates on two axes: the channel you're writing in, and
+     whether this is the first message or a chase. A LinkedIn note and
+     a cold email are not the same piece of writing — one goes in a
+     connection request and has to be short — so picking by channel is
+     what stops "Copy draft" handing you the wrong shape of thing.
+     Everything routes through here so no caller has to know the rules.
+     ---------------------------------------------------------------- */
+  function isLinkedInContact(c) { return (c && c.channel) === "LinkedIn"; }
+  function firstContactKind(c) {
+    if (!isLinkedInContact(c)) return "outreach";
+    var a = appForCompany(c && c.company);
+    return (a && isApplied(a)) ? "applied" : "connect";
+  }
+  function followupKind(c) { return isLinkedInContact(c) ? "liFollowup" : "followup"; }
+  function draftFor(c, kind) { return fillTemplate(tplFor(kind), draftValues(c)); }
+
   // Two spellings of one employer ("Marotta" vs "Marotta Controls, Inc.") would
   // split it into two companies and quietly break the applied-draft lookup, so
   // names are compared with the decoration stripped.
@@ -1734,7 +1815,8 @@
         (c.email ? ' · ' + escapeHtml(c.email) : '') +
         (nudged ? ' · ' + nudged + ' reminder' + (nudged > 1 ? 's' : '') + ' sent' : '') +
         '</div><div class="acts">' +
-        '<button data-act="copy" data-id="' + c.id + '">📋 Copy draft</button>' +
+        '<button data-act="copy" data-id="' + c.id + '">📋 Copy ' +
+          (isLinkedInContact(c) ? "LinkedIn" : "email") + ' follow-up</button>' +
         '<button data-act="nudged" data-id="' + c.id + '">Reminder sent</button>' +
         '<button data-act="replied" data-id="' + c.id + '">They replied</button>' +
         '<button data-act="mute" data-id="' + c.id + '">Ignore</button>' +
@@ -1754,7 +1836,7 @@
         // Copy is read-only: it must not silently mark the reminder sent,
         // because copying is not sending.
         if (act === "copy") {
-          copyText(fillTemplate(tplFor("followup"), draftValues(c)), btn);
+          copyText(draftFor(c, followupKind(c)), btn);
           return;
         }
         if (act === "nudged") { toggleRemindedToday(c); }
@@ -2375,7 +2457,10 @@
     html += '<div class="upd-group"><span class="upd-group-label">Actions</span>' +
       '<div class="upd-acts">' +
       actionBtn("workspace", "📝 Workspace" + (hasWorkspace(e) ? " ●" : ""));
-    if (isContact) html += actionBtn("copyfollow", "📋 Copy draft");
+    if (isContact) {
+      html += actionBtn("copyfirst", "📋 Copy " + (isLinkedInContact(e) ? "LinkedIn note" : "email"));
+      html += actionBtn("copyfollow", "📋 Copy " + (isLinkedInContact(e) ? "LinkedIn" : "email") + " follow-up");
+    }
     // Companies only: it looks for people *at* somewhere.
     if (!isContact) html += actionBtn("findcontacts", "🔍 Find contacts");
     html += actionBtn("delete", "Delete", "danger") + '</div></div>';
@@ -2396,7 +2481,11 @@
         if (!live) return;
         var act = btn.getAttribute("data-u");
         if (act === "copyfollow") {
-          copyText(fillTemplate(tplFor("followup"), draftValues(live)), btn);
+          copyText(draftFor(live, followupKind(live)), btn);
+          return;
+        }
+        if (act === "copyfirst") {
+          copyText(draftFor(live, firstContactKind(live)), btn);
           return;
         }
         if (act === "findcontacts") { openFinderFor(editingEntry.id); return; }
@@ -2577,8 +2666,12 @@
 
   function syncContactHandleLabel() {
     var ch = contactForm.querySelector('input[name="cChannel"]:checked');
-    document.getElementById("cEmailLabel").innerHTML =
-      handleLabelHtml(ch ? ch.value : "Email");
+    var v = ch ? ch.value : "Email";
+    document.getElementById("cEmailLabel").innerHTML = handleLabelHtml(v);
+    // The copy button names what it will actually hand you, so you don't have
+    // to remember which template the channel maps to.
+    document.getElementById("copyOutreachBtn").textContent =
+      v === "LinkedIn" ? "📋 Copy LinkedIn note" : "📋 Copy first email";
   }
   contactForm.querySelectorAll('input[name="cChannel"]').forEach(function (r) {
     r.addEventListener("change", syncContactHandleLabel);
@@ -2657,15 +2750,21 @@
 
   // Reads the form as it stands, so you can copy the draft, send it, and
   // only then hit Save — no need to save first just to get the wording.
-  document.getElementById("copyOutreachBtn").addEventListener("click", function () {
-    var vals = draftValues({
+  // Reads the form as it stands, and picks email or LinkedIn wording from the
+  // channel you've selected — the two are different pieces of writing, so one
+  // button handing over whichever you happen to need is the whole point.
+  function formContact() {
+    return {
       name: document.getElementById("cName").value.trim(),
       company: document.getElementById("cCompany").value.trim(),
       role: document.getElementById("cRole").value.trim(),
       channel: (contactForm.querySelector('input[name="cChannel"]:checked') || {}).value,
       date: document.getElementById("cDate").value || TODAY
-    });
-    copyText(fillTemplate(tplFor("outreach"), vals), this);
+    };
+  }
+  document.getElementById("copyOutreachBtn").addEventListener("click", function () {
+    var c = formContact();
+    copyText(draftFor(c, firstContactKind(c)), this);
   });
 
   /* ============================================================
@@ -3049,11 +3148,17 @@
       h += '<p class="finder-note">Six people at <strong>' + escapeHtml(FS.company) +
         '</strong> — two recruiters, two engineering leads, and two Boston University ' +
         'engineers. Every one gets checked against their real profile before anything is saved.</p>';
+      if (searchUrl()) {
+        h += '<button type="button" class="primary" id="fLocal">🔎 Search with my own engine</button>';
+      }
       h += getAiKey()
-        ? '<button type="button" class="primary" id="fSearch">🔍 Search for six</button>'
-        : '<p class="finder-note">No API key saved, so nothing can search from here. Copy the ' +
-          'research prompt into Claude (or anything with web access) and paste its reply back.</p>' +
-          '<button type="button" class="primary" id="fCopy">📋 Copy research prompt</button>';
+        ? '<button type="button" class="' + (searchUrl() ? "secondary" : "primary") +
+          '" id="fSearch">🔍 Search with Claude</button>'
+        : (searchUrl() ? "" :
+          '<p class="finder-note">No search engine and no API key saved, so nothing can search ' +
+          'from here. Copy the research prompt into Claude (or anything with web access) and ' +
+          'paste its reply back.</p>' +
+          '<button type="button" class="primary" id="fCopy">📋 Copy research prompt</button>');
       h += '<button type="button" class="secondary" id="fPaste">Paste a reply instead</button>';
     } else if (FS.phase === "searching" || FS.phase === "verifying") {
       h += '<p class="finder-progress">' + escapeHtml(FS.progress || "Working…") + "</p>";
@@ -3109,6 +3214,7 @@
   function wireFinder() {
     var on = function (id, fn) { var el = document.getElementById(id); if (el) el.addEventListener("click", fn); };
     on("fSearch", finderSearch);
+    on("fLocal", finderLocalSearch);
     on("fCopy", function () { copyText(buildFinderPrompt(finderApp() || {}), this); });
     on("fCopy2", function () { copyText(buildFinderPrompt(finderApp() || {}), this); });
     on("fPaste", function () { FS.phase = "paste"; FS.msg = ""; renderFinder(); });
@@ -3141,6 +3247,97 @@
     if (!FS) return null;
     var a = DATA.apps[FS.appId];
     return (a && !a.deleted) ? a : null;
+  }
+
+  /* ---- stage 1a: a search engine you run yourself ----------------
+     Every hosted search API refuses a browser: Brave and the public
+     SearXNG instances send no CORS headers, and Google's JSON API is
+     closed to new signups. A SearXNG you run yourself is the way out
+     — you own the CORS header, there's no key and no quota, and the
+     query never leaves your machine.
+
+     It's also a better source than a model for this particular job:
+     the profile URLs come out of a real search index, so they can't
+     be invented, which was the failure the verify stage exists for.
+     ---------------------------------------------------------------- */
+  function searchUrl() { return (SETTINGS.searchUrl || "").trim(); }
+
+  function searxQuery(q) {
+    var base = searchUrl().replace(/\/+$/, "");
+    return fetch(base + "/search?format=json&q=" + encodeURIComponent(q))
+      .then(function (r) {
+        if (!r.ok) throw new Error("the search engine answered " + r.status);
+        return r.json();
+      })
+      .then(function (j) { return (j && j.results) || []; });
+  }
+
+  // "Satya Nadella - Chairman and CEO - Microsoft | LinkedIn"
+  function fromSearchResult(hit, cat) {
+    var url = profileUrlFrom(hit.url || "");
+    if (!url) return null;
+    var t = String(hit.title || "").replace(/\s*[|\-–]\s*LinkedIn\s*$/i, "").trim();
+    var parts = t.split(/\s+[-–]\s+/);
+    return {
+      name: (parts[0] || "").trim(),
+      title: (parts[1] || "").trim(),
+      category: cat,
+      linkedin: url,
+      why: String(hit.content || "").slice(0, 160)
+    };
+  }
+
+  function finderLocalSearch() {
+    var a = finderApp();
+    if (!a) { fsSay("That company isn't in your list any more.", true); return; }
+    var co = '"' + FS.company + '"';
+    var plan = [
+      { cat: "hiring", q: 'site:linkedin.com/in ' + co + ' (recruiter OR "talent acquisition" OR "university relations")' },
+      { cat: "exec", q: 'site:linkedin.com/in ' + co + ' ("VP of Engineering" OR "Director of Engineering" OR "Engineering Manager")' },
+      { cat: "bu", q: 'site:linkedin.com/in ' + co + ' "Boston University" engineer' }
+    ];
+    FS.phase = "searching"; FS.msg = ""; FS.progress = "Searching…";
+    renderFinder();
+
+    var found = [], seen = {};
+    function step(i) {
+      if (!FS) return;
+      if (i >= plan.length) {
+        if (!found.length) {
+          FS.phase = "idle";
+          fsSay("The search ran but turned up no LinkedIn profiles for " + FS.company +
+            ". Try the paste route, or widen the wording in Settings.", true);
+          return;
+        }
+        found.forEach(function (p, n) { p.i = n; p.use = true; p.claimName = p.name;
+          p.claimTitle = p.title; p.verdict = "unverified"; p.claimNote = ""; p.buNote = ""; });
+        FS.people = found;
+        finderVerify();
+        return;
+      }
+      FS.progress = "Searching for " + CATS[plan[i].cat].label + "…";
+      renderFinder();
+      searxQuery(plan[i].q).then(function (hits) {
+        var n = 0;
+        hits.forEach(function (h) {
+          if (n >= 2) return;                       // two per pair, as asked
+          var p = fromSearchResult(h, plan[i].cat);
+          if (!p || !p.name || seen[p.linkedin]) return;
+          seen[p.linkedin] = true; found.push(p); n++;
+        });
+        step(i + 1);
+      }).catch(function (err) {
+        if (!FS) return;
+        FS.phase = "idle";
+        var m = (err && err.message) || "network error";
+        if (/failed to fetch/i.test(m)) {
+          m = "the browser couldn't reach it — check it's running, and that it allows " +
+            "requests from this page";
+        }
+        fsSay("Local search failed: " + m + ".", true);
+      });
+    }
+    step(0);
   }
 
   /* ---- stage 1: search ---- */
@@ -3226,10 +3423,10 @@
     list.forEach(function (p) {
       if (!p || out.length >= 6) return;
       var name = String(p.name || "").trim();
-      var url = String(p.linkedin || p.url || "").trim();
-      // A URL that isn't a real profile link is a guess; drop it rather than
-      // carry it into a row someone might tap.
-      if (!/^https?:\/\/([a-z]{2,3}\.)?linkedin\.com\/in\//i.test(url)) url = "";
+      // Same extractor the paste box uses, so a bare "linkedin.com/in/foo" or a
+      // URL wrapped in other text still lands. It returns "" for anything that
+      // isn't a profile link, which is what drops a guessed URL.
+      var url = profileUrlFrom(String(p.linkedin || p.url || p.profile || p.profileUrl || ""));
       if (!name && !url) return;
       var cat = String(p.category || "").toLowerCase();
       if (!CATS[cat]) cat = "exec";
@@ -3357,7 +3554,7 @@
       bits.push(p.verdict === "verified" ? "verified " + TODAY
         : p.verdict === "mismatch" ? "CHECK: " + (p.claimNote || "mismatch") + " (" + TODAY + ")"
         : "unverified " + TODAY);
-      DATA.contacts[newId()] = {
+      var row = {
         name: p.name, company: company, role: CATS[p.category].label,
         channel: "LinkedIn", email: p.linkedin,
         date: "",                       // nothing sent yet, so the 7-day clock stays off
@@ -3366,6 +3563,11 @@
         nudgedOn: [], closed: false, deleted: false, workspace: "",
         updated: new Date().toISOString()
       };
+      // The draft goes in the workspace ready to send. Six rows with nothing
+      // written in them is six more things to do by hand, which was the point
+      // of finding them in one go.
+      row.workspace = draftFor(row, firstContactKind(row));
+      DATA.contacts[newId()] = row;
       added++;
     });
 
@@ -3528,8 +3730,10 @@
     document.getElementById("tplFollowup").value = tplFor("followup");
     document.getElementById("tplApplied").value = tplFor("applied");
     document.getElementById("tplConnect").value = tplFor("connect");
+    document.getElementById("tplLiFollowup").value = tplFor("liFollowup");
     document.getElementById("readerInput").value = readerBase();
     document.getElementById("readerKeyInput").value = readerKey();
+    document.getElementById("searchInput").value = searchUrl();
     document.getElementById("aiKeyInput").value = getAiKey();
     document.getElementById("finderPromptInput").value = finderPromptTpl();
     document.getElementById("aiPromptInput").value = aiPromptTpl();
@@ -3568,6 +3772,7 @@
     // requests", which is different from never having configured one.
     SETTINGS.readerBase = document.getElementById("readerInput").value.trim();
     SETTINGS.readerKey = document.getElementById("readerKeyInput").value.trim();
+    SETTINGS.searchUrl = document.getElementById("searchInput").value.trim();
     setAiKey(document.getElementById("aiKeyInput").value.trim());
     SETTINGS.finderPrompt = document.getElementById("finderPromptInput").value;
     saveSettings(SETTINGS);
@@ -3590,7 +3795,8 @@
       outreach: document.getElementById("tplOutreach").value,
       followup: document.getElementById("tplFollowup").value,
       applied: document.getElementById("tplApplied").value,
-      connect: document.getElementById("tplConnect").value
+      connect: document.getElementById("tplConnect").value,
+      liFollowup: document.getElementById("tplLiFollowup").value
     };
     saveSettings(SETTINGS);
     render();
@@ -3601,7 +3807,8 @@
     };
     var unknown = [];
     [SETTINGS.templates.outreach, SETTINGS.templates.followup,
-     SETTINGS.templates.applied, SETTINGS.templates.connect].forEach(function (t) {
+     SETTINGS.templates.applied, SETTINGS.templates.connect,
+     SETTINGS.templates.liFollowup].forEach(function (t) {
       (String(t).match(/\{(\w+)\}/g) || []).forEach(function (m) {
         var k = m.slice(1, -1);
         if (!known[k] && unknown.indexOf(m) === -1) unknown.push(m);
@@ -3620,13 +3827,14 @@
   });
 
   document.getElementById("resetTplBtn").addEventListener("click", function () {
-    if (!confirm("Replace all four drafts with the built-in defaults? Your wording will be lost.")) return;
+    if (!confirm("Replace all five drafts with the built-in defaults? Your wording will be lost.")) return;
     delete SETTINGS.templates;
     saveSettings(SETTINGS);
     document.getElementById("tplOutreach").value = tplFor("outreach");
     document.getElementById("tplFollowup").value = tplFor("followup");
     document.getElementById("tplApplied").value = tplFor("applied");
     document.getElementById("tplConnect").value = tplFor("connect");
+    document.getElementById("tplLiFollowup").value = tplFor("liFollowup");
     setTplStatus("Reset to the built-in drafts.");
   });
 
