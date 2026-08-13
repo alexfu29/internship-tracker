@@ -212,8 +212,19 @@
     color: var(--red-ink); margin-bottom: 8px;
   }
   .nudge-row:last-child { margin-bottom: 0; }
-  .nudge-row .who { font-weight: 600; font-size: 0.92rem; }
-  .nudge-row .meta { font-size: 0.78rem; opacity: 0.9; margin-top: 2px; }
+  /* The name and the line under it are one tap target that opens the entry.
+     Drawn as a plain block rather than a button so the card still reads as a
+     card — the affordance is the hover and the pointer, not a chrome button
+     sitting inside an alert. */
+  .nudge-open {
+    display: block; width: 100%; text-align: left; font: inherit; color: inherit;
+    background: transparent; border: 0; padding: 2px 4px; margin: -2px -4px 0;
+    border-radius: 8px; cursor: pointer;
+  }
+  .nudge-open:hover { background: rgba(0, 0, 0, 0.06); }
+  .nudge-open:focus-visible { outline: 2px solid var(--red-ink); outline-offset: 1px; }
+  .nudge-row .who { display: block; font-weight: 600; font-size: 0.92rem; }
+  .nudge-row .meta { display: block; font-size: 0.78rem; opacity: 0.9; margin-top: 2px; }
   .nudge-row .acts { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
   .nudge-row .acts button {
     flex: 1 1 auto; min-height: 40px; padding: 6px 10px; font-size: 0.78rem;
@@ -1872,13 +1883,19 @@
     due.forEach(function (c) {
       var since = fmtShort(lastTouchOn(c));
       var nudged = (c.nudgedOn || []).length;
-      html += '<div class="nudge-row"><div class="who">' + escapeHtml(nameOf(c)) +
+      // The name and the line under it open the entry, exactly as tapping the
+      // table row does — same dialog, same workspace. The nudge card was the
+      // one place a person appeared that you couldn't open, so chasing someone
+      // meant going and finding them in the table first.
+      html += '<div class="nudge-row">' +
+        '<button type="button" class="nudge-open" data-open="' + c.id +
+        '" title="Open this contact"><span class="who">' + escapeHtml(nameOf(c)) +
         (c.company ? ' <span style="font-weight:400">· ' + escapeHtml(c.company) + '</span>' : '') +
-        '</div><div class="meta">' + daysSilent(c) + ' days since ' +
+        '</span><span class="meta">' + daysSilent(c) + ' days since ' +
         (nudged ? 'your last reminder' : escapeHtml(c.channel || 'contact')) + ' (' + since + ')' +
         (c.email ? ' · ' + escapeHtml(c.email) : '') +
         (nudged ? ' · ' + nudged + ' reminder' + (nudged > 1 ? 's' : '') + ' sent' : '') +
-        '</div><div class="acts">' +
+        '</span></button><div class="acts">' +
         '<button data-act="copy" data-id="' + c.id + '">📋 Copy ' +
           (isLinkedInContact(c) ? "LinkedIn" : "email") + ' follow-up</button>' +
         '<button data-act="nudged" data-id="' + c.id + '">Reminder sent</button>' +
@@ -1891,6 +1908,12 @@
       '"Reminder sent" to restart the 7-day clock. Nothing is emailed for you.</p>';
     html += '</section>';
     mount.innerHTML = html;
+
+    mount.querySelectorAll("button[data-open]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        openEditor("contact", btn.getAttribute("data-open"));
+      });
+    });
 
     mount.querySelectorAll("button[data-act]").forEach(function (btn) {
       btn.addEventListener("click", function () {

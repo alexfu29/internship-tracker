@@ -415,7 +415,17 @@ computed from them.
 
 A contact goes red when **all** of these hold: no reply, no meeting booked, not
 closed, and 7+ days since the last time you touched it. Those rows collect in a
-red **"Needs a nudge"** card at the top of the screen with three buttons:
+red **"Needs a nudge"** card at the top of the screen.
+
+**Tap the name — or the line under it — and the contact opens**, in the same
+dialog you get from tapping their row in the table: their role, their handle,
+their note, both copy buttons, the status toggles, and the workspace alongside it.
+The nudge card used to be the one place a person appeared that you couldn't open,
+so acting on a nudge meant scrolling down and finding them in the table first.
+The buttons underneath still do only their own job — tapping **Ignore** doesn't
+also open the dialog.
+
+Underneath, the buttons:
 
 - **📋 Copy draft** — puts your follow-up wording on the clipboard, filled in with
   this person's details. Paste into your mail app, tweak, send. Copying is *not*
