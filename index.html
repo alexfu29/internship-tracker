@@ -1448,8 +1448,14 @@
     }
   }
 
+  // `muted` is the quiet middle ground between chasing someone and dropping
+  // them: the row stays live and in the table, it just stops appearing in the
+  // red card. Closing would file them away as over, and "Reminder sent" would
+  // be a lie about something you didn't send — neither says "not this one".
+  function isMuted(c) { return c.muted === true; }
   function needsNudge(c) {
     if (!parseYmd(c.date)) return false;   // nothing to count from
+    if (isMuted(c)) return false;
     return !c.responded && !c.closed && !c.meetingOn && daysSilent(c) >= NUDGE_DAYS;
   }
   function dueNudges() {
@@ -1651,6 +1657,9 @@
       return { tone: "good", text: (future ? "Meeting " : "Met ") + fmtShort(e.meetingOn) };
     }
     if (e.responded) return { tone: "good", text: "Replied" };
+    // Say it out loud. A row that has quietly stopped nudging with nothing on
+    // it to explain why is the same bug as a silent failure anywhere else.
+    if (isContact && isMuted(e)) return { tone: "muted", text: "Ignored" };
     // No date means the 7-day clock can't be computed — say so instead of
     // quietly reporting day zero forever.
     if (!parseYmd(e.date)) return { tone: "warning", text: "No date" };
@@ -1728,6 +1737,7 @@
         '<button data-act="copy" data-id="' + c.id + '">📋 Copy draft</button>' +
         '<button data-act="nudged" data-id="' + c.id + '">Reminder sent</button>' +
         '<button data-act="replied" data-id="' + c.id + '">They replied</button>' +
+        '<button data-act="mute" data-id="' + c.id + '">Ignore</button>' +
         '<button data-act="close" data-id="' + c.id + '">Drop it</button>' +
         '</div></div>';
     });
@@ -1749,6 +1759,7 @@
         }
         if (act === "nudged") { toggleRemindedToday(c); }
         else if (act === "replied") { c.responded = true; c.respondedOn = TODAY; }
+        else if (act === "mute") { c.muted = true; }
         else if (act === "close") { c.closed = true; }
         touch(c); saveData(); render();
       });
@@ -2357,6 +2368,7 @@
     html += '<div class="upd-group"><span class="upd-group-label">Status</span>' +
       '<div class="upd-acts">' + toggleBtn("replied", !!e.responded, "Replied");
     if (isContact) html += toggleBtn("nudged", remindedToday(e), "Reminder sent");
+    if (isContact) html += toggleBtn("muted", isMuted(e), "Ignored");
     html += toggleBtn("close", !!e.closed, "Closed");
     html += '</div></div>';
 
@@ -2409,6 +2421,8 @@
           live.respondedOn = live.responded ? TODAY : null;
         } else if (act === "nudged") {
           toggleRemindedToday(live);
+        } else if (act === "muted") {
+          live.muted = !live.muted;
         } else if (act === "close") {
           live.closed = !live.closed;
         }

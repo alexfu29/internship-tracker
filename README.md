@@ -426,8 +426,22 @@ red **"Needs a nudge"** card at the top of the screen with three buttons:
   replied before you actually sent). The reminder count and last-reminder date
   show on the row.
 - **They replied** — marks it replied, clears it from the list.
+- **Ignore** — stops nudging about this one, and that's all. The row stays live
+  and in the table; it just never shows up in the red card again.
 - **Drop it** — closes the entry; it stops being chased and moves to the closed
   list at the bottom of the table.
+
+**Ignore is the quiet middle ground**, and it exists because the other three
+buttons all say something untrue when you just don't want to chase someone.
+*Drop it* files them away as over. *They replied* is a lie about them. *Reminder
+sent* is a lie about you, and it only buys a week anyway. Ignoring says the one
+thing that's actually true: not this one.
+
+An ignored contact shows a gray **Ignored** chip in the table rather than going
+silently quiet — a row that stopped nudging with nothing on it explaining why
+would be the same bug as any other silent failure. To undo it, tap the row and
+turn **Ignored** off in the Status group; it goes straight back to nudging if
+it's still overdue.
 
 Nothing is emailed for you. The app flags who needs a follow-up; you send it.
 
