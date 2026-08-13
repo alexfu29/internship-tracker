@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-08-13T23:56:33.893Z",
+  "updated": "2026-08-13T23:57:16.265Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -759,7 +759,7 @@
     "mso10ydu-suiey0": {
       "company": "Kairos Power",
       "applied": true,
-      "coldEmailed": false,
+      "coldEmailed": true,
       "connected": false,
       "role": "",
       "date": "2026-08-11",
@@ -770,7 +770,9 @@
       "meetingOn": null,
       "closed": false,
       "deleted": false,
-      "updated": "2026-08-12T00:56:32.301Z"
+      "updated": "2026-08-13T23:57:16.265Z",
+      "outcome": "",
+      "workspace": ""
     },
     "mso12t73-hxy9d5": {
       "company": "Kraft Heinz",
@@ -807,7 +809,7 @@
     "mspe3cyj-nb20nm": {
       "company": "RTX",
       "applied": true,
-      "coldEmailed": false,
+      "coldEmailed": true,
       "connected": false,
       "role": "MechE Intern",
       "date": "2026-08-11",
@@ -818,7 +820,9 @@
       "meetingOn": null,
       "closed": false,
       "deleted": false,
-      "updated": "2026-08-12T01:21:56.745Z"
+      "updated": "2026-08-13T23:57:07.978Z",
+      "outcome": "",
+      "workspace": ""
     },
     "mspe3k0u-0l9dzy": {
       "company": "Boeing",
