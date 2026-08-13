@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-08-13T18:34:39.412Z",
+  "updated": "2026-08-13T23:56:33.893Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -785,8 +785,8 @@
       "respondedOn": null,
       "meetingOn": null,
       "closed": false,
-      "deleted": false,
-      "updated": "2026-08-12T00:39:08.736Z"
+      "deleted": true,
+      "updated": "2026-08-13T23:56:33.893Z"
     },
     "mspe3a9i-fojs7c": {
       "company": "Anduril Industries",
