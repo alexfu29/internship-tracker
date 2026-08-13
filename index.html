@@ -342,7 +342,12 @@
     font-weight: 600; font-size: 0.9rem; cursor: pointer; min-height: var(--tap);
   }
   button.primary:active, button.secondary:active { transform: scale(0.99); }
-  #copyOutreachBtn { margin-top: 8px; }
+  /* Save and Copy draft sit on one line — they're the two things you do at
+     the end of the form, so stacking them pushed Save further from the
+     fields for no gain. They share the width evenly and wrap on a very
+     narrow screen rather than squeezing the labels. */
+  .form-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+  .form-actions > button { width: auto; flex: 1 1 150px; margin: 0; }
 
   /* ---------- Update panel ---------- */
   /* the non-field half of the edit dialog, below the form */
@@ -690,8 +695,10 @@
         <label for="cNote">Note <span class="opt">(optional)</span></label>
         <textarea id="cNote"></textarea>
       </div>
-      <button type="submit" class="primary">Save contact</button>
-      <button type="button" class="secondary" id="copyOutreachBtn">📋 Copy outreach draft</button>
+      <div class="form-actions">
+        <button type="submit" class="primary">Save contact</button>
+        <button type="button" class="secondary" id="copyOutreachBtn">📋 Copy outreach draft</button>
+      </div>
       <p class="hint">Copy the draft, paste it into your own email, customise, send — then save.
         Edit the template in settings. Reminder flag turns red after 7 days with no reply.</p>
     </form>
@@ -1875,12 +1882,18 @@
       ? { bag: editSel.isContact ? "contacts" : "apps", id: editSel.id }
       : null;
 
-    // The workspace belongs to exactly one entry, so it follows the dialog:
-    // it opens with an entry, repoints when you open a different one, and
-    // goes away when the dialog does. Always flush first — a mid-sentence
-    // debounce must not be lost to a close or a switch.
-    if (!panelOpen || !editSel) { flushWorkspace(); hideWorkspace(); }
-    else if (!wsOpenFor || wsOpenFor.id !== editSel.id) {
+    // The workspace follows the dialog: it opens with it, repoints when you
+    // open a different entry, and goes away when the dialog does. Always
+    // flush first — a mid-sentence debounce must not be lost to a switch.
+    // On the Add form there is no entry to write to yet, so it opens in
+    // pending mode and the text is carried onto the row when you save.
+    if (!panelOpen) { flushWorkspace(); hideWorkspace(); }
+    else if (!editSel) {
+      if (!wsOpenFor || !wsOpenFor.pending) {
+        flushWorkspace();
+        openWorkspaceForNew(openC, true);
+      }
+    } else if (!wsOpenFor || wsOpenFor.pending || wsOpenFor.id !== editSel.id) {
       flushWorkspace();
       // no focus: the form field below gets it, so typing starts in the form
       openWorkspaceFor({ isContact: editSel.isContact, id: editSel.id, e: editSel.e }, true);
@@ -2015,10 +2028,32 @@
   }
   function closeLogPanel() { setLogForm(null, null); }
 
+  /* Tapping outside the dialog commits rather than discards — you shouldn't
+     have to find the Save button to keep what you just typed. Every other
+     field stays optional, but a row with no name at all is one you can't
+     find again, so that's the single thing this won't write on its own:
+     no name, and tapping outside just closes, same as it always did.
+     ✕ and Escape still close without saving, so there's a way to back out. */
+  function saveAndCloseLogPanel() {
+    var openForm = contactForm.classList.contains("open") ? contactForm
+      : appForm.classList.contains("open") ? appForm : null;
+    if (openForm) {
+      var key = document.getElementById(openForm === contactForm ? "cName" : "aCompany");
+      if (key && key.value.trim()) {
+        // The submit handler owns saving and closing, so go through it
+        // rather than duplicating what it does.
+        if (openForm.requestSubmit) openForm.requestSubmit();
+        else openForm.dispatchEvent(new Event("submit", { cancelable: true }));
+        return;
+      }
+    }
+    closeLogPanel();
+  }
+
   btnShowContact.addEventListener("click", function () { toggleForm("contact"); });
   btnShowApp.addEventListener("click", function () { toggleForm("app"); });
   document.getElementById("logPanelClose").addEventListener("click", closeLogPanel);
-  logOverlay.addEventListener("click", closeLogPanel);
+  logOverlay.addEventListener("click", saveAndCloseLogPanel);
 
   /* ---- Workspace: one per contact, one per company ---------------
      Stored on the entry itself, so it travels with that entry across
@@ -2044,6 +2079,10 @@
   // rebuilds the update panel and would yank focus out mid-sentence.
   function flushWorkspace() {
     clearTimeout(wsTimer);
+    // On the Add form the row doesn't exist yet, so the textarea itself is
+    // the buffer and the save handler lifts it onto the new entry. Nothing
+    // to write here, but it isn't a failure either.
+    if (wsOpenFor && wsOpenFor.pending) return true;
     var e = wsEntry();
     if (!e) return false;
     if (e.workspace === wsText.value) return true;
@@ -2051,6 +2090,23 @@
     touch(e);
     saveData();
     return true;
+  }
+
+  // The workspace on the Add form, before there's a row to attach it to.
+  function openWorkspaceForNew(isContact, noFocus) {
+    wsOpenFor = { pending: true, isContact: isContact };
+    wsText.value = "";
+    wsTitle.textContent = isContact ? "New contact" : "New company";
+    wsSaved.textContent = "Saved when you save the entry";
+    wsPop.classList.add("open");
+    wsPop.setAttribute("aria-hidden", "false");
+    document.body.classList.add("ws-side");
+    if (!noFocus) wsText.focus();
+  }
+
+  // Whatever is in the pending buffer, for the save handlers to attach.
+  function pendingWorkspace() {
+    return (wsOpenFor && wsOpenFor.pending) ? wsText.value : "";
   }
 
   function openWorkspaceFor(sel, noFocus) {
@@ -2078,6 +2134,12 @@
   }
 
   wsText.addEventListener("input", function () {
+    // Never claim "Saved" on the Add form — nothing is written until the
+    // entry is, and the label is the only thing telling you which it is.
+    if (wsOpenFor && wsOpenFor.pending) {
+      wsSaved.textContent = "Saved when you save the entry";
+      return;
+    }
     wsSaved.textContent = "Saving…";
     clearTimeout(wsTimer);
     wsTimer = setTimeout(function () {
@@ -2139,6 +2201,7 @@
     } else {
       fields.responded = false; fields.respondedOn = null; fields.meetingOn = null;
       fields.nudgedOn = []; fields.closed = false; fields.deleted = false;
+      fields.workspace = pendingWorkspace();   // typed before the row existed
       fields.updated = new Date().toISOString();
       DATA.contacts[newId()] = fields;
     }
@@ -2169,6 +2232,7 @@
     } else {
       fields.responded = false; fields.respondedOn = null; fields.meetingOn = null;
       fields.closed = false; fields.deleted = false;
+      fields.workspace = pendingWorkspace();   // typed before the row existed
       fields.updated = new Date().toISOString();
       DATA.apps[newId()] = fields;
     }

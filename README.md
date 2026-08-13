@@ -151,7 +151,11 @@ carrying some other scheme isn't made clickable at all.
 Every contact and every company has **its own workspace** — a bigger, free-form
 notes area that belongs to that one entry.
 
-**Tap the row and the workspace opens with it**, beside the dialog — no second tap.
+**The workspace opens with the dialog**, beside it — no second tap. That includes
+**＋ Cold contact** and **＋ Add company**: there's no row to attach to yet, so it
+opens in pending mode (titled `New contact` / `New company`, labelled `Saved when you
+save the entry`) and the text is carried onto the row the moment you save it. Draft
+the email and log the person in one pass.
 It's 340×400, deliberately not a full-height drawer and not a takeover. Opening a
 different row repoints it at that entry, and closing the dialog closes it.
 
@@ -201,9 +205,25 @@ where you're already looking, and the page behind it never reflows.
 - The **Note** field keeps its place at the bottom of the form.
 
 Both buttons drive the same dialog and it only ever shows one form: tapping the
-other button swaps the contents and retitles the header. Close it by tapping the
-same button again, the **✕**, **Escape**, or by tapping outside it. Saving closes it
-for you.
+same button again, the **✕**, or **Escape** closes it. Saving closes it for you.
+
+**Save** and **📋 Copy outreach draft** sit on one line at the end of the form —
+they're the two things you do when you're finished with it.
+
+### Tapping outside saves
+
+**Tap any empty space outside the dialog and what you typed is saved**, rather than
+thrown away. You don't have to find the Save button to keep an entry, and everything
+that's optional stays optional — blank company, blank role, blank note all go in
+exactly as they would through Save.
+
+The one exception is a **name** (or a **company**, on the company form). A row with
+neither is one you can't find again, so tapping outside with an empty name just
+closes the dialog and writes nothing. Explicit **Save** is unchanged and still takes
+a completely blank row if you want one — see "No field is enforced".
+
+**✕ and Escape still close without saving**, so there's a deliberate way to back out
+of an edit you didn't mean to make.
 
 Tapping a row opens this same dialog pre-filled — see "Opening an entry" below.
 
