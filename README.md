@@ -76,8 +76,9 @@ column.
 
 The colors follow the same rule as everywhere else: **Accepted is green**,
 **Waitlisted is amber** because it's still live and may still need chasing, and
-**Denied is gray, not red** — it's over, and red stays reserved for things that
-still need action from you.
+**Denied is red**. Red normally means "needs action" here and a denial needs
+none — but a no is the one answer you must not misread while scanning, and gray
+let it blend into the closed rows it sits near. Being unmissable wins.
 
 The stat row carries an **Accepted** tile with `N waitlisted · N denied`
 underneath, so all three are one glance without spending three tiles on it. It
@@ -121,9 +122,20 @@ and red stay reserved for things actually demanding action, so they keep their b
 In the table the words are compressed to dots to keep the row one line tall, which
 is a real accessibility cost, so it's paid back three ways: each dot carries its
 full text as a **tooltip**, the same text is there for **screen readers**, and a
-**legend** sits under the table (`● done · ○ not yet · 1st dot = cold email, 2nd =
-connection`). The meaning is compressed, not thrown away — tap the row and the edit
-form spells both out in words, so there's always somewhere the state is unambiguous.
+**legend** sits under the table. The meaning is compressed, not thrown away — tap
+the row and the edit form spells both out in words, so there's always somewhere the
+state is unambiguous.
+
+The two dots mean different things **by position**, so the legend names each one
+rather than describing the colors:
+
+```
+● 1st = cold email sent   ● 2nd = connection made   ○ outline = not yet
+```
+
+A filled dot is blue, not green — see "Status colors". The legend used to read
+`● done · ○ not yet`, which was worse than nothing: "done" named neither dot and
+read like a third state the row could be in.
 
 These are per-*company*. The cold-contact table is still where individual people
 and the 7-day nudge live; **Cold emails sent** on a company is the coarse "have I
@@ -449,6 +461,17 @@ Placeholders substituted automatically:
 | `{company}` `{role}` `{channel}` | as logged |
 | `{date}` | date you first contacted them (e.g. Jul 25) |
 | `{days}` | days since your last contact or reminder |
+| `{internship}` | the role **you** applied to, read off that company's row |
+| `{learn}` | "you" for a recruiter, "your work" for an engineer |
+
+`{role}` and `{internship}` are easy to confuse and are not the same thing.
+`{role}` is the **person's** bucket — `Hiring`, `VP Eng`, `BU Eng`.
+`{internship}` is the job **you** applied to, which lives on the company row
+because it's the same for everyone you know there. A draft saying "I applied to
+the Marotta VP Eng" is what using the wrong one looks like.
+
+There are **four** templates. `applied` and `connect` are the short LinkedIn
+connect notes used by ⚡ Auto-populate; `outreach` and `followup` are the emails.
 
 A placeholder with **no value on file** comes through as a visible `[company]`
 rather than an empty gap — you notice `at [company]` before sending; you don't
@@ -475,15 +498,140 @@ grayscale, and a glance in bright sun:
 | Dot | Means |
 |---|---|
 | red | needs a nudge (7+ days silent) |
+| red | **Denied** |
 | amber | company tracked but **not applied yet** — a to-do, not a waiting game |
 | amber | **no date** on the row, so the 7-day clock can't run |
+| amber | **Waitlisted** — still live, may still need chasing |
 | green | replied, or a meeting is set |
 | green | **Accepted** |
-| amber | **Waitlisted** — still live, may still need chasing |
 | gray filled | waiting, under 7 days |
-| gray outline | closed; **Denied**; or a company flag still at **no** (no cold email, no connection) |
+| gray outline | closed; or a company flag still at **no** (no cold email, no connection) |
+| blue | a company flag at **yes** — cold email sent, or connection made |
+
+**Green never means "I did something."** It means something came back to you —
+they replied, you have a meeting, you got in. The two company flag dots are
+things *you* did, so they're **blue**: sharing green made a company you'd emailed
+look at a glance like a company that had answered.
 
 Light and dark mode both follow the OS setting.
+
+## ⚡ Auto-populate from a LinkedIn profile
+
+At the top of the **Cold contact** form: paste a profile, tap **⚡ Auto-populate**,
+and the name, company and their role land in the fields with an outreach draft in
+the Note.
+
+**A browser cannot read linkedin.com.** LinkedIn sends no CORS headers, so the
+request is refused before it leaves — this was tested, not assumed. A bookmarklet
+is out too: LinkedIn's CSP blocks any bookmarklet. So there is no scraper here.
+There are two ways in:
+
+| You paste | What happens |
+|---|---|
+| the **whole copied page** (Ctrl+A, Ctrl+C on the profile) | parsed on this device, **no request made at all** |
+| just the **URL** | a reader service fetches the public logged-out view, and that gets parsed |
+
+The paste route is the guarantee; the URL route is the convenience. That's why
+the reader is a setting you can blank out — see below.
+
+**Nothing is written straight into the form.** It parses, shows you exactly what
+it found, and waits for **Use these**. Then it fills only the fields that are
+still empty, so auto-populate can never eat something you typed. A bad read costs
+one tap.
+
+If the profile can't be read, it doesn't fail silently or invent anything — the
+URL slug still carries a name (`/in/nathalie-dubois-8a4b21` → `Nathalie Dubois`),
+so it fills that, says why the rest is missing, and tells you to paste the page.
+
+### Their role is a bucket, not a job title
+
+The `role` field on an auto-populated contact holds one of exactly three values,
+because when you're scanning a list of people to approach, their literal title
+isn't the thing you need:
+
+| Bucket | Who, and why it matters |
+|---|---|
+| `Hiring` | recruiters and hiring managers — they decide |
+| `VP Eng` | engineering leadership — more power, harder to reach |
+| `BU Eng` | **Boston University** engineers there — least gatekeeping, by far the easiest yes, because you already share something |
+
+`BU Eng` is deliberately **not** "any engineer". The BU connection is the entire
+point of the bucket, so it's set from Boston University actually appearing on the
+profile — never guessed from a job title. Their real title isn't thrown away: the
+preview shows it (`filed as VP Eng · LinkedIn says "Chairman and CEO"`) so you can
+see what was decided and overrule it before saving. With nothing to go on the role
+is left **blank** rather than guessed.
+
+### The draft, and the claim it won't make
+
+The Note is drafted from your **companies table**, not from the person:
+
+- that company is in your list and marked **Applied** → the `applied` draft,
+  *"I recently applied to the {company} {internship} for 2027…"*
+- anything else → the `connect` draft, which says the same thing minus any claim
+  that you applied.
+
+The app will not put an application you didn't make into your own outbox, so the
+companies table decides. The status line always says which draft it used and why.
+If the Note already has text, the draft is **appended** after a blank line.
+
+### Company names get matched to your list
+
+The profile says "Marotta Controls, Inc."; you track "Marotta". Left alone that's
+two companies, a split list, and a silently broken Applied lookup. So names are
+compared with the decoration stripped (`Inc`, `LLC`, punctuation) and on a
+whole-word prefix, and **the spelling already in your tracker wins**. The preview
+tells you when it substituted. `Boston Scientific` and `Boston Dynamics` don't
+match each other — neither is a prefix of the other.
+
+## 🔍 Find contacts
+
+On a company's edit dialog: six people at that company, in three pairs — two
+`Hiring`, two `VP Eng`, two `BU Eng`. Four stages, and **nothing reaches your log
+until the last one**:
+
+```
+find    → six candidates, from web search or from JSON you paste
+verify  → each profile URL read back and parsed
+review  → what was claimed vs what the profile actually says, with tickboxes
+write   → ordinary cold-contact rows, only for what you left ticked
+```
+
+Stage 1 alone is not trustworthy: a search can return a stale title, the wrong
+person, or a profile URL that was pattern-matched rather than opened. **Stage 2 is
+the reason this is worth doing** and stage 3 is where you get to disagree with it.
+
+Each row comes back as one of:
+
+| Verdict | Means |
+|---|---|
+| `verified` | the profile was read and its employer matches this company |
+| `check this` | read, but something disagrees — different employer, no BU on a `BU Eng` row, or a title that doesn't read like leadership on a `VP Eng` row |
+| `unverified` | couldn't be read at all, or there was no profile link |
+
+`verified` means **the profile page agreed** — not that this is the right person
+to write to. Read the six before you send anything.
+
+A **sign-in wall counts as a failure, not a profile.** LinkedIn answers a reader
+it doesn't like with a signup or "Security verification" page, and those parse
+perfectly happily — the heading is just "Join LinkedIn". Without that check a
+challenge page becomes a confidently wrong contact, which is worse than a failed
+read, so any page that looks like a wall is forced to `unverified`.
+
+**With no API key saved it still works.** The button copies the research prompt
+for you to run in Claude and paste the reply back; both routes go through the same
+parser and the same review step, so the manual one can't drift from the automatic
+one. The prompt is editable in Settings and carries the same anti-invention rules
+as **Copy AI prompt** — a blank URL is explicitly a correct answer, because every
+row gets checked anyway.
+
+What gets written: `company` is your company row's name verbatim, `channel` is
+LinkedIn, the handle is the profile URL, `role` is the bucket, and the note carries
+their real job title plus the verdict and date. **No date** is set — nothing has
+been sent, so the 7-day nudge clock stays off until you actually send something.
+The company row itself is untouched: **Cold emails sent** stays at *no*, because
+it still is. Running it twice on one company skips names already on your list and
+tells you how many.
 
 ## Setup: the GitHub sync token
 
@@ -500,6 +648,27 @@ setup. To sync between your phone and laptop through `data/log.json`:
 Do this on every device. The token lives only in that device's `localStorage`
 (key `intern-pat`) and is never sent anywhere except `api.github.com`. Owner and
 repo are autodetected from the `github.io` URL.
+
+## The two optional outside services
+
+Everything above works with no network but the GitHub sync. The two LinkedIn
+features can each reach one outside service, both **off by default in the sense
+that blanking the field disables them**, both visible in Settings:
+
+| Service | Used for | Sees | Turn it off by |
+|---|---|---|---|
+| the **profile reader** (`https://r.jina.ai/` by default) | reading a public profile from a URL | the profile URL you paste | clearing the field — then only pasted page text is parsed, with no request |
+| `api.anthropic.com` | the search behind 🔍 Find contacts | the company name and role | clearing the API key — Find contacts switches to copy-and-paste |
+
+Both keys are stored **only on that device** (`intern-ai-key`, and `readerKey` in
+`intern-settings`), never ride the sync, and are only ever sent to their own
+service. Neither feature reads anything but the public logged-out view, and
+neither touches or automates your LinkedIn account.
+
+Honest limitation: the reader's free anonymous tier **gets throttled for
+linkedin.com**, and when it does, LinkedIn serves a sign-in wall instead of the
+profile. You'll see this as rows coming back `unverified` with a message saying
+so. A free reader API key clears it; pasting the page always works regardless.
 
 ## How sync resolves conflicts
 

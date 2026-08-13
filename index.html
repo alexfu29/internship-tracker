@@ -403,6 +403,25 @@
   .vb.warn { border-color: var(--status-warning); color: var(--amber-ink); background: var(--amber-bg); }
   .vb.none { border-color: var(--baseline); color: var(--text-muted); }
 
+  /* Find contacts stacks over the edit dialog it was opened from (42/41) and
+     over the workspace popup (43), so those stay readable underneath. */
+  .modal.finder { z-index: 47; }
+  #finderOverlay { z-index: 46; }
+  .finder-note { font-size: 0.78rem; color: var(--text-secondary); line-height: 1.5; margin: 0 0 10px; }
+  .finder-note.bad { color: var(--red-ink); }
+  .finder-group {
+    font-size: 0.72rem; font-weight: 700; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.04em; margin: 14px 0 4px;
+  }
+  .fr { display: flex; gap: 9px; padding: 8px 0; border-top: 1px solid var(--gridline); }
+  .fr input[type=checkbox] { margin-top: 3px; width: 17px; height: 17px; flex: 0 0 17px; }
+  .fr .who { min-width: 0; flex: 1; }
+  .fr .nm { font-size: 0.86rem; font-weight: 600; color: var(--text-primary); }
+  .fr .ti { font-size: 0.76rem; color: var(--text-secondary); }
+  .fr .cl { font-size: 0.72rem; color: var(--text-muted); }
+  .fr .cl a { color: var(--accent); word-break: break-all; }
+  .finder-progress { font-size: 0.78rem; color: var(--text-secondary); }
+
   button.primary {
     width: 100%; padding: 12px; border-radius: 10px; border: none;
     background: var(--accent); color: var(--accent-ink);
@@ -876,6 +895,19 @@
   </div>
 </aside>
 
+<!-- Find contacts: opens over the company's edit dialog, so it stacks above
+     both that dialog and the workspace popup. One mount the JS repaints per
+     stage — search, paste, verify, review — because they're steps in one flow,
+     not four screens. -->
+<div class="modal-overlay" id="finderOverlay"></div>
+<aside class="modal finder" id="finderPanel" aria-hidden="true" aria-label="Find contacts">
+  <div class="modal-head">
+    <h2 id="finderTitle">Find contacts</h2>
+    <button type="button" class="icon-btn" id="finderClose" aria-label="Close">✕</button>
+  </div>
+  <div class="modal-body" id="finderBody"></div>
+</aside>
+
 <div class="drawer-overlay" id="drawerOverlay"></div>
 <div class="drawer" id="drawer" aria-hidden="true">
   <button class="icon-btn close-x" id="drawerClose" aria-label="Close settings">✕</button>
@@ -951,6 +983,27 @@
 
   <label for="readerKeyInput">Reader API key <span style="color:var(--text-muted)">(optional, for rate limits)</span></label>
   <input type="password" id="readerKeyInput" placeholder="jina_…" autocomplete="off">
+
+  <hr>
+  <h2 style="font-size:0.95rem">Find contacts</h2>
+  <p class="tpl-help">
+    <strong>🔍 Find contacts</strong> on a company looks for six people there — two
+    recruiters, two engineering leads, and two Boston University engineers — then checks
+    each one against their real profile before anything is saved.
+  </p>
+  <p class="tpl-help">
+    With an API key it searches for you. <strong>Leave the key blank</strong> and it copies
+    the research prompt instead, for you to run in Claude and paste the reply back — same
+    review step either way. The key is stored on this device only and goes nowhere except
+    <code>api.anthropic.com</code>.
+  </p>
+
+  <label for="aiKeyInput">Anthropic API key <span style="color:var(--text-muted)">(optional)</span></label>
+  <input type="password" id="aiKeyInput" placeholder="sk-ant-…" autocomplete="off">
+
+  <label for="finderPromptInput">Research prompt <span style="color:var(--text-muted)">(<code>{company}</code>)</span></label>
+  <textarea id="finderPromptInput" class="tpl" rows="14"></textarea>
+  <button class="secondary" id="resetFinderBtn">Reset prompt to default</button>
 
   <hr>
   <h2 style="font-size:0.95rem">AI research prompt</h2>
@@ -1068,6 +1121,9 @@
      ============================================================ */
   var DATA_KEY = "intern-data";
   var PAT_KEY = "intern-pat";
+  // Same trust model as the GitHub token above: this device only, never in the
+  // synced log, and only ever sent to api.anthropic.com.
+  var AI_KEY = "intern-ai-key";
   var SETTINGS_KEY = "intern-settings";
 
   function emptyData() {
@@ -1255,6 +1311,11 @@
     if (v) localStorage.setItem(PAT_KEY, v);
     else localStorage.removeItem(PAT_KEY);
   }
+  function getAiKey() { return localStorage.getItem(AI_KEY) || ""; }
+  function setAiKey(v) {
+    if (v) localStorage.setItem(AI_KEY, v);
+    else localStorage.removeItem(AI_KEY);
+  }
 
   function detectOwnerRepo() {
     var host = location.hostname;
@@ -1424,7 +1485,7 @@
      ---------------------------------------------------------------- */
   var BUCKETS = { Hiring: 1, "VP Eng": 1, "BU Eng": 1 };
   var RE_HIRING = /recruit|talent|sourcer|hiring|human resources|people ops|university relations|campus/i;
-  var RE_LEAD = /\b(vp|vice president|director|head of|chief|cto|principal|senior manager|engineering manager)\b/i;
+  var RE_LEAD = /\b(vp|vice president|director|head of|chief|c[etoi]o|chairman|chairwoman|chair|president|founder|owner|partner|principal|staff|senior manager|engineering manager|manager|lead)\b/i;
 
   // `hasBU` comes from the profile text, not the title — see above. With
   // nothing to go on it returns nothing: an empty role reads as "fill this in",
@@ -1909,9 +1970,11 @@
       tableHtml(as, appCols(false), "No companies logged yet.", "companies");
 
     document.getElementById("appLegend").innerHTML = as.length
-      ? '<span class="lg"><span class="flag-dot on"></span>blue = done</span>' +
-        '<span class="lg"><span class="flag-dot off"></span>outline = not yet</span>' +
-        '<span class="lg">1st dot = cold email · 2nd = connection</span>'
+      // The dots say two different things by position, so the legend has to
+      // name each one. "Done" named neither and read as a third state.
+      ? '<span class="lg"><span class="flag-dot on"></span>1st = cold email sent</span>' +
+        '<span class="lg"><span class="flag-dot on"></span>2nd = connection made</span>' +
+        '<span class="lg"><span class="flag-dot off"></span>outline = not yet</span>'
       : "";
 
     renderArchive("contactArchive", csClosed, "openClosedContacts",
@@ -2006,6 +2069,54 @@
   function aiPromptTpl() {
     var t = SETTINGS.aiPrompt;
     return (typeof t === "string" && t.trim().length) ? t : DEFAULT_AI_PROMPT;
+  }
+
+  /* ---- the Find-contacts prompt ----------------------------------
+     Six people in three pairs. It carries the same anti-invention rules
+     that make the company prompt trustworthy, because the failure that
+     matters here is a plausible-looking profile URL for a person who
+     doesn't work there. A blank URL is explicitly a correct answer —
+     every row gets checked against the real profile afterwards anyway,
+     so there is nothing to gain by guessing one.
+     ---------------------------------------------------------------- */
+  var DEFAULT_FINDER_PROMPT = "" +
+    "Find me six people to contact at {company}, using web search. I'm a Boston University\n" +
+    "mechanical engineering student looking for a paid Summer 2027 internship" +
+    "{roleLine}.\n" +
+    "\n" +
+    "Three pairs, two people each:\n" +
+    "1. hiring — recruiters or hiring managers who handle engineering internships there.\n" +
+    "2. exec — engineering leadership: engineering manager, director, or VP of engineering.\n" +
+    "3. bu — engineers currently at {company} who went to Boston University. These matter\n" +
+    "   most to me: they have the least gatekeeping and the shared school makes them by far\n" +
+    "   the most likely to reply. Say what shows the BU connection.\n" +
+    "\n" +
+    "Rules:\n" +
+    "- Only give a LinkedIn profile URL you actually opened and read. Never construct,\n" +
+    "  pattern-match or guess one. Leaving the URL blank is a correct answer.\n" +
+    "- Public professional information only: name, job title, employer, profile URL. No\n" +
+    "  personal email addresses, phone numbers or home addresses.\n" +
+    "- Fewer than six is fine. Say which slots you couldn't fill rather than padding the\n" +
+    "  list with people who don't fit.\n" +
+    "- Check they still work at {company} — a stale title is the usual failure here.\n" +
+    "\n" +
+    "Reply with one JSON object in a ```json fence and nothing else:\n" +
+    "\n" +
+    "```json\n" +
+    "{ \"people\": [ { \"name\": \"\", \"title\": \"\", \"category\": \"hiring|exec|bu\",\n" +
+    "                \"linkedin\": \"\", \"why\": \"\" } ],\n" +
+    "  \"notes\": \"anything you could not verify\" }\n" +
+    "```";
+
+  function finderPromptTpl() {
+    var t = SETTINGS.finderPrompt;
+    return (typeof t === "string" && t.trim().length) ? t : DEFAULT_FINDER_PROMPT;
+  }
+  function buildFinderPrompt(a) {
+    var company = companyOf(a);
+    return finderPromptTpl()
+      .split("{company}").join(company)
+      .split("{roleLine}").join(a.role ? " — I've been looking at their " + a.role : "");
   }
 
   function buildAiPrompt(list) {
@@ -2253,6 +2364,8 @@
       '<div class="upd-acts">' +
       actionBtn("workspace", "📝 Workspace" + (hasWorkspace(e) ? " ●" : ""));
     if (isContact) html += actionBtn("copyfollow", "📋 Copy draft");
+    // Companies only: it looks for people *at* somewhere.
+    if (!isContact) html += actionBtn("findcontacts", "🔍 Find contacts");
     html += actionBtn("delete", "Delete", "danger") + '</div></div>';
 
     editExtras.innerHTML = html;
@@ -2274,6 +2387,7 @@
           copyText(fillTemplate(tplFor("followup"), draftValues(live)), btn);
           return;
         }
+        if (act === "findcontacts") { openFinderFor(editingEntry.id); return; }
         if (act === "workspace") {
           if (wsOpenFor && wsOpenFor.id === editingEntry.id) closeWorkspace();
           else openWorkspaceFor({ isContact: isContact, id: editingEntry.id, e: live });
@@ -2665,6 +2779,18 @@
     return out;
   }
 
+  // LinkedIn answers a reader it doesn't like with a sign-up wall or a
+  // "Security verification" challenge. Those pages parse perfectly happily —
+  // the H1 is just "Join LinkedIn" — so without this check a challenge page
+  // becomes a confidently wrong contact, which is worse than a failed read.
+  var RE_WALL = /^(join linkedin|sign ?up|sign ?in|log ?in|security verification|linkedin|page not found|something went wrong)\b/i;
+  function pageIsProfile(text, got) {
+    if (!got.name || RE_WALL.test(got.name.trim())) return false;
+    // A real public profile has an Experience section or a "<role> at <company>"
+    // headline. A wall has neither.
+    return /^#{2,3} +Experience\s*$/m.test(text) || !!got.company;
+  }
+
   // A copied page is just lines. The name leads and LinkedIn repeats it, and
   // the headline is the first "<role> at <company>" line near the top.
   function parsePlain(t, out) {
@@ -2746,8 +2872,9 @@
       lpBusy = false;
       var got = parseLinkedIn(text);
       got.url = url;
-      if (!got.name && !got.company) {
-        lpFallback(url, "The reader returned a page with no profile on it — LinkedIn may be showing it a sign-in wall.");
+      if (!pageIsProfile(text, got)) {
+        lpFallback(url, "LinkedIn served a sign-in wall instead of the profile, so nothing on it " +
+          "could be trusted.");
         return;
       }
       lpStatus("Read from the public profile.");
@@ -2845,6 +2972,395 @@
   }
 
   document.getElementById("lpBtn").addEventListener("click", lpRun);
+
+  /* ============================================================
+     6C. FIND CONTACTS — six people at one company
+
+     Four stages, and nothing reaches the log until the last one:
+
+       find    → six candidates, from web search or from JSON you paste
+       verify  → each profile URL read back through 6B's parser
+       review  → claimed vs actually-found, side by side, with tickboxes
+       write   → ordinary contact rows, only for what you left ticked
+
+     Stage 1 on its own is untrustworthy: a search can hand back a
+     stale title, the wrong person, or a profile URL that was pattern-
+     matched rather than opened. Stage 2 is the whole reason this is
+     worth doing, and stage 3 is where you get to disagree with it.
+     ============================================================ */
+  var CATS = {
+    hiring: { label: "Hiring", head: "Hiring — recruiters and hiring managers" },
+    exec:   { label: "VP Eng", head: "VP Eng — engineering leadership" },
+    bu:     { label: "BU Eng", head: "BU Eng — Boston University engineers there" }
+  };
+  var CAT_ORDER = ["hiring", "exec", "bu"];
+
+  var finderPanel = document.getElementById("finderPanel");
+  var finderOverlay = document.getElementById("finderOverlay");
+  var finderBody = document.getElementById("finderBody");
+  var FS = null;   // null when closed
+
+  function openFinderFor(appId) {
+    var a = DATA.apps[appId];
+    if (!a || a.deleted) return;
+    FS = { appId: appId, company: companyOf(a), phase: "idle", people: [], msg: "", bad: false, raw: "" };
+    finderPanel.classList.add("open");
+    finderOverlay.classList.add("open");
+    finderPanel.setAttribute("aria-hidden", "false");
+    document.getElementById("finderTitle").textContent = "Find contacts · " + FS.company;
+    renderFinder();
+  }
+  function closeFinder() {
+    FS = null;
+    finderPanel.classList.remove("open");
+    finderOverlay.classList.remove("open");
+    finderPanel.setAttribute("aria-hidden", "true");
+    finderBody.innerHTML = "";
+  }
+  document.getElementById("finderClose").addEventListener("click", closeFinder);
+  finderOverlay.addEventListener("click", closeFinder);
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && FS) { e.stopPropagation(); closeFinder(); }
+  }, true);
+
+  function fsSay(msg, bad) { if (FS) { FS.msg = msg || ""; FS.bad = !!bad; renderFinder(); } }
+
+  /* ---- render ---- */
+  function renderFinder() {
+    if (!FS) return;
+    var h = "";
+    if (FS.msg) h += '<p class="finder-note' + (FS.bad ? " bad" : "") + '">' + escapeHtml(FS.msg) + "</p>";
+
+    if (FS.phase === "idle") {
+      h += '<p class="finder-note">Six people at <strong>' + escapeHtml(FS.company) +
+        '</strong> — two recruiters, two engineering leads, and two Boston University ' +
+        'engineers. Every one gets checked against their real profile before anything is saved.</p>';
+      h += getAiKey()
+        ? '<button type="button" class="primary" id="fSearch">🔍 Search for six</button>'
+        : '<p class="finder-note">No API key saved, so nothing can search from here. Copy the ' +
+          'research prompt into Claude (or anything with web access) and paste its reply back.</p>' +
+          '<button type="button" class="primary" id="fCopy">📋 Copy research prompt</button>';
+      h += '<button type="button" class="secondary" id="fPaste">Paste a reply instead</button>';
+    } else if (FS.phase === "searching" || FS.phase === "verifying") {
+      h += '<p class="finder-progress">' + escapeHtml(FS.progress || "Working…") + "</p>";
+      if (FS.phase === "verifying") {
+        h += '<button type="button" class="secondary" id="fSkipVerify">Skip verification</button>';
+      }
+    } else if (FS.phase === "paste") {
+      h += '<p class="finder-note">Paste the JSON reply here.</p>';
+      h += '<div class="lp"><textarea id="fPasteBox" rows="8" placeholder="{ &quot;people&quot;: [ … ] }">' +
+        escapeHtml(FS.raw || "") + '</textarea>' +
+        '<button type="button" class="secondary" id="fCopy2">📋 Copy the prompt again</button></div>';
+      h += '<button type="button" class="primary" id="fParse">Read it</button>';
+    } else if (FS.phase === "review") {
+      h += renderFinderReview();
+    }
+    finderBody.innerHTML = h;
+    wireFinder();
+  }
+
+  function verdictBadge(p) {
+    if (p.verdict === "verified") return '<span class="vb ok">verified</span>';
+    if (p.verdict === "mismatch") return '<span class="vb warn">check this</span>';
+    return '<span class="vb none">unverified</span>';
+  }
+
+  function renderFinderReview() {
+    var n = FS.people.filter(function (p) { return p.use; }).length;
+    var h = "";
+    CAT_ORDER.forEach(function (cat) {
+      var rows = FS.people.filter(function (p) { return p.category === cat; });
+      if (!rows.length) return;
+      h += '<div class="finder-group">' + escapeHtml(CATS[cat].head) + "</div>";
+      rows.forEach(function (p) {
+        h += '<label class="fr"><input type="checkbox" data-i="' + p.i + '"' + (p.use ? " checked" : "") + ">" +
+          '<span class="who"><span class="nm">' + escapeHtml(p.name || "(no name)") + "</span> " +
+          verdictBadge(p) +
+          '<div class="ti">' + escapeHtml(p.title || "—") + "</div>" +
+          (p.claimNote ? '<div class="cl">' + escapeHtml(p.claimNote) + "</div>" : "") +
+          (p.why ? '<div class="cl">' + escapeHtml(p.why) + "</div>" : "") +
+          (p.linkedin
+            ? '<div class="cl"><a href="' + escapeHtml(p.linkedin) + '" target="_blank" rel="noopener">' +
+              escapeHtml(p.linkedin) + "</a></div>"
+            : '<div class="cl">no profile link</div>') +
+          "</span></label>";
+      });
+    });
+    h += '<div class="lp-acts">' +
+      '<button type="button" class="primary" id="fAdd">Yes — add ' + n + ' to cold contacts</button>' +
+      '<button type="button" class="secondary" id="fCancel">Cancel</button></div>';
+    return h;
+  }
+
+  function wireFinder() {
+    var on = function (id, fn) { var el = document.getElementById(id); if (el) el.addEventListener("click", fn); };
+    on("fSearch", finderSearch);
+    on("fCopy", function () { copyText(buildFinderPrompt(finderApp() || {}), this); });
+    on("fCopy2", function () { copyText(buildFinderPrompt(finderApp() || {}), this); });
+    on("fPaste", function () { FS.phase = "paste"; FS.msg = ""; renderFinder(); });
+    on("fParse", function () {
+      FS.raw = document.getElementById("fPasteBox").value;
+      var people = parseFinderPeople(FS.raw);
+      if (!people.length) {
+        fsSay("Couldn't find any people in that. It needs the JSON object from the reply — " +
+          "your text is still here, so nothing is lost.", true);
+        return;
+      }
+      FS.people = people;
+      finderVerify();
+    });
+    on("fSkipVerify", function () { FS.skip = true; });
+    on("fCancel", closeFinder);
+    on("fAdd", addFinderContacts);
+    finderBody.querySelectorAll('input[type=checkbox][data-i]').forEach(function (cb) {
+      cb.addEventListener("change", function () {
+        var p = FS.people[+cb.getAttribute("data-i")];
+        if (p) p.use = cb.checked;
+        var btn = document.getElementById("fAdd");
+        if (btn) btn.textContent = "Yes — add " +
+          FS.people.filter(function (x) { return x.use; }).length + " to cold contacts";
+      });
+    });
+  }
+
+  function finderApp() {
+    if (!FS) return null;
+    var a = DATA.apps[FS.appId];
+    return (a && !a.deleted) ? a : null;
+  }
+
+  /* ---- stage 1: search ---- */
+  function claudeCall(messages, depth) {
+    return fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "x-api-key": getAiKey(),
+        "anthropic-version": "2023-06-01",
+        "anthropic-dangerous-direct-browser-access": "true"
+      },
+      body: JSON.stringify({
+        model: "claude-opus-5",
+        max_tokens: 8000,
+        tools: [{ type: "web_search_20260209", name: "web_search", max_uses: 12 }],
+        messages: messages
+      })
+    }).then(function (r) {
+      return r.json().catch(function () { return {}; }).then(function (j) {
+        if (!r.ok) {
+          var m = (j && j.error && j.error.message) || ("HTTP " + r.status);
+          if (r.status === 401 || r.status === 403) throw new Error("that API key was rejected — check it in Settings");
+          if (r.status === 429) throw new Error("the API is rate limiting right now — try again in a minute");
+          throw new Error(m);
+        }
+        // A refusal comes back 200 with empty or partial content, so this has
+        // to be read before anything indexes into content.
+        if (j.stop_reason === "refusal") throw new Error("the model declined that request");
+        // Server-tool loops pause at their iteration cap; continue the turn.
+        if (j.stop_reason === "pause_turn" && depth < 4) {
+          return claudeCall(messages.concat([{ role: "assistant", content: j.content }]), depth + 1);
+        }
+        return j;
+      });
+    });
+  }
+
+  function finderSearch() {
+    var a = finderApp();
+    if (!a) { fsSay("That company isn't in your list any more.", true); return; }
+    FS.phase = "searching";
+    FS.progress = "Searching the web for people at " + FS.company + "… this takes a minute.";
+    FS.msg = "";
+    renderFinder();
+
+    claudeCall([{ role: "user", content: buildFinderPrompt(a) }], 0).then(function (j) {
+      if (!FS) return;
+      var text = (j.content || []).filter(function (b) { return b.type === "text"; })
+        .map(function (b) { return b.text; }).join("\n");
+      var people = parseFinderPeople(text);
+      if (!people.length) {
+        FS.phase = "paste"; FS.raw = text;
+        fsSay("The search came back but I couldn't read a people list out of it. " +
+          "Its reply is below — you can fix it by hand.", true);
+        return;
+      }
+      FS.people = people;
+      finderVerify();
+    }).catch(function (err) {
+      if (!FS) return;
+      FS.phase = "idle";
+      var m = (err && err.message) || "network error";
+      // A blocked fetch never left the browser, which is a different problem
+      // from a request the API answered.
+      if (/failed to fetch|networkerror/i.test(m)) {
+        m = "the request never left the browser — check your connection, or use the paste route";
+      }
+      fsSay("Search failed: " + m + ".", true);
+    });
+  }
+
+  /* ---- shared parser: one code path for search and for paste ---- */
+  function parseFinderPeople(text) {
+    var s = String(text || "");
+    var fence = s.match(/```(?:json)?\s*([\s\S]*?)```/i);
+    var body = fence ? fence[1] : s.slice(s.indexOf("{"), s.lastIndexOf("}") + 1);
+    var obj;
+    try { obj = JSON.parse(body); } catch (e) { return []; }
+    var list = (obj && obj.people) || (Array.isArray(obj) ? obj : []);
+    if (!Array.isArray(list)) return [];
+    var out = [];
+    list.forEach(function (p) {
+      if (!p || out.length >= 6) return;
+      var name = String(p.name || "").trim();
+      var url = String(p.linkedin || p.url || "").trim();
+      // A URL that isn't a real profile link is a guess; drop it rather than
+      // carry it into a row someone might tap.
+      if (!/^https?:\/\/([a-z]{2,3}\.)?linkedin\.com\/in\//i.test(url)) url = "";
+      if (!name && !url) return;
+      var cat = String(p.category || "").toLowerCase();
+      if (!CATS[cat]) cat = "exec";
+      out.push({
+        i: out.length, use: true, category: cat,
+        name: name, title: String(p.title || "").trim(),
+        why: String(p.why || "").trim(),
+        linkedin: url, claimName: name, claimTitle: String(p.title || "").trim(),
+        verdict: "unverified", claimNote: "", buNote: ""
+      });
+    });
+    out.forEach(function (p, i) { p.i = i; });
+    return out;
+  }
+
+  /* ---- stage 2: verify each profile against the real page ---- */
+  function finderVerify() {
+    FS.skip = false;
+    if (!readerBase()) {
+      FS.people.forEach(function (p) { p.verdict = "unverified"; });
+      FS.phase = "review";
+      fsSay("The profile reader is off in Settings, so none of these could be checked against " +
+        "a real profile. Read them before you send anything.", true);
+      return;
+    }
+    FS.phase = "verifying";
+    FS.msg = "";
+    var todo = FS.people.filter(function (p) { return p.linkedin; });
+    var n = 0;
+
+    function step() {
+      if (!FS) return;
+      if (FS.skip || n >= todo.length) { finishVerify(); return; }
+      var p = todo[n];
+      FS.progress = "Checking profile " + (n + 1) + " of " + todo.length + "…";
+      renderFinder();
+      fetchProfile(p.linkedin).then(function (text) {
+        applyVerification(p, text);
+      }).catch(function () {
+        p.verdict = "unverified";
+        if (!p.name) p.name = nameFromSlug(slugFrom(p.linkedin));
+      }).then(function () {
+        n++;
+        // Spaced out on purpose. Six reads in a burst get the free tier
+        // throttled and LinkedIn starts answering with challenge pages, which
+        // costs you the whole batch to save a few seconds.
+        setTimeout(step, 1200);
+      });
+    }
+    step();
+  }
+
+  function applyVerification(p, text) {
+    var got = parseLinkedIn(text);
+    if (!pageIsProfile(text, got)) {
+      p.verdict = "unverified";
+      p.claimNote = "LinkedIn served a sign-in wall, so this one couldn't be checked";
+      if (!p.name) p.name = nameFromSlug(slugFrom(p.linkedin));
+      return;
+    }
+    var claimT = p.claimTitle;
+    if (got.name) p.name = got.name;
+    if (got.title) p.title = got.title;
+    p.buNote = (p.category === "bu")
+      ? (got.hasBU ? "Boston University on the profile" : "no Boston University on the public profile")
+      : "";
+    var sameCo = got.company ? sameCompany(got.company, FS.company) : false;
+    // The bucket is a claim too: an "exec" whose real title reads like an
+    // individual contributor is the same kind of error as a wrong employer.
+    var bucketOk = p.category !== "exec" || RE_LEAD.test(p.title || "");
+    if (got.company && !sameCo) {
+      p.verdict = "mismatch";
+      p.claimNote = "profile says " + got.company + ", not " + FS.company;
+    } else if (p.category === "bu" && !got.hasBU) {
+      p.verdict = "mismatch";
+      p.claimNote = "no Boston University on the public profile";
+    } else if (!bucketOk) {
+      p.verdict = "mismatch";
+      p.claimNote = "listed as leadership, but the profile title doesn't read that way";
+    } else {
+      p.verdict = "verified";
+      p.claimNote = (claimT && got.title && claimT !== got.title) ? "was told: " + claimT : "";
+    }
+  }
+
+  function finishVerify() {
+    if (!FS) return;
+    FS.phase = "review";
+    var v = FS.people.filter(function (p) { return p.verdict === "verified"; }).length;
+    var m = FS.people.filter(function (p) { return p.verdict === "mismatch"; }).length;
+    var u = FS.people.length - v - m;
+    var note = FS.people.length + " found · " + v + " verified · " + m + " to check · " + u + " unverified. " +
+      "Verified means the profile page agreed — not that they're the right person to write to.";
+    // Most of a batch coming back unverified is almost always the reader being
+    // throttled, not six bad leads. Say which it is.
+    if (u > v && u > 1 && !readerKey()) {
+      note += " Most of these couldn't be read — that's usually LinkedIn throttling " +
+        "anonymous requests. A free reader API key in Settings fixes it.";
+    }
+    fsSay(note, u > v);
+  }
+
+  /* ---- stage 4: the only write ---- */
+  function addFinderContacts() {
+    var a = finderApp();
+    if (!a) { fsSay("That company was deleted while this was open — nothing was saved.", true); return; }
+    var company = companyOf(a);
+    var picked = FS.people.filter(function (p) { return p.use; });
+    if (!picked.length) { fsSay("Nothing ticked, so nothing was added.", true); return; }
+
+    // Running this twice on one company shouldn't double the rows.
+    var have = {};
+    contacts().forEach(function (c) {
+      if (c.name && sameCompany(c.company, company)) have[c.name.trim().toLowerCase()] = true;
+    });
+
+    var added = 0, skipped = 0;
+    picked.forEach(function (p) {
+      var key = (p.name || "").trim().toLowerCase();
+      if (key && have[key]) { skipped++; return; }
+      have[key] = true;
+      var bits = [CATS[p.category].label];
+      if (p.title) bits.push(p.title);
+      if (p.buNote) bits.push(p.buNote);
+      bits.push(p.verdict === "verified" ? "verified " + TODAY
+        : p.verdict === "mismatch" ? "CHECK: " + (p.claimNote || "mismatch") + " (" + TODAY + ")"
+        : "unverified " + TODAY);
+      DATA.contacts[newId()] = {
+        name: p.name, company: company, role: CATS[p.category].label,
+        channel: "LinkedIn", email: p.linkedin,
+        date: "",                       // nothing sent yet, so the 7-day clock stays off
+        note: bits.join(" · "),
+        responded: false, respondedOn: null, meetingOn: null,
+        nudgedOn: [], closed: false, deleted: false, workspace: "",
+        updated: new Date().toISOString()
+      };
+      added++;
+    });
+
+    saveData();
+    render();
+    closeFinder();
+    if (skipped) alert("Added " + added + " to cold contacts. Skipped " + skipped +
+      " already on your list for " + company + ".");
+  }
 
   /* ============================================================
      7. SYNC — data/log.json in this repo, via a fine-grained PAT
@@ -3000,6 +3516,8 @@
     document.getElementById("tplConnect").value = tplFor("connect");
     document.getElementById("readerInput").value = readerBase();
     document.getElementById("readerKeyInput").value = readerKey();
+    document.getElementById("aiKeyInput").value = getAiKey();
+    document.getElementById("finderPromptInput").value = finderPromptTpl();
     document.getElementById("aiPromptInput").value = aiPromptTpl();
     setTplStatus("");
     setAiStatus("");
@@ -3036,6 +3554,8 @@
     // requests", which is different from never having configured one.
     SETTINGS.readerBase = document.getElementById("readerInput").value.trim();
     SETTINGS.readerKey = document.getElementById("readerKeyInput").value.trim();
+    setAiKey(document.getElementById("aiKeyInput").value.trim());
+    SETTINGS.finderPrompt = document.getElementById("finderPromptInput").value;
     saveSettings(SETTINGS);
     setSyncStatus("Saved. Syncing…");
     renderBanners();
@@ -3094,6 +3614,14 @@
     document.getElementById("tplApplied").value = tplFor("applied");
     document.getElementById("tplConnect").value = tplFor("connect");
     setTplStatus("Reset to the built-in drafts.");
+  });
+
+  document.getElementById("resetFinderBtn").addEventListener("click", function () {
+    if (!confirm("Replace the Find-contacts prompt with the built-in default? Your wording will be lost.")) return;
+    delete SETTINGS.finderPrompt;
+    saveSettings(SETTINGS);
+    document.getElementById("finderPromptInput").value = finderPromptTpl();
+    setTplStatus("Find-contacts prompt reset to the built-in default.");
   });
 
   var aiWarned = false;
