@@ -57,10 +57,34 @@ channel relabels it without moving or clearing what you already typed.
 | **Applied yet?** | **Not yet** (default) or **Applied** — tap the row later to flip it |
 | **Cold emails sent?** | **Not yet** (default) or **Sent** — did you email anyone there |
 | **Connection made?** | **Not yet** (default) or **Connected** — did that outreach actually land |
+| **If they came back, what was the answer?** | **No answer yet** (default) · **Accepted** · **Waitlisted** · **Denied** |
 | Role | optional |
 | Date | defaults to today |
 | Careers page or posting link | optional; becomes a tappable link |
 | Note | optional |
+
+### The answer, when one comes
+
+Applied / cold email / connection are all about what *you* did. The **answer** is
+what came back, and it's the one thing that ends the story: **Accepted**,
+**Waitlisted** or **Denied**, defaulting to **No answer yet**.
+
+It **replaces the status chip** on that row. Once a company has said yes, no or
+wait, how many days it's been silent stopped being the question — so the answer
+outranks "Waiting 12d" and "Not applied" in the same slot, rather than adding a
+column.
+
+The colors follow the same rule as everywhere else: **Accepted is green**,
+**Waitlisted is amber** because it's still live and may still need chasing, and
+**Denied is gray, not red** — it's over, and red stays reserved for things that
+still need action from you.
+
+The stat row carries an **Accepted** tile with `N waitlisted · N denied`
+underneath, so all three are one glance without spending three tiles on it. It
+counts every company including closed ones — archiving a row doesn't un-answer it.
+
+An older company row has no answer on file, which reads as **No answer yet**, and
+an unrecognised value is read the same way rather than trusted into the UI.
 
 The point is that a company enters the list the moment you *notice* it, not when
 you apply. Add it with **Not yet**, and flip the toggle once you've actually
@@ -123,9 +147,26 @@ left instead of the link being flung to the right-hand edge with a stretch of de
 space in front of it. Every cell is `nowrap`, so when it doesn't fit the table gets
 **wider, never taller**.
 
-The page is capped at **640px** — sized to what the row actually needs (~500px)
-rather than to the screen. Stretching it wider only spread dead space across the
-card.
+A single column is capped at **640px** — sized to what the row actually needs
+(~500px) rather than to the screen. Stretching one column wider only spread dead
+space across the card.
+
+### Two columns, one scroll
+
+At **1040px and up** the page widens to 1180px and the two tables sit **side by
+side**: contacts on the left, companies on the right. They're separate lists you
+read against each other — "have I emailed anyone at this place" spans both — so
+side by side beats one buried under the other.
+
+Both columns are in normal page flow, so **one page scroll moves them together**.
+Neither column scrolls on its own, and a short list stays short instead of being
+stretched to match the tall one.
+
+The **stat row stays full width across the top**, above both columns, since it
+counts things from both.
+
+Below 1040px there isn't room for two ~500px rows, so it collapses to the single
+640px column and the phone layout is exactly as it was.
 
 On a phone the row still has to fit, so under 620px the company name truncates with
 an ellipsis, the gutters tighten, and the link drops to a bare 🔗. That's deliberate:
@@ -437,8 +478,10 @@ grayscale, and a glance in bright sun:
 | amber | company tracked but **not applied yet** — a to-do, not a waiting game |
 | amber | **no date** on the row, so the 7-day clock can't run |
 | green | replied, or a meeting is set |
+| green | **Accepted** |
+| amber | **Waitlisted** — still live, may still need chasing |
 | gray filled | waiting, under 7 days |
-| gray outline | closed; or a company flag still at **no** (no cold email, no connection) |
+| gray outline | closed; **Denied**; or a company flag still at **no** (no cold email, no connection) |
 
 Light and dark mode both follow the OS setting.
 

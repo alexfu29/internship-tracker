@@ -122,6 +122,26 @@
      card — and it leaves room either side for the log and workspace panels. */
   .wrap { max-width: 640px; margin: 0 auto; padding: 0 14px; }
 
+  /* ---------- Two columns ----------
+     Contacts left, companies right. They're separate lists you scan against
+     each other — "have I emailed anyone here" is a question that spans both —
+     so side by side beats one under the other once the screen can hold it.
+     Both sit in normal page flow, so one page scroll moves them together;
+     neither column scrolls on its own. align-items:start keeps a short
+     column short instead of stretching it to match the tall one.
+     Under 1040px there isn't room for two ~500px rows, so it collapses back
+     to the single 640px column and nothing about the phone layout changes.
+
+     minmax(0,1fr), not 1fr: a grid item's default min-width is min-content,
+     so the widest table row would push the column past the page instead of
+     scrolling inside .table-scroll the way it does in one column. */
+  .cols { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0 14px; align-items: start; }
+  .cols > section { min-width: 0; }
+  @media (min-width: 1040px) {
+    .wrap, header.app-header, .app-footer { max-width: 1180px; }
+    .cols { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  }
+
   /* ---------- Header ---------- */
   header.app-header {
     display: flex; align-items: center; justify-content: space-between;
@@ -192,7 +212,9 @@
   .nudge-row .acts button:active { transform: scale(0.97); }
 
   /* ---------- Stat tiles ---------- */
-  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  /* auto-fit rather than a fixed 4, so the outcome tile joins the row on a
+     wide screen and wraps instead of crushing the others when it can't */
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; }
   @media (max-width: 420px) { .stats { grid-template-columns: repeat(2, 1fr); } }
   .stat {
     background: var(--surface-1); border: 1px solid var(--border);
@@ -628,20 +650,23 @@
 
   </section>
 
-  <!-- Tables -->
-  <section class="card">
-    <h2>People contacted <span class="count" id="contactCount"></span></h2>
-    <div class="table-scroll" id="contactTableMount"></div>
-    <div class="archive" id="contactArchive"></div>
-  </section>
+  <!-- Tables: contacts left, companies right on a wide screen; stacked below
+       1040px. One page scroll moves both — neither column scrolls alone. -->
+  <div class="cols">
+    <section class="card">
+      <h2>People contacted <span class="count" id="contactCount"></span></h2>
+      <div class="table-scroll" id="contactTableMount"></div>
+      <div class="archive" id="contactArchive"></div>
+    </section>
 
-  <section class="card">
-    <h2>Companies <span class="count" id="appCount"></span></h2>
-    <div id="aiPromptMount"></div>
-    <div class="table-scroll" id="appTableMount"></div>
-    <div class="dot-legend" id="appLegend"></div>
-    <div class="archive" id="appArchive"></div>
-  </section>
+    <section class="card">
+      <h2>Companies <span class="count" id="appCount"></span></h2>
+      <div id="aiPromptMount"></div>
+      <div class="table-scroll" id="appTableMount"></div>
+      <div class="dot-legend" id="appLegend"></div>
+      <div class="archive" id="appArchive"></div>
+    </section>
+  </div>
 
 </main>
 
@@ -729,6 +754,15 @@
             <label><input type="radio" name="aConn" value="no" checked><span>Not yet</span></label>
             <label><input type="radio" name="aConn" value="yes"><span>Connected</span></label>
           </div>
+        </div>
+      </div>
+      <div class="field">
+        <label>If they came back, what was the answer?</label>
+        <div class="seg" id="aOutcomeSeg">
+          <label><input type="radio" name="aOutcome" value="none" checked><span>No answer yet</span></label>
+          <label><input type="radio" name="aOutcome" value="accepted"><span>Accepted</span></label>
+          <label><input type="radio" name="aOutcome" value="waitlist"><span>Waitlisted</span></label>
+          <label><input type="radio" name="aOutcome" value="denied"><span>Denied</span></label>
         </div>
       </div>
       <div class="row2">
@@ -1247,6 +1281,25 @@
   function isColdEmailed(a) { return a.coldEmailed === true; }
   function isConnected(a) { return a.connected === true; }
 
+  // How it actually ended. Same shape as the flags above: no old row carried
+  // it, so a missing key honestly means "no answer yet". Anything unrecognised
+  // reads as no answer rather than being trusted into the UI.
+  var OUTCOMES = { accepted: "Accepted", waitlist: "Waitlisted", denied: "Denied" };
+  function outcomeOf(a) {
+    var v = a && a.outcome;
+    return OUTCOMES[v] ? v : "";
+  }
+  // Accepted is the good news; a waitlist is still live so it's amber; denied
+  // is gray, not red — it's over, and red is for things still needing action.
+  function outcomeChip(a) {
+    var v = outcomeOf(a);
+    if (!v) return null;
+    return {
+      tone: v === "accepted" ? "good" : v === "waitlist" ? "warning" : "muted",
+      text: OUTCOMES[v]
+    };
+  }
+
   // Two independent facts the single status chip can't carry — a company can
   // be un-applied and still be one you've emailed and heard back from.
   //
@@ -1315,6 +1368,12 @@
   // never the only carrier of meaning.
   function statusOf(e, isContact) {
     if (e.closed) return { tone: "muted", text: "Closed" };
+    // An answer outranks everything below it: once a company has said yes,
+    // no or wait, how many days it's been silent stopped being the question.
+    if (!isContact) {
+      var oc = outcomeChip(e);
+      if (oc) return oc;
+    }
     // A tracked-but-not-applied company is a to-do, not a waiting game.
     if (!isContact && !isApplied(e)) return { tone: "warning", text: "Not applied" };
     if (e.meetingOn) {
@@ -1354,12 +1413,25 @@
     var meetings = sent.filter(function (e) { return !!e.meetingOn; }).length;
     var rate = sent.length ? Math.round((replies / sent.length) * 100) : 0;
 
+    // Outcomes ride in one tile rather than three: accepted is the number
+    // you actually want, and waitlist/denied are context for it. Decided
+    // companies are counted across every company, closed ones included — an
+    // answer doesn't stop being an answer because you archived the row.
+    var decided = as.filter(function (a) { return outcomeOf(a); });
+    var accepted = decided.filter(function (a) { return outcomeOf(a) === "accepted"; }).length;
+    var waitlist = decided.filter(function (a) { return outcomeOf(a) === "waitlist"; }).length;
+    var denied = decided.filter(function (a) { return outcomeOf(a) === "denied"; }).length;
+    var outcomeSub = decided.length
+      ? waitlist + " waitlisted · " + denied + " denied"
+      : "no answers yet";
+
     var tiles = [
       { label: "Contacts", value: cs.length, sub: cs.length ? "people reached" : "none yet" },
       { label: "Applied", value: applied.length,
         sub: as.length ? "of " + as.length + " compan" + (as.length === 1 ? "y" : "ies") : "none yet" },
       { label: "Replies", value: replies, sub: sent.length ? rate + "% of " + sent.length : "—" },
-      { label: "Meetings", value: meetings, sub: meetings ? "booked or held" : "none yet" }
+      { label: "Meetings", value: meetings, sub: meetings ? "booked or held" : "none yet" },
+      { label: "Accepted", value: accepted, sub: outcomeSub }
     ];
     document.getElementById("stats").innerHTML = tiles.map(function (t) {
       return '<div class="stat"><div class="label">' + t.label + '</div>' +
@@ -1861,6 +1933,7 @@
     setRadio(appForm, "aApplied", isApplied(e) ? "yes" : "no");
     setRadio(appForm, "aCold", isColdEmailed(e) ? "yes" : "no");
     setRadio(appForm, "aConn", isConnected(e) ? "yes" : "no");
+    setRadio(appForm, "aOutcome", outcomeOf(e) || "none");
   }
 
   /* Editing opens the very same form as adding, in the very same dialog —
@@ -2215,11 +2288,13 @@
     var appliedEl = appForm.querySelector('input[name="aApplied"]:checked');
     var coldEl = appForm.querySelector('input[name="aCold"]:checked');
     var connEl = appForm.querySelector('input[name="aConn"]:checked');
+    var outcomeEl = appForm.querySelector('input[name="aOutcome"]:checked');
     var fields = {
       company: document.getElementById("aCompany").value.trim(),
       applied: !!(appliedEl && appliedEl.value === "yes"),
       coldEmailed: !!(coldEl && coldEl.value === "yes"),
       connected: !!(connEl && connEl.value === "yes"),
+      outcome: (outcomeEl && OUTCOMES[outcomeEl.value]) ? outcomeEl.value : "",
       role: document.getElementById("aRole").value.trim(),
       date: document.getElementById("aDate").value,
       link: document.getElementById("aLink").value.trim(),
