@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-08-13T17:32:47.569Z",
+  "updated": "2026-08-13T17:33:44.700Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -411,7 +411,8 @@
       "nudgedOn": [],
       "closed": false,
       "deleted": false,
-      "updated": "2026-08-13T01:59:33.455Z"
+      "updated": "2026-08-13T17:33:44.700Z",
+      "workspace": ""
     },
     "msqvfybw-8jnyc6": {
       "name": "William Dimas",
