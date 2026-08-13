@@ -662,29 +662,52 @@ Each created contact also gets **the draft already written into its workspace**,
 ready to send. Six people with six empty workspaces is six more things to do by
 hand, which was the thing this was meant to save.
 
-### Searching for free, on your own machine
+### Searching, with no key and nothing to install
 
-**Every hosted search API refuses a browser.** Brave and the public SearXNG
-instances send no CORS header, Google's Custom Search JSON API is closed to new
-signups, and DuckDuckGo's free API returns instant answers rather than web
-results. All four tested, not assumed.
+**🔎 Search** is built in and needs no account, no key and no quota. It's the
+default route, and it works on your phone.
 
-What does work is **a SearXNG you run yourself** — no key, no quota, and the
-query never leaves your machine:
+Getting there took some ruling out. **Every hosted search API refuses a
+browser** — Brave and five public SearXNG instances send no CORS header, Google's
+Custom Search JSON API is closed to new signups, and DuckDuckGo's free API returns
+instant answers rather than web results. All tested, not assumed.
+
+What works is the reader you already have. DuckDuckGo's **lite** endpoint won't
+answer a browser directly, but it goes through the same reader the profiles do,
+and its results page is plainly structured:
+
+```
+1.[Cici C. - Software Engineer at Microsoft | LinkedIn](https://duckduckgo.com/l/?uddg=…)
+Software Engineer at Microsoft · Experience: Microsoft · Education: Boston University · …
+www.linkedin.com/in/cici-c-30179ba7
+```
+
+Five `site:linkedin.com/in` searches run — two for hiring, two for leadership, one
+for BU — and the bare URL on the third line is read rather than DuckDuckGo's
+tracking redirect above it. The snippet is kept because it often **names the
+school outright**, which is the BU evidence, before any profile is opened.
+
+This beats asking a model for this job: the links come out of a search index, so
+they **can't be invented** — the exact failure the verify stage exists to catch.
+
+Two parsing details worth knowing, both of which bit during testing. LinkedIn
+sometimes titles a page with the headline alone (`Principal Engineering Manager at
+Microsoft - LinkedIn`), and splitting that naively files a job title as somebody's
+name — so if the first segment reads like a role, the name comes off the URL slug
+instead. And a profile whose public view is laid out differently puts
+`Experience & Education` exactly where the job title usually sits, so section
+headings are rejected as titles.
+
+**Optional: your own SearXNG.** If you'd rather nothing left your machine at all:
 
 ```bash
 docker run -d -p 8888:8080 searxng/searxng
 ```
 
-Add `json` to `search.formats` in its `settings.yml`, allow this page's origin,
-and put `http://localhost:8888` into **Settings → My own search engine**. A
-**🔎 Search with my own engine** button then appears on the Find contacts dialog.
-
-It's also *better* than asking a model for this particular job: the profile links
-come straight out of a search index, so they can't be invented — which is the
-exact failure the verify stage exists to catch. The trade-off is that it only
-works on the machine running it, so keep an API key if you want this on your
-phone.
+Add `json` to `search.formats` in its `settings.yml`, allow this page's origin, and
+put `http://localhost:8888` into **Settings → My own search engine**. It then takes
+over from the built-in route and the button reads **🔎 Search with my own engine**.
+It only works on the machine running it, which is why it isn't the default.
 
 ### Claude or Gemini
 
@@ -713,10 +736,12 @@ the three searches to run, and that a Director of Talent Acquisition counts as a
 hiring contact even though the title doesn't say "engineering" — the same run missed
 exactly that person.
 
-**With no API key saved it still works.** The button copies the research prompt
-for you to run in Claude and paste the reply back; both routes go through the same
-parser and the same review step, so the manual one can't drift from the automatic
-one. The prompt is editable in Settings and carries the same anti-invention rules
+**📋 Copy the research prompt is always there**, next to whichever search buttons
+you have. It puts the full prompt on your clipboard to run in Gemini, Claude or
+anything else with web access, and **Paste a reply instead** takes the JSON back.
+Every route — built-in search, your own SearXNG, a hosted model, or copy-and-paste —
+goes through the same parser and the same review step, so none of them can drift
+from the others. The prompt is editable in Settings and carries the same anti-invention rules
 as **Copy AI prompt** — a blank URL is explicitly a correct answer, because every
 row gets checked anyway.
 
@@ -752,7 +777,7 @@ that blanking the field disables them**, both visible in Settings:
 
 | Service | Used for | Sees | Turn it off by |
 |---|---|---|---|
-| the **profile reader** (`https://r.jina.ai/` by default) | reading a public profile from a URL | the profile URL you paste | clearing the field — then only pasted page text is parsed, with no request |
+| the **profile reader** (`https://r.jina.ai/` by default) | reading a public profile from a URL, **and the built-in search** | the profile URL you paste, or the search query | clearing the field — then only pasted page text is parsed, with no request, and 🔎 Search is unavailable |
 | `api.anthropic.com` **or** `generativelanguage.googleapis.com` | the search behind 🔍 Find contacts | the company name and role | clearing that API key — Find contacts switches to copy-and-paste |
 | **your own SearXNG** | the same search, locally | nothing leaves your machine | clearing the URL |
 

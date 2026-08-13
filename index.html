@@ -2972,8 +2972,14 @@
     }
 
     if (!out.name && !/^#/m.test(t)) parsePlain(t, out);
+    // A section heading is not a job title. Profiles whose public view is laid
+    // out differently put "Experience & Education" exactly where the title
+    // usually sits, and it sailed through as someone's role.
+    if (RE_SECTION.test(out.title)) out.title = "";
+    if (RE_SECTION.test(out.company)) out.company = "";
     return out;
   }
+  var RE_SECTION = /^\s*(experience|education|experience &(amp;)? education|about|skills|top skills|activity|licenses|certifications?|projects|honou?rs|languages|recommendations|interests|volunteering|publications)\s*$/i;
 
   // LinkedIn answers a reader it doesn't like with a sign-up wall or a
   // "Security verification" challenge. Those pages parse perfectly happily —
@@ -3007,7 +3013,9 @@
   }
 
   /* ---- fetching ---- */
-  function fetchProfile(url) {
+  function fetchProfile(url) { return readerFetch(url, "LinkedIn"); }
+
+  function readerFetch(url, what) {
     var base = readerBase();
     if (!base) return Promise.reject(new Error("reader-off"));
     var ctl = (typeof AbortController !== "undefined") ? new AbortController() : null;
@@ -3023,8 +3031,8 @@
       return r.text().then(function (body) {
         var throttled = r.status === 429 || /abuse|rate limit|blocked until/i.test(body);
         if (throttled && !readerKey()) {
-          throw new Error("the reader is throttling anonymous requests to LinkedIn — " +
-            "add a free reader API key in Settings, or paste the copied profile page instead");
+          throw new Error("the reader is throttling anonymous requests to " + (what || "that site") +
+            " — add a free reader API key in Settings, or paste the copied profile page instead");
         }
         if (throttled) throw new Error("the reader is rate-limiting this key right now — try again shortly");
         throw new Error("the reader answered " + r.status);
@@ -3242,17 +3250,21 @@
       h += '<p class="finder-note">Six people at <strong>' + escapeHtml(FS.company) +
         '</strong> — two recruiters, two engineering leads, and two Boston University ' +
         'engineers. Every one gets checked against their real profile before anything is saved.</p>';
-      if (searchUrl()) {
-        h += '<button type="button" class="primary" id="fLocal">🔎 Search with my own engine</button>';
+      var sp = searchProvider();
+      if (sp) {
+        h += '<button type="button" class="primary" id="fLocal">🔎 Search' +
+          (sp === "searx" ? " with my own engine" : "") + '</button>';
       }
-      h += hasAiKey()
-        ? '<button type="button" class="' + (searchUrl() ? "secondary" : "primary") +
-          '" id="fSearch">🔍 Search with ' + (aiProvider() === "gemini" ? "Gemini" : "Claude") + '</button>'
-        : (searchUrl() ? "" :
-          '<p class="finder-note">No search engine and no API key saved, so nothing can search ' +
-          'from here. Copy the research prompt into Claude (or anything with web access) and ' +
-          'paste its reply back.</p>' +
-          '<button type="button" class="primary" id="fCopy">📋 Copy research prompt</button>');
+      if (hasAiKey()) {
+        h += '<button type="button" class="' + (sp ? "secondary" : "primary") +
+          '" id="fSearch">🔍 Ask ' + (aiProvider() === "gemini" ? "Gemini" : "Claude") +
+          ' instead</button>';
+      } else if (!sp) {
+        h += '<p class="finder-note">Nothing can search from here — the profile reader is off ' +
+          'and no API key is saved. Copy the research prompt into Gemini or Claude and paste ' +
+          'its reply back.</p>';
+      }
+      h += '<button type="button" class="secondary" id="fCopy">📋 Copy the research prompt</button>';
       h += '<button type="button" class="secondary" id="fPaste">Paste a reply instead</button>';
     } else if (FS.phase === "searching" || FS.phase === "verifying") {
       h += '<p class="finder-progress">' + escapeHtml(FS.progress || "Working…") + "</p>";
@@ -3355,6 +3367,12 @@
      be invented, which was the failure the verify stage exists for.
      ---------------------------------------------------------------- */
   function searchUrl() { return (SETTINGS.searchUrl || "").trim(); }
+  // Built in unless you've pointed it at your own SearXNG. The built-in route
+  // needs the reader, since that's what gets it past CORS.
+  function searchProvider() {
+    if (searchUrl()) return "searx";
+    return readerBase() ? "ddg" : "";
+  }
 
   function searxQuery(q) {
     var base = searchUrl().replace(/\/+$/, "");
@@ -3363,39 +3381,101 @@
         if (!r.ok) throw new Error("the search engine answered " + r.status);
         return r.json();
       })
-      .then(function (j) { return (j && j.results) || []; });
+      .then(function (j) {
+        return ((j && j.results) || []).map(function (h) {
+          return { title: h.title || "", url: h.url || "", snippet: h.content || "" };
+        });
+      });
   }
 
-  // "Satya Nadella - Chairman and CEO - Microsoft | LinkedIn"
+  /* The built-in route. DuckDuckGo's lite endpoint refuses a browser directly,
+     but it goes through the same reader the profiles do, and its results page
+     is plainly structured:
+
+       1.[Cici C. - Software Engineer at Microsoft | LinkedIn](https://duckduckgo.com/l/?uddg=…)
+       Software Engineer at Microsoft · Experience: Microsoft · Education: Boston University · …
+       www.linkedin.com/in/cici-c-30179ba7
+
+     The bare URL on the third line is read rather than the redirect above it,
+     which saves unwrapping DuckDuckGo's tracking wrapper. The snippet is worth
+     keeping: it often names the school outright, which is the BU evidence. */
+  function ddgQuery(q) {
+    return readerFetch("https://lite.duckduckgo.com/lite/?q=" + encodeURIComponent(q), "DuckDuckGo")
+      .then(parseDdgResults);
+  }
+
+  function parseDdgResults(text) {
+    var chunks = String(text || "").split(/^\s*\d+\.\s*(?=\[)/m).slice(1);
+    var out = [];
+    chunks.forEach(function (ch) {
+      var t = ch.match(/^\[([^\]]*)\]/);
+      var u = ch.match(/(?:https?:\/\/)?(?:[a-z]{2,3}\.)?linkedin\.com\/in\/[A-Za-z0-9%_-]+/i);
+      if (!t || !u) return;
+      var snip = ch.slice(ch.indexOf(")") + 1);
+      snip = snip.slice(0, snip.indexOf(u[0]) > -1 ? snip.indexOf(u[0]) : snip.length);
+      out.push({
+        title: t[1],
+        url: u[0],
+        snippet: snip.replace(/\*\*/g, "").replace(/&#39;/g, "'").replace(/\s+/g, " ").trim()
+      });
+    });
+    return out;
+  }
+
+  function runSearch(q) {
+    return searchProvider() === "searx" ? searxQuery(q) : ddgQuery(q);
+  }
+
+  // Usually "Cici C. - Software Engineer at Microsoft | LinkedIn", but LinkedIn
+  // sometimes titles the page with the headline alone — "Principal Engineering
+  // Manager at Microsoft - LinkedIn" — and splitting that naively files a job
+  // title as somebody's name. If the first segment reads like a role, it is
+  // one, and the name comes off the URL slug instead.
   function fromSearchResult(hit, cat) {
     var url = profileUrlFrom(hit.url || "");
     if (!url) return null;
     var t = String(hit.title || "").replace(/\s*[|\-–]\s*LinkedIn\s*$/i, "").trim();
-    var parts = t.split(/\s+[-–]\s+/);
+    var parts = t.split(/\s+[-–|]\s+/).map(function (s) { return s.trim(); }).filter(Boolean);
+    var name = parts[0] || "";
+    var title = parts.slice(1).join(" · ");
+    if (!parts.length || looksLikeRole(name)) {
+      title = t;
+      name = nameFromSlug(slugFrom(url));
+    }
     return {
-      name: (parts[0] || "").trim(),
-      title: (parts[1] || "").trim(),
-      category: cat,
-      linkedin: url,
-      why: String(hit.content || "").slice(0, 160)
+      name: name, title: title, category: cat, linkedin: url,
+      why: String(hit.snippet || "").slice(0, 180)
     };
+  }
+  function looksLikeRole(s) {
+    return /\s+at\s+/i.test(s) || s.length > 38 ||
+      RE_HIRING.test(s) || RE_LEAD.test(s) || /\bengineer|intern|scientist|analyst\b/i.test(s);
   }
 
   function finderLocalSearch() {
     var a = finderApp();
     if (!a) { fsSay("That company isn't in your list any more.", true); return; }
     var co = '"' + FS.company + '"';
+    // Plain phrases, no OR groups: the lite endpoint handles them badly and
+    // an over-clever query comes back with nothing at all, which reads as
+    // "nobody works there" rather than "that query was wrong".
     var plan = [
-      { cat: "hiring", q: 'site:linkedin.com/in ' + co + ' (recruiter OR "talent acquisition" OR "university relations")' },
-      { cat: "exec", q: 'site:linkedin.com/in ' + co + ' ("VP of Engineering" OR "Director of Engineering" OR "Engineering Manager")' },
+      { cat: "hiring", q: 'site:linkedin.com/in ' + co + ' recruiter' },
+      { cat: "hiring", q: 'site:linkedin.com/in ' + co + ' "talent acquisition"' },
+      { cat: "exec", q: 'site:linkedin.com/in ' + co + ' "engineering manager"' },
+      { cat: "exec", q: 'site:linkedin.com/in ' + co + ' "director of engineering"' },
       { cat: "bu", q: 'site:linkedin.com/in ' + co + ' "Boston University" engineer' }
     ];
     FS.phase = "searching"; FS.msg = ""; FS.progress = "Searching…";
     renderFinder();
 
-    var found = [], seen = {};
+    var found = [], seen = {}, catCount = { hiring: 0, exec: 0, bu: 0 };
     function step(i) {
       if (!FS) return;
+      // Several queries feed one category, so the cap is counted per category
+      // rather than per query — otherwise "recruiter" and "talent acquisition"
+      // would return two each and fill the pair twice over.
+      while (i < plan.length && catCount[plan[i].cat] >= 2) i++;
       if (i >= plan.length) {
         if (!found.length) {
           FS.phase = "idle";
@@ -3406,29 +3486,41 @@
         found.forEach(function (p, n) { p.i = n; p.use = true; p.claimName = p.name;
           p.claimTitle = p.title; p.verdict = "unverified"; p.claimNote = ""; p.buNote = ""; });
         FS.people = found;
+        // Name the empty pairs. "3 found" alone reads like there are only three
+        // people at the company, rather than one search coming back empty.
+        var gaps = CAT_ORDER.filter(function (c) { return !catCount[c]; })
+          .map(function (c) { return CATS[c].label; });
+        FS.gapNote = gaps.length ? "No " + gaps.join(" or ") + " turned up in search." : "";
         finderVerify();
         return;
       }
       FS.progress = "Searching for " + CATS[plan[i].cat].label + "…";
       renderFinder();
-      searxQuery(plan[i].q).then(function (hits) {
-        var n = 0;
+      runSearch(plan[i].q).then(function (hits) {
+        var cat = plan[i].cat;
         hits.forEach(function (h) {
-          if (n >= 2) return;                       // two per pair, as asked
-          var p = fromSearchResult(h, plan[i].cat);
+          if (catCount[cat] >= 2) return;
+          var p = fromSearchResult(h, cat);
           if (!p || !p.name || seen[p.linkedin]) return;
-          seen[p.linkedin] = true; found.push(p); n++;
+          catCount[cat]++;
+          // The result snippet usually names the school outright, which is the
+          // BU evidence — worth keeping before the profile read confirms it.
+          p.snippetBU = /boston university/i.test(h.snippet || "");
+          seen[p.linkedin] = true; found.push(p);
         });
-        step(i + 1);
+        // Spaced for the same reason the profile reads are.
+        setTimeout(function () { step(i + 1); }, 900);
       }).catch(function (err) {
         if (!FS) return;
         FS.phase = "idle";
         var m = (err && err.message) || "network error";
-        if (/failed to fetch/i.test(m)) {
+        if (m === "reader-off") m = "the profile reader is switched off in Settings, and the " +
+          "built-in search needs it to get past CORS";
+        else if (/failed to fetch/i.test(m)) {
           m = "the browser couldn't reach it — check it's running, and that it allows " +
             "requests from this page";
         }
-        fsSay("Local search failed: " + m + ".", true);
+        fsSay("Search failed: " + m + ".", true);
       });
     }
     step(0);
@@ -3654,6 +3746,7 @@
     var m = FS.people.filter(function (p) { return p.verdict === "mismatch"; }).length;
     var u = FS.people.length - v - m;
     var note = FS.people.length + " found · " + v + " verified · " + m + " to check · " + u + " unverified. " +
+      (FS.gapNote ? FS.gapNote + " " : "") +
       "Verified means the profile page agreed — not that they're the right person to write to.";
     // Most of a batch coming back unverified is almost always the reader being
     // throttled, not six bad leads. Say which it is.
