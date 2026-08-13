@@ -137,6 +137,17 @@
      scrolling inside .table-scroll the way it does in one column. */
   .cols { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0 14px; align-items: start; }
   .cols > section { min-width: 0; }
+
+  /* ---------- Slim controls ----------
+     The stat tiles and the two log buttons are sized by their content, not by
+     the page. Once the tables go two-up the page is 1180px wide, and stretching
+     a four-tile row and two buttons across all of it just spread dead space
+     between them. Capped and left-aligned instead, so they stay a compact
+     control strip above the tables rather than a full-bleed banner.
+     Only above 1040px — the phone layout is untouched. */
+  @media (min-width: 1040px) {
+    .slim { max-width: 560px; }
+  }
   @media (min-width: 1040px) {
     .wrap, header.app-header, .app-footer { max-width: 1180px; }
     .cols { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
@@ -353,6 +364,45 @@
   }
   .seg label:focus-within { outline: 2px solid var(--accent); outline-offset: 1px; }
 
+  /* ---------- Auto-populate / Find contacts ----------
+     Boxed off from the fields below it so it reads as a tool that fills the
+     form rather than as another field of the form. Shared by the contact
+     form's ⚡ block and the Find-contacts dialog, so a verified/mismatch
+     badge means the same thing in both places. */
+  .lp {
+    border: 1px solid var(--gridline); border-radius: 10px;
+    padding: 10px; margin-bottom: 12px; background: var(--surface-2);
+  }
+  .lp label { display: block; font-size: 0.78rem; color: var(--text-secondary); margin-bottom: 4px; }
+  .lp textarea {
+    width: 100%; box-sizing: border-box; padding: 8px 10px; font: inherit;
+    font-size: 0.86rem; color: var(--text-primary); background: var(--surface-1);
+    border: 1px solid var(--border); border-radius: 8px; resize: vertical;
+    margin-bottom: 8px;
+  }
+  .lp button.secondary { margin: 0; width: 100%; }
+  .lp-status:empty, .lp-preview:empty { display: none; }
+  .lp-status { margin-top: 8px; font-size: 0.76rem; color: var(--text-secondary); line-height: 1.45; }
+  .lp-status.bad { color: var(--red-ink); }
+  .lp-preview { margin-top: 8px; }
+  .lp-row {
+    display: flex; gap: 8px; align-items: baseline;
+    font-size: 0.78rem; padding: 3px 0; border-top: 1px solid var(--gridline);
+  }
+  .lp-row .k { color: var(--text-muted); flex: 0 0 74px; }
+  .lp-row .v { color: var(--text-primary); font-weight: 600; word-break: break-word; }
+  .lp-row .was { color: var(--text-muted); font-weight: 400; }
+  .lp-acts { display: flex; gap: 8px; margin-top: 10px; }
+  .lp-acts button { flex: 1; margin: 0; }
+  /* verdict badges — words as well as color, same rule as the status chips */
+  .vb {
+    display: inline-block; font-size: 0.68rem; font-weight: 700; padding: 1px 6px;
+    border-radius: 999px; border: 1px solid var(--baseline); color: var(--text-secondary);
+  }
+  .vb.ok   { border-color: var(--status-good); color: var(--status-good); }
+  .vb.warn { border-color: var(--status-warning); color: var(--amber-ink); background: var(--amber-bg); }
+  .vb.none { border-color: var(--baseline); color: var(--text-muted); }
+
   button.primary {
     width: 100%; padding: 12px; border-radius: 10px; border: none;
     background: var(--accent); color: var(--accent-ink);
@@ -518,7 +568,10 @@
     width: 9px; height: 9px; border-radius: 50%; display: inline-block;
     box-shadow: 0 0 0 2px var(--surface-1);
   }
-  .flag-dot.on  { background: var(--status-good); }
+  /* Blue, not green. These two dots are facts about what you've done; green is
+     reserved for what came back to you (replied, met, accepted). Sharing one
+     color made a company you'd emailed look like a company that had answered. */
+  .flag-dot.on  { background: var(--accent); }
   .flag-dot.off { background: transparent; box-shadow: 0 0 0 1px var(--baseline); }
   /* ---------- Closed entries ----------
      A quiet strip under each table. It has to be findable but must never
@@ -638,10 +691,10 @@
   <div id="nudgeMount"></div>
 
   <!-- Stats -->
-  <div class="stats" id="stats"></div>
+  <div class="stats slim" id="stats"></div>
 
   <!-- Log -->
-  <section class="card">
+  <section class="card slim">
     <h2>Log something</h2>
     <div class="log-btns">
       <button type="button" id="btnShowContact">＋ Cold contact</button>
@@ -682,6 +735,17 @@
   </div>
   <div class="modal-body">
     <form class="logform" id="contactForm" autocomplete="off">
+      <!-- Auto-populate sits above the fields it fills, so the order on screen
+           matches the order you work in. It never writes straight into the
+           form: it parses, shows what it found, and waits for a tap. A bad
+           read costs one tap, never what you already typed. -->
+      <div class="lp">
+        <label for="lpInput">Paste a LinkedIn profile <span class="opt">(URL, or the whole copied page)</span></label>
+        <textarea id="lpInput" rows="2" placeholder="https://www.linkedin.com/in/…"></textarea>
+        <button type="button" class="secondary" id="lpBtn">⚡ Auto-populate</button>
+        <div class="lp-status" id="lpStatus"></div>
+        <div class="lp-preview" id="lpPreview"></div>
+      </div>
       <div class="field">
         <label for="cName">Who did you contact?</label>
         <input type="text" id="cName">
@@ -842,8 +906,15 @@
     Placeholders get replaced automatically:
     <code>{first}</code> <code>{name}</code> <code>{company}</code>
     <code>{role}</code> <code>{date}</code> <code>{days}</code>
-    <code>{channel}</code>. Anything with no value on file comes through as
+    <code>{channel}</code> <code>{internship}</code> <code>{learn}</code>.
+    Anything with no value on file comes through as
     <code>[company]</code> so you spot the gap instead of sending a blank.
+  </p>
+  <p class="tpl-help">
+    <code>{role}</code> is the person's bucket — <strong>Hiring</strong>,
+    <strong>VP Eng</strong> or <strong>BU Eng</strong>. <code>{internship}</code> is the
+    role <em>you</em> applied to, taken from that company's row.
+    <code>{learn}</code> becomes “you” for a recruiter and “your work” for an engineer.
   </p>
 
   <label for="tplOutreach">First-contact draft</label>
@@ -852,9 +923,34 @@
   <label for="tplFollowup">Follow-up draft <span style="color:var(--text-muted)">(the 7-day nudge)</span></label>
   <textarea id="tplFollowup" class="tpl" rows="10"></textarea>
 
+  <label for="tplApplied">LinkedIn note — already applied</label>
+  <textarea id="tplApplied" class="tpl" rows="9"></textarea>
+
+  <label for="tplConnect">LinkedIn note — not applied <span style="color:var(--text-muted)">(claims nothing)</span></label>
+  <textarea id="tplConnect" class="tpl" rows="9"></textarea>
+
   <button class="primary" id="doneTplBtn">Done editing drafts</button>
   <button class="secondary" id="resetTplBtn">Reset drafts to defaults</button>
   <div class="sync-status" id="tplStatus"></div>
+
+  <hr>
+  <h2 style="font-size:0.95rem">LinkedIn auto-populate</h2>
+  <p class="tpl-help">
+    A browser can't read linkedin.com directly — LinkedIn refuses the request. So
+    <strong>⚡ Auto-populate</strong> can send the profile <em>URL</em> to a reader
+    service, which returns the public, logged-out view. Only that public view — no
+    login, no cookies, and nothing that touches your own LinkedIn account.
+  </p>
+  <p class="tpl-help">
+    <strong>Leave this blank and no request is ever made.</strong> Pasting the copied
+    profile page into the box works entirely on this device either way.
+  </p>
+
+  <label for="readerInput">Profile reader</label>
+  <input type="text" id="readerInput" placeholder="https://r.jina.ai/">
+
+  <label for="readerKeyInput">Reader API key <span style="color:var(--text-muted)">(optional, for rate limits)</span></label>
+  <input type="password" id="readerKeyInput" placeholder="jina_…" autocomplete="off">
 
   <hr>
   <h2 style="font-size:0.95rem">AI research prompt</h2>
@@ -1040,7 +1136,32 @@
       "Happy to send my resume, or to find 15 minutes whenever suits you.\n" +
       "\n" +
       "Thanks,\n" +
-      "Alex"
+      "Alex",
+    // The two LinkedIn connect notes. Short on purpose — these go in a
+    // connection request, not an inbox. {internship} is the role you applied
+    // to at the company, which is NOT {role} (that's the person's own job).
+    // {learn} is "you" for a recruiter and "your work" for an engineer.
+    applied:
+      "Hi {first},\n" +
+      "\n" +
+      "I recently applied to the {company} {internship} for 2027. I'd love to connect\n" +
+      "with you to learn more about {learn} and the company culture.\n" +
+      "\n" +
+      "Would you be down for a quick zoom meeting to connect?\n" +
+      "\n" +
+      "I'm available daily after 6:30pm and Sundays after 2pm.",
+    // Same note minus any claim of having applied. It exists so the app can
+    // never put an application you didn't make into your own outbox.
+    connect:
+      "Hi {first},\n" +
+      "\n" +
+      "I'm a mechanical engineering student at Boston University and I've been\n" +
+      "following what {company} is doing. I'd love to connect with you to learn more\n" +
+      "about {learn} and the company culture.\n" +
+      "\n" +
+      "Would you be down for a quick zoom meeting to connect?\n" +
+      "\n" +
+      "I'm available daily after 6:30pm and Sundays after 2pm."
   };
   function tplFor(kind) {
     var t = SETTINGS.templates && SETTINGS.templates[kind];
@@ -1060,10 +1181,16 @@
   function firstNameOf(name) {
     return String(name || "").trim().split(/\s+/)[0] || "";
   }
+  // {internship} and {learn} are looked up rather than stored: the internship
+  // lives on the company row (it's the same for everyone you know there), and
+  // {learn} follows the contact's bucket. Both are computed here so every copy
+  // button in the app gets them without knowing they exist.
   function draftValues(c) {
     return {
       name: c.name, first: firstNameOf(c.name), company: c.company,
       role: c.role, channel: c.channel,
+      internship: internshipFor(c.company),
+      learn: learnFor(c.role),
       date: c.date ? fmtShort(c.date) : "",
       days: c.date ? String(daysSilent(c)) : ""
     };
@@ -1281,6 +1408,85 @@
   function isColdEmailed(a) { return a.coldEmailed === true; }
   function isConnected(a) { return a.connected === true; }
 
+  /* ---- who this person is, in three words ------------------------
+     A contact's `role` holds one of exactly three buckets rather than their
+     literal job title. The title is what LinkedIn says; the bucket is what
+     you actually need to know when scanning a list of people to approach.
+
+       Hiring  — recruiters and hiring managers: they decide, so ask about them
+       VP Eng  — engineering leadership: more power, harder to reach
+       BU Eng  — Boston University engineers at that company: least power,
+                 by far the easiest yes, because you already share something
+
+     BU Eng is deliberately not "any engineer" — the whole point of the bucket
+     is the BU connection, so it's set from evidence on the profile, never
+     guessed from a job title.
+     ---------------------------------------------------------------- */
+  var BUCKETS = { Hiring: 1, "VP Eng": 1, "BU Eng": 1 };
+  var RE_HIRING = /recruit|talent|sourcer|hiring|human resources|people ops|university relations|campus/i;
+  var RE_LEAD = /\b(vp|vice president|director|head of|chief|cto|principal|senior manager|engineering manager)\b/i;
+
+  // `hasBU` comes from the profile text, not the title — see above. With
+  // nothing to go on it returns nothing: an empty role reads as "fill this in",
+  // where a guessed "VP Eng" would read as a fact the app never established.
+  function bucketFor(title, hasBU) {
+    if (RE_HIRING.test(title || "")) return "Hiring";
+    if (hasBU) return "BU Eng";
+    if (!String(title || "").trim()) return "";
+    return "VP Eng";
+  }
+  // A recruiter wants to talk about themselves and the team; an engineer wants
+  // to talk about the work. One placeholder rather than four forked templates.
+  function learnFor(role) { return role === "Hiring" ? "you" : "your work"; }
+
+  // Two spellings of one employer ("Marotta" vs "Marotta Controls, Inc.") would
+  // split it into two companies and quietly break the applied-draft lookup, so
+  // names are compared with the decoration stripped.
+  function normCompany(s) {
+    return String(s || "").toLowerCase()
+      .replace(/[.,]/g, " ")
+      .replace(/\b(inc|llc|ltd|corp|corporation|co|company|the)\b/g, " ")
+      .replace(/\s+/g, " ").trim();
+  }
+  // LinkedIn's legal name is usually longer than what you'd type: you track
+  // "Marotta", the profile says "Marotta Controls, Inc.". So a whole-word
+  // prefix counts as the same company, which catches that pair without
+  // matching "Boston Scientific" to "Boston Dynamics" — neither is a prefix
+  // of the other. The 4-character floor keeps a stray initial from matching
+  // half the list.
+  function sameCompany(a, b) {
+    var x = normCompany(a), y = normCompany(b);
+    if (!x || !y) return false;
+    if (x === y) return true;
+    var shortStr = x.length <= y.length ? x : y;
+    var longStr = x.length <= y.length ? y : x;
+    if (shortStr.length < 4) return false;
+    return longStr.indexOf(shortStr + " ") === 0;
+  }
+  // The spelling already in your tracker wins, so a company never enters twice.
+  function knownCompanyName(raw) {
+    if (!normCompany(raw)) return "";
+    var hit = "";
+    apps().concat(contacts()).forEach(function (e) {
+      if (!hit && e.company && sameCompany(e.company, raw)) hit = e.company;
+    });
+    return hit;
+  }
+  function appForCompany(raw) {
+    if (!normCompany(raw)) return null;
+    var hit = null;
+    apps().forEach(function (a) {
+      if (!hit && sameCompany(a.company, raw)) hit = a;
+    });
+    return hit;
+  }
+  // The internship you applied to there — a fact about the company, not about
+  // the person, which is why it isn't a field on the contact.
+  function internshipFor(company) {
+    var a = appForCompany(company);
+    return (a && a.role) ? a.role : "";
+  }
+
   // How it actually ended. Same shape as the flags above: no old row carried
   // it, so a missing key honestly means "no answer yet". Anything unrecognised
   // reads as no answer rather than being trusted into the UI.
@@ -1289,13 +1495,15 @@
     var v = a && a.outcome;
     return OUTCOMES[v] ? v : "";
   }
-  // Accepted is the good news; a waitlist is still live so it's amber; denied
-  // is gray, not red — it's over, and red is for things still needing action.
+  // Accepted is green, a waitlist is still live so it's amber, and denied is
+  // red. Red normally means "needs action" in this app and a denial needs
+  // none — but a no is the one answer you must not misread while scanning, and
+  // gray let it blend into the closed rows. Being unmissable wins here.
   function outcomeChip(a) {
     var v = outcomeOf(a);
     if (!v) return null;
     return {
-      tone: v === "accepted" ? "good" : v === "waitlist" ? "warning" : "muted",
+      tone: v === "accepted" ? "good" : v === "waitlist" ? "warning" : "critical",
       text: OUTCOMES[v]
     };
   }
@@ -1701,8 +1909,8 @@
       tableHtml(as, appCols(false), "No companies logged yet.", "companies");
 
     document.getElementById("appLegend").innerHTML = as.length
-      ? '<span class="lg"><span class="flag-dot on"></span>done</span>' +
-        '<span class="lg"><span class="flag-dot off"></span>not yet</span>' +
+      ? '<span class="lg"><span class="flag-dot on"></span>blue = done</span>' +
+        '<span class="lg"><span class="flag-dot off"></span>outline = not yet</span>' +
         '<span class="lg">1st dot = cold email · 2nd = connection</span>'
       : "";
 
@@ -1974,7 +2182,7 @@
     logPanel.classList.toggle("open", panelOpen);
     logOverlay.classList.toggle("open", panelOpen);
     logPanel.setAttribute("aria-hidden", panelOpen ? "false" : "true");
-    if (!panelOpen) { removeLegacyChannel(); renderEditExtras(); return; }
+    if (!panelOpen) { removeLegacyChannel(); lpReset(); renderEditExtras(); return; }
 
     logPanel.querySelector(".modal-body").scrollTop = 0;   // never land mid-form
     logPanelTitle.textContent = editSel
@@ -1987,6 +2195,9 @@
     appHint.style.display = editSel ? "none" : "";
 
     if (openC) {
+      // A parse belongs to the entry it was run for; carrying one across would
+      // be exactly how a name lands on the wrong person.
+      lpReset();
       if (editSel) fillContactForm(editSel.e);
       else { contactForm.reset(); removeLegacyChannel(); document.getElementById("cDate").value = TODAY; }
       syncContactHandleLabel();
@@ -2330,6 +2541,312 @@
   });
 
   /* ============================================================
+     6B. AUTO-POPULATE FROM A LINKEDIN PROFILE
+
+     A browser page cannot read linkedin.com. It sends no CORS
+     headers, so the request is refused before it leaves — tested,
+     not assumed. Bookmarklets are out too: LinkedIn's CSP blocks
+     any of them. So there is no scraping here, and two paths in:
+
+       1. You paste the copied profile page — parsed on this device,
+          no request made at all. Always works.
+       2. You paste just the URL — a reader service fetches the
+          public, logged-out view and we parse that.
+
+     Path 2 is the convenience and path 1 is the guarantee, which
+     is why the reader is a setting you can blank out entirely.
+     Nothing is ever written straight into the form: it parses,
+     shows you what it found, and waits for a tap.
+     ============================================================ */
+  var lpInput = document.getElementById("lpInput");
+  var lpStatusEl = document.getElementById("lpStatus");
+  var lpPreviewEl = document.getElementById("lpPreview");
+  var lpFound = null;
+  var lpBusy = false;
+
+  var DEFAULT_READER = "https://r.jina.ai/";
+  // An absent key means "never configured" and gets the default; a key that is
+  // present and empty means you turned it off, which must be obeyed.
+  function readerBase() {
+    var v = SETTINGS.readerBase;
+    return (typeof v === "string") ? v.trim() : DEFAULT_READER;
+  }
+  function readerKey() { return (SETTINGS.readerKey || "").trim(); }
+
+  function lpStatus(msg, bad) {
+    lpStatusEl.textContent = msg || "";
+    lpStatusEl.className = "lp-status" + (bad ? " bad" : "");
+  }
+  function lpReset() {
+    lpFound = null; lpBusy = false;
+    if (lpInput) lpInput.value = "";
+    lpStatus(""); lpPreviewEl.innerHTML = "";
+  }
+
+  /* ---- reading a profile URL ---- */
+  function profileUrlFrom(text) {
+    var m = String(text || "").match(/(?:https?:\/\/)?(?:[a-z]{2,3}\.)?linkedin\.com\/in\/[^\s"'<>)\]]+/i);
+    if (!m) return "";
+    var u = m[0].replace(/[.,;]+$/, "");
+    if (!/^https?:\/\//i.test(u)) u = "https://" + u;
+    return u;
+  }
+  function slugFrom(url) {
+    var m = String(url || "").match(/linkedin\.com\/in\/([^/?#]+)/i);
+    return m ? decodeURIComponent(m[1]) : "";
+  }
+  // Last resort when the profile can't be read: a slug still carries the name.
+  // The trailing token is LinkedIn's disambiguator, not a surname, so drop it.
+  function nameFromSlug(slug) {
+    var parts = String(slug || "").split("-").filter(Boolean);
+    if (parts.length > 1 && /\d/.test(parts[parts.length - 1])) parts.pop();
+    return parts.map(function (p) {
+      return p.charAt(0).toUpperCase() + p.slice(1);
+    }).join(" ");
+  }
+
+  /* ---- the parser ------------------------------------------------
+     The reader returns markdown whose shape is stable across profiles:
+
+       # Name
+       ## Headline at Company
+       ## Experience
+       … ### Job title            (inline, after the company logo link)
+       #### [Company](…/company/…)
+
+     The Experience pair is the reliable one and is tried first. The
+     page's own `Title:` line is NOT usable — on one profile it was
+     the person's latest article headline, not their name.
+
+     A pasted page has no markdown at all, so that falls through to
+     line heuristics instead.
+     ---------------------------------------------------------------- */
+  var LP_NOISE = /^(sign in|join now|view |people also|about$|articles by|courses by|activity$|experience$|education$|skills$|contact info)/i;
+
+  function parseLinkedIn(text) {
+    var t = String(text || "");
+    var out = { name: "", company: "", title: "", hasBU: /boston university/i.test(t) };
+
+    var h1 = t.match(/^# +(.+?)\s*$/m);
+    if (h1) out.name = h1[1].trim();
+
+    var ei = t.search(/^#{2,3} +Experience\s*$/m);
+    if (ei > -1) {
+      var block = t.slice(ei);
+      var jt = block.match(/### +([^\n#]+)/);
+      var co = block.match(/#### +\[([^\]]+)\]/);
+      if (jt) out.title = jt[1].trim();
+      if (co) out.company = co[1].trim();
+    }
+
+    // Headline: the first ## that isn't boilerplate. Also the fallback source
+    // for company when there's no Experience section on the public view.
+    if (!out.title || !out.company) {
+      var heads = t.match(/^## +(.+?)\s*$/gm) || [];
+      for (var i = 0; i < heads.length; i++) {
+        var h = heads[i].replace(/^## +/, "").trim();
+        if (!h || LP_NOISE.test(h) || h === out.name) continue;
+        if (!out.title) out.title = h;
+        if (!out.company) {
+          var at = h.split(/\s+(?:at|@)\s+/i);
+          if (at.length > 1) out.company = at[at.length - 1].trim();
+        }
+        break;
+      }
+    }
+    // "Satya can introduce you to 10+ people at Microsoft" — present on the
+    // logged-out view even when the Experience section isn't.
+    if (!out.company) {
+      var intro = t.match(/can introduce you to [^\n]*? at ([^\n]+)/i);
+      if (intro) out.company = intro[1].trim();
+    }
+
+    if (!out.name && !/^#/m.test(t)) parsePlain(t, out);
+    return out;
+  }
+
+  // A copied page is just lines. The name leads and LinkedIn repeats it, and
+  // the headline is the first "<role> at <company>" line near the top.
+  function parsePlain(t, out) {
+    var lines = t.split(/\r?\n/).map(function (s) { return s.trim(); })
+      .filter(function (s) { return s && !LP_NOISE.test(s); });
+    if (!lines.length) return;
+    out.name = lines[0];
+    for (var i = 1; i < Math.min(lines.length, 14); i++) {
+      if (lines[i] === out.name) continue;
+      var at = lines[i].split(/\s+(?:at|@)\s+/i);
+      if (at.length > 1) {
+        out.title = at[0].trim();
+        out.company = at[at.length - 1].trim();
+        return;
+      }
+      if (!out.title) out.title = lines[i];
+    }
+  }
+
+  /* ---- fetching ---- */
+  function fetchProfile(url) {
+    var base = readerBase();
+    if (!base) return Promise.reject(new Error("reader-off"));
+    var ctl = (typeof AbortController !== "undefined") ? new AbortController() : null;
+    var opts = { headers: {} };
+    if (ctl) opts.signal = ctl.signal;
+    if (readerKey()) opts.headers.Authorization = "Bearer " + readerKey();
+    if (ctl) setTimeout(function () { ctl.abort(); }, 45000);
+    return fetch(base + url, opts).then(function (r) {
+      if (r.ok) return r.text();
+      // The reader throttles anonymous requests to linkedin.com and says so in
+      // the body. Passing "403" up the chain would leave you guessing at a fix
+      // that is actually one field away, so name it.
+      return r.text().then(function (body) {
+        var throttled = r.status === 429 || /abuse|rate limit|blocked until/i.test(body);
+        if (throttled && !readerKey()) {
+          throw new Error("the reader is throttling anonymous requests to LinkedIn — " +
+            "add a free reader API key in Settings, or paste the copied profile page instead");
+        }
+        if (throttled) throw new Error("the reader is rate-limiting this key right now — try again shortly");
+        throw new Error("the reader answered " + r.status);
+      });
+    });
+  }
+
+  /* ---- the button ---- */
+  function lpRun() {
+    if (lpBusy) return;
+    var raw = (lpInput.value || "").trim();
+    lpPreviewEl.innerHTML = ""; lpFound = null;
+    if (!raw) { lpStatus("Paste a LinkedIn profile URL, or the whole copied profile page.", true); return; }
+
+    var url = profileUrlFrom(raw);
+    // Anything substantial beyond the URL is a pasted page: parse it here and
+    // make no request at all.
+    var rest = raw.replace(url, "").trim();
+    if (rest.length > 40 || /\n/.test(rest)) {
+      var got = parseLinkedIn(raw);
+      got.url = url;
+      if (!got.name && !got.company) {
+        lpStatus("Couldn't find a name or a company in that text. Select the whole profile page and copy it again.", true);
+        return;
+      }
+      lpStatus("Read from the text you pasted — nothing was sent anywhere.");
+      lpShow(got);
+      return;
+    }
+
+    if (!url) { lpStatus("That doesn't look like a linkedin.com/in/… profile link.", true); return; }
+
+    if (!readerBase()) {
+      lpFallback(url, "The profile reader is switched off in Settings, so only the URL could be used.");
+      return;
+    }
+
+    lpBusy = true;
+    lpStatus("Reading the public profile…");
+    fetchProfile(url).then(function (text) {
+      lpBusy = false;
+      var got = parseLinkedIn(text);
+      got.url = url;
+      if (!got.name && !got.company) {
+        lpFallback(url, "The reader returned a page with no profile on it — LinkedIn may be showing it a sign-in wall.");
+        return;
+      }
+      lpStatus("Read from the public profile.");
+      lpShow(got);
+    }).catch(function (err) {
+      lpBusy = false;
+      var why = (err && err.message === "reader-off")
+        ? "The profile reader is switched off in Settings."
+        : "Couldn't reach the profile reader (" + ((err && err.message) || "network error") + ").";
+      lpFallback(url, why);
+    });
+  }
+
+  // Never a dead end: a URL alone still carries a name, so fill what it gives
+  // and say plainly what to do for the rest.
+  function lpFallback(url, why) {
+    lpStatus(why + " Filled in what the URL gives — open the profile, select all, copy, " +
+      "and paste it here for the company and their role.", true);
+    lpShow({ name: nameFromSlug(slugFrom(url)), company: "", title: "", hasBU: false, url: url });
+  }
+
+  /* ---- preview, then apply ---- */
+  function lpRow(k, v, extra) {
+    return '<div class="lp-row"><span class="k">' + escapeHtml(k) + '</span>' +
+      '<span class="v">' + escapeHtml(v || "—") +
+      (extra ? ' <span class="was">' + escapeHtml(extra) + '</span>' : "") + '</span></div>';
+  }
+  function lpShow(got) {
+    // The tracker's own spelling wins so one employer can't enter twice.
+    var known = knownCompanyName(got.company);
+    got.companyOut = known || got.company;
+    got.bucket = bucketFor(got.title, got.hasBU);
+    lpFound = got;
+
+    var taken = function (id) { return !!document.getElementById(id).value.trim(); };
+    var html = lpRow("Name", got.name, taken("cName") ? "· keeping what you typed" : "");
+    html += lpRow("Company", got.companyOut,
+      (known && known !== got.company)
+        ? "· matched “" + got.company + "” to your list"
+        : (taken("cCompany") ? "· keeping what you typed" : ""));
+    html += lpRow("Their role", got.bucket,
+      got.title ? "· LinkedIn says “" + got.title + "”" + (got.hasBU ? " · Boston University on profile" : "") : "");
+    if (got.url) html += lpRow("Profile", got.url, taken("cEmail") ? "· keeping what you typed" : "");
+    html += '<div class="lp-acts">' +
+      '<button type="button" class="primary" id="lpUse">Use these</button>' +
+      '<button type="button" class="secondary" id="lpCancel">Cancel</button></div>';
+    lpPreviewEl.innerHTML = html;
+    document.getElementById("lpUse").addEventListener("click", lpApply);
+    document.getElementById("lpCancel").addEventListener("click", function () {
+      lpFound = null; lpPreviewEl.innerHTML = ""; lpStatus("");
+    });
+  }
+
+  // Fills only what's still empty — auto-populate must never be able to eat
+  // something you typed by hand.
+  function lpApply() {
+    var got = lpFound;
+    if (!got) return;
+    function set(id, val) {
+      var el = document.getElementById(id);
+      if (val && !el.value.trim()) { el.value = val; return true; }
+      return false;
+    }
+    set("cName", got.name);
+    set("cCompany", got.companyOut);
+    set("cRole", got.bucket);
+    set("cEmail", got.url);
+    // The channel follows the source, not the URL: this came off a LinkedIn
+    // profile whether or not a link came with it.
+    setRadio(contactForm, "cChannel", "LinkedIn");
+    syncContactHandleLabel();
+
+    // Which draft, and why — the wording must never claim an application that
+    // isn't recorded, so the companies table decides, not the person.
+    var company = document.getElementById("cCompany").value.trim();
+    var a = appForCompany(company);
+    var applied = !!(a && isApplied(a));
+    var note = document.getElementById("cNote");
+    var draft = fillTemplate(tplFor(applied ? "applied" : "connect"), draftValues({
+      name: document.getElementById("cName").value.trim(),
+      company: company,
+      role: document.getElementById("cRole").value.trim(),
+      channel: "LinkedIn", date: ""
+    }));
+    note.value = note.value.trim() ? note.value.trim() + "\n\n" + draft : draft;
+
+    var why = !a
+      ? company + " isn't in your companies list yet — used the connect draft, which doesn't claim you applied."
+      : (applied
+        ? company + " is marked Applied — used the applied draft."
+        : company + " isn't marked Applied — used the connect draft, which doesn't claim you applied.");
+    lpStatus("Filled in. " + why);
+    lpPreviewEl.innerHTML = "";
+    lpFound = null;
+  }
+
+  document.getElementById("lpBtn").addEventListener("click", lpRun);
+
+  /* ============================================================
      7. SYNC — data/log.json in this repo, via a fine-grained PAT
      ============================================================ */
   var SYNC_PATH = "data/log.json";
@@ -2479,6 +2996,10 @@
     document.getElementById("repoInput").value = or.repo || "";
     document.getElementById("tplOutreach").value = tplFor("outreach");
     document.getElementById("tplFollowup").value = tplFor("followup");
+    document.getElementById("tplApplied").value = tplFor("applied");
+    document.getElementById("tplConnect").value = tplFor("connect");
+    document.getElementById("readerInput").value = readerBase();
+    document.getElementById("readerKeyInput").value = readerKey();
     document.getElementById("aiPromptInput").value = aiPromptTpl();
     setTplStatus("");
     setAiStatus("");
@@ -2511,6 +3032,10 @@
     setPAT(document.getElementById("patInput").value.trim());
     SETTINGS.owner = document.getElementById("ownerInput").value.trim();
     SETTINGS.repo = document.getElementById("repoInput").value.trim();
+    // Written even when empty — a blank reader is a deliberate "make no
+    // requests", which is different from never having configured one.
+    SETTINGS.readerBase = document.getElementById("readerInput").value.trim();
+    SETTINGS.readerKey = document.getElementById("readerKeyInput").value.trim();
     saveSettings(SETTINGS);
     setSyncStatus("Saved. Syncing…");
     renderBanners();
@@ -2529,14 +3054,20 @@
   document.getElementById("doneTplBtn").addEventListener("click", function () {
     SETTINGS.templates = {
       outreach: document.getElementById("tplOutreach").value,
-      followup: document.getElementById("tplFollowup").value
+      followup: document.getElementById("tplFollowup").value,
+      applied: document.getElementById("tplApplied").value,
+      connect: document.getElementById("tplConnect").value
     };
     saveSettings(SETTINGS);
     render();
 
-    var known = { first: 1, name: 1, company: 1, role: 1, date: 1, days: 1, channel: 1 };
+    var known = {
+      first: 1, name: 1, company: 1, role: 1, date: 1, days: 1, channel: 1,
+      internship: 1, learn: 1
+    };
     var unknown = [];
-    [SETTINGS.templates.outreach, SETTINGS.templates.followup].forEach(function (t) {
+    [SETTINGS.templates.outreach, SETTINGS.templates.followup,
+     SETTINGS.templates.applied, SETTINGS.templates.connect].forEach(function (t) {
       (String(t).match(/\{(\w+)\}/g) || []).forEach(function (m) {
         var k = m.slice(1, -1);
         if (!known[k] && unknown.indexOf(m) === -1) unknown.push(m);
@@ -2547,7 +3078,7 @@
       tplWarned = true;
       setTplStatus("Saved — but " + unknown.join(", ") + " isn't a placeholder I recognise, so it " +
         "will appear literally in the email. Known: {first} {name} {company} {role} {date} " +
-        "{days} {channel}. Tap Done again to keep it as-is.");
+        "{days} {channel} {internship} {learn}. Tap Done again to keep it as-is.");
       return;
     }
     tplWarned = false;
@@ -2555,11 +3086,13 @@
   });
 
   document.getElementById("resetTplBtn").addEventListener("click", function () {
-    if (!confirm("Replace both drafts with the built-in defaults? Your wording will be lost.")) return;
+    if (!confirm("Replace all four drafts with the built-in defaults? Your wording will be lost.")) return;
     delete SETTINGS.templates;
     saveSettings(SETTINGS);
     document.getElementById("tplOutreach").value = tplFor("outreach");
     document.getElementById("tplFollowup").value = tplFor("followup");
+    document.getElementById("tplApplied").value = tplFor("applied");
+    document.getElementById("tplConnect").value = tplFor("connect");
     setTplStatus("Reset to the built-in drafts.");
   });
 
