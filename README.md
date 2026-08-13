@@ -552,9 +552,14 @@ Light and dark mode both follow the OS setting.
 
 ## ⚡ Auto-populate from a LinkedIn profile
 
-At the top of the **Cold contact** form: paste a profile, tap **⚡ Auto-populate**,
-and the name, company and their role land in the fields with an outreach draft in
-the Note.
+On the **Cold contact** form there's one button: **⚡ Auto-populate from LinkedIn**.
+Tap it and the paste box opens as a popup beside the form; paste a profile, and the
+name, company and their role land in the fields with an outreach draft in the Note.
+
+It's a **popup, not a permanent block**. Most saves don't involve it, and a paste
+box plus a preview sitting above the name field pushed the actual form down every
+single time. It opens on ⚡, closes on ⚡ again, **✕** or **Escape**, and closes
+itself whenever the form opens — a parse belongs to the entry it was run for.
 
 **A browser cannot read linkedin.com.** LinkedIn sends no CORS headers, so the
 request is refused before it leaves — this was tested, not assumed. A bookmarklet
@@ -681,6 +686,33 @@ exact failure the verify stage exists to catch. The trade-off is that it only
 works on the machine running it, so keep an API key if you want this on your
 phone.
 
+### Claude or Gemini
+
+Either can do the searching. Paste a key for whichever you have into **Settings →
+Find contacts**; if you fill in only one, that's the one it uses regardless of the
+**Which model searches** toggle, since a preference for a provider you have no key
+for would just look broken.
+
+| | Where the key comes from | Endpoint |
+|---|---|---|
+| **Gemini** *(cheaper way in)* | `aistudio.google.com/apikey` | `generativelanguage.googleapis.com`, with Google Search grounding |
+| **Claude** | `console.anthropic.com` | `api.anthropic.com`, with server-side web search |
+
+The Gemini model is a settings field defaulting to `gemini-flash-latest`, so you
+can point it at a newer one without touching the code. A wrong model name comes
+back as "no such model as …", not a silent failure.
+
+**The prompt is tuned for how these models actually fail.** An early Gemini Flash
+run returned six people with *every* LinkedIn URL blank, and then explained that it
+had left them out to comply with "never construct a URL" — reading a rule against
+*fabricating* links as a rule against *reporting* them. So the prompt now says the
+opposite explicitly: if a search result shows a profile URL, include it, you are not
+vouching for it, it gets checked automatically afterwards, and blanking every URL to
+be safe is the wrong answer because it makes the list useless. It also spells out
+the three searches to run, and that a Director of Talent Acquisition counts as a
+hiring contact even though the title doesn't say "engineering" — the same run missed
+exactly that person.
+
 **With no API key saved it still works.** The button copies the research prompt
 for you to run in Claude and paste the reply back; both routes go through the same
 parser and the same review step, so the manual one can't drift from the automatic
@@ -721,10 +753,10 @@ that blanking the field disables them**, both visible in Settings:
 | Service | Used for | Sees | Turn it off by |
 |---|---|---|---|
 | the **profile reader** (`https://r.jina.ai/` by default) | reading a public profile from a URL | the profile URL you paste | clearing the field — then only pasted page text is parsed, with no request |
-| `api.anthropic.com` | the search behind 🔍 Find contacts | the company name and role | clearing the API key — Find contacts switches to copy-and-paste |
+| `api.anthropic.com` **or** `generativelanguage.googleapis.com` | the search behind 🔍 Find contacts | the company name and role | clearing that API key — Find contacts switches to copy-and-paste |
 | **your own SearXNG** | the same search, locally | nothing leaves your machine | clearing the URL |
 
-Both keys are stored **only on that device** (`intern-ai-key`, and `readerKey` in
+Both keys are stored **only on that device** (`intern-ai-key`, `intern-gemini-key`, and `readerKey` in
 `intern-settings`), never ride the sync, and are only ever sent to their own
 service. Neither feature reads anything but the public logged-out view, and
 neither touches or automates your LinkedIn account.

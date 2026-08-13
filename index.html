@@ -311,7 +311,9 @@
     body.ws-side .modal.open {
       transform: translate(calc(-50% - 178px), -50%) scale(1);
     }
-    body.ws-side .ws-pop { right: auto; left: calc(50% + 98px); }
+    /* not .lp-pop — it isn't part of the dialog+workspace pair, and shifting
+       it with them would drop it straight on top of the workspace */
+    body.ws-side .ws-pop:not(.lp-pop) { right: auto; left: calc(50% + 98px); }
   }
   .ws-pop-head {
     display: flex; align-items: center; justify-content: space-between;
@@ -373,6 +375,21 @@
     border: 1px solid var(--gridline); border-radius: 10px;
     padding: 10px; margin-bottom: 12px; background: var(--surface-2);
   }
+  /* Sits above the dialog it fills in, and above the workspace popup, so all
+     three can be open without the one you're typing into hiding behind. */
+  .lp-pop { z-index: 44; height: min(520px, calc(100vh - 96px)); }
+  .lp-pop-body { display: block; overflow-y: auto; padding: 12px; }
+  .lp-pop-body textarea {
+    width: 100%; box-sizing: border-box; padding: 8px 10px; font: inherit;
+    font-size: 0.86rem; color: var(--text-primary); background: var(--surface-2);
+    border: 1px solid var(--border); border-radius: 8px; resize: vertical;
+    margin-bottom: 8px;
+  }
+  .lp-pop-body > label {
+    display: block; font-size: 0.78rem; color: var(--text-secondary); margin-bottom: 4px;
+  }
+  .lp-pop-body button.primary { width: 100%; margin: 0; }
+  .lp-open { width: 100%; margin-bottom: 12px; }
   .lp label { display: block; font-size: 0.78rem; color: var(--text-secondary); margin-bottom: 4px; }
   .lp textarea {
     width: 100%; box-sizing: border-box; padding: 8px 10px; font: inherit;
@@ -769,13 +786,7 @@
            matches the order you work in. It never writes straight into the
            form: it parses, shows what it found, and waits for a tap. A bad
            read costs one tap, never what you already typed. -->
-      <div class="lp">
-        <label for="lpInput">Paste a LinkedIn profile <span class="opt">(URL, or the whole copied page)</span></label>
-        <textarea id="lpInput" rows="2" placeholder="https://www.linkedin.com/in/…"></textarea>
-        <button type="button" class="secondary" id="lpBtn">⚡ Auto-populate</button>
-        <div class="lp-status" id="lpStatus"></div>
-        <div class="lp-preview" id="lpPreview"></div>
-      </div>
+      <button type="button" class="secondary lp-open" id="lpOpen">⚡ Auto-populate from LinkedIn</button>
       <div class="field">
         <label for="cName">Who did you contact?</label>
         <input type="text" id="cName">
@@ -903,6 +914,23 @@
       <span class="ws-saved" id="workspaceSaved">Saves as you type</span>
       <button type="button" class="secondary" id="workspaceCopy">📋 Copy</button>
     </div>
+  </div>
+</aside>
+
+<!-- Auto-populate: a popup rather than a permanent block in the form. Most
+     saves don't involve it, and a paste box plus a preview sitting above the
+     name field pushed the actual form down every single time. Opened by ⚡. -->
+<aside class="ws-pop lp-pop" id="lpPanel" aria-hidden="true" aria-label="Auto-populate from LinkedIn">
+  <div class="ws-pop-head">
+    <h2>⚡ Auto-populate</h2>
+    <button type="button" class="icon-btn" id="lpClose" aria-label="Close">✕</button>
+  </div>
+  <div class="ws-pop-body lp-pop-body">
+    <label for="lpInput">Paste a LinkedIn profile <span class="opt">(URL, or the whole copied page)</span></label>
+    <textarea id="lpInput" rows="3" placeholder="https://www.linkedin.com/in/…"></textarea>
+    <button type="button" class="primary" id="lpBtn">⚡ Auto-populate</button>
+    <div class="lp-status" id="lpStatus"></div>
+    <div class="lp-preview" id="lpPreview"></div>
   </div>
 </aside>
 
@@ -1051,6 +1079,25 @@
   <label for="searchInput">My own search engine <span style="color:var(--text-muted)">(SearXNG URL)</span></label>
   <input type="text" id="searchInput" placeholder="http://localhost:8888">
 
+  <p class="tpl-help">
+    <strong>Or use a hosted model to search.</strong> Paste a key for whichever you have —
+    if you fill in only one, that's the one it uses and the choice below is ignored.
+    Gemini's free tier is the cheaper way in; get a key at
+    <code>aistudio.google.com/apikey</code>.
+  </p>
+
+  <label>Which model searches</label>
+  <div class="seg" id="aiProviderSeg">
+    <label><input type="radio" name="aiProvider" value="claude" checked><span>Claude</span></label>
+    <label><input type="radio" name="aiProvider" value="gemini"><span>Gemini</span></label>
+  </div>
+
+  <label for="gemKeyInput">Google Gemini API key <span style="color:var(--text-muted)">(optional)</span></label>
+  <input type="password" id="gemKeyInput" placeholder="AIza…" autocomplete="off">
+
+  <label for="gemModelInput">Gemini model</label>
+  <input type="text" id="gemModelInput" placeholder="gemini-flash-latest">
+
   <label for="aiKeyInput">Anthropic API key <span style="color:var(--text-muted)">(optional)</span></label>
   <input type="password" id="aiKeyInput" placeholder="sk-ant-…" autocomplete="off">
 
@@ -1177,6 +1224,7 @@
   // Same trust model as the GitHub token above: this device only, never in the
   // synced log, and only ever sent to api.anthropic.com.
   var AI_KEY = "intern-ai-key";
+  var GEM_KEY = "intern-gemini-key";
   var SETTINGS_KEY = "intern-settings";
 
   function emptyData() {
@@ -1380,6 +1428,22 @@
     if (v) localStorage.setItem(AI_KEY, v);
     else localStorage.removeItem(AI_KEY);
   }
+  function getGemKey() { return localStorage.getItem(GEM_KEY) || ""; }
+  function setGemKey(v) {
+    if (v) localStorage.setItem(GEM_KEY, v);
+    else localStorage.removeItem(GEM_KEY);
+  }
+  // Which one actually runs. If only one key is filled in, that's the answer
+  // regardless of the setting — a saved preference for a provider you have no
+  // key for would just look broken.
+  function aiProvider() {
+    var want = SETTINGS.aiProvider === "gemini" ? "gemini" : "claude";
+    if (want === "gemini" && !getGemKey() && getAiKey()) return "claude";
+    if (want === "claude" && !getAiKey() && getGemKey()) return "gemini";
+    return want;
+  }
+  function hasAiKey() { return !!(getAiKey() || getGemKey()); }
+  function geminiModel() { return (SETTINGS.geminiModel || "").trim() || "gemini-flash-latest"; }
 
   function detectOwnerRepo() {
     var host = location.hostname;
@@ -2173,32 +2237,44 @@
      so there is nothing to gain by guessing one.
      ---------------------------------------------------------------- */
   var DEFAULT_FINDER_PROMPT = "" +
-    "Find me six people to contact at {company}, using web search. I'm a Boston University\n" +
-    "mechanical engineering student looking for a paid Summer 2027 internship" +
-    "{roleLine}.\n" +
+    "Find people to contact at {company}. I'm a Boston University mechanical engineering\n" +
+    "student looking for a paid Summer 2027 internship{roleLine}.\n" +
     "\n" +
-    "Three pairs, two people each:\n" +
-    "1. hiring — recruiters or hiring managers who handle engineering internships there.\n" +
-    "2. exec — engineering leadership: engineering manager, director, or VP of engineering.\n" +
-    "3. bu — engineers currently at {company} who went to Boston University. These matter\n" +
-    "   most to me: they have the least gatekeeping and the shared school makes them by far\n" +
-    "   the most likely to reply. Say what shows the BU connection.\n" +
+    "STEP 1 — run all three of these searches before you answer:\n" +
+    "  site:linkedin.com/in \"{company}\" recruiter OR \"talent acquisition\"\n" +
+    "  site:linkedin.com/in \"{company}\" \"engineering manager\" OR \"director of engineering\" OR \"VP engineering\"\n" +
+    "  site:linkedin.com/in \"{company}\" \"Boston University\" engineer\n" +
     "\n" +
-    "Rules:\n" +
-    "- Only give a LinkedIn profile URL you actually opened and read. Never construct,\n" +
-    "  pattern-match or guess one. Leaving the URL blank is a correct answer.\n" +
+    "STEP 2 — give me up to six people, two in each category:\n" +
+    "  hiring — recruiters, talent acquisition, or hiring managers for engineering roles.\n" +
+    "  exec   — engineering leadership: engineering manager, director, or VP of engineering.\n" +
+    "  bu     — engineers at {company} who went to Boston University. Say what shows the\n" +
+    "           BU connection. These matter most: least gatekeeping, and the shared school\n" +
+    "           makes them the likeliest to reply.\n" +
+    "\n" +
+    "THE linkedin FIELD — read this twice:\n" +
+    "- If a search result shows a linkedin.com/in/ URL for the person, PUT IT IN. Copy it\n" +
+    "  from the result. You are not vouching for it: every URL I get is opened and checked\n" +
+    "  automatically afterwards, so include it and let that check do its job.\n" +
+    "- Do NOT invent a URL from someone's name. If no search result gave you one, leave it\n" +
+    "  as \"\" and still list the person.\n" +
+    "- A person with a blank URL is useful. A person you left out entirely is not. Blanking\n" +
+    "  every URL to be safe is the wrong answer — it makes the whole list useless.\n" +
+    "\n" +
+    "OTHER RULES:\n" +
     "- Public professional information only: name, job title, employer, profile URL. No\n" +
     "  personal email addresses, phone numbers or home addresses.\n" +
-    "- Fewer than six is fine. Say which slots you couldn't fill rather than padding the\n" +
-    "  list with people who don't fit.\n" +
-    "- Check they still work at {company} — a stale title is the usual failure here.\n" +
+    "- Check they still work at {company}. A stale title is the usual failure here.\n" +
+    "- Fewer than six is fine — say which slots you couldn't fill in \"notes\". Don't pad the\n" +
+    "  list with people who don't fit, and don't skip someone obvious: a Director of Talent\n" +
+    "  Acquisition is a hiring contact even though the title doesn't say \"engineering\".\n" +
     "\n" +
-    "Reply with one JSON object in a ```json fence and nothing else:\n" +
+    "OUTPUT — only this JSON, in a ```json fence, with no text before or after it:\n" +
     "\n" +
     "```json\n" +
     "{ \"people\": [ { \"name\": \"\", \"title\": \"\", \"category\": \"hiring|exec|bu\",\n" +
     "                \"linkedin\": \"\", \"why\": \"\" } ],\n" +
-    "  \"notes\": \"anything you could not verify\" }\n" +
+    "  \"notes\": \"which slots you couldn't fill, and anything you couldn't verify\" }\n" +
     "```";
 
   function finderPromptTpl() {
@@ -2804,10 +2880,17 @@
     lpStatusEl.textContent = msg || "";
     lpStatusEl.className = "lp-status" + (bad ? " bad" : "");
   }
+  var lpPanel = document.getElementById("lpPanel");
+  function lpShowPanel(on) {
+    lpPanel.classList.toggle("open", !!on);
+    lpPanel.setAttribute("aria-hidden", on ? "false" : "true");
+    if (on) lpInput.focus();
+  }
   function lpReset() {
     lpFound = null; lpBusy = false;
     if (lpInput) lpInput.value = "";
     lpStatus(""); lpPreviewEl.innerHTML = "";
+    lpShowPanel(false);
   }
 
   /* ---- reading a profile URL ---- */
@@ -3085,6 +3168,17 @@
   }
 
   document.getElementById("lpBtn").addEventListener("click", lpRun);
+  document.getElementById("lpOpen").addEventListener("click", function () {
+    lpShowPanel(!lpPanel.classList.contains("open"));
+  });
+  document.getElementById("lpClose").addEventListener("click", function () { lpShowPanel(false); });
+  // Escape closes this before the dialog underneath it, so one tap doesn't
+  // throw away the form as well as the popup.
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && lpPanel.classList.contains("open")) {
+      e.stopPropagation(); lpShowPanel(false);
+    }
+  }, true);
 
   /* ============================================================
      6C. FIND CONTACTS — six people at one company
@@ -3151,9 +3245,9 @@
       if (searchUrl()) {
         h += '<button type="button" class="primary" id="fLocal">🔎 Search with my own engine</button>';
       }
-      h += getAiKey()
+      h += hasAiKey()
         ? '<button type="button" class="' + (searchUrl() ? "secondary" : "primary") +
-          '" id="fSearch">🔍 Search with Claude</button>'
+          '" id="fSearch">🔍 Search with ' + (aiProvider() === "gemini" ? "Gemini" : "Claude") + '</button>'
         : (searchUrl() ? "" :
           '<p class="finder-note">No search engine and no API key saved, so nothing can search ' +
           'from here. Copy the research prompt into Claude (or anything with web access) and ' +
@@ -3376,18 +3470,59 @@
     });
   }
 
+  /* Gemini. Same job, different wire format: the key rides in the query
+     string, Google Search grounding is `tools: [{google_search: {}}]`, and the
+     answer comes back as candidates → content → parts. Browser calls are
+     allowed against this endpoint, so it needs no proxy. */
+  function geminiCall(prompt) {
+    var url = "https://generativelanguage.googleapis.com/v1beta/models/" +
+      encodeURIComponent(geminiModel()) + ":generateContent?key=" + encodeURIComponent(getGemKey());
+    return fetch(url, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        contents: [{ role: "user", parts: [{ text: prompt }] }],
+        tools: [{ google_search: {} }]
+      })
+    }).then(function (r) {
+      return r.json().catch(function () { return {}; }).then(function (j) {
+        if (!r.ok) {
+          var m = (j && j.error && j.error.message) || ("HTTP " + r.status);
+          if (/API key not valid|API_KEY_INVALID/i.test(m)) throw new Error("that Gemini key was rejected — check it in Settings");
+          if (r.status === 429) throw new Error("Gemini is rate limiting right now — try again in a minute");
+          if (r.status === 404) throw new Error("no such model as “" + geminiModel() + "” — change it in Settings");
+          throw new Error(m);
+        }
+        var c = (j.candidates && j.candidates[0]) || {};
+        if (c.finishReason === "SAFETY" || c.finishReason === "PROHIBITED_CONTENT") {
+          throw new Error("Gemini declined that request");
+        }
+        return ((c.content && c.content.parts) || [])
+          .map(function (p) { return p.text || ""; }).join("\n");
+      });
+    });
+  }
+
   function finderSearch() {
     var a = finderApp();
     if (!a) { fsSay("That company isn't in your list any more.", true); return; }
+    var gem = aiProvider() === "gemini";
     FS.phase = "searching";
-    FS.progress = "Searching the web for people at " + FS.company + "… this takes a minute.";
+    FS.progress = "Asking " + (gem ? "Gemini" : "Claude") + " to search for people at " +
+      FS.company + "… this takes a minute.";
     FS.msg = "";
     renderFinder();
 
-    claudeCall([{ role: "user", content: buildFinderPrompt(a) }], 0).then(function (j) {
+    var prompt = buildFinderPrompt(a);
+    var run = gem
+      ? geminiCall(prompt)
+      : claudeCall([{ role: "user", content: prompt }], 0).then(function (j) {
+          return (j.content || []).filter(function (b) { return b.type === "text"; })
+            .map(function (b) { return b.text; }).join("\n");
+        });
+
+    run.then(function (text) {
       if (!FS) return;
-      var text = (j.content || []).filter(function (b) { return b.type === "text"; })
-        .map(function (b) { return b.text; }).join("\n");
       var people = parseFinderPeople(text);
       if (!people.length) {
         FS.phase = "paste"; FS.raw = text;
@@ -3735,6 +3870,9 @@
     document.getElementById("readerKeyInput").value = readerKey();
     document.getElementById("searchInput").value = searchUrl();
     document.getElementById("aiKeyInput").value = getAiKey();
+    document.getElementById("gemKeyInput").value = getGemKey();
+    document.getElementById("gemModelInput").value = geminiModel();
+    setRadio(document, "aiProvider", SETTINGS.aiProvider === "gemini" ? "gemini" : "claude");
     document.getElementById("finderPromptInput").value = finderPromptTpl();
     document.getElementById("aiPromptInput").value = aiPromptTpl();
     setTplStatus("");
@@ -3774,6 +3912,10 @@
     SETTINGS.readerKey = document.getElementById("readerKeyInput").value.trim();
     SETTINGS.searchUrl = document.getElementById("searchInput").value.trim();
     setAiKey(document.getElementById("aiKeyInput").value.trim());
+    setGemKey(document.getElementById("gemKeyInput").value.trim());
+    SETTINGS.geminiModel = document.getElementById("gemModelInput").value.trim();
+    var apEl = document.querySelector('input[name="aiProvider"]:checked');
+    SETTINGS.aiProvider = (apEl && apEl.value === "gemini") ? "gemini" : "claude";
     SETTINGS.finderPrompt = document.getElementById("finderPromptInput").value;
     saveSettings(SETTINGS);
     setSyncStatus("Saved. Syncing…");
