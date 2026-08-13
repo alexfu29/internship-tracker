@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-08-13T17:53:00.438Z",
+  "updated": "2026-08-13T18:34:39.412Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -69,8 +69,9 @@
       "nudgedOn": [],
       "closed": false,
       "deleted": false,
-      "updated": "2026-08-13T14:44:31.267Z",
-      "workspace": ""
+      "updated": "2026-08-13T18:34:37.425Z",
+      "workspace": "",
+      "muted": true
     },
     "msi8jrt6-14rd0m": {
       "name": "Jackson O-Toole",
@@ -86,7 +87,8 @@
       "nudgedOn": [],
       "closed": false,
       "deleted": false,
-      "updated": "2026-08-07T00:57:46.122Z"
+      "updated": "2026-08-13T18:34:39.412Z",
+      "muted": true
     },
     "msi8t77w-rgbg29": {
       "name": "Alex Leuchanka",
