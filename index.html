@@ -267,6 +267,19 @@
     transition: opacity 0.16s ease, transform 0.16s ease;
   }
   .ws-pop.open { opacity: 1; visibility: visible; transform: translateY(0); }
+
+  /* Side by side, once there's room for both. The workspace opens with the
+     entry, so pinning it to the right edge would drop it on top of the dialog
+     it's meant to sit beside. Instead the two are centred as one pair:
+     520 dialog + 16 gap + 340 workspace = 876 wide, so the pair's left edge
+     is 438px left of centre. Under 920px there is no side to sit on, so this
+     doesn't apply and the popup keeps the right edge to itself. */
+  @media (min-width: 920px) {
+    body.ws-side .modal.open {
+      transform: translate(calc(-50% - 178px), -50%) scale(1);
+    }
+    body.ws-side .ws-pop { right: auto; left: calc(50% + 98px); }
+  }
   .ws-pop-head {
     display: flex; align-items: center; justify-content: space-between;
     gap: 8px; padding: 10px 12px 8px; border-bottom: 1px solid var(--border);
@@ -1862,7 +1875,16 @@
       ? { bag: editSel.isContact ? "contacts" : "apps", id: editSel.id }
       : null;
 
-    if (!panelOpen || !editSel) hideWorkspace();   // notes belong to one entry
+    // The workspace belongs to exactly one entry, so it follows the dialog:
+    // it opens with an entry, repoints when you open a different one, and
+    // goes away when the dialog does. Always flush first — a mid-sentence
+    // debounce must not be lost to a close or a switch.
+    if (!panelOpen || !editSel) { flushWorkspace(); hideWorkspace(); }
+    else if (!wsOpenFor || wsOpenFor.id !== editSel.id) {
+      flushWorkspace();
+      // no focus: the form field below gets it, so typing starts in the form
+      openWorkspaceFor({ isContact: editSel.isContact, id: editSel.id, e: editSel.e }, true);
+    }
     logPanel.classList.toggle("open", panelOpen);
     logOverlay.classList.toggle("open", panelOpen);
     logPanel.setAttribute("aria-hidden", panelOpen ? "false" : "true");
@@ -1932,7 +1954,7 @@
 
     html += '<div class="upd-group"><span class="upd-group-label">Actions</span>' +
       '<div class="upd-acts">' +
-      actionBtn("workspace", "📝 Notes" + (hasWorkspace(e) ? " ●" : ""));
+      actionBtn("workspace", "📝 Workspace" + (hasWorkspace(e) ? " ●" : ""));
     if (isContact) html += actionBtn("copyfollow", "📋 Copy draft");
     html += actionBtn("delete", "Delete", "danger") + '</div></div>';
 
@@ -2031,19 +2053,21 @@
     return true;
   }
 
-  function openWorkspaceFor(sel) {
+  function openWorkspaceFor(sel, noFocus) {
     wsOpenFor = { bag: sel.isContact ? "contacts" : "apps", id: sel.id };
     wsText.value = sel.e.workspace || "";
     wsTitle.textContent = sel.isContact ? nameOf(sel.e) : companyOf(sel.e);
     wsSaved.textContent = "Saves as you type";
     wsPop.classList.add("open");
     wsPop.setAttribute("aria-hidden", "false");
-    wsText.focus();
+    document.body.classList.add("ws-side");   // shifts the dialog to make room
+    if (!noFocus) wsText.focus();
   }
   function hideWorkspace() {
     clearTimeout(wsTimer);
     wsPop.classList.remove("open");
     wsPop.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("ws-side");
     wsOpenFor = null;
   }
   function closeWorkspace() {

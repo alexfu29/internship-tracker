@@ -149,25 +149,33 @@ carrying some other scheme isn't made clickable at all.
 ## Per-entry workspaces
 
 Every contact and every company has **its own workspace** — a bigger, free-form
-notes area that belongs to that one entry. Tap the row to open it, then **📝 Notes**
-in the dialog.
+notes area that belongs to that one entry.
 
-It opens as a **small popup on the right**: 340×400, deliberately not a full-height
-drawer and not a takeover. It sits above the dialog, so you can read the entry while
-writing about it, and the page underneath never moves.
+**Tap the row and the workspace opens with it**, beside the dialog — no second tap.
+It's 340×400, deliberately not a full-height drawer and not a takeover. Opening a
+different row repoints it at that entry, and closing the dialog closes it.
+
+Where there's room (**920px and up**) the dialog and the workspace are **centred as
+a pair**, side by side with a gap: the dialog shifts left rather than the workspace
+landing on top of the thing it's meant to sit beside. Narrower than that — a phone,
+or a half-width window — there is no side to sit on, so it still opens with the entry
+but sits over the top of the dialog, the same place it has always appeared. **📝
+Workspace** in the dialog puts it away and brings it back.
+
+The page underneath never moves either way.
 
 - **Saves as you type**, debounced, straight onto that entry. The label reads
   `Saving…` then `Saved`.
-- Pending text is **flushed on the way out** — closing the popup, switching entries,
-  or backgrounding the app all commit what you typed, so a mid-sentence debounce
-  can't drop it.
+- Pending text is **flushed on the way out** — closing the popup, closing the dialog,
+  switching entries, or backgrounding the app all commit what you typed, so a
+  mid-sentence debounce can't drop it.
 - If the entry has since been deleted (say, on another device), it says
   `⚠ Entry is gone — copy your text out` rather than claiming a save that didn't
   happen.
 - The **📝 button shows a dot** when there's already something written in there, so
   you can tell without opening it.
 - **📋 Copy** puts the whole thing on the clipboard.
-- Tapping **📝 Notes** again puts it away, as does **✕** or **Escape**.
+- Tapping **📝 Workspace** again puts it away, as does **✕** or **Escape**.
 
 The workspace never re-points at another entry: opening a different one closes it
 first, after saving. That's how notes would end up on the wrong person.
@@ -242,12 +250,13 @@ Below the fields, the dialog carries everything that isn't a field:
 | Group | Buttons |
 |---|---|
 | **Status** | `Replied` · `Reminder sent` *(contacts)* · `Closed` — each shows a ✓ when true |
-| **Actions** | `📝 Notes` · `📋 Copy draft` *(contacts)* · `Delete` |
+| **Actions** | `📝 Workspace` · `📋 Copy draft` *(contacts)* · `Delete` |
 
 plus the **meeting date**. Those save the moment you tap them — **Save changes** is
 only for the fields, so there's no way to lose a status change by closing without it.
-`📝 Notes` shows a ● when that entry already has something in its workspace, and the
-notes popup opens *above* the dialog so you can read one while writing the other.
+`📝 Workspace` shows a ● when that entry already has something in its workspace. The
+workspace is already open by the time you see this button, so it's there to put it
+away and bring it back.
 
 Applied / Cold emails / Connection aren't repeated here: they're toggles on the
 company form itself, a few lines up.
