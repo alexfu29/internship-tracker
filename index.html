@@ -1772,8 +1772,12 @@
      guessed from a job title.
      ---------------------------------------------------------------- */
   var BUCKETS = { Hiring: 1, "VP Eng": 1, "BU Eng": 1 };
-  var RE_HIRING = /recruit|talent|sourcer|hiring|human resources|people ops|university relations|campus/i;
-  var RE_LEAD = /\b(vp|vice president|director|head of|chief|c[etoi]o|chairman|chairwoman|chair|president|founder|owner|partner|principal|staff|senior manager|engineering manager|manager|lead)\b/i;
+  // "VP of People" is a hiring contact, not engineering leadership — without
+  // the people-team wording RE_LEAD claims them on the "vp" alone.
+  var RE_HIRING = /recruit|talent|sourcer|hiring|human resources|\bhr\b|people ops|people operations|(chief|head of|vp of|director of) people|university relations|campus/i;
+  // [esa]?vp so EVP/SVP/AVP count — \bvp\b can't match inside "EVP", which is
+  // how an EVP of Technology fell through to no category at all.
+  var RE_LEAD = /\b([esa]?vp|vice president|director|head of|chief|c[etoi]o|chairman|chairwoman|chair|president|founder|owner|partner|principal|staff|senior manager|engineering manager|manager|lead)\b/i;
 
   // `hasBU` comes from the profile text, not the title — see above. With
   // nothing to go on it returns nothing: an empty role reads as "fill this in",
@@ -3475,7 +3479,9 @@
           (p.why ? '<div class="cl">' + escapeHtml(p.why) + "</div>" : "") +
           (p.linkedin
             ? '<div class="cl"><a href="' + escapeHtml(p.linkedin) + '" target="_blank" rel="noopener">' +
-              escapeHtml(p.linkedin) + "</a></div>"
+              escapeHtml(p.linkedin) + "</a>" +
+              (p.linkBySearch ? " <em>— link found by search, not claimed</em>" : "") +
+              "</div>"
             : '<div class="cl">no profile link</div>') +
           "</span></label>";
       });
@@ -3621,6 +3627,30 @@
       RE_HIRING.test(s) || RE_LEAD.test(s) || /\bengineer|intern|scientist|analyst\b/i.test(s);
   }
 
+  /* Which pair a search hit really belongs in, read off the person rather
+     than off the query that surfaced them. Returns "" when the title says
+     nothing, so the caller keeps the query's guess rather than inventing one.
+
+     Order matters and mirrors bucketFor(): a recruiter who went to BU is
+     still a recruiter, because the bucket is about how you approach them.
+     BU only wins for someone who isn't obviously hiring or leadership. */
+  function searchCategory(p) {
+    var title = String(p.title || "");
+    var hay = title + " " + String(p.why || "");
+    if (RE_HIRING.test(title)) return "hiring";
+    if (RE_LEAD.test(title)) return "exec";
+    // "Accomplished senior executive" is leadership; "Account Executive" is
+    // sales, and is the one common title that word would otherwise mis-file.
+    if (/\bexecutive\b/i.test(title) && !/\baccount executive\b/i.test(title)) {
+      return "exec";
+    }
+    // BU has to come off the evidence, never a job title — same rule the
+    // profile parser follows.
+    if (/boston university/i.test(hay)) return "bu";
+    if (RE_HIRING.test(hay)) return "hiring";
+    return "";
+  }
+
   function finderLocalSearch() {
     var a = finderApp();
     if (!a) { fsSay("That company isn't in your list any more.", true); return; }
@@ -3628,24 +3658,45 @@
     // Plain phrases, no OR groups: the lite endpoint handles them badly and
     // an over-clever query comes back with nothing at all, which reads as
     // "nobody works there" rather than "that query was wrong".
+    // Every query runs and everything is pooled: which query found someone
+    // says nothing about who they are. Widened because two of the three
+    // categories were routinely coming back empty — "director of engineering"
+    // alone misses a VP Eng, and one BU query misses everyone who lists the
+    // school without the word "engineer".
     var plan = [
       { cat: "hiring", q: 'site:linkedin.com/in ' + co + ' recruiter' },
       { cat: "hiring", q: 'site:linkedin.com/in ' + co + ' "talent acquisition"' },
+      { cat: "hiring", q: 'site:linkedin.com/in ' + co + ' "technical recruiter"' },
       { cat: "exec", q: 'site:linkedin.com/in ' + co + ' "engineering manager"' },
       { cat: "exec", q: 'site:linkedin.com/in ' + co + ' "director of engineering"' },
-      { cat: "bu", q: 'site:linkedin.com/in ' + co + ' "Boston University" engineer' }
+      { cat: "exec", q: 'site:linkedin.com/in ' + co + ' "VP of engineering"' },
+      { cat: "exec", q: 'site:linkedin.com/in ' + co + ' "head of engineering"' },
+      { cat: "bu", q: 'site:linkedin.com/in ' + co + ' "Boston University" engineer' },
+      { cat: "bu", q: 'site:linkedin.com/in ' + co + ' "Boston University"' }
     ];
     FS.phase = "searching"; FS.msg = ""; FS.progress = "Searching…";
     renderFinder();
 
-    var found = [], seen = {}, catCount = { hiring: 0, exec: 0, bu: 0 };
+    var pool = [], seen = {};
     function step(i) {
       if (!FS) return;
-      // Several queries feed one category, so the cap is counted per category
-      // rather than per query — otherwise "recruiter" and "talent acquisition"
-      // would return two each and fill the pair twice over.
-      while (i < plan.length && catCount[plan[i].cat] >= 2) i++;
       if (i >= plan.length) {
+        // Bucket by what the title says, not by the query that surfaced them.
+        // A search for "recruiter" happily returns a VP, and filing them under
+        // Hiring made the app assert something it never established — which is
+        // also how {learn} ends up writing "learn more about you" to an
+        // engineer. The query's own bucket is only the fallback.
+        pool.forEach(function (p) {
+          p.category = searchCategory(p) || p.category;
+        });
+        var found = [], catCount = { hiring: 0, exec: 0, bu: 0 };
+        CAT_ORDER.forEach(function (cat) {
+          pool.forEach(function (p) {
+            if (p.category !== cat || catCount[cat] >= 2) return;
+            catCount[cat]++;
+            found.push(p);
+          });
+        });
         if (!found.length) {
           FS.phase = "idle";
           fsSay("The search ran but turned up no LinkedIn profiles for " + FS.company +
@@ -3663,19 +3714,17 @@
         finderVerify();
         return;
       }
-      FS.progress = "Searching for " + CATS[plan[i].cat].label + "…";
+      FS.progress = "Searching " + CATS[plan[i].cat].label +
+        " (" + (i + 1) + " of " + plan.length + ")…";
       renderFinder();
       runSearch(plan[i].q).then(function (hits) {
-        var cat = plan[i].cat;
         hits.forEach(function (h) {
-          if (catCount[cat] >= 2) return;
-          var p = fromSearchResult(h, cat);
+          var p = fromSearchResult(h, plan[i].cat);
           if (!p || !p.name || seen[p.linkedin]) return;
-          catCount[cat]++;
           // The result snippet usually names the school outright, which is the
           // BU evidence — worth keeping before the profile read confirms it.
           p.snippetBU = /boston university/i.test(h.snippet || "");
-          seen[p.linkedin] = true; found.push(p);
+          seen[p.linkedin] = true; pool.push(p);
         });
         // Spaced for the same reason the profile reads are.
         setTimeout(function () { step(i + 1); }, 900);
@@ -3839,6 +3888,57 @@
   }
 
   /* ---- stage 2: verify each profile against the real page ---- */
+  /* ---- fill in the links a model wouldn't give us --------------------
+     The two routes fail in opposite directions. Search returns profile URLs
+     but only finds whoever the index surfaces; a model names people it knows
+     about — often a different, equally real set — and routinely leaves every
+     `linkedin` blank, because it treats reporting a URL as vouching for one.
+
+     A person with no URL is skipped by verify and lands as `unverified`
+     forever, which is what made the two routes feel like alternatives rather
+     than two halves. So: look the missing ones up by name, and hand them to
+     the same verification as everyone else.
+
+     The slug has to contain their surname before we'll accept it. Attaching a
+     plausible-but-wrong profile is precisely the confidently-wrong failure the
+     verify stage exists to catch, and it would sail through it. */
+  function slugMatchesName(url, name) {
+    var slug = slugFrom(url).toLowerCase().replace(/[^a-z]/g, "");
+    var parts = String(name || "").toLowerCase()
+      .replace(/[^a-z\s]/g, " ").split(/\s+/).filter(Boolean);
+    if (!slug || !parts.length) return false;
+    var last = parts[parts.length - 1];
+    return last.length >= 3 && slug.indexOf(last) !== -1;
+  }
+
+  function finderBackfillLinks(done) {
+    var need = FS.people.filter(function (p) { return !p.linkedin && p.name; });
+    if (!need.length || !searchProvider()) { done(); return; }
+    var n = 0;
+    function step() {
+      if (!FS) return;
+      if (FS.skip || n >= need.length) { done(); return; }
+      var p = need[n];
+      FS.progress = "Looking for " + p.name + "'s profile (" +
+        (n + 1) + " of " + need.length + ")…";
+      renderFinder();
+      runSearch('site:linkedin.com/in "' + p.name + '" "' + FS.company + '"')
+        .then(function (hits) {
+          for (var i = 0; i < hits.length; i++) {
+            var url = profileUrlFrom(hits[i].url || "");
+            if (url && slugMatchesName(url, p.name)) {
+              p.linkedin = url;
+              p.linkBySearch = true;
+              break;
+            }
+          }
+        })
+        .catch(function () { /* no link is the status quo, not a failure */ })
+        .then(function () { n++; setTimeout(step, 900); });
+    }
+    step();
+  }
+
   function finderVerify() {
     FS.skip = false;
     if (!readerBase()) {
@@ -3850,6 +3950,11 @@
     }
     FS.phase = "verifying";
     FS.msg = "";
+    finderBackfillLinks(function () { verifyLinked(); });
+  }
+
+  function verifyLinked() {
+    if (!FS) return;
     var todo = FS.people.filter(function (p) { return p.linkedin; });
     var n = 0;
 
