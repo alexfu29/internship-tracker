@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-08-14T01:26:16.761Z",
+  "updated": "2026-08-14T01:27:43.689Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -507,7 +507,7 @@
       "role": "Hiring",
       "channel": "LinkedIn",
       "email": "https://www.linkedin.com/in/alinalisanke/",
-      "date": "",
+      "date": "2026-08-13",
       "note": "Hiring · Welcome back · verified 2026-08-13",
       "responded": false,
       "respondedOn": null,
@@ -516,7 +516,7 @@
       "closed": false,
       "deleted": false,
       "workspace": "Hi Alina,\n\nI'm a mechanical engineering student at Boston University and I've been\nfollowing what Lexington Medical, Inc. is doing. I'd love to connect with you to learn more about you and the company culture.\n\nWould you be down for a quick zoom meeting to connect?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
-      "updated": "2026-08-13T17:52:42.586Z"
+      "updated": "2026-08-14T01:27:43.689Z"
     },
     "msrsqg7c-4s1q0q": {
       "name": "Robin Ganek",
@@ -843,7 +843,7 @@
     "mspe3qgh-f2u530": {
       "company": "Lexington Medical, Inc.",
       "applied": false,
-      "coldEmailed": false,
+      "coldEmailed": true,
       "connected": false,
       "role": "",
       "date": "2026-08-11",
@@ -854,7 +854,7 @@
       "meetingOn": null,
       "closed": false,
       "deleted": false,
-      "updated": "2026-08-13T17:32:47.569Z",
+      "updated": "2026-08-14T01:27:43.689Z",
       "workspace": ""
     },
     "mspe3u8o-rils79": {
