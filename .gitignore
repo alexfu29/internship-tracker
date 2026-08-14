@@ -1,1 +1,12 @@
 .claude/
+
+# The staging agent's runtime data and config live in
+# %LOCALAPPDATA%\internship-agent\, deliberately outside this repo — this repo
+# is public. These entries are belt-and-braces in case anything ever gets
+# pointed at the working tree instead.
+agent/config.json
+agent/outbox/
+agent/batches/
+agent/*.log
+__pycache__/
+*.pyc

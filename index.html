@@ -450,6 +450,36 @@
   .fr .cl a { color: var(--accent); word-break: break-all; }
   .finder-progress { font-size: 0.78rem; color: var(--text-secondary); }
 
+  /* ---- send queue ----------------------------------------------------
+     Opens from the main page rather than over a dialog, so it sits at the
+     same level as the log panel. Rows reuse .fr / .vb / .finder-group from
+     Find contacts: it's the same "tick what you meant" shape, and two
+     divergent copies of it would drift. */
+  .modal.outbox { z-index: 47; }
+  #outboxOverlay { z-index: 46; }
+  .fr.off { opacity: 0.62; }
+  .fr.off input[type=checkbox] { visibility: hidden; }
+  .ob-why { font-size: 0.72rem; color: var(--amber-ink); font-weight: 600; }
+  .ob-src { font-size: 0.72rem; color: var(--accent); font-weight: 600; }
+  .ob-eye {
+    background: none; border: 0; padding: 0 0 0 4px; cursor: pointer;
+    font-size: 0.78rem; color: var(--text-muted);
+  }
+  .ob-prev {
+    white-space: pre-wrap; font-size: 0.74rem; line-height: 1.45;
+    color: var(--text-secondary); background: var(--surface-3);
+    border: 1px solid var(--gridline); border-radius: 6px;
+    padding: 8px 9px; margin: 6px 0 2px; max-height: 260px; overflow: auto;
+  }
+  .ob-prev .sj { font-weight: 700; color: var(--text-primary); }
+  .ob-ph { background: var(--amber-bg); color: var(--amber-ink); font-weight: 700;
+           border-radius: 3px; padding: 0 2px; }
+  .ob-rest { font-size: 0.76rem; color: var(--text-muted); margin: 14px 0 0;
+             line-height: 1.5; }
+  .ob-status { font-size: 0.78rem; line-height: 1.5; margin: 10px 0 0; }
+  .ob-status.bad { color: var(--red-ink); }
+  .ob-status.good { color: var(--status-good); font-weight: 600; }
+
   /* Which draft goes where, and what fills in — a grid because both are
      lookups, and prose made you hold two axes in your head at once. */
   .tpl-map { border-collapse: collapse; margin: 8px 0 12px; font-size: 0.74rem; width: 100%; }
@@ -766,6 +796,7 @@
   <div class="cols">
     <section class="card">
       <h2>People contacted <span class="count" id="contactCount"></span></h2>
+      <div id="outboxMount"></div>
       <div class="table-scroll" id="contactTableMount"></div>
       <div class="archive" id="contactArchive"></div>
     </section>
@@ -956,6 +987,18 @@
     <button type="button" class="icon-btn" id="finderClose" aria-label="Close">✕</button>
   </div>
   <div class="modal-body" id="finderBody"></div>
+</aside>
+
+<!-- Send queue: tick people, hand the finished text to the local staging
+     agent. Same mount-and-repaint shape as Find contacts, because it's the
+     same job — read a list, disagree with some of it, commit the rest. -->
+<div class="modal-overlay" id="outboxOverlay"></div>
+<aside class="modal outbox" id="outboxPanel" aria-hidden="true" aria-label="Send queue">
+  <div class="modal-head">
+    <h2 id="outboxTitle">Send queue</h2>
+    <button type="button" class="icon-btn" id="outboxClose" aria-label="Close">✕</button>
+  </div>
+  <div class="modal-body" id="outboxBody"></div>
 </aside>
 
 <div class="drawer-overlay" id="drawerOverlay"></div>
@@ -2373,6 +2416,7 @@
     renderStats();
     renderNudges();
     renderCompanyList();
+    renderOutboxBtn();
     renderTables();
     renderEditExtras();   // keeps the open dialog honest after any change
   }
@@ -2559,6 +2603,7 @@
     if (isContact) {
       html += actionBtn("copyfirst", "📋 Copy " + (isLinkedInContact(e) ? "LinkedIn note" : "email"));
       html += actionBtn("copyfollow", "📋 Copy " + (isLinkedInContact(e) ? "LinkedIn" : "email") + " follow-up");
+      html += actionBtn("queue", "✉ Send queue");
     }
     // Companies only: it looks for people *at* somewhere.
     if (!isContact) html += actionBtn("findcontacts", "🔍 Find contacts");
@@ -2588,6 +2633,7 @@
           return;
         }
         if (act === "findcontacts") { openFinderFor(editingEntry.id); return; }
+        if (act === "queue") { openOutbox(editingEntry.id); return; }
         if (act === "workspace") {
           if (wsOpenFor && wsOpenFor.id === editingEntry.id) closeWorkspace();
           else openWorkspaceFor({ isContact: isContact, id: editingEntry.id, e: live });
@@ -3830,6 +3876,456 @@
   }
 
   /* ============================================================
+     6D. SEND QUEUE — hand a batch to the local staging agent
+
+     Nothing here sends anything. It picks people, renders the same drafts
+     every copy button in this app already produces, and POSTs them to an
+     agent listening on loopback, which screenshots each one and waits for
+     you. The agent has no credentials and cannot write back — see agent/.
+
+     The finished *text* goes over the wire, not a contact id and a template
+     name. That's deliberate: the templates live in this device's
+     localStorage and never sync, so anything that re-rendered them at the
+     other end would be a second implementation free to drift from this one.
+     Sending the string means what you approved is what gets staged.
+     ============================================================ */
+  var AGENT_BASE = "http://127.0.0.1:8787";
+  var OB = null;   // { rows, only, status, bad, busy } while open, else null
+  var obRecordNote = "";   // "✓ Recorded N sends…", shown until the next render
+
+  var outboxOverlay = document.getElementById("outboxOverlay");
+  var outboxPanel = document.getElementById("outboxPanel");
+  var outboxBody = document.getElementById("outboxBody");
+  var outboxTitle = document.getElementById("outboxTitle");
+
+  // The email templates open with a literal "Subject:" line and the three
+  // LinkedIn ones don't. Split it here rather than in the agent so what you
+  // approve on screen is the same shape that gets staged. Templates are
+  // freely editable in Settings, so a deleted line, a lowercase "subject:"
+  // and an empty one after the colon are all reachable — none of them may
+  // guess, because a wrong subject is the one part you can't unsee.
+  function splitSubject(text, wantsSubject) {
+    var out = { subject: "", body: text, warn: "" };
+    if (!wantsSubject) return out;
+    var nl = text.indexOf("\n");
+    var first = nl === -1 ? text : text.slice(0, nl);
+    var m = /^[ \t]*subject[ \t]*:[ \t]*(.*)$/i.exec(first);
+    if (!m) {
+      out.warn = "no Subject: line — check this template in Settings";
+      return out;
+    }
+    if (!m[1].trim()) {
+      out.warn = "the Subject: line is empty — check this template in Settings";
+      return out;
+    }
+    var rest = nl === -1 ? "" : text.slice(nl + 1);
+    if (rest.charAt(0) === "\n") rest = rest.slice(1);   // at most one blank line
+    if (!rest.trim()) {
+      out.warn = "there's a subject but no message body";
+      return out;
+    }
+    out.subject = m[1].trim();
+    out.body = rest;
+    return out;
+  }
+
+  // Which templates open with a Subject: line. The LinkedIn three don't —
+  // a connection request has no subject field to put one in.
+  var EMAIL_TPL_KINDS = { outreach: 1, followup: 1 };
+
+  var OB_PLACEHOLDER = /\[(first|name|company|role|date|days|channel|internship|learn)\]/;
+
+  // One unvalidated field holds the handle, and which kind it should be is
+  // decided by `channel`. When those two disagree the row is unusable rather
+  // than wrong: firstContactKind() keys off the channel alone, so a LinkedIn
+  // URL on an Email contact would otherwise get a full email — Subject line
+  // and all — pasted into a connection request.
+  function outboxTarget(c) {
+    var h = (c.email || "").trim();
+    var isEmail = /\S+@\S+/.test(h);
+    var isLi = /linkedin\.com\/in\//i.test(h);
+    if (!h) return { ok: false, why: "no address or profile link on file" };
+    if (isLinkedInContact(c)) {
+      if (isLi) return { ok: true, via: "linkedin", value: h };
+      if (isEmail) return { ok: false, why: "channel is LinkedIn but the handle is an email address" };
+      return { ok: false, why: "that handle doesn't look like a LinkedIn profile URL" };
+    }
+    if (isEmail) return { ok: true, via: "email", value: h };
+    if (isLi) return { ok: false, why: "the handle is a LinkedIn URL — set the channel to LinkedIn" };
+    return { ok: false, why: "that handle doesn't look like an email address" };
+  }
+
+  // A hand-edited workspace beats a freshly generated draft. Find contacts
+  // already writes a draft in there, and re-rendering over an edit you made
+  // would throw it away with nothing on screen saying so.
+  function outboxDraft(c, kind) {
+    var ws = (c.workspace || "").trim();
+    if (ws) return { text: ws, source: "workspace" };
+    return { text: draftFor(c, kind), source: "template" };
+  }
+
+  function outboxRow(c, kind, group) {
+    var t = outboxTarget(c);
+    var d = outboxDraft(c, kind);
+    var s = splitSubject(d.text, EMAIL_TPL_KINDS[kind] === 1);
+    var blockers = [];
+    if (!t.ok) blockers.push(t.why);
+    if (s.warn) blockers.push(s.warn);
+    if (OB_PLACEHOLDER.test(s.subject) || OB_PLACEHOLDER.test(s.body)) {
+      blockers.push("the draft still has an unfilled [placeholder] in it");
+    }
+    return {
+      id: c.id, contact: c, kind: kind, group: group,
+      via: t.via || (isLinkedInContact(c) ? "linkedin" : "email"),
+      to: t.via === "email" ? t.value : "",
+      profileUrl: t.via === "linkedin" ? t.value : "",
+      subject: s.subject, body: s.body, source: d.source,
+      blockers: blockers, use: blockers.length === 0, open: false
+    };
+  }
+
+  function outboxBuild(onlyId) {
+    var rows = [], rest = { replied: 0, meeting: 0, waiting: 0, ignored: 0 };
+    var dueIds = {};
+    dueNudges().forEach(function (c) { dueIds[c.id] = true; });
+
+    contacts().forEach(function (c) {
+      if (c.closed) return;
+      if (onlyId && c.id !== onlyId) return;
+      if (!c.date) {
+        rows.push(outboxRow(c, firstContactKind(c), "first"));
+      } else if (dueIds[c.id]) {
+        rows.push(outboxRow(c, followupKind(c), "follow"));
+      } else if (onlyId) {
+        // Asked for this one by name, so show it whatever state it's in.
+        rows.push(outboxRow(c, c.responded ? firstContactKind(c) : followupKind(c), "follow"));
+      } else if (c.responded) { rest.replied++; }
+      else if (c.meetingOn) { rest.meeting++; }
+      else if (isMuted(c)) { rest.ignored++; }
+      else { rest.waiting++; }
+    });
+
+    rows.forEach(function (r, i) { r.i = i; });
+    return { rows: rows, rest: rest };
+  }
+
+  function outboxCount() {
+    return OB ? OB.rows.filter(function (r) { return r.use; }).length : 0;
+  }
+
+  function obHighlight(s) {
+    return escapeHtml(s).replace(
+      /\[(first|name|company|role|date|days|channel|internship|learn)\]/g,
+      function (w) { return '<span class="ob-ph">' + w + "</span>"; });
+  }
+
+  function renderOutbox() {
+    if (!OB) return;
+    var groups = [
+      ["first", "First message — nothing sent to these yet"],
+      ["follow", "Follow-up — 7+ days silent"]
+    ];
+    var h = "";
+
+    if (!OB.rows.length) {
+      h += '<p class="finder-note">Nobody is waiting on a message right now. ' +
+        'People show up here when they have no contact date yet, or once ' +
+        "they've been silent for 7 days.</p>";
+    }
+
+    groups.forEach(function (g) {
+      var rows = OB.rows.filter(function (r) { return r.group === g[0]; });
+      if (!rows.length) return;
+      h += '<div class="finder-group">' + escapeHtml(g[1]) + "</div>";
+      rows.forEach(function (r) {
+        var c = r.contact;
+        var blocked = r.blockers.length > 0;
+        h += '<label class="fr' + (blocked ? " off" : "") + '">' +
+          '<input type="checkbox" data-i="' + r.i + '"' +
+          (r.use ? " checked" : "") + (blocked ? " disabled" : "") + ">" +
+          '<span class="who"><span class="nm">' + escapeHtml(nameOf(c)) + "</span> " +
+          '<span class="vb' + (r.via === "linkedin" ? "" : " ok") + '">' +
+          (r.via === "linkedin" ? "LinkedIn" : "Email") + "</span> " +
+          '<span class="vb none">' + escapeHtml(r.kind) + "</span>" +
+          '<button type="button" class="ob-eye" data-eye="' + r.i + '">' +
+          (r.open ? "▾ hide" : "👁 preview") + "</button>" +
+          '<div class="ti">' + escapeHtml(c.company || "(no company)") + "</div>";
+        if (r.source === "workspace") {
+          h += '<div class="ob-src">using your Workspace text</div>';
+        }
+        r.blockers.forEach(function (b) {
+          h += '<div class="ob-why">⚠ ' + escapeHtml(b) + "</div>";
+        });
+        if (r.open) {
+          h += '<div class="ob-prev">' +
+            (r.subject ? '<span class="sj">' + obHighlight(r.subject) + "</span>\n\n" : "") +
+            obHighlight(r.body) + "</div>";
+        }
+        h += "</span></label>";
+      });
+    });
+
+    var rest = OB.rest, bits = [];
+    if (rest.waiting) bits.push(rest.waiting + " still inside the 7 days");
+    if (rest.replied) bits.push(rest.replied + " replied");
+    if (rest.meeting) bits.push(rest.meeting + " with a meeting booked");
+    if (rest.ignored) bits.push(rest.ignored + " ignored");
+    if (bits.length) {
+      h += '<p class="ob-rest">Not shown: ' + escapeHtml(bits.join(" · ")) + ".</p>";
+    }
+
+    h += '<p class="ob-rest">Staging does not send anything. Each one is ' +
+      'rendered and screenshotted on this computer, then waits for you on the ' +
+      'agent\'s review page.</p>';
+
+    h += '<div class="lp-acts">' +
+      '<button type="button" class="primary" id="obGo"' +
+      (OB.busy || !outboxCount() ? " disabled" : "") + ">" +
+      (OB.busy ? "Staging…" : "✉ Stage " + outboxCount() + " for sending") + "</button>" +
+      '<button type="button" class="secondary" id="obCancel">Cancel</button></div>';
+
+    if (OB.status) {
+      h += '<p class="ob-status' + (OB.bad ? " bad" : " good") + '">' +
+        escapeHtml(OB.status) + "</p>";
+    }
+
+    outboxBody.innerHTML = h;
+    wireOutbox();
+  }
+
+  function wireOutbox() {
+    var go = document.getElementById("obGo");
+    if (go) go.addEventListener("click", stageOutbox);
+    var cancel = document.getElementById("obCancel");
+    if (cancel) cancel.addEventListener("click", closeOutbox);
+
+    // Mutate the button label in place rather than repainting, so ticking a
+    // box never moves the list under your finger.
+    outboxBody.querySelectorAll('input[type=checkbox][data-i]').forEach(function (cb) {
+      cb.addEventListener("change", function () {
+        var r = OB.rows[+cb.getAttribute("data-i")];
+        if (r) r.use = cb.checked;
+        var btn = document.getElementById("obGo");
+        if (btn) {
+          var n = outboxCount();
+          btn.textContent = "✉ Stage " + n + " for sending";
+          btn.disabled = !n;
+        }
+      });
+    });
+
+    outboxBody.querySelectorAll("button[data-eye]").forEach(function (b) {
+      b.addEventListener("click", function (ev) {
+        ev.preventDefault();
+        ev.stopPropagation();
+        var r = OB.rows[+b.getAttribute("data-eye")];
+        if (r) { r.open = !r.open; renderOutbox(); }
+      });
+    });
+  }
+
+  function openOutbox(onlyId) {
+    // Fold in anything already sent before deciding who still needs writing to,
+    // or a person you sent five minutes ago is offered up again.
+    recordSentJobs().then(function (applied) {
+      if (applied && applied.length && OB) {
+        var rebuilt = outboxBuild(OB.only);
+        OB.rows = rebuilt.rows;
+        OB.rest = rebuilt.rest;
+        OB.status = obRecordNote;
+        OB.bad = false;
+        renderOutbox();
+      }
+    });
+    var built = outboxBuild(onlyId || null);
+    OB = { rows: built.rows, rest: built.rest, only: onlyId || null,
+           status: "", bad: false, busy: false };
+    outboxTitle.textContent = onlyId ? "Send queue — one contact" : "Send queue";
+    outboxPanel.classList.add("open");
+    outboxPanel.setAttribute("aria-hidden", "false");
+    outboxOverlay.classList.add("open");
+    renderOutbox();
+  }
+
+  function closeOutbox() {
+    OB = null;
+    outboxPanel.classList.remove("open");
+    outboxPanel.setAttribute("aria-hidden", "true");
+    outboxOverlay.classList.remove("open");
+    outboxBody.innerHTML = "";
+  }
+
+  outboxOverlay.addEventListener("click", closeOutbox);
+  document.getElementById("outboxClose").addEventListener("click", closeOutbox);
+  document.addEventListener("keydown", function (ev) {
+    if (ev.key === "Escape" && OB) { ev.stopPropagation(); closeOutbox(); }
+  }, true);
+
+  function stageOutbox() {
+    if (!OB || OB.busy) return;
+    var picked = OB.rows.filter(function (r) { return r.use; });
+    if (!picked.length) return;
+
+    OB.busy = true;
+    OB.status = "Handing " + picked.length + " to the agent…";
+    OB.bad = false;
+    renderOutbox();
+
+    var payload = {
+      batchId: "b" + Date.now().toString(36),
+      jobs: picked.map(function (r) {
+        return {
+          contactId: r.id, name: nameOf(r.contact), company: r.contact.company || "",
+          channel: r.contact.channel || "", kind: r.kind,
+          to: r.to, profileUrl: r.profileUrl,
+          subject: r.subject, body: r.body, source: r.source
+        };
+      })
+    };
+
+    fetch(AGENT_BASE + "/queue", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    }).then(function (resp) {
+      return resp.json().then(function (j) { return { ok: resp.ok, j: j }; });
+    }).then(function (res) {
+      if (!OB) return;
+      OB.busy = false;
+      if (!res.ok || !res.j.ok) {
+        OB.bad = true;
+        OB.status = "The agent refused that: " + (res.j.error || "unknown reason") +
+          (res.j.rejected && res.j.rejected.length ? " (" + res.j.rejected.join("; ") + ")" : "");
+        renderOutbox();
+        return;
+      }
+      // Report what the agent actually took, never what we hoped it took.
+      var msg = "✓ " + res.j.accepted + " staged. Open " + res.j.reviewUrl +
+        " to work through them.";
+      if (res.j.rejected && res.j.rejected.length) {
+        msg += " Not staged: " + res.j.rejected.join("; ") + ".";
+      }
+      OB.status = msg;
+      OB.bad = false;
+      OB.rows.forEach(function (r) { r.use = false; });
+      renderOutbox();
+    }).catch(function () {
+      if (!OB) return;
+      OB.busy = false;
+      OB.bad = true;
+      OB.status = "Couldn't reach the staging agent on " + AGENT_BASE +
+        ". Start it with:  python agent/stage_agent.py";
+      renderOutbox();
+    });
+  }
+
+  /* ---- recording what you actually sent -------------------------------
+     The agent can't write to your tracker — it holds no token, by design.
+     So the bookkeeping lives here, where saveData() already does. The agent
+     reports which cards you ticked as sent; this applies them and tells the
+     agent they've been recorded, so the same send can't be counted twice.
+
+     Both sides guard: the agent won't re-report a recorded job, and every
+     write below is idempotent on its own. It takes both failing to
+     double-count. */
+  function applySentJob(job) {
+    var c = DATA.contacts[job.contactId];
+    if (!c || c.deleted) return null;
+
+    var touched = [];
+
+    // Always record a touch. "Set the date only if it's empty" would record
+    // nothing for anyone already contacted — they'd re-qualify tomorrow and
+    // you'd chase them forever.
+    if (!c.date) {
+      c.date = TODAY;
+      touched.push("first contact dated");
+    } else if ((c.nudgedOn || []).indexOf(TODAY) === -1) {
+      c.nudgedOn = (c.nudgedOn || []).concat([TODAY]);
+      touched.push("7-day clock restarted");
+    }
+
+    // The company's cold-email dot. Per the README this flag is the coarse
+    // "have I approached this place at all" answer, so a LinkedIn note counts
+    // for it too — it's about the company, not the channel.
+    //
+    // appForCompany() searches apps(), and liveList() hands back
+    // `Object.assign({id: id}, e)` — copies, not the stored objects. Writing
+    // to that result changes nothing and saves cleanly, so re-fetch the live
+    // row by id before touching it.
+    var match = appForCompany(c.company);
+    var a = match && DATA.apps[match.id];
+    if (a && !isColdEmailed(a)) {
+      a.coldEmailed = true;
+      touch(a);
+      touched.push("marked " + companyOf(a) + " as approached");
+    }
+
+    // Never touched: responded, meetingOn, closed. Those mean something came
+    // back, and nothing here knows whether it did.
+    touch(c);
+    return { name: nameOf(c), did: touched };
+  }
+
+  function recordSentJobs() {
+    // A missing agent is the normal case and stays silent. A failure *after*
+    // we have the list is a bug in here, and must not be swallowed — the
+    // symptom would be dots that quietly never update.
+    return fetch(AGENT_BASE + "/status")
+      .then(function (r) { return r.json(); }, function () { return null; })
+      .then(function (j) {
+        if (!j || !j.ok || !j.sent || !j.sent.length) return null;
+        var applied = [], ids = [];
+        try {
+          j.sent.forEach(function (job) {
+            ids.push(job.jobId);
+            // Demo batches are invented people; they never write anything.
+            if (job.demo) return;
+            var res = applySentJob(job);
+            if (res && res.did.length) applied.push(res);
+          });
+        } catch (e) {
+          obRecordNote = "⚠ Couldn't record your sends: " + e.message;
+          render();
+          throw e;
+        }
+        if (applied.length) {
+          obRecordNote = "✓ Recorded " + applied.length + " send" +
+            (applied.length === 1 ? "" : "s") + ": " +
+            applied.map(function (a) { return a.name; }).join(", ") + ".";
+          saveData();
+          render();
+        }
+        return fetch(AGENT_BASE + "/recorded", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ jobIds: ids })
+        }).then(function () { return applied; });
+      });
+  }
+
+  function renderOutboxBtn() {
+    var mount = document.getElementById("outboxMount");
+    if (!mount) return;
+    var built = outboxBuild(null);
+    var ready = built.rows.filter(function (r) { return !r.blockers.length; }).length;
+    if (!built.rows.length && !obRecordNote) { mount.innerHTML = ""; return; }
+    mount.innerHTML =
+      (built.rows.length
+        ? '<button class="secondary" id="openOutboxBtn" style="margin-bottom:12px">' +
+          "✉ Send queue (" + ready + " ready)</button>"
+        : "") +
+      (obRecordNote
+        ? '<p class="ob-status good" style="margin:0 0 12px">' +
+          escapeHtml(obRecordNote) + "</p>"
+        : "");
+    if (!built.rows.length) return;
+    document.getElementById("openOutboxBtn").addEventListener("click", function () {
+      openOutbox(null);
+    });
+  }
+
+  /* ============================================================
      7. SYNC — data/log.json in this repo, via a fine-grained PAT
      ============================================================ */
   var SYNC_PATH = "data/log.json";
@@ -4166,6 +4662,15 @@
   document.getElementById("aDate").value = TODAY;
   render();
   if (getPAT()) syncPull(false);
+
+  // Pick up anything you ticked as sent on the agent's review page. Runs on
+  // load and whenever you come back to the tab — which is exactly when you
+  // return from sending a batch, so the dots are already right by the time
+  // you look at the table.
+  recordSentJobs();
+  document.addEventListener("visibilitychange", function () {
+    if (document.visibilityState === "visible") recordSentJobs();
+  });
 })();
 </script>
 </body></html>
