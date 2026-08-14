@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-08-14T01:32:50.875Z",
+  "updated": "2026-08-14T01:36:58.319Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -568,6 +568,40 @@
       "deleted": true,
       "workspace": "Hi Kerry,\n\nI'm a mechanical engineering student at Boston University and I've been\nfollowing what Lexington Medical, Inc. is doing. I'd love to connect with you to learn more\nabout your work and the company culture.\n\nWould you be down for a quick zoom meeting to connect?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
       "updated": "2026-08-14T01:32:41.953Z"
+    },
+    "mssa15fy-d4c2zj": {
+      "name": "Marc Jin",
+      "company": "Lexington Medical, Inc.",
+      "role": "Hiring",
+      "channel": "LinkedIn",
+      "email": "https://www.linkedin.com/in/marcjin",
+      "date": "",
+      "note": "Hiring · Lexington Medical, Inc. · unverified 2026-08-13",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "nudgedOn": [],
+      "closed": false,
+      "deleted": false,
+      "workspace": "Hi Marc,\n\nI'm an engineering student at BU and I've been\nfollowing what Lexington Medical, Inc. is doing. I'd love to connect with you to learn more\nabout you and the company culture.\n\nWould you be down for a quick zoom meeting to connect?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
+      "updated": "2026-08-14T01:36:58.318Z"
+    },
+    "mssa15fz-y1ylto": {
+      "name": "David Moy Jr.",
+      "company": "Lexington Medical, Inc.",
+      "role": "Hiring",
+      "channel": "LinkedIn",
+      "email": "https://www.linkedin.com/in/davidmoyjr",
+      "date": "",
+      "note": "Hiring · Senior Mechanical Engineer at Lexington Medical, Inc ... · unverified 2026-08-13",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "nudgedOn": [],
+      "closed": false,
+      "deleted": false,
+      "workspace": "Hi David,\n\nI'm an engineering student at BU and I've been\nfollowing what Lexington Medical, Inc. is doing. I'd love to connect with you to learn more\nabout you and the company culture.\n\nWould you be down for a quick zoom meeting to connect?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
+      "updated": "2026-08-14T01:36:58.318Z"
     }
   },
   "apps": {
