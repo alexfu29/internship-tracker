@@ -479,6 +479,55 @@
   .ob-status { font-size: 0.78rem; line-height: 1.5; margin: 10px 0 0; }
   .ob-status.bad { color: var(--red-ink); }
   .ob-status.good { color: var(--status-good); font-weight: 600; }
+  .linkish {
+    background: none; border: 0; padding: 0; font: inherit; font-weight: 700;
+    color: var(--accent); cursor: pointer; text-decoration: underline;
+  }
+  .cmd-row { display: flex; gap: 7px; align-items: stretch; margin-bottom: 10px; }
+  .cmd {
+    flex: 1; min-width: 0; font-family: ui-monospace, Menlo, Consolas, monospace;
+    font-size: 0.7rem; line-height: 1.45; background: var(--surface-3);
+    border: 1px solid var(--gridline); border-radius: 7px; padding: 7px 8px;
+    color: var(--text-primary); overflow-x: auto; white-space: pre;
+  }
+  .cmd-row button { flex: 0 0 auto; }
+
+  /* ---- the deck --------------------------------------------------------
+     One card at a time. The card is a fixed height with the message
+     scrolling inside it, so the buttons sit in the same place on every card
+     — you press the same one twenty times and it must not move because
+     someone's draft ran three lines longer. */
+  .dk-top { display: flex; align-items: center; gap: 10px; font-size: 0.76rem;
+            font-weight: 600; color: var(--text-secondary); margin-bottom: 10px; }
+  .dk-bar { flex: 1; height: 5px; background: var(--gridline); border-radius: 999px;
+            overflow: hidden; }
+  .dk-bar i { display: block; height: 100%; background: var(--status-good);
+              transition: width .3s ease; }
+  .dk-card { border: 1px solid var(--gridline); border-radius: 10px;
+             overflow: hidden; display: flex; flex-direction: column;
+             height: min(56vh, 440px); }
+  .dk-head { padding: 9px 11px; border-bottom: 1px solid var(--gridline);
+             display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+  .dk-head .nm { font-size: 0.9rem; font-weight: 700; }
+  .dk-head .ti { font-size: 0.78rem; color: var(--text-secondary); }
+  .dk-msg { flex: 1 1 auto; overflow-y: auto; min-height: 0; }
+  .dk-to { padding: 8px 11px; font-size: 0.76rem; color: var(--text-secondary);
+           border-bottom: 1px solid var(--gridline); word-break: break-all; }
+  .dk-to b { color: var(--text-muted); font-weight: 600; margin-right: 5px; }
+  .dk-subj { padding: 9px 11px; font-size: 0.9rem; font-weight: 700;
+             border-bottom: 1px solid var(--gridline); }
+  .dk-body { padding: 11px; white-space: pre-wrap; font-size: 0.82rem;
+             line-height: 1.6; }
+  .dk-acts { flex: 0 0 auto; padding: 9px 11px; display: flex; gap: 7px;
+             align-items: center; border-top: 1px solid var(--gridline);
+             background: var(--surface-2); }
+  .dk-acts .dk-right { margin-left: auto; display: flex; gap: 7px; flex: 0 0 auto; }
+  .dk-acts button { flex: 0 0 auto; }
+  .dk-empty { text-align: center; padding: 34px 16px; border: 1px solid var(--gridline);
+              border-radius: 10px; }
+  .dk-empty span { font-size: 0.8rem; color: var(--text-secondary); }
+  .dk-tick { font-size: 1.8rem; color: var(--status-good); margin-bottom: 6px; }
+  @media (prefers-reduced-motion: reduce) { .dk-bar i { transition: none; } }
 
   /* Which draft goes where, and what fills in — a grid because both are
      lookups, and prose made you hold two axes in your head at once. */
@@ -1018,6 +1067,57 @@
   <button class="primary" id="saveSettingsBtn">Save settings</button>
   <button class="secondary" id="testSyncBtn">Test sync</button>
   <div class="sync-status" id="syncStatus"></div>
+
+  <hr>
+  <h2 style="font-size:0.95rem">Send queue</h2>
+  <p class="tpl-help">
+    Ticking people opens a deck you work through one at a time — copy the
+    message, open the compose window or profile, send it yourself, tick it off.
+    <strong>All of that happens right here in the tracker</strong>, so nothing
+    needs to be running for it to work.
+  </p>
+
+  <label for="gmailAccountInput">Gmail account slot <span class="opt">(the /u/N in your Gmail URL)</span></label>
+  <input type="number" id="gmailAccountInput" min="0" max="9" step="1" placeholder="0">
+  <p class="tpl-help">
+    Which signed-in Google account <strong>✉ Open compose</strong> should use. With
+    several signed in, <code>0</code> is whichever Google treats as primary — which
+    is how a cold email goes out from the wrong address. Open Gmail on the account
+    you want and read the number out of the URL.
+  </p>
+
+  <label for="reviewInSelect">Where to work through them</label>
+  <select id="reviewInSelect">
+    <option value="tracker">Here in the tracker (nothing to install)</option>
+    <option value="agent">In the local agent (needs it running)</option>
+  </select>
+
+  <div id="agentCmds">
+    <p class="tpl-help">
+      The optional local agent does the same job in its own window, which
+      outlives this tab. It is <strong>not</strong> set to start by itself — run
+      the first command when you want it, the second when you're done.
+    </p>
+
+    <label>Turn it on</label>
+    <div class="cmd-row">
+      <code class="cmd" id="cmdStart"></code>
+      <button type="button" class="secondary" id="copyStartBtn">📋 Copy</button>
+    </div>
+
+    <label>Turn it off</label>
+    <div class="cmd-row">
+      <code class="cmd" id="cmdStop"></code>
+      <button type="button" class="secondary" id="copyStopBtn">📋 Copy</button>
+    </div>
+
+    <label for="agentPathInput">Where the repo lives <span class="opt">(used to build the command above)</span></label>
+    <input type="text" id="agentPathInput" placeholder="$HOME\Downloads\internship-tracker">
+    <p class="tpl-help">
+      Paste either command into <strong>PowerShell</strong>. Starting it opens no
+      window — it runs quietly until you stop it or log out.
+    </p>
+  </div>
 
   <hr>
   <h2 style="font-size:0.95rem">Drafts</h2>
@@ -3890,8 +3990,54 @@
      Sending the string means what you approved is what gets staged.
      ============================================================ */
   var AGENT_BASE = "http://127.0.0.1:8787";
-  var OB = null;   // { rows, only, status, bad, busy } while open, else null
+  var OUTBOX_KEY = "intern-outbox";
+  var OB = null;   // { phase, rows, only, status, bad, busy } while open, else null
   var obRecordNote = "";   // "✓ Recorded N sends…", shown until the next render
+
+  /* ---- the staged batch, kept on this device -------------------------
+     Not in DATA, so it never rides the sync: these carry the full message
+     text, and data/log.json is public. It's also working state rather than
+     a record — once you've sent something, the fact lives on the contact.
+
+     This is what lets the whole review step happen here. A browser can open
+     a compose window, write the clipboard and store a batch perfectly well,
+     so the local agent is now optional rather than required. */
+  function loadOutbox() {
+    try {
+      var p = JSON.parse(localStorage.getItem(OUTBOX_KEY));
+      return (p && Array.isArray(p.jobs)) ? p : { version: 1, jobs: [] };
+    } catch (e) { return { version: 1, jobs: [] }; }
+  }
+  function saveOutbox(o) {
+    try { localStorage.setItem(OUTBOX_KEY, JSON.stringify(o)); }
+    catch (e) { fatal("Could not save the send queue: " + e.message); }
+  }
+  var OUTBOX = loadOutbox();
+
+  // Why this card can no longer be sent. Same guards as needsNudge(), read
+  // live off DATA — which is fresher than anything the agent could check,
+  // because it's the copy you've been editing.
+  function jobVoidReason(job) {
+    var c = DATA.contacts[job.contactId];
+    if (!c || c.deleted) return "this contact has been deleted";
+    if (c.responded) return "they replied";
+    if (c.meetingOn) return "a meeting is booked (" + fmtShort(c.meetingOn) + ")";
+    if (c.closed) return "the entry is closed";
+    if (isMuted(c)) return "you marked this one Ignored";
+    return "";
+  }
+  function outboxLive() {
+    return OUTBOX.jobs.filter(function (j) {
+      return j.state === "staged" && !jobVoidReason(j);
+    });
+  }
+  function outboxStagedIds() {
+    var m = {};
+    OUTBOX.jobs.forEach(function (j) {
+      if (j.state === "staged") m[j.contactId] = true;
+    });
+    return m;
+  }
 
   var outboxOverlay = document.getElementById("outboxOverlay");
   var outboxPanel = document.getElementById("outboxPanel");
@@ -4046,11 +4192,24 @@
 
   function renderOutbox() {
     if (!OB) return;
+    if (OB.phase === "deck") { renderDeck(); return; }
+    renderPicker();
+  }
+
+  function renderPicker() {
     var groups = [
       ["first", "First message — nothing sent to these yet"],
       ["follow", "Follow-up — 7+ days silent"]
     ];
     var h = "";
+
+    var waiting = outboxLive().length;
+    if (waiting) {
+      h += '<p class="ob-status good" style="margin:0 0 10px">' +
+        "✉ " + waiting + (waiting === 1 ? " message is" : " messages are") +
+        " already staged and waiting. " +
+        '<button type="button" class="linkish" id="obToDeck">Work through them →</button></p>';
+    }
 
     if (!OB.rows.length) {
       h += '<p class="finder-note">Nobody is waiting on a message right now. ' +
@@ -4118,11 +4277,171 @@
     wireOutbox();
   }
 
+  /* ---- the deck: one card at a time -----------------------------------
+     Everything the agent's review page did, done here instead. The browser
+     can open the compose window, write the clipboard and keep the batch, so
+     nothing outside this file is needed to work through a batch. */
+  function renderDeck() {
+    var live = outboxLive();
+    var done = OUTBOX.jobs.filter(function (j) { return j.state !== "staged"; });
+    var voided = OUTBOX.jobs.filter(function (j) {
+      return j.state === "staged" && jobVoidReason(j);
+    });
+    var total = OB.deckTotal || live.length;
+    var h = "";
+
+    h += '<div class="dk-top"><span id="dkLabel">' +
+      (live.length ? (total - live.length) + " of " + total + " done · " +
+        live.length + " to go" : "all " + total + " done") +
+      '</span><span class="dk-bar"><i style="width:' +
+      (total ? Math.round(((total - live.length) / total) * 100) : 100) +
+      '%"></i></span></div>';
+
+    if (!live.length) {
+      h += '<div class="dk-empty"><div class="dk-tick">✓</div>' +
+        "<strong>That's the batch.</strong><br>" +
+        "<span>You sent them — nothing here did. Each one you ticked has " +
+        "already been written into your tracker.</span></div>";
+    } else {
+      var job = live[0];
+      var isEmail = job.channel === "Email" || EMAIL_TPL_KINDS[job.kind] === 1;
+      h += '<div class="dk-card">';
+      h += '<div class="dk-head"><span class="nm">' + escapeHtml(job.name || "(no name)") +
+        '</span> <span class="ti">' + escapeHtml(job.company || "") + "</span> " +
+        '<span class="vb' + (isEmail ? " ok" : "") + '">' +
+        (isEmail ? "Email" : "LinkedIn") + "</span> " +
+        '<span class="vb none">' + escapeHtml(job.kind) + "</span>" +
+        (job.source === "workspace"
+          ? ' <span class="ob-src">your Workspace text</span>' : "") +
+        "</div>";
+      h += '<div class="dk-msg">' +
+        '<div class="dk-to"><b>To</b> ' +
+        escapeHtml(job.to || job.profileUrl || "(nothing on file)") + "</div>" +
+        (isEmail
+          ? '<div class="dk-subj">' + (job.subject
+              ? obHighlight(job.subject)
+              : '<span class="ob-why">no subject line — check the template</span>') +
+            "</div>"
+          : "") +
+        '<div class="dk-body">' + obHighlight(job.body) + "</div></div>";
+      h += '<div class="dk-acts">' +
+        '<button type="button" class="secondary" id="dkCopy">📋 Copy ' +
+        (isEmail ? "body" : "note") + "</button>" +
+        (isEmail && job.subject
+          ? '<button type="button" class="secondary" id="dkCopySubj">📋 Copy subject</button>'
+          : "") +
+        '<button type="button" class="secondary" id="dkOpen">' +
+        (isEmail ? "✉ Open compose" : "🔗 Open profile") + "</button>" +
+        '<span class="dk-right">' +
+        '<button type="button" class="primary" id="dkSent">✓ Sent — next</button>' +
+        '<button type="button" class="secondary" id="dkSkip">Skip</button></span></div>';
+      h += "</div>";
+    }
+
+    if (voided.length) {
+      h += '<div class="finder-group">Not sendable any more</div>';
+      voided.forEach(function (j) {
+        h += '<p class="ob-why" style="margin:4px 0">⚠ ' + escapeHtml(j.name) +
+          " — " + escapeHtml(jobVoidReason(j)) + "</p>";
+      });
+    }
+
+    h += '<div class="lp-acts">' +
+      '<button type="button" class="secondary" id="dkBack">← Pick more people</button>' +
+      (done.length || voided.length
+        ? '<button type="button" class="secondary" id="dkClear">Clear ' +
+          (done.length + voided.length) + " finished</button>"
+        : "") +
+      '<button type="button" class="secondary" id="dkClose">Close</button></div>';
+
+    if (OB.status) {
+      h += '<p class="ob-status' + (OB.bad ? " bad" : " good") + '">' +
+        escapeHtml(OB.status) + "</p>";
+    }
+
+    outboxBody.innerHTML = h;
+    wireDeck(live[0] || null);
+  }
+
+  function wireDeck(job) {
+    var on = function (id, fn) {
+      var el = document.getElementById(id);
+      if (el) el.addEventListener("click", fn);
+    };
+    on("dkBack", function () { OB.phase = "pick"; obRefreshRows(); renderOutbox(); });
+    on("dkClose", closeOutbox);
+    on("dkClear", function () {
+      OUTBOX.jobs = OUTBOX.jobs.filter(function (j) {
+        return j.state === "staged" && !jobVoidReason(j);
+      });
+      saveOutbox(OUTBOX);
+      OB.deckTotal = outboxLive().length;
+      renderOutbox();
+      render();
+    });
+    if (!job) return;
+
+    on("dkCopy", function () { copyText(job.body, this); });
+    on("dkCopySubj", function () { copyText(job.subject, this); });
+
+    // One window per click, which is also the only thing popup blockers
+    // reliably allow — hence no "open all", which would silently open one
+    // and swallow the rest.
+    on("dkOpen", function () {
+      var isEmail = job.channel === "Email" || EMAIL_TPL_KINDS[job.kind] === 1;
+      var url = isEmail
+        ? gmailComposeUrl(job.to, job.subject, job.body)
+        : linkHref(job.profileUrl);
+      if (!url) { OB.status = "No usable link for this one."; OB.bad = true; renderOutbox(); return; }
+      window.open(url, "_blank", "noopener,noreferrer");
+    });
+
+    on("dkSent", function () { finishJob(job, "sent"); });
+    on("dkSkip", function () { finishJob(job, "skipped"); });
+  }
+
+  // Marking it sent writes straight into the tracker — no round trip, and no
+  // second copy of the rule about what a send means.
+  function finishJob(job, state) {
+    job.state = state;
+    job.markedAt = new Date().toISOString();
+    saveOutbox(OUTBOX);
+    if (state === "sent") {
+      var res = applySentJob(job);
+      if (res && res.did.length) {
+        OB.status = "✓ " + res.name + ": " + res.did.join(", ") + ".";
+        OB.bad = false;
+        saveData();
+      }
+    }
+    render();          // dots and counts update behind the dialog
+    renderOutbox();    // deals the next card
+  }
+
+  function gmailComposeUrl(to, subject, body) {
+    var idx = SETTINGS.gmailAccount || 0;
+    var q = encodeURIComponent;
+    return "https://mail.google.com/mail/u/" + idx + "/?view=cm&fs=1&to=" +
+      q(to || "") + "&su=" + q(subject || "") + "&body=" + q(body || "");
+  }
+
+  function obRefreshRows() {
+    var rebuilt = outboxBuild(OB.only);
+    OB.rows = rebuilt.rows;
+    OB.rest = rebuilt.rest;
+  }
+
   function wireOutbox() {
     var go = document.getElementById("obGo");
     if (go) go.addEventListener("click", stageOutbox);
     var cancel = document.getElementById("obCancel");
     if (cancel) cancel.addEventListener("click", closeOutbox);
+    var toDeck = document.getElementById("obToDeck");
+    if (toDeck) toDeck.addEventListener("click", function () {
+      OB.phase = "deck";
+      OB.deckTotal = outboxLive().length;
+      renderOutbox();
+    });
 
     // Mutate the button label in place rather than repainting, so ticking a
     // box never moves the list under your finger.
@@ -4149,22 +4468,22 @@
     });
   }
 
-  function openOutbox(onlyId) {
-    // Fold in anything already sent before deciding who still needs writing to,
-    // or a person you sent five minutes ago is offered up again.
+  function openOutbox(onlyId, phase) {
+    // If the local agent is running and holds sends you ticked there, fold
+    // them in first — otherwise someone you wrote to five minutes ago gets
+    // offered up again.
     recordSentJobs().then(function (applied) {
       if (applied && applied.length && OB) {
-        var rebuilt = outboxBuild(OB.only);
-        OB.rows = rebuilt.rows;
-        OB.rest = rebuilt.rest;
+        obRefreshRows();
         OB.status = obRecordNote;
         OB.bad = false;
         renderOutbox();
       }
     });
     var built = outboxBuild(onlyId || null);
-    OB = { rows: built.rows, rest: built.rest, only: onlyId || null,
-           status: "", bad: false, busy: false };
+    OB = { phase: phase || "pick", rows: built.rows, rest: built.rest,
+           only: onlyId || null, status: "", bad: false, busy: false,
+           deckTotal: outboxLive().length };
     outboxTitle.textContent = onlyId ? "Send queue — one contact" : "Send queue";
     outboxPanel.classList.add("open");
     outboxPanel.setAttribute("aria-hidden", "false");
@@ -4186,11 +4505,47 @@
     if (ev.key === "Escape" && OB) { ev.stopPropagation(); closeOutbox(); }
   }, true);
 
+  function jobFromRow(r) {
+    return {
+      id: newId(), contactId: r.id, name: nameOf(r.contact),
+      company: r.contact.company || "", channel: r.contact.channel || "",
+      kind: r.kind, to: r.to, profileUrl: r.profileUrl,
+      subject: r.subject, body: r.body, source: r.source,
+      state: "staged", stagedAt: new Date().toISOString()
+    };
+  }
+
+  /* Staging keeps the batch here and goes straight to the deck. Handing it to
+     the local agent instead is a setting, for when you'd rather work through
+     them in a window that outlives this tab. */
   function stageOutbox() {
     if (!OB || OB.busy) return;
     var picked = OB.rows.filter(function (r) { return r.use; });
     if (!picked.length) return;
 
+    if (SETTINGS.reviewIn === "agent") { stageToAgent(picked); return; }
+
+    var already = outboxStagedIds();
+    var added = 0, skipped = 0;
+    picked.forEach(function (r) {
+      if (already[r.id]) { skipped++; return; }   // don't stage the same person twice
+      OUTBOX.jobs.push(jobFromRow(r));
+      added++;
+    });
+    saveOutbox(OUTBOX);
+
+    OB.phase = "deck";
+    OB.deckTotal = outboxLive().length;
+    OB.status = skipped
+      ? "Already staged, so not added again: " + skipped + "."
+      : "";
+    OB.bad = false;
+    obRefreshRows();
+    render();
+    renderOutbox();
+  }
+
+  function stageToAgent(picked) {
     OB.busy = true;
     OB.status = "Handing " + picked.length + " to the agent…";
     OB.bad = false;
@@ -4225,8 +4580,7 @@
         return;
       }
       // Report what the agent actually took, never what we hoped it took.
-      var msg = "✓ " + res.j.accepted + " staged. Open " + res.j.reviewUrl +
-        " to work through them.";
+      var msg = "✓ " + res.j.accepted + " staged in the agent.";
       if (res.j.rejected && res.j.rejected.length) {
         msg += " Not staged: " + res.j.rejected.join("; ") + ".";
       }
@@ -4234,12 +4588,13 @@
       OB.bad = false;
       OB.rows.forEach(function (r) { r.use = false; });
       renderOutbox();
+      if (res.j.reviewUrl) window.open(res.j.reviewUrl, "_blank", "noopener");
     }).catch(function () {
       if (!OB) return;
       OB.busy = false;
       OB.bad = true;
-      OB.status = "Couldn't reach the staging agent on " + AGENT_BASE +
-        ". Start it with:  python agent/stage_agent.py";
+      OB.status = "Couldn't reach the agent on " + AGENT_BASE + ". Start it " +
+        "with the command in Settings, or switch reviewing back to the tracker.";
       renderOutbox();
     });
   }
@@ -4334,19 +4689,26 @@
     if (!mount) return;
     var built = outboxBuild(null);
     var ready = built.rows.filter(function (r) { return !r.blockers.length; }).length;
-    if (!built.rows.length && !obRecordNote) { mount.innerHTML = ""; return; }
+    var staged = outboxLive().length;
+    if (!built.rows.length && !staged && !obRecordNote) { mount.innerHTML = ""; return; }
     mount.innerHTML =
       (built.rows.length
         ? '<button class="secondary" id="openOutboxBtn" style="margin-bottom:12px">' +
-          "✉ Send queue (" + ready + " ready)</button>"
+          "✉ Send queue (" + ready + " ready)</button> "
+        : "") +
+      (staged
+        ? '<button class="primary" id="openDeckBtn" style="margin-bottom:12px">' +
+          "▶ " + staged + " staged — work through them</button>"
         : "") +
       (obRecordNote
         ? '<p class="ob-status good" style="margin:0 0 12px">' +
           escapeHtml(obRecordNote) + "</p>"
         : "");
-    if (!built.rows.length) return;
-    document.getElementById("openOutboxBtn").addEventListener("click", function () {
-      openOutbox(null);
+    var openBtn = document.getElementById("openOutboxBtn");
+    if (openBtn) openBtn.addEventListener("click", function () { openOutbox(null); });
+    var deckBtn = document.getElementById("openDeckBtn");
+    if (deckBtn) deckBtn.addEventListener("click", function () {
+      openOutbox(null, "deck");
     });
   }
 
@@ -4493,8 +4855,37 @@
      ============================================================ */
   var drawer = document.getElementById("drawer");
   var overlay = document.getElementById("drawerOverlay");
+  /* ---- the agent's on/off commands ------------------------------------
+     Shown rather than assumed: the agent is not installed as a startup task
+     and does not run unless you start it. `pythonw` is what keeps it
+     windowless; the stop command finds it by the port it holds rather than
+     by name, so it can't kill an unrelated python. */
+  function agentRepoPath() {
+    return (SETTINGS.agentPath || "").trim() || "$HOME\\Downloads\\internship-tracker";
+  }
+  function agentStartCmd() {
+    return 'Start-Process pythonw -WindowStyle Hidden -ArgumentList "' +
+      agentRepoPath() + '\\agent\\stage_agent.py"';
+  }
+  function agentStopCmd() {
+    return "Get-NetTCPConnection -LocalPort 8787 -State Listen -EA 0 | " +
+      "Select-Object -First 1 -Expand OwningProcess | " +
+      "ForEach-Object { Stop-Process -Id $_ -Force }";
+  }
+  function refreshAgentCmds() {
+    document.getElementById("cmdStart").textContent = agentStartCmd();
+    document.getElementById("cmdStop").textContent = agentStopCmd();
+    document.getElementById("agentCmds").style.display =
+      (SETTINGS.reviewIn === "agent") ? "" : "none";
+  }
+
   function openDrawer() {
     var or = detectOwnerRepo();
+    document.getElementById("gmailAccountInput").value =
+      SETTINGS.gmailAccount === undefined ? "" : SETTINGS.gmailAccount;
+    document.getElementById("reviewInSelect").value = SETTINGS.reviewIn || "tracker";
+    document.getElementById("agentPathInput").value = SETTINGS.agentPath || "";
+    refreshAgentCmds();
     document.getElementById("patInput").value = getPAT();
     document.getElementById("ownerInput").value = or.owner || "";
     document.getElementById("repoInput").value = or.repo || "";
@@ -4539,10 +4930,31 @@
     if (e.key === "Escape" && drawer.classList.contains("open")) closeDrawer();
   });
 
+  // Live, so the command reflects the path as you type it rather than after
+  // a save — you're about to copy it.
+  document.getElementById("reviewInSelect").addEventListener("change", function () {
+    SETTINGS.reviewIn = this.value;
+    saveSettings(SETTINGS);
+    refreshAgentCmds();
+  });
+  document.getElementById("agentPathInput").addEventListener("input", function () {
+    SETTINGS.agentPath = this.value.trim();
+    saveSettings(SETTINGS);
+    refreshAgentCmds();
+  });
+  document.getElementById("copyStartBtn").addEventListener("click", function () {
+    copyText(agentStartCmd(), this);
+  });
+  document.getElementById("copyStopBtn").addEventListener("click", function () {
+    copyText(agentStopCmd(), this);
+  });
+
   document.getElementById("saveSettingsBtn").addEventListener("click", function () {
     setPAT(document.getElementById("patInput").value.trim());
     SETTINGS.owner = document.getElementById("ownerInput").value.trim();
     SETTINGS.repo = document.getElementById("repoInput").value.trim();
+    var slot = parseInt(document.getElementById("gmailAccountInput").value, 10);
+    SETTINGS.gmailAccount = (isNaN(slot) || slot < 0) ? 0 : slot;
     // Written even when empty — a blank reader is a deliberate "make no
     // requests", which is different from never having configured one.
     SETTINGS.readerBase = document.getElementById("readerInput").value.trim();
