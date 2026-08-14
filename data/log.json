@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-08-14T13:35:36.539Z",
+  "updated": "2026-08-14T23:58:07.513Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -660,9 +660,11 @@
       "meetingOn": null,
       "closed": false,
       "deleted": false,
-      "updated": "2026-08-09T17:28:01.633Z",
+      "updated": "2026-08-14T23:58:07.513Z",
       "connected": true,
-      "coldEmailed": true
+      "coldEmailed": true,
+      "outcome": "",
+      "workspace": ""
     },
     "msl0573c-nasry3": {
       "company": "CarGill",
@@ -692,7 +694,9 @@
       "meetingOn": null,
       "closed": false,
       "deleted": false,
-      "updated": "2026-08-12T00:38:56.358Z"
+      "updated": "2026-08-14T23:57:53.030Z",
+      "workspace": "",
+      "outcome": ""
     },
     "msm3oz66-fge3lm": {
       "company": "Marotta Controls",
@@ -724,7 +728,8 @@
       "meetingOn": null,
       "closed": false,
       "deleted": false,
-      "updated": "2026-08-11T01:37:14.822Z"
+      "updated": "2026-08-14T23:57:59.213Z",
+      "workspace": ""
     },
     "mso0l8ji-z1s85w": {
       "company": "Avery Dennison",
