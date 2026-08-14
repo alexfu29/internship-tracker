@@ -749,6 +749,19 @@ def render_review(batches: list, warning: str) -> str:
     warn_html = '<div class="warn">%s</div>' % e(warning) if warning else ""
     demo_html = ("<span class='demo'>DEMO DATA</span>" if demo else "")
 
+    # The banner has to say which mode is actually running. Hardcoding
+    # "MANUAL MODE" while auto was on made the page state something untrue
+    # about what had just happened to the screen.
+    if auto_enabled():
+        mode_html = ("AUTO MODE &mdash; &#9654; Set it up opens the real window "
+                     "already filled, loads your clipboard and photographs the "
+                     "screen, then stops. It cannot send, and it is not "
+                     "modifying your tracker. You press Send.")
+    else:
+        mode_html = ("MANUAL MODE &mdash; these are staged for you to send. This "
+                     "agent cannot send anything and is not modifying your "
+                     "tracker. Ticking &#10003; Sent is your checklist.")
+
     return (
         "<!doctype html><html><head><meta charset='utf-8'>"
         "<meta name='viewport' content='width=device-width,initial-scale=1'>"
@@ -758,14 +771,12 @@ def render_review(batches: list, warning: str) -> str:
         "<header><h1>Staged outreach</h1>"
         "<span class='count'>%d waiting on you%s</span>"
         "<span class='spacer'></span>%s</header>"
-        "<div class='test'>MANUAL MODE &mdash; these are staged for you to send. "
-        "This agent cannot send anything and is not modifying your tracker. "
-        "Ticking &#10003; Sent is your checklist and goes no further.</div>%s"
+        "<div class='test'>%s</div>%s"
         "<main>%s<div class='deck' id='deck'>%s</div>%s</main>"
         "<script>%s</script></body></html>"
         % (REVIEW_CSS, total, len(live),
            (" &middot; %d handled earlier" % len(handled)) if handled else "",
-           demo_html, warn_html, progress, deck, rest, REVIEW_JS)
+           demo_html, mode_html, warn_html, progress, deck, rest, REVIEW_JS)
     )
 
 
