@@ -1,8 +1,8 @@
 # The staging agent
 
 Tick people in the tracker, and this stages a personalized message for each one
-on your computer: rendered, screenshotted, and waiting in a list you click
-through. **You send them.** It cannot.
+on your computer, waiting in a list you click through one at a time.
+**You send them.** It cannot.
 
 ## What it will not do
 
@@ -14,7 +14,6 @@ This matters more than what it does, so it's first.
 | Send LinkedIn messages | It opens a profile in your browser. That's the whole extent of it. |
 | Click Send | It never clicks, submits, or presses a key in any window. There is no keystroke injection — something typing into whatever window has focus can't coexist with you using the computer. |
 | Write to your tracker | It holds no GitHub token and never PUTs. The website reads `/status` from it and does its own bookkeeping. |
-| Look at the screenshots | Captured and displayed. Nothing reads them, nothing is uploaded. |
 | Touch the network, mostly | One request exists: a read-only GET of your **public** `data/log.json`, so a staged card can notice someone replied since you queued them. |
 
 You can check the first and last of those yourself rather than taking my word:
@@ -38,7 +37,7 @@ says `DEMO DATA` so a demo run can never be mistaken for a real one.
 
 ## Setup
 
-Needs Python 3 and Chrome. No `pip install`, no packages, nothing to build.
+Needs Python 3. No `pip install`, no packages, nothing to build.
 
 ```bash
 python agent/stage_agent.py
@@ -56,8 +55,7 @@ It prints a review-page link and creates `%LOCALAPPDATA%\internship-agent\config
   "repo": "internship-tracker",
   "branch": "main",
   "openBrowserOnStage": true,
-  "mode": "manual",
-  "autoSettleSeconds": 3
+  "mode": "manual"
 }
 ```
 
@@ -78,8 +76,8 @@ powershell -ExecutionPolicy Bypass -File agent\install-task.ps1
 ```
 
 Registers a logon task running `pythonw.exe`, which has no console window at
-all. Nothing appears on screen and nothing steals focus — the screenshots are
-rendered offscreen. `-Remove` unregisters it.
+all. Nothing appears on screen and nothing steals focus until you ask it to
+open something. `-Remove` unregisters it.
 
 ## The two modes
 
@@ -93,8 +91,9 @@ Set `"mode"` in `config.json` and restart. Neither one sends anything.
 3. Paste, send it yourself, hit **✓ Sent — next**. The card slides away and the
    next is dealt.
 
-There's no screenshot here on purpose — a picture of text sitting next to that
-same text isn't evidence of anything.
+There are no screenshots anywhere in this, in either mode. You press the
+button and you press Send, so a photograph of that is a picture of your own
+work — it proves nothing you didn't already do.
 
 ### `"auto"`
 
@@ -103,13 +102,10 @@ Adds a **▶ Set it up** button to each card. Pressing it:
 1. opens the real target in your real signed-in browser — for email that's a
    Gmail compose window that arrives with **To, Subject and body already
    filled**;
-2. puts the note on your real clipboard (for LinkedIn, ready to paste);
-3. waits `autoSettleSeconds` for the window to paint, then **photographs your
-   actual screen** and shows that on the card.
+2. puts the note on your real clipboard (for LinkedIn, ready to paste).
 
-Then it stops. It does not click Send. *Here* the screenshot means something:
-it's a state you didn't assemble by hand, captured at the moment before you
-commit.
+Then it stops. It does not click Send. It's the fetching-and-filling done for
+you; the judgement and the commit stay yours.
 
 **Setting up the accounts** is just being signed in normally — there are no
 credentials to give this thing:
@@ -122,9 +118,6 @@ credentials to give this thing:
 - **LinkedIn** — be signed in. It opens the person's profile; you click Message
   and paste. LinkedIn is not automated any further, deliberately: doing so
   breaks their terms and risks your account.
-
-One caveat: the screen capture photographs **the whole screen**, including
-whatever else is on it. The images stay in `%LOCALAPPDATA%`, never in the repo.
 
 ## Copying is always a button press
 
@@ -158,8 +151,7 @@ isn't added to the nudge list twice, and a dot already on is left alone).
   config.json                     settings above
   agent.log                       what it did, including the review link
   batches\<batchId>\
-    batch.json                    the batch and its state
-    <jobId>.html / <jobId>.png    the preview and its screenshot
+    batch.json                    the batch, its messages and their state
 ```
 
 Deliberately **not** in this repo, which is public. `.gitignore` also covers
@@ -177,15 +169,15 @@ year" to someone who answered. If the re-read fails, it says so and disables
 sending instead of showing you stale state confidently.
 
 **"could not re-check the tracker"** — no network, or your log isn't published
-yet. Staging and screenshots still work; only the staleness check is off, and
-the page tells you.
+yet. Staging still works; only the staleness check is off, and the page tells
+you.
 
 **"▶ Set it up" isn't there** — you're in manual mode. Set `"mode": "auto"` and
 restart the agent.
 
-**Screen capture failed** — it uses PowerShell and .NET, so it's Windows-only.
-Everything else in auto mode still works; you just lose the picture, and the
-card says so rather than pretending.
+**Clipboard didn't load** — it uses PowerShell, so it's Windows-only. The
+compose window still opens filled; the card says what worked and what didn't
+rather than pretending.
 
 **The dots didn't update** — the website does that, not the agent, and only
 when the tracker is open. Open or refocus the tracker tab; a note appears above

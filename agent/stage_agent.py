@@ -10,17 +10,17 @@ WHAT THIS DOES
     tick it off and the next one is dealt.
 
 TWO MODES, NEITHER OF WHICH SENDS
-    manual  - the card shows the finished message as text and you copy it.
-              No screenshot: a picture of text you can already read, sitting
-              next to that text, is not evidence of anything.
+    manual  - the card shows the finished message as text; you copy it and
+              open the compose window or profile yourself.
 
-    auto    - it opens the real compose window (Gmail's compose link arrives
-              with to/subject/body already filled), puts the note on your real
-              clipboard, and photographs the actual screen. Then it stops.
-              Here the screenshot earns its place: it shows a state you did
-              not assemble by hand, at the moment before you send.
+    auto    - one button does the fetching: it opens the real compose window
+              (Gmail's link arrives with to/subject/body already filled) and
+              puts the note on your real clipboard. Then it stops.
 
-    In both, the last action is yours. Set "mode" in config.json.
+    In both, every action that leaves this machine is one you took. There are
+    no screenshots: you pressed the button and you press Send, so a photograph
+    of that is a picture of your own work, and evidence of nothing.
+    Set "mode" in config.json.
 
 WHAT THIS DOES NOT DO — and cannot, because the code isn't here
     * It does not send email. No mail library is imported and no mail server is
@@ -73,9 +73,7 @@ HOST = "127.0.0.1"
 DEFAULT_PORT = 8787
 
 # Not a setting - the absence of send/write code. It exists so the UI can
-# state the fact, not so anyone can flip it. An auto mode that fills a compose
-# window (and screenshots the real screen before submit) would be the thing
-# that changes this, and it is not built.
+# state the fact, not so anyone can flip it.
 TEST_MODE = True
 
 # Origins allowed to hand us a batch. A JSON content-type forces a CORS
@@ -133,7 +131,6 @@ DEFAULT_CONFIG = {
     "branch": "main",
     "openBrowserOnStage": True,
     "mode": "manual",
-    "autoSettleSeconds": 3,
 }
 
 
@@ -221,10 +218,9 @@ def gmail_compose_url(to: str, subject: str, body: str) -> str:
 # auto mode — set the message up for real, and stop before Send
 #
 # What "auto" means here, precisely: open the real compose window or profile
-# in your real signed-in browser, put the note on your real clipboard, and
-# photograph the actual screen so you can see what was set up. Then it stops.
-# It does not click Send, does not submit a form, and does not press a key in
-# anyone else's window. The last action is always yours.
+# in your real signed-in browser and put the note on your real clipboard. Then
+# it stops. It does not click Send, does not submit a form, and does not press
+# a key in anyone else's window. The last action is always yours.
 #
 # There is no keystroke injection anywhere in here on purpose. Something that
 # types into whatever window happens to be focused cannot coexist with you
@@ -272,52 +268,6 @@ def set_clipboard(text: str) -> tuple:
     return _powershell(
         "Set-Clipboard -Value ([Text.Encoding]::UTF8.GetString("
         "[Convert]::FromBase64String('%s')))" % b64)
-
-
-def capture_screen(png_path: Path) -> tuple:
-    """
-    A photograph of the real screen, taken after the compose window is open
-    and filled. This is the screenshot that means something: it is evidence of
-    a state you did not assemble by hand, taken at the moment before you send.
-
-    PowerShell hands the image back as base64 on stdout and Python writes the
-    file. Pointing PowerShell at a path chosen over here looks simpler and is
-    the thing that breaks: any disagreement about that path - a redirected or
-    synced LOCALAPPDATA, a permission, a length limit - surfaces as a success
-    with no file, which is worse than an error. Passing bytes needs no shared
-    view of the filesystem at all.
-    """
-    if os.name != "nt":
-        return False, "screen capture is Windows-only here"
-    script = (
-        "Add-Type -AssemblyName System.Windows.Forms,System.Drawing; "
-        "$b = [System.Windows.Forms.SystemInformation]::VirtualScreen; "
-        "$bmp = New-Object System.Drawing.Bitmap $b.Width, $b.Height; "
-        "$g = [System.Drawing.Graphics]::FromImage($bmp); "
-        "$g.CopyFromScreen($b.Location, [System.Drawing.Point]::Empty, $b.Size); "
-        "$ms = New-Object System.IO.MemoryStream; "
-        "$bmp.Save($ms, [System.Drawing.Imaging.ImageFormat]::Png); "
-        "[Convert]::ToBase64String($ms.ToArray()); "
-        "$g.Dispose(); $bmp.Dispose(); $ms.Dispose()"
-    )
-    ok, out = _powershell(script, timeout=45)
-    if not ok:
-        return False, out
-    blob = "".join(out.split())
-    if not blob:
-        return False, "screen capture produced no image data"
-    try:
-        data = base64.b64decode(blob)
-    except (ValueError, TypeError) as exc:
-        return False, "unreadable image data: %s" % exc
-    if len(data) < 1000 or data[:8] != b"\x89PNG\r\n\x1a\n":
-        return False, "that wasn't a PNG"
-    try:
-        png_path.parent.mkdir(parents=True, exist_ok=True)
-        png_path.write_bytes(data)
-    except OSError as exc:
-        return False, "could not save the capture: %s" % exc
-    return True, "%d bytes" % len(data)
 
 
 # ----------------------------------------------------------------------------
@@ -582,10 +532,6 @@ REVIEW_CSS = """
            line-height: 1.6; }
   .ph { background: #ffe9b8; border-radius: 3px; padding: 0 3px;
         font-weight: 700; color: #7a4d00; }
-  .screen { border-top: 1px solid #e6e3dc; }
-  .screen-cap { padding: 9px 18px; font-size: 12px; font-weight: 700;
-                color: #2f6b47; background: #eef5f0; }
-  .screen img { display: block; width: 100%; }
   .noshot { padding: 11px 18px; color: #7a4d00; background: #fdf3df;
             font-size: 13px; font-weight: 600;
             border-bottom: 1px solid #e6e3dc; }
@@ -629,8 +575,8 @@ function fallback(t, done) {
   try { document.execCommand("copy"); done(); } catch (e) { alert(t); }
   document.body.removeChild(ta);
 }
-/* Auto mode: open the real target, load the clipboard, photograph the screen.
-   It stops there — the send is still your click. */
+/* Auto mode: open the real target and load the clipboard. It stops there —
+   the send is still your click. */
 function setup(batch, job, btn) {
   var old = btn.textContent;
   btn.disabled = true;
@@ -754,9 +700,9 @@ def render_review(batches: list, warning: str) -> str:
     # about what had just happened to the screen.
     if auto_enabled():
         mode_html = ("AUTO MODE &mdash; &#9654; Set it up opens the real window "
-                     "already filled, loads your clipboard and photographs the "
-                     "screen, then stops. It cannot send, and it is not "
-                     "modifying your tracker. You press Send.")
+                     "already filled and loads your clipboard, then stops. It "
+                     "cannot send, and it is not modifying your tracker. You "
+                     "press Send.")
     else:
         mode_html = ("MANUAL MODE &mdash; these are staged for you to send. This "
                      "agent cannot send anything and is not modifying your "
@@ -816,16 +762,7 @@ def render_card(batch: dict, job: dict) -> str:
     if notes:
         shot += "<div class='noshot'>&#9888; %s</div>" % e("; ".join(notes))
 
-    # Once auto mode has set this one up, the real screen is the better
-    # evidence than the text - it shows the compose window actually filled.
-    if job.get("hasScreen"):
-        shot += ("<div class='screen'><div class='screen-cap'>The real screen "
-                 "after setting this up &mdash; %s</div>"
-                 "<img alt='screen after setting up the message to %s' "
-                 "src='/shot?b=%s&amp;j=%s'></div>"
-                 % (e(job.get("setUpAt") or ""), e(job.get("name") or ""),
-                    urllib.parse.quote(bid), urllib.parse.quote(jid)))
-    elif job.get("setupSteps"):
+    if job.get("setupSteps"):
         shot += ("<div class='noshot'>Set up: %s</div>"
                  % e("; ".join(job["setupSteps"])))
 
@@ -1004,10 +941,6 @@ class Handler(BaseHTTPRequestHandler):
             self._json(200, {"ok": True, "sent": out}, origin)
             return
 
-        if path == "/shot":
-            self._shot(qs)
-            return
-
         if path in ("/", "/index.html"):
             if not self._token_ok(qs):
                 return
@@ -1095,34 +1028,10 @@ class Handler(BaseHTTPRequestHandler):
             log("website recorded %d send(s) into the tracker" % n)
         self._json(200, {"ok": True, "recorded": n}, origin)
 
-    def _shot(self, qs: dict) -> None:
-        """Serve a real-screen capture taken by auto mode."""
-        cookie = ""
-        for part in (self.headers.get("Cookie") or "").split(";"):
-            k, _, v = part.strip().partition("=")
-            if k == "agent_token":
-                cookie = v
-        if cookie != TOKEN and (qs.get("t") or [""])[0] != TOKEN:
-            self._send(403, b"", "text/plain")
-            return
-        bid = safe_batch_id((qs.get("b") or [""])[0])
-        jid = safe_batch_id((qs.get("j") or [""])[0])
-        if not bid or not jid:
-            self._send(404, b"", "text/plain")
-            return
-        try:
-            p = (BATCH_DIR / bid / ("%s-screen.png" % jid)).resolve()
-            p.relative_to(BATCH_DIR.resolve())
-            data = p.read_bytes()
-        except (OSError, ValueError):
-            self._send(404, b"", "text/plain")
-            return
-        self._send(200, data, "image/png")
-
     def _setup(self) -> None:
         """
-        Auto mode's one action: open the real target, load the clipboard, and
-        photograph the screen. It stops there - the send is still your click.
+        Auto mode's one action: open the real target and load the clipboard.
+        It stops there - the send is still your click.
         """
         if not auto_enabled():
             self._json(409, {"ok": False,
@@ -1169,24 +1078,15 @@ class Handler(BaseHTTPRequestHandler):
         ok, msg = set_clipboard(job.get("body") or "")
         steps.append("note on your clipboard" if ok else "clipboard failed: " + msg)
 
-        # Give the browser a moment to actually paint before photographing it.
-        time.sleep(float(CONFIG.get("autoSettleSeconds", 3) or 0))
-
-        shot_ok, shot_msg = capture_screen(
-            BATCH_DIR / bid / ("%s-screen.png" % jid))
-        steps.append("screen captured" if shot_ok
-                     else "screen capture failed: " + shot_msg)
-
         with STORE_LOCK:
             batch = json.loads(batch_path(bid).read_text(encoding="utf-8"))
             job = next(j for j in batch["jobs"] if j["jobId"] == jid)
             job["setUpAt"] = stamp()
-            job["hasScreen"] = bool(shot_ok)
             job["setupSteps"] = steps
             save_batch(batch)
 
         log("set up %s (%s) - nothing was sent" % (jid, "; ".join(steps)))
-        self._json(200, {"ok": True, "steps": steps, "hasScreen": bool(shot_ok)})
+        self._json(200, {"ok": True, "steps": steps})
 
     def _queue(self) -> None:
         origin = self.headers.get("Origin") or ""
@@ -1452,9 +1352,6 @@ def main() -> int:
             % CONFIG_PATH)
         return 1
 
-    # "auto" would fill the compose window itself and screenshot the real
-    # screen before submit. It isn't built. Saying so out loud beats running
-    # in manual and letting the config imply something else is happening.
     mode = str(CONFIG.get("mode") or "manual").lower()
     if mode not in ("manual", "auto"):
         log("config asks for mode=%r, which does not exist - running manual." % mode)
@@ -1462,8 +1359,8 @@ def main() -> int:
     log("=" * 66)
     log("internship staging agent %s" % VERSION)
     if auto_enabled():
-        log("AUTO MODE: it opens the real compose window, fills it, loads your")
-        log("clipboard and photographs the screen - then stops. You press Send.")
+        log("AUTO MODE: it opens the real compose window already filled and")
+        log("loads your clipboard - then stops. You press Send.")
     else:
         log("MANUAL MODE: it stages messages; you copy and send them.")
     log("It cannot send anything and cannot write to your tracker.")
