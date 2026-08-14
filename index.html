@@ -1772,9 +1772,21 @@
      guessed from a job title.
      ---------------------------------------------------------------- */
   var BUCKETS = { Hiring: 1, "VP Eng": 1, "BU Eng": 1 };
-  // "VP of People" is a hiring contact, not engineering leadership — without
-  // the people-team wording RE_LEAD claims them on the "vp" alone.
-  var RE_HIRING = /recruit|talent|sourcer|hiring|human resources|\bhr\b|people ops|people operations|(chief|head of|vp of|director of) people|university relations|campus/i;
+  /* Hiring means the recruiting *function* — talent acquisition, HR, People,
+     a recruiter — not anyone whose headline mentions hiring.
+
+     The bare word "hiring" used to be in here, and LinkedIn headlines are
+     full of "We're hiring!". A VP of Engineering advertising open roles was
+     landing in the Hiring pair, which is the opposite of useful: that pair
+     exists so you can write to whoever runs recruiting for the company. It
+     also feeds {learn}, so a mis-filed engineer gets "learn more about you"
+     instead of "your work". "hiring manager" survives as an exact phrase. */
+  var RE_HIRING = new RegExp(
+    "\\b(recruit\\w*|sourcer|staffing|hiring manager|human resources|hrbp|hr" +
+    "|people ops|people operations|university relations|campus recruit\\w*)\\b" +
+    "|\\btalent (acquisition|partner|management|team|sourcing|development)\\b" +
+    "|\\b(chief|head|vp|svp|evp|vice president|director|manager) of " +
+    "(people|talent|hr|human resources|recruit\\w*|staffing)\\b", "i");
   // [esa]?vp so EVP/SVP/AVP count — \bvp\b can't match inside "EVP", which is
   // how an EVP of Technology fell through to no category at all.
   var RE_LEAD = /\b([esa]?vp|vice president|director|head of|chief|c[etoi]o|chairman|chairwoman|chair|president|founder|owner|partner|principal|staff|senior manager|engineering manager|manager|lead)\b/i;
@@ -3483,6 +3495,25 @@
               (p.linkBySearch ? " <em>— link found by search, not claimed</em>" : "") +
               "</div>"
             : '<div class="cl">no profile link</div>') +
+          // The reader only ever sees the logged-out view, and LinkedIn hands
+          // it a wall as soon as it throttles. You are signed in, so your copy
+          // of the page is the one route that always works.
+          (p.movedFrom
+            ? '<div class="cl">filed under ' + escapeHtml(CATS[p.category].label) +
+              ", not " + escapeHtml(CATS[p.movedFrom].label) + " — going by the title</div>"
+            : "") +
+          // Offered even with no profile link: the page you paste is itself the
+          // evidence, so a name with no URL can still be checked.
+          (p.verdict !== "verified"
+            ? '<div class="cl"><button type="button" class="linkish" data-paste="' +
+              p.i + '">' + (FS.pasteFor === p.i ? "▾ hide" : "📋 paste the page to check it") +
+              "</button></div>"
+            : "") +
+          (FS.pasteFor === p.i
+            ? '<div class="lp" style="margin-top:5px">' +
+              '<textarea id="fVerifyBox" rows="4" placeholder="Open their profile while signed in, Ctrl+A, Ctrl+C, paste here"></textarea>' +
+              '<button type="button" class="primary" data-checkpaste="' + p.i + '">Check it</button></div>'
+            : "") +
           "</span></label>";
       });
     });
@@ -3520,6 +3551,35 @@
         var btn = document.getElementById("fAdd");
         if (btn) btn.textContent = "Yes — add " +
           FS.people.filter(function (x) { return x.use; }).length + " to cold contacts";
+      });
+    });
+
+    finderBody.querySelectorAll("button[data-paste]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        var i = +b.getAttribute("data-paste");
+        FS.pasteFor = (FS.pasteFor === i) ? null : i;
+        renderFinder();
+      });
+    });
+    finderBody.querySelectorAll("button[data-checkpaste]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        var p = FS.people[+b.getAttribute("data-checkpaste")];
+        var box = document.getElementById("fVerifyBox");
+        var text = box ? box.value : "";
+        if (!p || text.trim().length < 40) {
+          fsSay("That doesn't look like a profile page — select the whole page " +
+            "(Ctrl+A) and copy it.", true);
+          return;
+        }
+        // Same check the reader's text goes through, so a pasted page and a
+        // fetched one can't reach different verdicts.
+        applyVerification(p, text);
+        FS.pasteFor = null;
+        fsSay(p.verdict === "verified"
+          ? "✓ " + p.name + " checked out against the page you pasted."
+          : p.name + ": " + (p.claimNote || "still couldn't confirm that one."),
+          p.verdict !== "verified");
+        renderFinder();
       });
     });
   }
@@ -3667,6 +3727,8 @@
       { cat: "hiring", q: 'site:linkedin.com/in ' + co + ' recruiter' },
       { cat: "hiring", q: 'site:linkedin.com/in ' + co + ' "talent acquisition"' },
       { cat: "hiring", q: 'site:linkedin.com/in ' + co + ' "technical recruiter"' },
+      { cat: "hiring", q: 'site:linkedin.com/in ' + co + ' "head of talent"' },
+      { cat: "hiring", q: 'site:linkedin.com/in ' + co + ' "human resources"' },
       { cat: "exec", q: 'site:linkedin.com/in ' + co + ' "engineering manager"' },
       { cat: "exec", q: 'site:linkedin.com/in ' + co + ' "director of engineering"' },
       { cat: "exec", q: 'site:linkedin.com/in ' + co + ' "VP of engineering"' },
@@ -3873,13 +3935,20 @@
       // isn't a profile link, which is what drops a guessed URL.
       var url = profileUrlFrom(String(p.linkedin || p.url || p.profile || p.profileUrl || ""));
       if (!name && !url) return;
-      var cat = String(p.category || "").toLowerCase();
-      if (!CATS[cat]) cat = "exec";
+      var claimedCat = String(p.category || "").toLowerCase();
+      if (!CATS[claimedCat]) claimedCat = "";
+      var title = String(p.title || "").trim();
+      var why = String(p.why || "").trim();
+      // The category is a claim like any other, so it gets read off the title
+      // the same way a search hit's does. A model told us an "accomplished
+      // senior executive" was a hiring contact; the title says otherwise, and
+      // the title is the evidence. Its claim is only the fallback.
+      var cat = searchCategory({ title: title, why: why }) || claimedCat || "exec";
       out.push({
         i: out.length, use: true, category: cat,
-        name: name, title: String(p.title || "").trim(),
-        why: String(p.why || "").trim(),
-        linkedin: url, claimName: name, claimTitle: String(p.title || "").trim(),
+        name: name, title: title, why: why,
+        movedFrom: (claimedCat && claimedCat !== cat) ? claimedCat : "",
+        linkedin: url, claimName: name, claimTitle: title,
         verdict: "unverified", claimNote: "", buNote: ""
       });
     });
