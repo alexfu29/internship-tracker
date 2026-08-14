@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-08-14T01:27:43.689Z",
+  "updated": "2026-08-14T01:32:50.875Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -531,9 +531,9 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
+      "deleted": true,
       "workspace": "Hi Robin,\n\nI'm a mechanical engineering student at Boston University and I've been\nfollowing what Lexington Medical, Inc. is doing. I'd love to connect with you to learn more\nabout you and the company culture.\n\nWould you be down for a quick zoom meeting to connect?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
-      "updated": "2026-08-13T17:32:45.576Z"
+      "updated": "2026-08-14T01:32:50.875Z"
     },
     "msrsqg7c-ru8tmj": {
       "name": "Andrew Marecki",
@@ -548,9 +548,9 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
+      "deleted": true,
       "workspace": "Hi Andrew,\n\nI'm a mechanical engineering student at Boston University and I've been\nfollowing what Lexington Medical, Inc. is doing. I'd love to connect with you to learn more\nabout your work and the company culture.\n\nWould you be down for a quick zoom meeting to connect?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
-      "updated": "2026-08-13T17:32:45.576Z"
+      "updated": "2026-08-14T01:32:47.573Z"
     },
     "msrsqg7c-gkxt35": {
       "name": "Kerry McConnaughay",
@@ -565,9 +565,9 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
+      "deleted": true,
       "workspace": "Hi Kerry,\n\nI'm a mechanical engineering student at Boston University and I've been\nfollowing what Lexington Medical, Inc. is doing. I'd love to connect with you to learn more\nabout your work and the company culture.\n\nWould you be down for a quick zoom meeting to connect?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
-      "updated": "2026-08-13T17:32:45.576Z"
+      "updated": "2026-08-14T01:32:41.953Z"
     }
   },
   "apps": {
