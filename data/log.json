@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-08-13T23:58:47.710Z",
+  "updated": "2026-08-14T01:26:16.761Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -480,9 +480,9 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
+      "deleted": true,
       "workspace": "Hi Frank,\n\nI'm a mechanical engineering student at Boston University and I've been\nfollowing what Welkin Mechanical is doing. I'd love to connect with you to learn more\nabout your work and the company culture.\n\nWould you be down for a quick zoom meeting to connect?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
-      "updated": "2026-08-13T17:53:00.438Z"
+      "updated": "2026-08-14T01:26:16.761Z"
     },
     "msrnj934-z9iene": {
       "name": "Sean Alexander",
