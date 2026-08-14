@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-08-14T01:36:58.319Z",
+  "updated": "2026-08-14T13:27:16.160Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -463,9 +463,9 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
+      "deleted": true,
       "workspace": "",
-      "updated": "2026-08-13T15:13:09.389Z"
+      "updated": "2026-08-14T13:27:13.253Z"
     },
     "msrnj934-9uoeuv": {
       "name": "Frank Vettese",
@@ -497,9 +497,9 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
+      "deleted": true,
       "workspace": "",
-      "updated": "2026-08-13T15:07:11.680Z"
+      "updated": "2026-08-14T13:27:16.160Z"
     },
     "msrsqg7c-6z99we": {
       "name": "Alina Lisanke",
