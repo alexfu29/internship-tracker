@@ -3933,6 +3933,28 @@
   // a connection request has no subject field to put one in.
   var EMAIL_TPL_KINDS = { outreach: 1, followup: 1 };
 
+  // A sign-off keeps the break after it, so the name stays on its own line.
+  var OB_SIGNOFF = /^(best|thanks|thank you|regards|best regards|cheers|sincerely)[,!.]?$/i;
+
+  /* The templates are hard-wrapped at ~80 characters so they read well in the
+     Settings textarea. Pasted into Gmail or a LinkedIn message box — which do
+     their own wrapping, at their own width — those breaks land mid-sentence
+     and look like a broken machine wrote it. So paragraphs are unwrapped back
+     into single lines and only the blank lines between them survive. */
+  function unwrapParagraphs(text) {
+    return String(text || "").split(/\n{2,}/).map(function (para) {
+      var lines = para.split("\n");
+      var out = lines.length ? lines[0].replace(/\s+$/, "") : "";
+      for (var i = 1; i < lines.length; i++) {
+        var ln = lines[i].replace(/^\s+|\s+$/g, "");
+        if (!ln) continue;
+        if (OB_SIGNOFF.test(lines[i - 1].trim())) out += "\n" + ln;
+        else out += (out && !/\s$/.test(out) ? " " : "") + ln;
+      }
+      return out;
+    }).join("\n\n").replace(/\s+$/, "");
+  }
+
   var OB_PLACEHOLDER = /\[(first|name|company|role|date|days|channel|internship|learn)\]/;
 
   // One unvalidated field holds the handle, and which kind it should be is
@@ -3968,6 +3990,9 @@
     var t = outboxTarget(c);
     var d = outboxDraft(c, kind);
     var s = splitSubject(d.text, EMAIL_TPL_KINDS[kind] === 1);
+    // Unwrap after the split: the subject is one line either way, and the
+    // body is what gets pasted into something that re-wraps it.
+    s.body = unwrapParagraphs(s.body);
     var blockers = [];
     if (!t.ok) blockers.push(t.why);
     if (s.warn) blockers.push(s.warn);

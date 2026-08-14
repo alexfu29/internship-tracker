@@ -257,22 +257,21 @@ def set_clipboard(text: str) -> tuple:
     """
     One card's text, on demand. Deliberately never done for a whole batch:
     copying twenty in a row would leave you holding only the twentieth.
+
+    The text goes over as base64 inside the command rather than through a temp
+    file. No file means nothing to mislay between writing and reading it, and
+    the note never touches disk. Base64 rather than raw because PowerShell
+    reads stdin in the console codepage, which turns the em dash in the
+    follow-up template into mojibake.
     """
     if os.name != "nt":
         return False, "clipboard is Windows-only here"
-    tmp = ROOT / "clip.txt"
-    try:
-        tmp.write_text(text, encoding="utf-8")
-    except OSError as exc:
-        return False, str(exc)
-    ok, msg = _powershell(
-        "Get-Content -LiteralPath '%s' -Raw -Encoding UTF8 | Set-Clipboard"
-        % str(tmp).replace("'", "''"))
-    try:
-        tmp.unlink()
-    except OSError:
-        pass
-    return ok, msg
+    if not text:
+        return False, "nothing to copy"
+    b64 = base64.b64encode(text.encode("utf-8")).decode("ascii")
+    return _powershell(
+        "Set-Clipboard -Value ([Text.Encoding]::UTF8.GetString("
+        "[Convert]::FromBase64String('%s')))" % b64)
 
 
 def capture_screen(png_path: Path) -> tuple:
@@ -280,24 +279,45 @@ def capture_screen(png_path: Path) -> tuple:
     A photograph of the real screen, taken after the compose window is open
     and filled. This is the screenshot that means something: it is evidence of
     a state you did not assemble by hand, taken at the moment before you send.
+
+    PowerShell hands the image back as base64 on stdout and Python writes the
+    file. Pointing PowerShell at a path chosen over here looks simpler and is
+    the thing that breaks: any disagreement about that path - a redirected or
+    synced LOCALAPPDATA, a permission, a length limit - surfaces as a success
+    with no file, which is worse than an error. Passing bytes needs no shared
+    view of the filesystem at all.
     """
     if os.name != "nt":
         return False, "screen capture is Windows-only here"
-    png_path.parent.mkdir(parents=True, exist_ok=True)
-    target = str(png_path).replace("'", "''")
     script = (
         "Add-Type -AssemblyName System.Windows.Forms,System.Drawing; "
         "$b = [System.Windows.Forms.SystemInformation]::VirtualScreen; "
         "$bmp = New-Object System.Drawing.Bitmap $b.Width, $b.Height; "
         "$g = [System.Drawing.Graphics]::FromImage($bmp); "
         "$g.CopyFromScreen($b.Location, [System.Drawing.Point]::Empty, $b.Size); "
-        "$bmp.Save('%s', [System.Drawing.Imaging.ImageFormat]::Png); "
-        "$g.Dispose(); $bmp.Dispose()" % target
+        "$ms = New-Object System.IO.MemoryStream; "
+        "$bmp.Save($ms, [System.Drawing.Imaging.ImageFormat]::Png); "
+        "[Convert]::ToBase64String($ms.ToArray()); "
+        "$g.Dispose(); $bmp.Dispose(); $ms.Dispose()"
     )
-    ok, msg = _powershell(script)
-    if ok and not png_path.exists():
-        return False, "PowerShell reported success but wrote no file"
-    return ok, msg
+    ok, out = _powershell(script, timeout=45)
+    if not ok:
+        return False, out
+    blob = "".join(out.split())
+    if not blob:
+        return False, "screen capture produced no image data"
+    try:
+        data = base64.b64decode(blob)
+    except (ValueError, TypeError) as exc:
+        return False, "unreadable image data: %s" % exc
+    if len(data) < 1000 or data[:8] != b"\x89PNG\r\n\x1a\n":
+        return False, "that wasn't a PNG"
+    try:
+        png_path.parent.mkdir(parents=True, exist_ok=True)
+        png_path.write_bytes(data)
+    except OSError as exc:
+        return False, "could not save the capture: %s" % exc
+    return True, "%d bytes" % len(data)
 
 
 # ----------------------------------------------------------------------------
@@ -651,9 +671,11 @@ function advance(el) {
   card.classList.add("leaving");
   setTimeout(function () {
     card.remove();
-    var left = document.querySelectorAll("#deck .job").length;
+    // "left" counts real job cards; the end-of-batch panel is not one, so it
+    // can't be mistaken for something still owed.
+    var left = document.querySelectorAll("#deck .job .acts").length;
     var total = +document.body.dataset.total || 0;
-    var doneN = total - left;
+    var doneN = Math.max(0, total - left);
     var bar = document.getElementById("bar");
     var lbl = document.getElementById("plabel");
     if (bar) bar.style.width = (total ? (doneN / total) * 100 : 100) + "%";
@@ -690,8 +712,13 @@ def render_review(batches: list, warning: str) -> str:
             (live if job.get("state", STATE_STAGED) == STATE_STAGED
              else handled).append((b, job))
 
-    total = len(live) + len(handled)
-    done_n = len(handled)
+    # Progress describes the work in front of you *now*, not every batch ever
+    # staged. Counting old handled jobs made the total climb forever and the
+    # fraction stop meaning anything ("3 of 47 done"). So the page opens with
+    # however many are still waiting, and counts up as you clear them; the
+    # older ones live in their own collapsed section with their own count.
+    total = len(live)
+    done_n = 0
 
     if live:
         deck = "".join(render_card(b, j) for b, j in live)
@@ -708,12 +735,10 @@ def render_review(batches: list, warning: str) -> str:
 
     progress = ""
     if total:
-        pct = (done_n / total) * 100 if total else 0
-        label = ("all %d done" % total if not live
-                 else "%d of %d done &middot; %d to go" % (done_n, total, len(live)))
-        progress = ("<div class='progress'><span id='plabel'>%s</span>"
-                    "<span class='bar'><i id='bar' style='width:%.1f%%'></i></span>"
-                    "</div>" % (label, pct))
+        progress = ("<div class='progress'><span id='plabel'>"
+                    "0 of %d done &middot; %d to go</span>"
+                    "<span class='bar'><i id='bar' style='width:0%%'></i></span>"
+                    "</div>" % (total, total))
 
     rest = ""
     if handled:
@@ -731,15 +756,16 @@ def render_review(batches: list, warning: str) -> str:
         "<title>Staged outreach</title><style>%s</style></head>"
         "<body data-total='%d'>"
         "<header><h1>Staged outreach</h1>"
-        "<span class='count'>%d waiting &middot; %d total</span>"
+        "<span class='count'>%d waiting on you%s</span>"
         "<span class='spacer'></span>%s</header>"
         "<div class='test'>MANUAL MODE &mdash; these are staged for you to send. "
         "This agent cannot send anything and is not modifying your tracker. "
         "Ticking &#10003; Sent is your checklist and goes no further.</div>%s"
         "<main>%s<div class='deck' id='deck'>%s</div>%s</main>"
         "<script>%s</script></body></html>"
-        % (REVIEW_CSS, len(live), len(live), total, demo_html, warn_html,
-           progress, deck, rest, REVIEW_JS)
+        % (REVIEW_CSS, total, len(live),
+           (" &middot; %d handled earlier" % len(handled)) if handled else "",
+           demo_html, warn_html, progress, deck, rest, REVIEW_JS)
     )
 
 
@@ -1332,6 +1358,35 @@ DEMO_PEOPLE = [
 ]
 
 
+_SIGNOFF_RE = re.compile(
+    r"^(best|thanks|thank you|regards|best regards|cheers|sincerely)[,!.]?$", re.I)
+
+
+def unwrap_paragraphs(text: str) -> str:
+    """
+    Mirror of the site's unwrapParagraphs(). Only used for the demo bodies,
+    which are hard-wrapped in this file so the source stays readable - real
+    batches arrive already unwrapped, because the site does it before staging
+    so that what you approve is what you paste.
+    """
+    out = []
+    for para in re.split(r"\n{2,}", text or ""):
+        lines = [ln for ln in para.split("\n")]
+        if not lines:
+            continue
+        acc = lines[0].rstrip()
+        for i in range(1, len(lines)):
+            ln = lines[i].strip()
+            if not ln:
+                continue
+            if _SIGNOFF_RE.match(lines[i - 1].strip()):
+                acc += "\n" + ln
+            else:
+                acc += (" " if acc and not acc.endswith(" ") else "") + ln
+        out.append(acc)
+    return "\n\n".join(out).rstrip()
+
+
 def seed_demo() -> str:
     """Stage a batch of invented people. Nothing here touches your tracker."""
     batch_id = "demo-" + datetime.now().strftime("%H%M%S")
@@ -1345,6 +1400,7 @@ def seed_demo() -> str:
             body_only = split[1].lstrip("\n")
         else:
             subject, body_only = "", body
+        body_only = unwrap_paragraphs(body_only)
         job = {
             "jobId": "%s-%02d" % (batch_id, i),
             # A contact id that matches nothing real, so the staleness check
