@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-08-15T23:58:52.550Z",
+  "updated": "2026-08-15T23:59:26.472Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -618,7 +618,7 @@
       "closed": false,
       "deleted": false,
       "workspace": "Hi Angela,\n\nI recently applied to the Caterpillar [internship] for 2027. I'd love to connect\nwith you to learn more about you and the company culture.\n\nWould you be down for a quick zoom meeting to connect?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
-      "updated": "2026-08-15T23:58:42.853Z"
+      "updated": "2026-08-15T23:59:26.472Z"
     },
     "msv1eht1-zugb4a": {
       "name": "Bharadwaj Pruthvi",
@@ -670,6 +670,23 @@
       "deleted": false,
       "workspace": "Hi Richard,\n\nI recently applied to the Caterpillar [internship] for 2027. I'd love to connect\nwith you to learn more about your work and the company culture.\n\nWould you be down for a quick zoom meeting to connect?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
       "updated": "2026-08-15T23:58:42.853Z"
+    },
+    "msv1f8f9-w5mx2x": {
+      "name": "Ella Conley",
+      "company": "Caterpillar",
+      "role": "BU eng",
+      "channel": "LinkedIn",
+      "email": "https://www.linkedin.com/in/ellaconley/",
+      "date": "2026-08-15",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "nudgedOn": [],
+      "closed": false,
+      "deleted": false,
+      "workspace": "",
+      "updated": "2026-08-15T23:59:17.349Z"
     }
   },
   "apps": {
