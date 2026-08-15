@@ -10,6 +10,39 @@ single static `index.html` (vanilla HTML/CSS/JS, no frameworks, no build step),
 `data/log.json` through a fine-grained GitHub token. Sync failures show up as a
 loud red banner — they never silently swallow your data.
 
+## The shape of it, in one screen
+
+Everything is in **`index.html`** — one file, ~5,400 lines, all JS in one IIFE
+with numbered section banners (`4. DERIVED STATE`, `6C. FIND CONTACTS`,
+`6D. SEND QUEUE`, `7. SYNC`). The only other code is `agent/`, which is
+**optional and off by default**.
+
+| Where | What |
+|---|---|
+| `intern-data` | contacts + companies. The synced one — this is `data/log.json` |
+| `intern-settings` | templates, prompts, reader/search config. **Never synced** |
+| `intern-outbox` | the staged send queue. Device-local; holds message text |
+| `intern-pat`, `intern-ai-key`, `intern-gemini-key` | secrets, per device, never synced |
+
+Four things it does beyond logging, each with its own section below:
+
+1. **The 7-day rule** — who's gone quiet, and the red card that says so.
+2. **⚡ Auto-populate** — paste a LinkedIn profile, get a filled-in contact.
+3. **🔍 Find contacts** — find six people at a company, verified before they land.
+4. **✉ Send queue** — stage a batch of personalized messages and work down it.
+
+Three rules the code keeps coming back to, worth knowing before changing any of
+it:
+
+- **A gap is shown, not prevented.** Nothing is required and nothing validates its
+  format; instead missing things are visible — `(no name)`, an amber `No date`
+  chip, a literal `[company]` left in a draft.
+- **Never assert what wasn't established.** A bucket is read off the evidence, not
+  off the query or a model's say-so; with nothing to go on it's left blank.
+- **Never claim a success that didn't happen.** Sync errors get a loud banner,
+  a failed clipboard shows the text to copy by hand, and a batch reports what was
+  actually accepted.
+
 ## THE ONE URL
 
 ```
@@ -453,11 +486,81 @@ would be the same bug as any other silent failure. To undo it, tap the row and
 turn **Ignored** off in the Status group; it goes straight back to nudging if
 it's still overdue.
 
-Nothing is emailed for you. The app flags who needs a follow-up; you send it.
+Nothing is emailed for you — see **✉ Send queue**, which stages a batch and then
+waits for you to send each one.
 
 Applications deliberately **do not** get a red flag — a quiet application at day
 7 is normal, and flagging it would train you to ignore red. They show a plain
 "Waiting N days" instead.
+
+## ✉ Send queue
+
+Above the contacts table: tick people, hit **Stage N**, and you land in a deck
+you work down one card at a time — read it, **📋 Copy**, **✉ Open compose** or
+**🔗 Open profile**, send it yourself, **✓ Sent — next**. The card slides away
+and the next is dealt.
+
+**Nothing here sends anything.** It does the fetching and filling; the judgement
+and the click stay yours.
+
+Who shows up: **First message** (no contact date yet) and **Follow-up** (the
+`dueNudges()` set). Rows that can't be sent are shown greyed **with the reason**
+rather than hidden — the handle field is one unvalidated box, so a LinkedIn URL
+sitting on an `Email` contact is caught and named, because `firstContactKind()`
+keys off the channel alone and would otherwise paste a full email, `Subject:`
+line and all, into a connection request.
+
+A draft still carrying `[company]` or any other `[placeholder]` **can't be
+ticked**. That marker exists so you notice before sending; a Gmail subject field
+is where it would go unnoticed.
+
+**Hand-edited Workspace text wins** over the regenerated draft, and the row says
+`using your Workspace text` so you can see which source it used.
+
+**Line wrapping is undone before staging.** The templates are hard-wrapped at ~80
+characters so they read well in the Settings textarea; Gmail and LinkedIn wrap
+themselves, at their own width, so those breaks land mid-sentence. Paragraphs are
+rejoined and only the blank lines between them survive — a sign-off (`Best,` /
+`Thanks,`) keeps its break so the name stays on its own line.
+
+### Ticking Sent updates the tracker
+
+- **The 7-day clock restarts** for that contact — or, if they had no contact date
+  at all, today becomes it. ("Set the date only if it's empty" would record
+  nothing for anyone already contacted, so they'd re-qualify tomorrow forever.)
+- **The company's cold-email dot turns on**, so you never go back into the
+  company to say you approached them. A LinkedIn note counts: that flag is the
+  coarse "have I approached this place at all" answer, not a claim about channel.
+- **Never** touched: replied, meeting booked, closed. Those mean something came
+  *back*, and nothing here knows whether it did.
+
+The batch lives in this device's `localStorage` under `intern-outbox`, **not** in
+`DATA` — it carries full message text and `data/log.json` is public. It's working
+state anyway; once something is sent the fact lives on the contact.
+
+Staleness is re-checked against `DATA` on every render, so a contact who replied
+thirty seconds ago voids their own card before you can write to them.
+
+### The local agent — optional, and off by default
+
+`agent/stage_agent.py` does the same job in its own window, which outlives the
+tab. **Nothing needs it**: a browser can open a compose window, write the
+clipboard and keep a batch, so the review deck moved into the site and the agent
+became a choice rather than a requirement.
+
+Switch to it under **Settings → Send queue → Where to work through them**, which
+also shows its start and stop commands with a copy button each. It is **not**
+installed as a startup task and does not run unless you start it; the stop
+command finds it by the port it holds, so it can't kill an unrelated python.
+
+It holds no credentials and never writes to your tracker — the website reads
+`/status` from it and does its own bookkeeping. Its `auto` mode opens the real
+pre-filled compose window and loads your clipboard, then stops. Its runtime data
+lives in `%LOCALAPPDATA%\internship-agent\`, deliberately outside this public
+repo. See `agent/README.md`.
+
+There are no screenshots anywhere in this. You press the button and you press
+Send, so a picture of that is a picture of your own work.
 
 ## Email drafts
 
@@ -601,8 +704,8 @@ isn't the thing you need:
 
 | Bucket | Who, and why it matters |
 |---|---|
-| `Hiring` | recruiters and hiring managers — they decide |
-| `VP Eng` | engineering leadership — more power, harder to reach |
+| `Hiring` | the **recruiting function** — talent acquisition, recruiters, sourcers, HR, People. Not anyone whose headline happens to say "hiring": LinkedIn is full of *"We're hiring!"*, and that was landing VPs of Engineering here |
+| `VP Eng` | engineering leadership — more power, harder to reach. EVP/SVP count |
 | `BU Eng` | **Boston University** engineers there — least gatekeeping, by far the easiest yes, because you already share something |
 
 `BU Eng` is deliberately **not** "any engineer". The BU connection is the entire
@@ -636,13 +739,14 @@ match each other — neither is a prefix of the other.
 
 ## 🔍 Find contacts
 
-On a company's edit dialog: six people at that company, in three pairs — two
-`Hiring`, two `VP Eng`, two `BU Eng`. Four stages, and **nothing reaches your log
-until the last one**:
+On a company's edit dialog: up to six people at that company, in three pairs —
+two `Hiring`, two `VP Eng`, two `BU Eng`. A pair comes back **empty with a note**
+rather than padded. Four stages, and **nothing reaches your log until the last
+one**:
 
 ```
-find    → six candidates, from web search or from JSON you paste
-verify  → each profile URL read back and parsed
+find    → pool every query, bucket by job title, score, take two per pair
+verify  → each profile URL read back and parsed — missing links looked up first
 review  → what was claimed vs what the profile actually says, with tickboxes
 write   → ordinary cold-contact rows, only for what you left ticked
 ```
@@ -692,13 +796,89 @@ Software Engineer at Microsoft · Experience: Microsoft · Education: Boston Uni
 www.linkedin.com/in/cici-c-30179ba7
 ```
 
-Five `site:linkedin.com/in` searches run — two for hiring, two for leadership, one
-for BU — and the bare URL on the third line is read rather than DuckDuckGo's
-tracking redirect above it. The snippet is kept because it often **names the
-school outright**, which is the BU evidence, before any profile is opened.
+Eight `site:linkedin.com/in` searches run and the bare URL on the third line is
+read rather than DuckDuckGo's tracking redirect above it. The snippet is kept
+because it often **names the school outright**, which is the BU evidence, before
+any profile is opened.
 
 This beats asking a model for this job: the links come out of a search index, so
 they **can't be invented** — the exact failure the verify stage exists to catch.
+
+#### How the queries are built, and why it once found nobody
+
+Two rules, both learned by measuring the live endpoint rather than reasoning
+about it. Getting either wrong returns *literally* "No results found":
+
+- **The company name is stripped of legal decoration.** `Lexington Medical, Inc.`
+  searched verbatim matches nothing, because almost no profile writes it that
+  way. `normCompany()` already knew how to strip that; the search didn't use it.
+- **Exactly one quoted phrase per query — the company.** Two quoted phrases
+  return nothing here. `"Lexington Medical" "engineering manager"` → no results;
+  `"Lexington Medical" engineering manager` → eight profiles including the VP of
+  Technology. So role words go in loose.
+
+Together those take a search from nothing to 47–74 profiles per company.
+
+#### Which pair someone lands in
+
+**The query that found you doesn't decide your bucket — your job title does.**
+A search for `recruiter` happily returns a VP, and filing them under Hiring
+makes the app assert something it never established. It also feeds `{learn}`, so
+a mis-filed engineer gets a draft offering to "learn more about *you*".
+
+Every query runs, results are pooled, then each person is bucketed from their own
+title. Three details worth knowing:
+
+- **Hiring means the recruiting function** — talent acquisition, recruiter,
+  sourcer, HR, People — not anyone whose headline says "hiring". LinkedIn
+  headlines are full of *"We're hiring!"*, and that alone was putting VPs of
+  Engineering in the Hiring pair.
+- **EVP/SVP count as leadership.** `\bvp\b` cannot match inside "EVP", so an EVP
+  of Technology used to land in no bucket at all.
+- **A BU pick requires Boston University in the evidence.** Everyone the BU query
+  returns works at the company, so without the school there's nothing left
+  distinguishing them. The pair comes back **empty with a note** rather than
+  naming two strangers — the same rule as `⚡ Auto-populate`: never guessed.
+
+#### Picking two out of dozens
+
+With a pool that deep, *which* two matters more than how many were found, so hits
+are scored:
+
+| Signal | Why |
+|---|---|
+| their headline names the employer | strongest evidence it's the right person |
+| **extra organisation words dock heavily** | `Lexington Medical Center` is an unrelated hospital, and `sameCompany()` matches it *on purpose* — that prefix rule is what makes "Marotta" find "Marotta Controls, Inc." |
+| the company appears **only in their name** earns nothing | a search for Draper returns Kristen Draper, who recruits for someone else |
+| exec needs engineering **and** leadership, docked separately | a Senior Mechanical Engineer is the right field but not leadership; a Guest Services Manager is the reverse |
+
+Checked across Draper, Whoop, Marotta Controls, Boston Scientific and Medtronic:
+hiring and engineering leadership land the right people in all five.
+
+#### Getting past the sign-in wall
+
+The reader only ever sees the logged-out view, and LinkedIn answers a throttled
+reader with a wall. Any row that isn't verified offers **📋 paste the page to
+check it** — you're signed in, so your copy of the page always works. It runs
+through the same check as a fetched page, so the two can't reach different
+verdicts. It's offered even with no profile link, since the page you paste is
+itself the evidence.
+
+A **free reader API key** in Settings clears the throttling that causes most of
+these. Giving the reader your LinkedIn session is not an option here and won't
+be: it means handing your logged-in account to a third party, and authenticated
+scraping is what LinkedIn actually restricts accounts for.
+
+#### The two routes fill each other's gaps
+
+Search returns URLs but only finds what the index surfaces. A model names people
+it knows about and routinely leaves `linkedin` blank, treating reporting a URL as
+vouching for one — and those people were skipped by verify and stuck at
+`unverified` forever. **Missing links are now looked up by name** and handed to
+the same verification as everyone else. The slug must contain their surname
+first: attaching a plausible-but-wrong profile is exactly the confidently-wrong
+failure verify exists to catch, and it would sail through it. The review says
+when a link was found by search rather than claimed.
 
 Two parsing details worth knowing, both of which bit during testing. LinkedIn
 sometimes titles a page with the headline alone (`Principal Engineering Manager at
