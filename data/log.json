@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-08-15T02:16:00.622Z",
+  "updated": "2026-08-15T02:25:07.044Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -882,8 +882,8 @@
     },
     "mspe3qgh-f2u530": {
       "company": "Lexington Medical, Inc.",
-      "applied": false,
-      "coldEmailed": true,
+      "applied": true,
+      "coldEmailed": false,
       "connected": false,
       "role": "",
       "date": "2026-08-11",
@@ -894,8 +894,9 @@
       "meetingOn": null,
       "closed": false,
       "deleted": false,
-      "updated": "2026-08-14T01:27:43.689Z",
-      "workspace": ""
+      "updated": "2026-08-15T02:25:07.044Z",
+      "workspace": "",
+      "outcome": ""
     },
     "mspe3u8o-rils79": {
       "company": "Chamberlain Group",
@@ -1045,7 +1046,7 @@
     },
     "mstqtuxy-3b0yjm": {
       "company": "Caterpillar",
-      "applied": false,
+      "applied": true,
       "coldEmailed": false,
       "connected": false,
       "outcome": "",
@@ -1059,7 +1060,7 @@
       "closed": false,
       "deleted": false,
       "workspace": "",
-      "updated": "2026-08-15T02:16:00.622Z"
+      "updated": "2026-08-15T02:24:57.797Z"
     }
   }
 }
