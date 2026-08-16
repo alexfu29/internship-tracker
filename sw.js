@@ -29,7 +29,7 @@
    index.html — that one is what's displayed, and it is true by construction
    because it lives in the file being executed. */
 
-var VERSION = "2026-08-16c";
+var VERSION = "2026-08-16d";
 var CACHE = "internship-tracker-" + VERSION;
 var SHELL = "./";
 
