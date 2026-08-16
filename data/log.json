@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-08-16T01:09:16.239Z",
+  "updated": "2026-08-16T01:10:43.404Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -737,8 +737,8 @@
       "nudgedOn": [],
       "closed": false,
       "deleted": false,
-      "workspace": "Hi Laura,\n\nI recently applied to the Lexington Medical, Inc. General Interest for the Engineering Intern spot for 2027. I'd love to connect\nwith you to learn more about you and the company culture.\n\nWould you be down for a quick zoom meeting to connect?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
-      "updated": "2026-08-16T01:09:07.746Z"
+      "workspace": "Hi Laura,\n\nI recently applied to the Lexington Medical, Inc. Engineering Intern for 2027. I'd love to connect\nwith you to learn more about you and the company culture.\n\nWould you be down for a quick zoom meeting to connect?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
+      "updated": "2026-08-16T01:10:43.404Z"
     },
     "msv3ttu3-d17a2x": {
       "name": "Andrew Marecki",
@@ -754,8 +754,8 @@
       "nudgedOn": [],
       "closed": false,
       "deleted": false,
-      "workspace": "Hi Andrew,\n\nI recently applied to the Lexington Medical, Inc. General Interest for the Engineering Intern spot for 2027. I'd love to connect\nwith you to learn more about your work and the company culture.\n\nWould you be down for a quick zoom meeting to connect?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
-      "updated": "2026-08-16T01:09:13.117Z"
+      "workspace": "Hi Andrew,\n\nI recently applied to the Lexington Medical, Inc. Engineering Intern for 2027. I'd love to connect\nwith you to learn more about your work and the company culture.\n\nWould you be down for a quick zoom meeting to connect?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
+      "updated": "2026-08-16T01:10:41.115Z"
     },
     "msv3ttu3-qpp04a": {
       "name": "Carolyn Abrams",
@@ -771,8 +771,8 @@
       "nudgedOn": [],
       "closed": false,
       "deleted": false,
-      "workspace": "Hi Carolyn,\n\nI recently applied to the Lexington Medical, Inc. General Interest for the Engineering Intern spot for 2027. I'd love to connect\nwith you to learn more about your work and the company culture.\n\nWould you be down for a quick zoom meeting to connect?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
-      "updated": "2026-08-16T01:09:16.239Z"
+      "workspace": "Hi Carolyn,\n\nI recently applied to the Lexington Medical, Inc. Engineering Intern for 2027. I'd love to connect\nwith you to learn more about your work and the company culture.\n\nWould you be down for a quick zoom meeting to connect?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
+      "updated": "2026-08-16T01:10:38.377Z"
     }
   },
   "apps": {
@@ -1056,11 +1056,11 @@
       "updated": "2026-08-12T01:07:30.462Z"
     },
     "mspe3qgh-f2u530": {
-      "company": "Lexington Medical, Inc.",
+      "company": "Lexington Medical",
       "applied": true,
       "coldEmailed": false,
       "connected": false,
-      "role": "General Interest for the Engineering Intern spot",
+      "role": "Engineering Intern",
       "date": "2026-08-13",
       "link": "https://app.joinhandshake.com/jobs/11235285",
       "note": "",
@@ -1069,7 +1069,7 @@
       "meetingOn": null,
       "closed": false,
       "deleted": false,
-      "updated": "2026-08-16T01:09:03.295Z",
+      "updated": "2026-08-16T01:10:34.524Z",
       "workspace": "",
       "outcome": ""
     },
