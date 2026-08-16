@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-08-16T00:22:38.720Z",
+  "updated": "2026-08-16T00:41:20.420Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -850,11 +850,11 @@
     },
     "mso0p9bw-5ecqjg": {
       "company": "Texas Instruments",
-      "applied": false,
+      "applied": true,
       "coldEmailed": false,
       "connected": false,
-      "role": "",
-      "date": "2026-08-10",
+      "role": "Product/Test Engineering Intern",
+      "date": "2026-08-15",
       "link": "https://careers.ti.com/en/sites/CX/job/25016565?utm_medium=jobboard&utm_source=handshake",
       "note": "",
       "responded": false,
@@ -862,8 +862,9 @@
       "meetingOn": null,
       "closed": false,
       "deleted": false,
-      "updated": "2026-08-16T00:13:29.030Z",
-      "workspace": ""
+      "updated": "2026-08-16T00:41:20.420Z",
+      "workspace": "",
+      "outcome": ""
     },
     "mso0xr88-tbmx5m": {
       "company": "Mass Life Sciences Center",
