@@ -455,15 +455,33 @@ which a single global toggle can't do.
 
 ### Ordering the tables
 
-Both tables start **newest first**, and the **↓** next to `DATE` (or `SENT`) is the
-whole indicator: present means date order, absent means your own order.
+Both tables open **newest first**, and either can be sorted by any of three
+columns — independently of each other, and remembered per device.
 
-- **Drag the bars** left of a name to move a row. Dragging *is* the switch to your
-  own order — the ↓ disappears the moment you drop.
-- **Tap the date header** to go back to newest-first. Tap it again and you're back in
-  your own order. It's a straight toggle between the two.
-- **Both orders are remembered.** Rearranging doesn't destroy the date sort, and
-  sorting by date doesn't destroy your arrangement.
+| Tap | Sorts by | Opens at |
+|---|---|---|
+| **Who** / **Company** | name, alphabetically | A → Z |
+| **Sent** / **Date** | the date on the row | newest first |
+| **Status** | how long it's been sitting | **No date**, then *sent today*, then *waiting 1d*, and so on |
+
+**The arrow is the whole indicator**, and it says two things at once: which column
+is sorting, and which way. `↑` ascending, `↓` descending, on exactly one header.
+
+- **Tap a different column** to sort by it, at whatever end is useful to open on.
+- **Tap the column you're on** to reverse it.
+- **Drag the bars** left of a name to make your own order. The arrow disappears —
+  leaving one would claim an ordering rule that isn't running.
+- **Both are remembered.** Your dragged order survives a sort and vice versa, and
+  each table keeps its own.
+
+Status sorting is one rule rather than a hand-ranked list of every chip: a row's
+place is how long it's been sitting, so a **Replied** row sorts among the others
+by its date and the chip still says Replied. Sorting by status ascending is the
+"who have I just touched" view; reversed, it's the "what have I left longest"
+view.
+
+The order is a view preference: it lives in this device's `localStorage`, never on
+the entries, so reordering can't alter your data or ride the sync.
 
 Anything the saved order has never seen — added since you last dragged, or synced in
 from another device — appears at the **top** in date order rather than silently
@@ -706,6 +724,28 @@ themselves, at their own width, so those breaks land mid-sentence. Paragraphs ar
 rejoined and only the blank lines between them survive — a sign-off (`Best,` /
 `Thanks,`) keeps its break so the name stays on its own line.
 
+### ↩ Back, for a tap you didn't mean
+
+**✓ Sent — next** writes into the tracker, so taking it back has to put those
+writes back too — not just re-deal the card. Everything the tick can touch is
+photographed first: the contact's date and reminder history, and the company's
+cold-email dot. **↩ Back** restores from that snapshot and says what it actually
+reversed:
+
+```
+↩ Zoe Adams is back — un-dated the contact, turned Zeta Corp's cold-email dot back off.
+```
+
+Restoring beats inverting each change one by one, which would have to know that a
+dot already on before you got here should stay on.
+
+The button only appears once there's a tap to take back, and you can walk back
+several. It is **not** persisted: an undo stack surviving a reload would let you
+reverse something from yesterday, long after the tracker has moved on.
+
+A **Skip** can be taken back the same way, and correctly reports that nothing in
+the tracker changed — because nothing did.
+
 ### Ticking Sent updates the tracker
 
 - **The 7-day clock restarts** for that contact — or, if they had no contact date
@@ -754,16 +794,15 @@ wording (BU mech-e, biosensors/HMI, Summer 2027); edit them to taste, then hit
 **Done editing drafts** — that saves and closes the drawer in one tap. **Reset to
 defaults** puts the built-in wording back.
 
-### Six drafts, and you never pick one
+### Ten drafts, and you never pick one
 
-There are **six** templates on two axes — the channel you're writing in, and
-whether this is the first message or a chase. Each first message has a second
-version for **BU engineers**:
+Two axes — the channel, and first message versus chase — plus **a first message
+per role**:
 
 | | First message | Follow-up |
 |---|---|---|
-| **Email** | Email · first message *(plain / BU engineer)* | Email · follow-up |
-| **LinkedIn** | LinkedIn · first message *(plain / BU engineer)* | LinkedIn · follow-up |
+| **Email** | `outreach` · `outreachHiring` · `outreachExec` · `outreachBU` | `followup` |
+| **LinkedIn** | `connect` · `connectHiring` · `connectExec` · `connectBU` | `liFollowup` |
 
 A LinkedIn note and a cold email are not the same piece of writing — one goes in
 a connection request and has to be short — so they're separate templates rather
@@ -772,21 +811,27 @@ than one draft you reword every time.
 **The app picks from the contact's channel and role**, so there's no dropdown and
 no choosing.
 
-#### The BU opener
+#### One opener per bucket
 
-`BU Eng` is the bucket that exists because you already share something — least
-gatekeeping, by far the easiest yes — and that fact was going into the drafts
-nowhere. So both first messages have a BU version, and the shared school leads:
+The three buckets are three different conversations, and sending all of them the
+same paragraph wastes the only thing that distinguishes them:
 
-```
-Fellow BU engineer here — I'm a mechanical engineering student at Boston
-University working on biosensors and wearables…
-```
+| Role | What its opener does |
+|---|---|
+| `Hiring` | asks the one question a recruiter can actually answer — are you taking mechanical/biomedical interns for 2027, and when |
+| `VP Eng` | asks about the work and the team. Engineering leadership can't process an application and shouldn't be asked to |
+| `BU Eng` | leads with the shared school, which is the whole reason that bucket is worth having |
+| anything else | the plain opener |
 
-It keys off the contact's **role** being `BU Eng`, which is only ever set from
-Boston University appearing in their **Education** and is never guessed from a
-job title — so "I saw you went to BU as well" is a claim the app established
-before writing it. Set the role by hand and the draft follows.
+A role that is blank, or something you typed by hand, gets the **plain** version
+rather than being pushed into a bucket it never established — the same rule the
+rest of this app follows. `BU Eng` in particular is only ever set from Boston
+University appearing in someone's **Education**, so "I saw you went to BU as
+well" is a claim the app established before writing it. Change a role by hand and
+the draft follows; ♻ Repopulate rewrites an existing one to match.
+
+**Follow-ups are one each**, unchanged — by the time you're chasing, the opener
+already did the work of saying who you are.
 
 #### The applied / not-applied fork is gone
 
@@ -908,6 +953,17 @@ one tap.
 If the profile can't be read, it doesn't fail silently or invent anything — the
 URL slug still carries a name (`/in/nathalie-dubois-8a4b21` → `Nathalie Dubois`),
 so it fills that, says why the rest is missing, and tells you to paste the page.
+
+### It leaves the date empty
+
+The Add form prefills today's date, because logging usually follows sending.
+Auto-populate **clears it**: pasting somebody's profile URL is research, not
+contact, and a date there is the app asserting you wrote to them. It would also
+start the 7-day clock, so a person you have never messaged would turn up in the
+red nudge card a week later.
+
+Same choice 🔍 Find contacts already makes. Type a date in yourself, or let
+✉ Send queue stamp it when you actually send.
 
 ### Their role is a bucket, not a job title
 

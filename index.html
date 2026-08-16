@@ -1174,15 +1174,17 @@
 
   <table class="tpl-map">
     <tr><th></th><th>First message</th><th>Follow-up</th></tr>
-    <tr><th>Email</th><td>First email<br><span class="opt">plain / BU engineer</span></td><td>Email follow-up</td></tr>
-    <tr><th>LinkedIn</th><td>LinkedIn note<br><span class="opt">plain / BU engineer</span></td><td>LinkedIn follow-up</td></tr>
+    <tr><th>Email</th><td>First email<br><span class="opt">Hiring / VP Eng / BU Eng / other</span></td><td>Email follow-up</td></tr>
+    <tr><th>LinkedIn</th><td>LinkedIn note<br><span class="opt">Hiring / VP Eng / BU Eng / other</span></td><td>LinkedIn follow-up</td></tr>
   </table>
 
   <p class="tpl-help">
-    Each first message has a <strong>BU engineer</strong> version, used when the contact's
-    role is <strong>BU Eng</strong> — which is only ever set from Boston University appearing
-    in their education, never guessed. The shared school is the whole reason that
-    bucket is worth having, so it belongs in the opening line.
+    Each first message has a version per <strong>role</strong>, because the three buckets
+    are three different conversations: a recruiter can answer &ldquo;are you taking
+    interns&rdquo;, engineering leadership can&rsquo;t and shouldn&rsquo;t be asked to, and a
+    <strong>BU Eng</strong> is someone you already share a school with. Any other role &mdash;
+    blank, or something you typed &mdash; gets the plain version rather than being pushed
+    into a bucket. Follow-ups are one each, unchanged.
   </p>
 
   <p class="tpl-help"><strong>What fills in automatically:</strong></p>
@@ -1204,8 +1206,16 @@
     spot the gap instead of sending a blank.
   </p>
 
-  <label for="tplOutreach">Email · first message</label>
+  <label for="tplOutreach">Email · first message <span style="color:var(--text-muted)">(any other role)</span></label>
   <textarea id="tplOutreach" class="tpl" rows="10"></textarea>
+
+  <label for="tplOutreachHiring">Email · first message — <em>Hiring</em>
+    <span style="color:var(--text-muted)">(role is Hiring)</span></label>
+  <textarea id="tplOutreachHiring" class="tpl" rows="10"></textarea>
+
+  <label for="tplOutreachExec">Email · first message — <em>VP Eng</em>
+    <span style="color:var(--text-muted)">(role is VP Eng)</span></label>
+  <textarea id="tplOutreachExec" class="tpl" rows="10"></textarea>
 
   <label for="tplOutreachBU">Email · first message — <em>BU engineer</em>
     <span style="color:var(--text-muted)">(role is BU Eng)</span></label>
@@ -1214,8 +1224,16 @@
   <label for="tplFollowup">Email · follow-up <span style="color:var(--text-muted)">(the 7-day nudge)</span></label>
   <textarea id="tplFollowup" class="tpl" rows="10"></textarea>
 
-  <label for="tplConnect">LinkedIn · first message</label>
+  <label for="tplConnect">LinkedIn · first message <span style="color:var(--text-muted)">(any other role)</span></label>
   <textarea id="tplConnect" class="tpl" rows="9"></textarea>
+
+  <label for="tplConnectHiring">LinkedIn · first message — <em>Hiring</em>
+    <span style="color:var(--text-muted)">(role is Hiring)</span></label>
+  <textarea id="tplConnectHiring" class="tpl" rows="9"></textarea>
+
+  <label for="tplConnectExec">LinkedIn · first message — <em>VP Eng</em>
+    <span style="color:var(--text-muted)">(role is VP Eng)</span></label>
+  <textarea id="tplConnectExec" class="tpl" rows="9"></textarea>
 
   <label for="tplConnectBU">LinkedIn · first message — <em>BU engineer</em>
     <span style="color:var(--text-muted)">(role is BU Eng)</span></label>
@@ -1359,7 +1377,7 @@
      tell those apart from a change that genuinely didn't work. This string
      lives in the file being executed, so it cannot lie about which file that
      is. It's shown at the bottom of Settings. */
-  var APP_VERSION = "2026-08-16g";
+  var APP_VERSION = "2026-08-16h";
   var swReady = false, swCacheVersion = "", swNote = "";
 
   /* ============================================================
@@ -1513,6 +1531,42 @@
       "\n" +
       "Thanks,\n" +
       "Alex",
+    // A recruiter is the one contact who can answer the process question
+    // directly, so this one asks it instead of talking about the work.
+    outreachHiring:
+      "Subject: Summer 2027 mechanical engineering internship at {company}\n" +
+      "\n" +
+      "Hi {first},\n" +
+      "\n" +
+      "I'm a mechanical engineering student at Boston University looking for a paid\n" +
+      "Summer 2027 internship, and you looked like the right person to ask.\n" +
+      "\n" +
+      "I work on biosensors, wearables and human-machine interaction. Is {company}\n" +
+      "taking mechanical or biomedical engineering interns for 2027, and what does the\n" +
+      "timeline look like?\n" +
+      "\n" +
+      "Happy to send my resume. Thanks for your time.\n" +
+      "\n" +
+      "Best,\n" +
+      "Alex",
+    // Engineering leadership cannot process an application and should not be
+    // asked to, so this asks about the work and the team instead.
+    outreachExec:
+      "Subject: BU mech-e student — a question about your team at {company}\n" +
+      "\n" +
+      "Hi {first},\n" +
+      "\n" +
+      "I'm a mechanical engineering student at Boston University working on biosensors,\n" +
+      "wearables and human-machine interaction, and I've been following what your team\n" +
+      "at {company} is building.\n" +
+      "\n" +
+      "I'm looking for a Summer 2027 internship. Rather than ask you to route a resume,\n" +
+      "I'd mostly like to hear about {learn} — and whether your group takes interns.\n" +
+      "\n" +
+      "Happy to send my resume either way. Thanks for your time.\n" +
+      "\n" +
+      "Best,\n" +
+      "Alex",
     // The BU opener, by email. A shared school is the whole reason this
     // bucket exists — least gatekeeping, easiest yes — so it leads with that
     // rather than burying it. Only ever sent to a contact filed `BU Eng`,
@@ -1543,6 +1597,26 @@
       "I'm a mechanical engineering student at Boston University and I've been\n" +
       "following what {company} is doing. I'd love to connect with you to learn more\n" +
       "about {learn} and the company culture.\n" +
+      "\n" +
+      "Would you be down for a quick zoom meeting to connect?\n" +
+      "\n" +
+      "I'm available daily after 6:30pm and Sundays after 2pm.",
+    // The recruiter version, short: one answerable question.
+    connectHiring:
+      "Hi {first},\n" +
+      "\n" +
+      "I'm a mechanical engineering student at Boston University looking for a Summer\n" +
+      "2027 internship. Is {company} taking mechanical or biomedical engineering interns\n" +
+      "next summer?\n" +
+      "\n" +
+      "Happy to send my resume — and glad to connect either way.",
+    // Engineering leadership: about the work, not the process.
+    connectExec:
+      "Hi {first},\n" +
+      "\n" +
+      "I'm a mechanical engineering student at Boston University working on biosensors\n" +
+      "and wearables. I've been following what your team at {company} is doing and would\n" +
+      "love to connect and hear about {learn}.\n" +
       "\n" +
       "Would you be down for a quick zoom meeting to connect?\n" +
       "\n" +
@@ -1719,9 +1793,21 @@
      this device's localStorage. Nothing here writes to an entry, so
      reordering can't touch your data or ride the sync.
      ---------------------------------------------------------------- */
+  /* A saved mode is either "custom" or "<column>:<direction>". Older devices
+     stored a bare "date", which reads as date:desc — the newest-first default
+     both tables have always opened with. An unrecognised value falls back to
+     that default rather than to nothing, so a bad string can't leave you with
+     an unsorted table and no arrow explaining why. */
+  var SORT_COLS = { name: "asc", date: "desc", status: "asc" };   // default direction each
+  function sortFor(kind) {
+    var m = (SETTINGS.sortMode && SETTINGS.sortMode[kind]) || "";
+    if (m === "custom") return { col: null, dir: "asc" };
+    var bits = String(m).split(":");
+    if (!SORT_COLS[bits[0]]) return { col: "date", dir: "desc" };
+    return { col: bits[0], dir: bits[1] === "asc" ? "asc" : "desc" };
+  }
   function sortModeFor(kind) {
-    var m = SETTINGS.sortMode && SETTINGS.sortMode[kind];
-    return m === "custom" ? "custom" : "date";
+    return sortFor(kind).col ? "date" : "custom";   // legacy shape, for enableDrag
   }
   function customOrderFor(kind) {
     var o = SETTINGS.rowOrder && SETTINGS.rowOrder[kind];
@@ -1738,9 +1824,44 @@
     saveSettings(SETTINGS);
   }
 
-  // liveList already hands back newest-first, so date mode is a no-op.
+  /* How far along the waiting ladder a row is, which is what "sort by status"
+     means here: **No date** first, then Sent/Applied today, then Waiting 1d,
+     and so on. One rule rather than a hand-ranked list of every chip, so it
+     stays predictable — a Replied row sorts by how long it's been sitting,
+     the same as any other, and the chip still says Replied. */
+  function statusRank(e) {
+    if (!parseYmd(e.date)) return -1;
+    return ageDays(e.date);
+  }
+  function sortText(e, kind) {
+    return (kind === "contacts" ? nameOf(e) : companyOf(e)).toLowerCase();
+  }
+
+  /* Sorted by a column, or in the order you dragged rows into. Stable in both
+     directions: ties hold their existing position rather than shuffling on
+     every render, and reversing a sort reverses the column, not the ties. */
   function applyOrder(list, kind) {
-    if (sortModeFor(kind) !== "custom") return list;
+    var s = sortFor(kind);
+    if (s.col) {
+      var mul = s.dir === "asc" ? 1 : -1;
+      return list.map(function (e, i) { return { e: e, i: i }; })
+        .sort(function (a, b) {
+          var d = 0;
+          if (s.col === "name") {
+            d = sortText(a.e, kind) < sortText(b.e, kind) ? -1
+              : sortText(a.e, kind) > sortText(b.e, kind) ? 1 : 0;
+          } else if (s.col === "status") {
+            d = statusRank(a.e) - statusRank(b.e);
+          } else {
+            // "" (no date) sorts before any real date, so newest-first puts
+            // undated rows at the bottom — where liveList already had them.
+            d = String(a.e.date || "") < String(b.e.date || "") ? -1
+              : String(a.e.date || "") > String(b.e.date || "") ? 1 : 0;
+          }
+          return d ? d * mul : a.i - b.i;
+        })
+        .map(function (k) { return k.e; });
+    }
     var order = customOrderFor(kind);
     if (!order) return list;
     var pos = {};
@@ -1927,10 +2048,18 @@
      in the template. The old `applied` text is left untouched in
      localStorage rather than deleted, so nothing you wrote is lost. */
   function isBUContact(c) { return (c && c.role) === "BU Eng"; }
+  /* The three buckets are three different conversations: a recruiter can
+     answer "are you taking interns", engineering leadership can't and
+     shouldn't be asked to, and a BU engineer is someone you already share
+     something with. So each gets its own opener on each channel.
+
+     A contact whose role is none of the three — blank, or something you typed
+     by hand — falls back to the plain opener rather than being pushed into a
+     bucket it never established. Same rule as everywhere else here. */
+  var ROLE_TPL = { "Hiring": "Hiring", "VP Eng": "Exec", "BU Eng": "BU" };
   function firstContactKind(c) {
-    var bu = isBUContact(c);
-    if (isLinkedInContact(c)) return bu ? "connectBU" : "connect";
-    return bu ? "outreachBU" : "outreach";
+    var suffix = ROLE_TPL[String((c && c.role) || "").trim()] || "";
+    return (isLinkedInContact(c) ? "connect" : "outreach") + suffix;
   }
   function followupKind(c) { return isLinkedInContact(c) ? "liFollowup" : "followup"; }
   function draftFor(c, kind) { return fillTemplate(tplFor(kind), draftValues(c)); }
@@ -2299,28 +2428,40 @@
   }
   var dragEndedAt = 0;
 
-  // The ↓ is the whole indicator: present means sorted by date, absent means
-  // your own order. One glyph rather than a control that needs explaining.
-  function wireSortHeader(mountId, kind) {
-    var th = document.querySelector("#" + mountId + " th.sortcol");
-    if (!th) return;
-    var byDate = sortModeFor(kind) === "date";
-    var label = th.textContent;
-    th.innerHTML = escapeHtml(label) + (byDate ? '<span class="sort-arrow">↓</span>' : "");
-    th.classList.toggle("active", byDate);
-    th.setAttribute("title", byDate
-      ? "Newest first — tap for your own order"
-      : "Your own order — tap to sort by date");
-    th.addEventListener("click", function () {
-      var next = sortModeFor(kind) === "date" ? "custom" : "date";
-      // Switching to your own order for the first time starts from what's
-      // on screen, so the list never jumps to something you didn't choose.
-      if (next === "custom" && !customOrderFor(kind)) {
-        var tbody = document.querySelector("#" + mountId + " tbody");
-        if (tbody) setCustomOrder(kind, rowIdsIn(tbody));
-      }
-      setSortMode(kind, next);
-      render();
+  /* The arrow is the whole indicator, and it says two things at once: which
+     column is sorting, and which way. It sits on exactly one header while a
+     sort is active and disappears entirely in your own dragged order — an
+     arrow there would be claiming an ordering rule that isn't running.
+
+     Tap a different column to sort by it, tap the one you're on to reverse.
+     There is no third tap back to custom: dragging is how you get your own
+     order, which is the rule the drag handles already followed. */
+  var SORT_HINT = {
+    name: { asc: "A → Z", desc: "Z → A" },
+    date: { asc: "Oldest first", desc: "Newest first" },
+    status: { asc: "No date, then shortest wait first", desc: "Longest wait first" }
+  };
+  function wireSortHeaders(mountId, kind) {
+    var s = sortFor(kind);
+    document.querySelectorAll("#" + mountId + " th[data-sort]").forEach(function (th) {
+      var col = th.getAttribute("data-sort");
+      var on = s.col === col;
+      th.innerHTML = escapeHtml(th.textContent) +
+        (on ? '<span class="sort-arrow">' + (s.dir === "asc" ? "↑" : "↓") + "</span>" : "");
+      th.classList.toggle("active", on);
+      th.setAttribute("title", on
+        ? SORT_HINT[col][s.dir] + " — tap to reverse"
+        : "Tap to sort: " + SORT_HINT[col][SORT_COLS[col]].toLowerCase());
+      th.addEventListener("click", function () {
+        var cur = sortFor(kind);
+        // Same column reverses; a different one starts at its own default,
+        // because "newest first" and "A → Z" are the useful ends to open on.
+        var dir = cur.col === col
+          ? (cur.dir === "asc" ? "desc" : "asc")
+          : SORT_COLS[col];
+        setSortMode(kind, col + ":" + dir);
+        render();
+      });
     });
   }
 
@@ -2328,7 +2469,9 @@
     if (!rows.length) return '<p class="empty">' + escapeHtml(emptyMsg) + '</p>';
     var html = '<table class="' + (cls || "") + '"><thead><tr>';
     cols.forEach(function (c) {
-      html += '<th class="' + (c.cls || "") + '">' + escapeHtml(c.head) + '</th>';
+      html += '<th class="' + (c.cls || "") + (c.sort ? " sortcol" : "") + '"' +
+        (c.sort ? ' data-sort="' + c.sort + '"' : "") + ">" +
+        escapeHtml(c.head) + "</th>";
     });
     html += '</tr></thead><tbody>';
     rows.forEach(function (r) {
@@ -2346,7 +2489,7 @@
      look something up, not a list you keep in an order. */
   function contactCols(archive) {
     return [
-      { head: "Who", cls: "who", cell: function (r) {
+      { head: "Who", cls: "who", sort: archive ? null : "name", cell: function (r) {
           return '<div class="co-wrap">' + (archive ? "" : dragHandleHtml()) +
             '<span class="co-text">' +
             '<span class="co-name">' + escapeHtml(nameOf(r)) + '</span>' +
@@ -2358,8 +2501,10 @@
       { head: "How", cell: function (r) {
           return '<span class="sub-cell">' + escapeHtml(r.channel || "—") + '</span>';
         } },
-      { head: "Sent", cls: archive ? "date" : "date sortcol", cell: function (r) { return fmtShort(r.date); } },
-      { head: "Status", cell: function (r) { return chipHtml(statusOf(r, true)); } }
+      { head: "Sent", cls: "date", sort: archive ? null : "date",
+        cell: function (r) { return fmtShort(r.date); } },
+      { head: "Status", sort: archive ? null : "status",
+        cell: function (r) { return chipHtml(statusOf(r, true)); } }
     ];
   }
   // One line per company: name + role + the two flag dots, then date and
@@ -2367,15 +2512,17 @@
   // posting always sits hard right.
   function appCols(archive) {
     return [
-      { head: "Company", cls: "company", cell: function (r) {
+      { head: "Company", cls: "company", sort: archive ? null : "name", cell: function (r) {
           return '<div class="co-wrap">' + (archive ? "" : dragHandleHtml()) +
             '<span class="co-text">' +
             '<span class="co-name">' + escapeHtml(companyOf(r)) + '</span>' +
             (r.role ? '<span class="co-role">' + escapeHtml(r.role) + '</span>' : '') +
             '</span>' + flagDotsHtml(r) + '</div>';
         } },
-      { head: "Date", cls: archive ? "date" : "date sortcol", cell: function (r) { return fmtShort(r.date); } },
-      { head: "Status", cls: "status", cell: function (r) { return chipHtml(statusOf(r, false)); } },
+      { head: "Date", cls: "date", sort: archive ? null : "date",
+        cell: function (r) { return fmtShort(r.date); } },
+      { head: "Status", cls: "status", sort: archive ? null : "status",
+        cell: function (r) { return chipHtml(statusOf(r, false)); } },
       { head: "Link", cls: "linkcol", cell: function (r) { return linkHtml(r, " Open ↗"); } },
       // Absorbs the leftover width so the columns above stay packed together.
       { head: "", cls: "spacer", cell: function () { return ""; } }
@@ -2462,8 +2609,8 @@
       });
     });
 
-    wireSortHeader("contactTableMount", "contacts");
-    wireSortHeader("appTableMount", "apps");
+    wireSortHeaders("contactTableMount", "contacts");
+    wireSortHeaders("appTableMount", "apps");
     enableDrag("contactTableMount", "contacts");
     enableDrag("appTableMount", "apps");
   }
@@ -3059,13 +3206,24 @@
      and afterwards it names the template it used and any placeholder still
      unfilled, rather than leaving you to diff two drafts by eye.
      ---------------------------------------------------------------- */
+  /* Every draft that has a box in Settings, in the order they appear there.
+     One list drives filling the boxes, reading them back, and the unknown
+     placeholder check — adding a template used to mean remembering three
+     separate places and the checks quietly skipped whichever you forgot. */
+  var TPL_BOXES = ["outreach", "outreachHiring", "outreachExec", "outreachBU",
+                   "followup", "connect", "connectHiring", "connectExec",
+                   "connectBU", "liFollowup"];
   var TPL_NAMES = {
-    outreach:   "Email · first message",
-    outreachBU: "Email · first message (BU engineer)",
-    followup:   "Email · follow-up",
-    connect:    "LinkedIn · first message",
-    connectBU:  "LinkedIn · first message (BU engineer)",
-    liFollowup: "LinkedIn · follow-up"
+    outreach:       "Email · first message",
+    outreachHiring: "Email · first message (Hiring)",
+    outreachExec:   "Email · first message (VP Eng)",
+    outreachBU:     "Email · first message (BU engineer)",
+    followup:       "Email · follow-up",
+    connect:        "LinkedIn · first message",
+    connectHiring:  "LinkedIn · first message (Hiring)",
+    connectExec:    "LinkedIn · first message (VP Eng)",
+    connectBU:      "LinkedIn · first message (BU engineer)",
+    liFollowup:     "LinkedIn · follow-up"
   };
 
   // Which draft this entry wants, and what to draft it from. Companies and a
@@ -3628,6 +3786,16 @@
     // profile whether or not a link came with it.
     setRadio(contactForm, "cChannel", "LinkedIn");
     syncContactHandleLabel();
+
+    /* Clear the date. The Add form prefills today because logging usually
+       follows sending — but pasting somebody's profile URL is research, not
+       contact, and a date here is the app asserting you wrote to them. It
+       also starts the 7-day clock, so a person you have never messaged would
+       turn up in the nudge card a week later.
+       This is the same choice 🔍 Find contacts already makes, which writes
+       its rows with no date for exactly the same reason. Type one in, or let
+       ✉ Send queue stamp it when you actually send. */
+    document.getElementById("cDate").value = "";
 
     // Which draft, and why. This used to fork on whether the company was
     // marked Applied and had its own copy of that rule; now it goes through
@@ -4753,7 +4921,8 @@
 
   // Which templates open with a Subject: line. The LinkedIn three don't —
   // a connection request has no subject field to put one in.
-  var EMAIL_TPL_KINDS = { outreach: 1, outreachBU: 1, followup: 1 };
+  var EMAIL_TPL_KINDS = { outreach: 1, outreachHiring: 1, outreachExec: 1,
+                          outreachBU: 1, followup: 1 };
 
   // A sign-off keeps the break after it, so the name stays on its own line.
   var OB_SIGNOFF = /^(best|thanks|thank you|regards|best regards|cheers|sincerely)[,!.]?$/i;
@@ -5086,6 +5255,10 @@
     }
 
     h += '<div class="lp-acts">' +
+      // Only offered once there is a tap to take back, so it can't imply a
+      // history that isn't there.
+      ((OB.undo && OB.undo.length)
+        ? '<button type="button" class="secondary" id="dkUndo">↩ Back</button>' : "") +
       // Batch-wide, for after you've rewritten a template in Settings — the
       // alternative is walking the deck tapping ♻ once per person.
       (live.length > 1
@@ -5114,6 +5287,7 @@
       if (el) el.addEventListener("click", fn);
     };
     on("dkBack", function () { OB.phase = "pick"; obRefreshRows(); renderOutbox(); });
+    on("dkUndo", undoLastFinish);
 
     /* The whole batch at once, for after a template rewrite. Destructive
        across several people rather than one, so it names the count in the
@@ -5231,7 +5405,30 @@
 
   // Marking it sent writes straight into the tracker — no round trip, and no
   // second copy of the rule about what a send means.
+  /* Ticking Sent writes into the tracker, so undoing it has to put those
+     writes back — not just re-deal the card. Anything applySentJob() can
+     touch is photographed first: the contact's date and reminder history, and
+     the company's cold-email flag. Restoring from the snapshot beats trying
+     to invert each change, which would have to know that "the flag was
+     already on before you got here" means leave it on.
+
+     Session-only and unbounded within a batch, so you can walk back several
+     taps. It isn't persisted — an undo stack surviving a reload would let you
+     reverse something you did yesterday, long after the tracker has moved on. */
+  function snapshotForUndo(job) {
+    var c = DATA.contacts[job.contactId];
+    if (!c) return null;
+    var match = appForCompany(c.company);
+    var a = match && DATA.apps[match.id];
+    return {
+      jobId: job.id, state: job.state,
+      date: c.date, nudgedOn: (c.nudgedOn || []).slice(),
+      appId: a ? match.id : null, coldEmailed: a ? a.coldEmailed : undefined
+    };
+  }
+
   function finishJob(job, state) {
+    var snap = snapshotForUndo(job);
     job.state = state;
     job.markedAt = new Date().toISOString();
     saveOutbox(OUTBOX);
@@ -5243,8 +5440,46 @@
         saveData();
       }
     }
+    if (snap && OB) (OB.undo = OB.undo || []).push(snap);
     render();          // dots and counts update behind the dialog
     renderOutbox();    // deals the next card
+  }
+
+  function undoLastFinish() {
+    if (!OB || !OB.undo || !OB.undo.length) return;
+    var snap = OB.undo.pop();
+    var job = null;
+    OUTBOX.jobs.forEach(function (j) { if (j.id === snap.jobId) job = j; });
+    if (!job) { OB.status = "That card is no longer in the batch."; OB.bad = true; renderOutbox(); return; }
+    job.state = snap.state;
+    delete job.markedAt;
+    saveOutbox(OUTBOX);
+
+    var c = DATA.contacts[job.contactId];
+    var undone = [];
+    if (c && !c.deleted) {
+      if (c.date !== snap.date) { c.date = snap.date; undone.push("un-dated the contact"); }
+      if ((c.nudgedOn || []).length !== snap.nudgedOn.length) {
+        c.nudgedOn = snap.nudgedOn; undone.push("put the 7-day clock back");
+      }
+      touch(c);
+    }
+    var a = snap.appId && DATA.apps[snap.appId];
+    if (a && a.coldEmailed !== snap.coldEmailed) {
+      // undefined is how a row that never carried the flag reads as "no".
+      if (snap.coldEmailed === undefined) delete a.coldEmailed;
+      else a.coldEmailed = snap.coldEmailed;
+      touch(a);
+      undone.push("turned " + companyOf(a) + "'s cold-email dot back off");
+    }
+    saveData();
+    // Says what it actually reversed rather than a bare "undone" — a Skip
+    // changes nothing in the tracker, and claiming otherwise would be a lie.
+    OB.status = "↩ " + (job.name || "that card") + " is back" +
+      (undone.length ? " — " + undone.join(", ") + "." : ".");
+    OB.bad = false;
+    render();
+    renderOutbox();
   }
 
   function gmailComposeUrl(to, subject, body) {
@@ -5781,12 +6016,9 @@
     document.getElementById("patInput").value = getPAT();
     document.getElementById("ownerInput").value = or.owner || "";
     document.getElementById("repoInput").value = or.repo || "";
-    document.getElementById("tplOutreach").value = tplFor("outreach");
-    document.getElementById("tplOutreachBU").value = tplFor("outreachBU");
-    document.getElementById("tplFollowup").value = tplFor("followup");
-    document.getElementById("tplConnect").value = tplFor("connect");
-    document.getElementById("tplConnectBU").value = tplFor("connectBU");
-    document.getElementById("tplLiFollowup").value = tplFor("liFollowup");
+    TPL_BOXES.forEach(function (k) {
+      document.getElementById("tpl" + k.charAt(0).toUpperCase() + k.slice(1)).value = tplFor(k);
+    });
     document.getElementById("readerInput").value = readerBase();
     document.getElementById("readerKeyInput").value = readerKey();
     document.getElementById("searchInput").value = searchUrl();
@@ -5875,14 +6107,11 @@
   // block. Saving always happens either way, so nothing typed is lost.
   var tplWarned = false;
   document.getElementById("doneTplBtn").addEventListener("click", function () {
-    SETTINGS.templates = {
-      outreach: document.getElementById("tplOutreach").value,
-      outreachBU: document.getElementById("tplOutreachBU").value,
-      followup: document.getElementById("tplFollowup").value,
-      connect: document.getElementById("tplConnect").value,
-      connectBU: document.getElementById("tplConnectBU").value,
-      liFollowup: document.getElementById("tplLiFollowup").value
-    };
+    SETTINGS.templates = {};
+    TPL_BOXES.forEach(function (k) {
+      SETTINGS.templates[k] =
+        document.getElementById("tpl" + k.charAt(0).toUpperCase() + k.slice(1)).value;
+    });
     saveSettings(SETTINGS);
     render();
 
@@ -5891,9 +6120,7 @@
       internship: 1, learn: 1
     };
     var unknown = [];
-    [SETTINGS.templates.outreach, SETTINGS.templates.outreachBU,
-     SETTINGS.templates.followup, SETTINGS.templates.connect,
-     SETTINGS.templates.connectBU, SETTINGS.templates.liFollowup].forEach(function (t) {
+    TPL_BOXES.map(function (k) { return SETTINGS.templates[k]; }).forEach(function (t) {
       (String(t).match(/\{(\w+)\}/g) || []).forEach(function (m) {
         var k = m.slice(1, -1);
         if (!known[k] && unknown.indexOf(m) === -1) unknown.push(m);
@@ -5912,15 +6139,12 @@
   });
 
   document.getElementById("resetTplBtn").addEventListener("click", function () {
-    if (!confirm("Replace all six drafts with the built-in defaults? Your wording will be lost.")) return;
+    if (!confirm("Replace all ten drafts with the built-in defaults? Your wording will be lost.")) return;
     delete SETTINGS.templates;
     saveSettings(SETTINGS);
-    document.getElementById("tplOutreach").value = tplFor("outreach");
-    document.getElementById("tplOutreachBU").value = tplFor("outreachBU");
-    document.getElementById("tplFollowup").value = tplFor("followup");
-    document.getElementById("tplConnect").value = tplFor("connect");
-    document.getElementById("tplConnectBU").value = tplFor("connectBU");
-    document.getElementById("tplLiFollowup").value = tplFor("liFollowup");
+    TPL_BOXES.forEach(function (k) {
+      document.getElementById("tpl" + k.charAt(0).toUpperCase() + k.slice(1)).value = tplFor(k);
+    });
     setTplStatus("Reset to the built-in drafts.");
   });
 
