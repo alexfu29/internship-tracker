@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-08-16T01:06:37.515Z",
+  "updated": "2026-08-16T01:07:44.633Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -1060,16 +1060,16 @@
       "applied": true,
       "coldEmailed": false,
       "connected": false,
-      "role": "",
+      "role": "General Interest for the Engineering Intern",
       "date": "2026-08-13",
-      "link": "",
+      "link": "https://app.joinhandshake.com/jobs/11235285",
       "note": "",
       "responded": false,
       "respondedOn": null,
       "meetingOn": null,
       "closed": false,
       "deleted": false,
-      "updated": "2026-08-15T02:25:20.762Z",
+      "updated": "2026-08-16T01:07:44.633Z",
       "workspace": "",
       "outcome": ""
     },
