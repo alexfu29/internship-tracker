@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-08-16T00:10:40.944Z",
+  "updated": "2026-08-16T00:13:29.030Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -862,7 +862,8 @@
       "meetingOn": null,
       "closed": false,
       "deleted": false,
-      "updated": "2026-08-11T02:11:41.844Z"
+      "updated": "2026-08-16T00:13:29.030Z",
+      "workspace": ""
     },
     "mso0xr88-tbmx5m": {
       "company": "Mass Life Sciences Center",
