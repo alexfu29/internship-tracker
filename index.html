@@ -1297,6 +1297,15 @@
     <input type="file" id="importInput" accept="application/json">
   </div>
   <hr>
+  <h2 style="font-size:0.95rem">This build</h2>
+  <p class="tpl-help" id="buildInfo"></p>
+  <p class="tpl-help">
+    Check this against what you expect before concluding a change didn't work.
+    The app is served from a copy kept on this device, so it opens with no
+    connection; when you do have one it always fetches the current file first,
+    and the copy is only the fallback.
+  </p>
+  <hr>
   <p style="font-size:0.72rem;color:var(--text-muted)">
     The token is stored only on this device (localStorage). It is never sent anywhere
     except directly to api.github.com.
@@ -1306,6 +1315,16 @@
 <script>
 (function () {
   "use strict";
+
+  /* Which build you are actually looking at. Bump this with any change worth
+     noticing. It is not decoration: three times now a change has been called
+     broken when the real answer was that the browser or the CDN was still
+     serving the previous file, and there was nothing on screen that could
+     tell those apart from a change that genuinely didn't work. This string
+     lives in the file being executed, so it cannot lie about which file that
+     is. It's shown at the bottom of Settings. */
+  var APP_VERSION = "2026-08-16a";
+  var swReady = false, swCacheVersion = "", swNote = "";
 
   /* ============================================================
      0. FAIL LOUDLY
@@ -1693,6 +1712,16 @@
 
   function renderBanners() {
     var html = "";
+    // Offline is normal here, not an error — the app is served from this
+    // device and the data was never on the network to begin with. It says so
+    // anyway, because "my edit didn't reach my phone" and "I am offline" look
+    // identical otherwise, and only one of them fixes itself.
+    if (!navigator.onLine) {
+      html += '<div class="banner banner-amber"><div><strong>Offline</strong>' +
+        'Running from the copy saved on this device. Everything still saves here; ' +
+        'syncing to your other devices resumes when you are back online.' +
+        '</div></div>';
+    }
     if (redBannerMsg) {
       // Deliberately NOT dismissible: it clears only when a sync call
       // actually succeeds. A silent sync failure is the one thing this
@@ -5355,7 +5384,26 @@
       (SETTINGS.reviewIn === "agent") ? "" : "none";
   }
 
+  // Reports what is true right now rather than what registration hoped for:
+  // "offline ready" only appears once a worker is actually controlling this
+  // page, which is not the case on the very first load after installing one.
+  function renderBuildInfo() {
+    var el = document.getElementById("buildInfo");
+    if (!el) return;
+    var bits = ["Version " + APP_VERSION];
+    if (swNote) {
+      bits.push(swNote);
+    } else if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+      bits.push("Offline ready" + (swCacheVersion ? " (cache " + swCacheVersion + ")" : ""));
+    } else if (swReady) {
+      bits.push("Offline mode installs on the next reload.");
+    }
+    bits.push(navigator.onLine ? "Online." : "Offline right now.");
+    el.textContent = bits.join(" · ");
+  }
+
   function openDrawer() {
+    renderBuildInfo();
     var or = detectOwnerRepo();
     document.getElementById("gmailAccountInput").value =
       SETTINGS.gmailAccount === undefined ? "" : SETTINGS.gmailAccount;
@@ -5575,6 +5623,38 @@
   document.getElementById("aDate").value = TODAY;
   render();
   if (getPAT()) syncPull(false);
+
+  /* ---- offline, and the copy that makes it work -----------------------
+     The data was always local; the *app* wasn't. Losing signal meant a blank
+     page, which is a strange failure for something whose whole store is
+     localStorage. sw.js keeps a copy of this file on the device and serves it
+     when the network can't — see the long note at the top of it for why it's
+     network-first rather than the usual cache-first.
+
+     Registration is guarded, not assumed: service workers need a secure
+     context, so opening index.html straight off disk (file://) has none, and
+     that's a supported way to run this. It degrades to exactly today's
+     behaviour rather than throwing. */
+  if ("serviceWorker" in navigator && window.isSecureContext) {
+    navigator.serviceWorker.register("sw.js").then(function () {
+      swReady = true;
+      navigator.serviceWorker.controller &&
+        navigator.serviceWorker.controller.postMessage("version");
+    }).catch(function (err) {
+      // Never silent: without this the app simply won't open offline, and
+      // finding that out on a train is worse than reading it here.
+      swNote = "Offline mode is off — " + ((err && err.message) || "the browser refused it") + ".";
+    });
+    navigator.serviceWorker.addEventListener("message", function (ev) {
+      if (ev.data && ev.data.swVersion) swCacheVersion = ev.data.swVersion;
+    });
+  } else {
+    swNote = window.isSecureContext
+      ? "This browser has no service worker, so the app needs a connection to open."
+      : "Opened from a file:// path, so offline mode is unavailable. Everything else works.";
+  }
+  window.addEventListener("online", renderBanners);
+  window.addEventListener("offline", renderBanners);
 
   // Pick up anything you ticked as sent on the agent's review page. Runs on
   // load and whenever you come back to the tab — which is exactly when you

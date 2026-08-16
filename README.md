@@ -14,8 +14,10 @@ loud red banner — they never silently swallow your data.
 
 Everything is in **`index.html`** — one file, ~5,400 lines, all JS in one IIFE
 with numbered section banners (`4. DERIVED STATE`, `6C. FIND CONTACTS`,
-`6D. SEND QUEUE`, `7. SYNC`). The only other code is `agent/`, which is
-**optional and off by default**.
+`6D. SEND QUEUE`, `7. SYNC`). Beside it sits **`sw.js`**, the service worker
+that keeps a copy of that file on your device so the app opens with no
+connection. The only other code is `agent/`, which is **optional and off by
+default**.
 
 | Where | What |
 |---|---|
@@ -1063,6 +1065,67 @@ been sent, so the 7-day nudge clock stays off until you actually send something.
 The company row itself is untouched: **Cold emails sent** stays at *no*, because
 it still is. Running it twice on one company skips names already on your list and
 tells you how many.
+
+## It opens with no connection
+
+The data was always local — `localStorage`, no backend. The *app* wasn't: losing
+signal meant a blank page, which is a strange way for something with no server
+to fail. `sw.js` keeps a copy of `index.html` on the device and serves it when
+the network can't.
+
+So GitHub is only ever used for **moving data between your devices**. Opening the
+app, logging a contact, reading the tables, drafting, the 7-day rule — none of it
+needs a network. An amber **Offline** banner says so while you're out, and says
+the thing you actually want to know: everything still saves here, and syncing
+resumes when you're back.
+
+### Why it's network-first, and not the usual PWA recipe
+
+The standard recipe is cache-first: instant offline, and then it serves you the
+old app for a session — or forever, when the update dance goes wrong. **That
+failure has already cost this project three rounds of "I don't see any
+changes"**, so it's the one outcome the file is written to prevent.
+
+```
+online   → fetch it, use it, keep a copy
+offline  → serve the copy from the last time you were online
+```
+
+Fresh whenever the network can answer, working whenever it can't. The cost is
+that a load waits on the network rather than painting from cache — one file from
+a CDN, which is a fair price for never wondering which version you're looking at.
+This was tested by editing the file and doing a **plain reload** with the worker
+active: the change came through.
+
+**Nothing cross-origin is touched.** `api.github.com`, the profile reader, the
+model endpoints and the local agent all go straight past. Caching a sync response
+is how you'd resurrect deleted contacts; caching a LinkedIn read is how a stale
+profile would verify as current.
+
+One honest limit: GitHub Pages sets `Cache-Control: max-age=600` on the file
+itself, so for up to **ten minutes** after a push the CDN may still hand back the
+previous copy. That's above this layer and can't be configured on Pages. Adding
+`?fresh=2` to the URL bypasses it.
+
+### Which build am I looking at?
+
+**Settings → This build** shows the version, whether the offline copy is in
+place, and whether you're online right now:
+
+```
+Version 2026-08-16a · Offline ready (cache 2026-08-16a) · Online.
+```
+
+It exists because "the change didn't work" and "you're looking at last week's
+file" are indistinguishable from the outside, and that ambiguity has burned real
+time three times now. The version string lives *in the file being executed*, so
+it can't lie about which file that is. `Offline ready` only appears once a worker
+is genuinely controlling the page — not merely because registration was
+attempted.
+
+Opening `index.html` straight off disk (`file://`) has no secure context, so
+service workers are unavailable there; Settings says that rather than failing
+quietly, and everything except offline mode works as before.
 
 ## Setup: the GitHub sync token
 
