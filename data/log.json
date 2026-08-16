@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-08-16T20:06:42.643Z",
+  "updated": "2026-08-16T20:07:26.007Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -951,6 +951,23 @@
       "deleted": false,
       "workspace": "Hi Gina,\n\nI was looking at Linkedin and I saw that you work that Anduril Industries where I'd love to intern at. \n\nWould you be down for a quick zoom meeting to connect to talk about your work and the company culture?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
       "updated": "2026-08-16T20:06:42.643Z"
+    },
+    "msw8kx13-l4pph4": {
+      "name": "Brian S.",
+      "company": "Anduril Industries",
+      "role": "BU eng",
+      "channel": "LinkedIn",
+      "email": "https://www.linkedin.com/in/brianhshin/",
+      "date": "2026-08-16",
+      "note": "Hi Brianhshin,\n\nI was looking at Linkedin and I saw that you work that [company] where I'd love to intern at. \n\nWould you be down for a quick zoom meeting to connect to talk about your work and the company culture?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "nudgedOn": [],
+      "closed": false,
+      "deleted": false,
+      "workspace": "Hi Brian,\n\nI was looking at Linkedin and I saw that you work that Anduril Industries where I'd love to intern at. \n\nWould you be down for a quick zoom meeting to connect to talk about your work and the company culture?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
+      "updated": "2026-08-16T20:07:26.007Z"
     }
   },
   "apps": {
