@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-08-16T19:49:50.123Z",
+  "updated": "2026-08-16T19:51:12.277Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -873,7 +873,7 @@
       "role": "BU eng",
       "channel": "LinkedIn",
       "email": "https://www.linkedin.com/in/maha-noor/",
-      "date": "",
+      "date": "2026-08-16",
       "note": "",
       "responded": false,
       "respondedOn": null,
@@ -882,7 +882,7 @@
       "closed": false,
       "deleted": false,
       "workspace": "Hi Maha,\n\nI was looking at Linkedin and I saw that you work that Texas Instruments where I'd love to intern at, and you also went to BU.\n\nWould you be down for a quick zoom meeting to connect to talk about your work and how BU helped you get there?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
-      "updated": "2026-08-16T19:49:50.123Z"
+      "updated": "2026-08-16T19:51:12.276Z"
     }
   },
   "apps": {
@@ -1047,7 +1047,7 @@
     "mso0p9bw-5ecqjg": {
       "company": "Texas Instruments",
       "applied": true,
-      "coldEmailed": false,
+      "coldEmailed": true,
       "connected": false,
       "role": "Product/Test Engineering Intern",
       "date": "2026-08-15",
@@ -1058,7 +1058,7 @@
       "meetingOn": null,
       "closed": false,
       "deleted": false,
-      "updated": "2026-08-16T00:41:20.420Z",
+      "updated": "2026-08-16T19:51:12.276Z",
       "workspace": "",
       "outcome": ""
     },
