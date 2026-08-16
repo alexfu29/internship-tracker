@@ -522,6 +522,17 @@
              border-bottom: 1px solid var(--gridline); }
   .dk-body { padding: 11px; white-space: pre-wrap; font-size: 0.82rem;
              line-height: 1.6; }
+  /* The card's message is editable in place — this is the thing about to be
+     sent, so it's the obvious place to fix a sentence. Deliberately looks
+     like the text it replaced rather than like a form field: no border, no
+     background, so the card still reads as a message until you click it. */
+  .dk-edit { display: block; width: 100%; box-sizing: border-box; padding: 11px;
+             border: 0; border-top: 1px solid var(--gridline); background: transparent;
+             color: var(--text-primary); font-family: inherit; font-size: 0.82rem;
+             line-height: 1.6; resize: vertical; min-height: 150px; }
+  .dk-edit:focus { outline: 2px solid var(--accent); outline-offset: -3px; }
+  .dk-warn:not(:empty) { padding: 7px 11px; border-top: 1px solid var(--gridline);
+             font-size: 0.72rem; color: var(--amber-ink); font-weight: 600; }
   /* Every button in this app is width:100% by default — it's a phone-first
      form layout. In a nowrap flex row that is fatal: `flex: 0 0 auto` takes
      its basis from that width, so each button demanded the full row, refused
@@ -1348,7 +1359,7 @@
      tell those apart from a change that genuinely didn't work. This string
      lives in the file being executed, so it cannot lie about which file that
      is. It's shown at the bottom of Settings. */
-  var APP_VERSION = "2026-08-16f";
+  var APP_VERSION = "2026-08-16g";
   var swReady = false, swCacheVersion = "", swNote = "";
 
   /* ============================================================
@@ -4627,6 +4638,75 @@
       return j.state === "staged" && !jobVoidReason(j);
     });
   }
+
+  /* A staged card is a *view* of the contact, not a photocopy taken when you
+     pressed Stage. It used to be the photocopy: jobFromRow() froze the text,
+     so repopulating a Workspace — or fixing the company row the draft reads
+     from — changed nothing about the card waiting in the queue, and you'd
+     send the old wording having watched yourself correct it.
+
+     So the text is re-derived from the contact on every deck render, through
+     the same outboxDraft() the picker uses. The Workspace is the one place
+     the message lives; the queue only records who is in the batch and how far
+     you've got. Editing the card writes back to that same Workspace, so the
+     two can't disagree in either direction.
+
+     Only `staged` jobs are refreshed. A sent one is a record of what you
+     actually sent, and rewriting it later would make it a lie. */
+  function refreshJobs() {
+    var changed = false;
+    OUTBOX.jobs.forEach(function (j) {
+      if (j.state !== "staged") return;
+      var c = DATA.contacts[j.contactId];
+      if (!c || c.deleted) return;
+      var t = outboxTarget(c);
+      var d = outboxDraft(c, j.kind);
+      var s = splitSubject(d.text, EMAIL_TPL_KINDS[j.kind] === 1);
+      var next = {
+        name: nameOf(c), company: c.company || "", channel: c.channel || "",
+        to: t.via === "email" ? t.value : "",
+        profileUrl: t.via === "linkedin" ? t.value : "",
+        draftText: d.text, source: d.source,
+        subject: s.subject, body: unwrapParagraphs(s.body)
+      };
+      Object.keys(next).forEach(function (k) {
+        if (j[k] !== next[k]) { j[k] = next[k]; changed = true; }
+      });
+    });
+    if (changed) saveOutbox(OUTBOX);
+    return changed;
+  }
+
+  /* Editing the card writes the raw draft back onto the contact, which is
+     what makes the round trip work: Workspace → card → Workspace. Debounced
+     for the same reason the Workspace popup is, and deliberately without a
+     re-render — a repaint mid-sentence would take the cursor with it. */
+  /* The picker refuses to stage a draft with a placeholder in it, but the
+     deck can now acquire one after staging — you edit the text, or the draft
+     is re-derived after the company row changed. Saying so beats letting
+     "[internship]" go out in a connection request. */
+  function deckWarning(job) {
+    var left = missingPlaceholders(job.draftText || job.body || "");
+    return left.length
+      ? "⚠ still unfilled: " + left.join(" ") + " — ♻ Repopulate, or type over it."
+      : "";
+  }
+
+  var dkSaveTimer = null;
+  function applyDeckEdit(job, raw, isEmail) {
+    job.draftText = raw;
+    var s = splitSubject(raw, isEmail);
+    job.subject = s.subject;
+    job.body = unwrapParagraphs(s.body);
+    job.source = "workspace";          // it's your text now, whatever it started as
+    clearTimeout(dkSaveTimer);
+    dkSaveTimer = setTimeout(function () {
+      var c = DATA.contacts[job.contactId];
+      if (!c || c.deleted) return;     // renderDeck already voids a deleted one
+      if (c.workspace !== raw) { c.workspace = raw; touch(c); saveData(); }
+      saveOutbox(OUTBOX);
+    }, 400);
+  }
   function outboxStagedIds() {
     var m = {};
     OUTBOX.jobs.forEach(function (j) {
@@ -4759,7 +4839,7 @@
       via: t.via || (isLinkedInContact(c) ? "linkedin" : "email"),
       to: t.via === "email" ? t.value : "",
       profileUrl: t.via === "linkedin" ? t.value : "",
-      subject: s.subject, body: s.body, source: d.source,
+      subject: s.subject, body: s.body, source: d.source, raw: d.text,
       blockers: blockers, use: blockers.length === 0, open: false
     };
   }
@@ -4912,6 +4992,7 @@
      can open the compose window, write the clipboard and keep the batch, so
      nothing outside this file is needed to work through a batch. */
   function renderDeck() {
+    refreshJobs();          // pick up Workspace and company-row edits made elsewhere
     var live = outboxLive();
     var done = OUTBOX.jobs.filter(function (j) { return j.state !== "staged"; });
     var voided = OUTBOX.jobs.filter(function (j) {
@@ -4944,16 +5025,30 @@
         (job.source === "workspace"
           ? ' <span class="ob-src">your Workspace text</span>' : "") +
         "</div>";
+      /* The message is a textarea, not a paragraph: this is the exact text
+         about to go out, so the card is the obvious place to fix a sentence
+         in it. What you type is written back onto the contact's Workspace,
+         which is where the draft lives — so an edit here survives closing the
+         deck, and ♻ Repopulate in either place overwrites the same thing.
+
+         For an email the box holds the whole draft including its `Subject:`
+         line, because that is how the text is stored and splitting it into
+         two fields would mean reassembling it on save. The subject strip
+         above is a live read-out of what will actually be used. */
       h += '<div class="dk-msg">' +
         '<div class="dk-to"><b>To</b> ' +
         escapeHtml(job.to || job.profileUrl || "(nothing on file)") + "</div>" +
         (isEmail
-          ? '<div class="dk-subj">' + (job.subject
+          ? '<div class="dk-subj" id="dkSubjLine">' + (job.subject
               ? obHighlight(job.subject)
               : '<span class="ob-why">no subject line — check the template</span>') +
             "</div>"
           : "") +
-        '<div class="dk-body">' + obHighlight(job.body) + "</div></div>";
+        '<textarea class="dk-edit" id="dkText" spellcheck="true" ' +
+        'aria-label="The message that will be sent — edit it here">' +
+        escapeHtml(job.draftText || job.body || "") + "</textarea>" +
+        '<div class="dk-warn" id="dkWarn">' + escapeHtml(deckWarning(job)) + "</div>" +
+        "</div>";
       /* Three, left to right: copy · both · open. The middle one is the whole
          job in one tap and is what you'll use nearly every time — but the
          other two have to stay, because the pair comes apart often enough.
@@ -4975,6 +5070,7 @@
           : '<button type="button" class="secondary" id="dkBoth">📋🔗 Copy &amp; open</button>') +
         '<button type="button" class="secondary" id="dkOpen">' +
         (isEmail ? "✉ Open compose" : "🔗 Open profile") + "</button>" +
+        '<button type="button" class="secondary" id="dkRepop">♻ Repopulate</button>' +
         '<span class="dk-right">' +
         '<button type="button" class="primary" id="dkSent">✓ Sent — next</button>' +
         '<button type="button" class="secondary" id="dkSkip">Skip</button></span></div>';
@@ -4990,6 +5086,12 @@
     }
 
     h += '<div class="lp-acts">' +
+      // Batch-wide, for after you've rewritten a template in Settings — the
+      // alternative is walking the deck tapping ♻ once per person.
+      (live.length > 1
+        ? '<button type="button" class="secondary" id="dkRepopAll">♻ Repopulate all ' +
+          live.length + "</button>"
+        : "") +
       '<button type="button" class="secondary" id="dkBack">← Pick more people</button>' +
       (done.length || voided.length
         ? '<button type="button" class="secondary" id="dkClear">Clear ' +
@@ -5012,6 +5114,34 @@
       if (el) el.addEventListener("click", fn);
     };
     on("dkBack", function () { OB.phase = "pick"; obRefreshRows(); renderOutbox(); });
+
+    /* The whole batch at once, for after a template rewrite. Destructive
+       across several people rather than one, so it names the count in the
+       confirm and reports what actually happened — including how many still
+       carry a placeholder, since regenerating can't invent a value that
+       isn't on file and quietly leaving those is how one goes out. */
+    on("dkRepopAll", function () {
+      var jobs = outboxLive();
+      if (!jobs.length) return;
+      if (!confirm("Rewrite all " + jobs.length + " messages in this batch from the " +
+                   "templates? Anything you've typed into them will be lost.")) return;
+      clearTimeout(dkSaveTimer);
+      var done = 0, stuck = [];
+      jobs.forEach(function (j) {
+        var c = DATA.contacts[j.contactId];
+        if (!c || c.deleted) return;
+        var fresh = draftFor(c, j.kind);
+        c.workspace = fresh; touch(c);
+        done++;
+        if (missingPlaceholders(fresh).length) stuck.push(nameOf(c));
+      });
+      saveData();
+      OB.status = "✓ Rewrote " + done + " message" + (done === 1 ? "" : "s") + "." +
+        (stuck.length ? " Still carrying a placeholder: " + stuck.join(", ") + "." : "");
+      OB.bad = stuck.length > 0;
+      renderOutbox();
+      render();
+    });
     on("dkClose", closeOutbox);
     on("dkClear", function () {
       OUTBOX.jobs = OUTBOX.jobs.filter(function (j) {
@@ -5049,6 +5179,54 @@
 
     on("dkSent", function () { finishJob(job, "sent"); });
     on("dkSkip", function () { finishJob(job, "skipped"); });
+
+    /* Editing the card. No re-render on input — that would move the cursor —
+       so the two things a repaint would have refreshed are updated by hand:
+       the subject read-out and the placeholder warning. */
+    var isEmailJob = job.channel === "Email" || EMAIL_TPL_KINDS[job.kind] === 1;
+    var ta = document.getElementById("dkText");
+    if (ta) {
+      ta.addEventListener("input", function () {
+        applyDeckEdit(job, ta.value, isEmailJob);
+        var sl = document.getElementById("dkSubjLine");
+        if (sl) {
+          sl.innerHTML = job.subject ? obHighlight(job.subject)
+            : '<span class="ob-why">no subject line — check the template</span>';
+        }
+        var w = document.getElementById("dkWarn");
+        if (w) w.textContent = deckWarning(job);
+      });
+      // A debounce that loses the last sentence is worse than no autosave,
+      // and leaving the deck is exactly when one is in flight.
+      ta.addEventListener("blur", function () {
+        clearTimeout(dkSaveTimer);
+        var c = DATA.contacts[job.contactId];
+        if (c && !c.deleted && c.workspace !== ta.value) {
+          c.workspace = ta.value; touch(c); saveData(); saveOutbox(OUTBOX);
+        }
+      });
+    }
+
+    // Per person: throw this card's text away and rebuild it from the
+    // template, exactly as ♻ Repopulate does in the Workspace — same
+    // draftFor(), so the two can't produce different wording.
+    on("dkRepop", function () {
+      var c = DATA.contacts[job.contactId];
+      if (!c || c.deleted) { OB.status = "That contact has been deleted."; OB.bad = true; renderOutbox(); return; }
+      if ((c.workspace || "").trim() &&
+          !confirm("Replace " + nameOf(c) + "'s message with a freshly generated draft? " +
+                   "What's written here will be lost.")) return;
+      clearTimeout(dkSaveTimer);
+      var fresh = draftFor(c, job.kind);
+      c.workspace = fresh; touch(c); saveData();
+      var left = missingPlaceholders(fresh);
+      OB.status = left.length
+        ? "Rewrote " + nameOf(c) + "'s draft, but " + left.join(" ") + " still isn't on file."
+        : "✓ " + nameOf(c) + "'s draft rewritten from " + (TPL_NAMES[job.kind] || job.kind) + ".";
+      OB.bad = left.length > 0;
+      renderOutbox();   // refreshJobs() picks the new text up
+      render();
+    });
   }
 
   // Marking it sent writes straight into the tracker — no round trip, and no
@@ -5204,6 +5382,8 @@
       company: r.contact.company || "", channel: r.contact.channel || "",
       kind: r.kind, to: r.to, profileUrl: r.profileUrl,
       subject: r.subject, body: r.body, source: r.source,
+      // The raw stored draft, subject line and all — what the deck edits.
+      draftText: r.raw,
       state: "staged", stagedAt: new Date().toISOString()
     };
   }

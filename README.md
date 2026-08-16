@@ -617,6 +617,50 @@ Email keeps its own set: a compose URL already carries the subject and body, so
 there's nothing to copy on the way out and the middle slot is **📋 Copy subject**
 instead.
 
+### The card is the message, and you can type in it
+
+The message on a deck card is a **textarea**, not a paragraph. It is the exact
+text about to go out, so it's the obvious place to fix a sentence — and what you
+type is written straight onto that contact's **Workspace**, which is where the
+draft actually lives. So an edit here survives closing the deck, and ♻ Repopulate
+in either place overwrites the same thing.
+
+For an email the box holds the whole draft including its `Subject:` line, because
+that's how the text is stored; the subject strip above it is a live read-out of
+what will be used.
+
+**A staged card is a view of the contact, not a photocopy.** It used to be the
+photocopy — the text was frozen when you pressed Stage, so repopulating a
+Workspace, or fixing the company row a draft reads from, changed nothing about
+the card waiting in the queue and you'd send the old wording having just watched
+yourself correct it. The text is now re-derived on every deck render, through the
+same `outboxDraft()` the picker uses.
+
+Only `staged` jobs refresh. A **sent** one is a record of what you actually sent,
+and rewriting it later would make it a lie.
+
+The picker refuses to stage a draft containing a placeholder, but a card can
+acquire one *after* staging — you edit it, or it's re-derived after the company
+row changed — so the card warns rather than letting `[internship]` go out:
+
+```
+⚠ still unfilled: [internship] — ♻ Repopulate, or type over it.
+```
+
+### ♻ Repopulate, per person and for the whole batch
+
+**♻ Repopulate** on the card rebuilds that one message from the template — the
+same `draftFor()` the Workspace button uses, so the two can't produce different
+wording. It asks first when there's text to lose.
+
+**♻ Repopulate all N** in the footer does the batch, which is what you want after
+rewriting a template in Settings; the alternative is walking the deck tapping ♻
+once per person. It's destructive across several people rather than one, so it
+names the count in the confirm and reports what actually happened — including
+anyone whose draft still carries a placeholder afterwards, since regenerating
+can't invent a value that isn't on file and quietly leaving those is how one goes
+out.
+
 ### ♻ Repopulate, on a row that says it has a placeholder
 
 A row carrying `[company]` or any other `[placeholder]` can't be ticked. That
