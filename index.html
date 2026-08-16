@@ -522,11 +522,30 @@
              border-bottom: 1px solid var(--gridline); }
   .dk-body { padding: 11px; white-space: pre-wrap; font-size: 0.82rem;
              line-height: 1.6; }
+  /* Every button in this app is width:100% by default — it's a phone-first
+     form layout. In a nowrap flex row that is fatal: `flex: 0 0 auto` takes
+     its basis from that width, so each button demanded the full row, refused
+     to shrink, and the row ran off the right-hand edge of the dialog. You saw
+     "📋 Copy note" filling the card and nothing else — ✓ Sent and Skip were
+     rendered, wired and working, just painted somewhere off-screen, which is
+     why the deck looked like it had no way to move on.
+
+     So: reset the width here, and let the row wrap. Wrapping matters on a
+     phone, where four buttons were never going to fit on one line — the
+     second row is fine, an unreachable button is not. */
   .dk-acts { flex: 0 0 auto; padding: 9px 11px; display: flex; gap: 7px;
-             align-items: center; border-top: 1px solid var(--gridline);
+             align-items: center; flex-wrap: wrap;
+             border-top: 1px solid var(--gridline);
              background: var(--surface-2); }
-  .dk-acts .dk-right { margin-left: auto; display: flex; gap: 7px; flex: 0 0 auto; }
-  .dk-acts button { flex: 0 0 auto; }
+  .dk-acts .dk-right { margin-left: auto; display: flex; gap: 7px;
+                       flex: 0 0 auto; flex-wrap: wrap; }
+  /* Qualified with the class on purpose. `button.secondary { width: 100% }`
+     is defined further down this stylesheet at the same specificity, so a
+     bare `.dk-acts button` loses to it on source order and the reset silently
+     does nothing — which is exactly how this got shipped broken. */
+  .dk-acts button.primary, .dk-acts button.secondary {
+    flex: 0 0 auto; width: auto; padding: 9px 12px; font-size: 0.82rem;
+  }
   .dk-empty { text-align: center; padding: 34px 16px; border: 1px solid var(--gridline);
               border-radius: 10px; }
   .dk-empty span { font-size: 0.8rem; color: var(--text-secondary); }
@@ -1323,7 +1342,7 @@
      tell those apart from a change that genuinely didn't work. This string
      lives in the file being executed, so it cannot lie about which file that
      is. It's shown at the bottom of Settings. */
-  var APP_VERSION = "2026-08-16a";
+  var APP_VERSION = "2026-08-16b";
   var swReady = false, swCacheVersion = "", swNote = "";
 
   /* ============================================================

@@ -560,6 +560,27 @@ you work down one card at a time — read it, **📋 Copy**, **✉ Open compose*
 **Nothing here sends anything.** It does the fetching and filling; the judgement
 and the click stay yours.
 
+### The buttons that were there but off the edge
+
+For a while the deck looked like it had no way to move on: the card showed
+**📋 Copy note** filling its whole width and nothing else. **✓ Sent — next** and
+**Skip** were rendered, wired and working the whole time — just painted past the
+right-hand edge of the dialog, where no amount of scrolling reached them.
+
+Every button in this app is `width: 100%`, which is right for a phone-first form
+layout and fatal in a `nowrap` flex row: `flex: 0 0 auto` takes its basis from
+that width, so each button demanded the entire row and refused to shrink. The
+reset that should have stopped it, `.dk-acts button`, has the same specificity as
+`button.secondary` and loses to it on source order — so it silently did nothing.
+The fix is qualifying the selector (`.dk-acts button.secondary`) and letting the
+row wrap; four buttons were never going to fit on one phone line, and a second
+row beats an unreachable button.
+
+Worth knowing because the failure is invisible to the obvious test. Clicking
+`dkSent` from the console advances the deck perfectly whether or not the button
+can be seen — so "the handler works" proved nothing. What catches it is measuring
+where the buttons actually landed and hit-testing the centre of each one.
+
 **Staging is the only door to the deck**, and the picker used to describe it as
 sending your batch off to be "rendered and screenshotted" and left "on the
 agent's review page" — none of which had been true since the deck moved into
