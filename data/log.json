@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-08-16T20:26:06.962Z",
+  "updated": "2026-08-16T21:16:37.602Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -1253,7 +1253,7 @@
     },
     "mspe3k0u-0l9dzy": {
       "company": "Boeing",
-      "applied": false,
+      "applied": true,
       "coldEmailed": false,
       "connected": false,
       "role": "",
@@ -1265,7 +1265,9 @@
       "meetingOn": null,
       "closed": false,
       "deleted": false,
-      "updated": "2026-08-12T01:07:30.462Z"
+      "updated": "2026-08-16T21:16:37.602Z",
+      "outcome": "",
+      "workspace": ""
     },
     "mspe3qgh-f2u530": {
       "company": "Lexington Medical",
