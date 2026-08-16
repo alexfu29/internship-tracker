@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-08-16T00:52:47.351Z",
+  "updated": "2026-08-16T00:53:22.640Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -678,7 +678,7 @@
       "role": "BU eng",
       "channel": "LinkedIn",
       "email": "https://www.linkedin.com/in/ellaconley/",
-      "date": "",
+      "date": "2026-08-15",
       "note": "",
       "responded": false,
       "respondedOn": null,
@@ -687,7 +687,7 @@
       "closed": false,
       "deleted": false,
       "workspace": "Hi Ella,\n\nI recently applied to the Caterpillar Product Development Internship for 2027. I'd love to connect with you to learn more about you and the company culture.\n\nWould you be down for a quick zoom meeting to connect?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
-      "updated": "2026-08-16T00:10:40.944Z"
+      "updated": "2026-08-16T00:53:22.640Z"
     }
   },
   "apps": {
@@ -1137,7 +1137,7 @@
     "mstqtuxy-3b0yjm": {
       "company": "Caterpillar",
       "applied": true,
-      "coldEmailed": false,
+      "coldEmailed": true,
       "connected": false,
       "outcome": "",
       "role": "Product Development Intern",
@@ -1150,7 +1150,7 @@
       "closed": false,
       "deleted": false,
       "workspace": "",
-      "updated": "2026-08-16T00:00:01.912Z"
+      "updated": "2026-08-16T00:53:22.640Z"
     }
   }
 }
