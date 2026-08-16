@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-08-16T01:02:25.596Z",
+  "updated": "2026-08-16T01:03:27.497Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -695,7 +695,7 @@
       "role": "Hiring",
       "channel": "LinkedIn",
       "email": "https://in.linkedin.com/in/vicky-deshwal-219198298",
-      "date": "",
+      "date": "2026-08-15",
       "note": "Hiring · Assistant billing Engineer at Welkin Mechanical, LLC ... · unverified 2026-08-15",
       "responded": false,
       "respondedOn": null,
@@ -704,7 +704,7 @@
       "closed": false,
       "deleted": false,
       "workspace": "Hi Vicky,\n\nI recently applied to the Welkin Mechanical Field Engineer Intern for 2027. I'd love to connect\nwith you to learn more about you and the company culture.\n\nWould you be down for a quick zoom meeting to connect?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
-      "updated": "2026-08-16T01:02:25.595Z"
+      "updated": "2026-08-16T01:03:27.497Z"
     },
     "msv3ofgc-pz59es": {
       "name": "Kyle Doyle",
@@ -712,7 +712,7 @@
       "role": "VP Eng",
       "channel": "LinkedIn",
       "email": "https://www.linkedin.com/in/kyle-doyle-839a941a",
-      "date": "",
+      "date": "2026-08-15",
       "note": "VP Eng · Project Executive at Welkin Mechanical, LLC · unverified 2026-08-15",
       "responded": false,
       "respondedOn": null,
@@ -721,7 +721,7 @@
       "closed": false,
       "deleted": false,
       "workspace": "Hi Kyle,\n\nI recently applied to the Welkin Mechanical Field Engineer Intern for 2027. I'd love to connect\nwith you to learn more about your work and the company culture.\n\nWould you be down for a quick zoom meeting to connect?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
-      "updated": "2026-08-16T01:02:25.596Z"
+      "updated": "2026-08-16T01:03:27.497Z"
     }
   },
   "apps": {
@@ -1153,7 +1153,7 @@
     "msqvsziz-b76el2": {
       "company": "Welkin Mechanical",
       "applied": true,
-      "coldEmailed": false,
+      "coldEmailed": true,
       "connected": false,
       "role": "Field Engineer Intern",
       "date": "2026-08-12",
@@ -1164,7 +1164,7 @@
       "meetingOn": null,
       "closed": false,
       "deleted": false,
-      "updated": "2026-08-13T23:58:47.710Z",
+      "updated": "2026-08-16T01:03:27.497Z",
       "workspace": "",
       "outcome": ""
     },
