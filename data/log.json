@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-08-16T01:16:04.262Z",
+  "updated": "2026-08-16T19:42:38.799Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -123,7 +123,8 @@
       "nudgedOn": [],
       "closed": false,
       "deleted": false,
-      "updated": "2026-08-09T17:15:13.885Z"
+      "updated": "2026-08-16T19:39:28.354Z",
+      "muted": true
     },
     "msm2r0li-ntsdbw": {
       "name": "Jason Durant",
@@ -139,8 +140,9 @@
       "nudgedOn": [],
       "closed": false,
       "deleted": false,
-      "updated": "2026-08-16T00:47:36.572Z",
-      "workspace": ""
+      "updated": "2026-08-16T19:39:28.024Z",
+      "workspace": "",
+      "muted": true
     },
     "mso0kwok-sdnmuy": {
       "name": "Pele Collins",
@@ -779,6 +781,91 @@
       "deleted": false,
       "workspace": "Hi Carolyn,\n\nI recently applied to the Lexington Medical Engineering Intern position for 2027. I'd love to connect with you to learn more about your work and the company culture.\n\nWould you be down for a quick zoom meeting to connect?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
       "updated": "2026-08-16T01:15:48.601Z"
+    },
+    "msw7nwwl-qqx5va": {
+      "name": "Kathir Balakrishnan",
+      "company": "Texas Instruments",
+      "role": "Hiring",
+      "channel": "LinkedIn",
+      "email": "https://in.linkedin.com/in/kathir-balakrishnan-05a4472b",
+      "date": "",
+      "note": "Hiring · Welcome back · verified 2026-08-16",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "nudgedOn": [],
+      "closed": false,
+      "deleted": false,
+      "workspace": "Hi Kathir,\n\nI recently applied to the Texas Instruments Product/Test Engineering Intern position for 2027. I'd love to connect with you to learn more about you and the company culture.\n\nWould you be down for a quick zoom meeting to connect?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
+      "updated": "2026-08-16T19:41:46.196Z"
+    },
+    "msw7nwwl-t55boq": {
+      "name": "Mike Steinthal",
+      "company": "Texas Instruments",
+      "role": "Hiring",
+      "channel": "LinkedIn",
+      "email": "https://es.linkedin.com/in/mike-steinthal-a04b063b1",
+      "date": "",
+      "note": "Hiring · Technical Recruiter at Texas Instruments · unverified 2026-08-16",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "nudgedOn": [],
+      "closed": false,
+      "deleted": false,
+      "workspace": "Hi Mike,\n\nI recently applied to the Texas Instruments Product/Test Engineering Intern position for 2027. I'd love to connect with you to learn more about you and the company culture.\n\nWould you be down for a quick zoom meeting to connect?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
+      "updated": "2026-08-16T19:41:46.197Z"
+    },
+    "msw7nwwl-qxuo3o": {
+      "name": "Kevin Gable",
+      "company": "Texas Instruments",
+      "role": "VP Eng",
+      "channel": "LinkedIn",
+      "email": "https://www.linkedin.com/in/kevingable",
+      "date": "",
+      "note": "VP Eng · Engineering Manager at Texas Instruments · unverified 2026-08-16",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "nudgedOn": [],
+      "closed": false,
+      "deleted": false,
+      "workspace": "Hi Kevin,\n\nI recently applied to the Texas Instruments Product/Test Engineering Intern position for 2027. I'd love to connect with you to learn more about your work and the company culture.\n\nWould you be down for a quick zoom meeting to connect?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
+      "updated": "2026-08-16T19:41:46.197Z"
+    },
+    "msw7nwwl-cjm6qg": {
+      "name": "Minh Le",
+      "company": "Texas Instruments",
+      "role": "VP Eng",
+      "channel": "LinkedIn",
+      "email": "https://www.linkedin.com/in/minh-le-947417b",
+      "date": "",
+      "note": "VP Eng · Engineering Manager at Texas Instruments · unverified 2026-08-16",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "nudgedOn": [],
+      "closed": false,
+      "deleted": false,
+      "workspace": "Hi Minh,\n\nI recently applied to the Texas Instruments Product/Test Engineering Intern position for 2027. I'd love to connect with you to learn more about your work and the company culture.\n\nWould you be down for a quick zoom meeting to connect?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
+      "updated": "2026-08-16T19:41:46.197Z"
+    },
+    "msw7oy7l-oodaby": {
+      "name": "Yongning Ma",
+      "company": "Texas Instruments",
+      "role": "BU eng",
+      "channel": "LinkedIn",
+      "email": "https://www.linkedin.com/in/yongning-ma/",
+      "date": "2026-08-16",
+      "note": "Hi Yongning,\n\nI'm an engineering student at BU and I've been following what [company] is doing. I'd love to connect with you to learn more about your work and the company culture.\n\nWould you be down for a quick zoom meeting to connect?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "nudgedOn": [],
+      "closed": false,
+      "deleted": false,
+      "workspace": "Hi Yongning,\n\nI recently applied to the Texas Instruments Product/Test Engineering Intern position for 2027. I'd love to connect with you to learn more about your work and the company culture.\n\nWould you be down for a quick zoom meeting to connect?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
+      "updated": "2026-08-16T19:42:34.545Z"
     }
   },
   "apps": {
