@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-08-16T20:16:11.654Z",
+  "updated": "2026-08-16T20:16:22.703Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -958,7 +958,7 @@
       "role": "BU eng",
       "channel": "LinkedIn",
       "email": "https://www.linkedin.com/in/brianhshin/",
-      "date": "2026-08-16",
+      "date": "",
       "note": "Hi Brianhshin,\n\nI was looking at Linkedin and I saw that you work that [company] where I'd love to intern at. \n\nWould you be down for a quick zoom meeting to connect to talk about your work and the company culture?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
       "responded": false,
       "respondedOn": null,
@@ -967,7 +967,7 @@
       "closed": false,
       "deleted": false,
       "workspace": "Hi Brian,\n\nI'm a mechanical engineering student at BU working on wearables and embedded systems. I'd love to connect and hear about your work at Anduril Industries and how BU helped you.\n\nWould you be down for a quick zoom meeting to connect?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
-      "updated": "2026-08-16T20:16:11.654Z"
+      "updated": "2026-08-16T20:16:22.703Z"
     },
     "msw8le0w-gvueed": {
       "name": "Ryan Hunter",
