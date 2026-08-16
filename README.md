@@ -710,24 +710,53 @@ wording (BU mech-e, biosensors/HMI, Summer 2027); edit them to taste, then hit
 **Done editing drafts** — that saves and closes the drawer in one tap. **Reset to
 defaults** puts the built-in wording back.
 
-### Five drafts, and you never pick one
+### Six drafts, and you never pick one
 
-There are **five** templates on two axes — the channel you're writing in, and
-whether this is the first message or a chase:
+There are **six** templates on two axes — the channel you're writing in, and
+whether this is the first message or a chase. Each first message has a second
+version for **BU engineers**:
 
 | | First message | Follow-up |
 |---|---|---|
-| **Email** | Email · first message | Email · follow-up |
-| **LinkedIn** | LinkedIn · first message *(applied / not applied)* | LinkedIn · follow-up |
+| **Email** | Email · first message *(plain / BU engineer)* | Email · follow-up |
+| **LinkedIn** | LinkedIn · first message *(plain / BU engineer)* | LinkedIn · follow-up |
 
 A LinkedIn note and a cold email are not the same piece of writing — one goes in
 a connection request and has to be short — so they're separate templates rather
 than one draft you reword every time.
 
-**The app picks from the contact's channel**, so there's no dropdown and no
-choosing. The LinkedIn first message has two versions and the **Companies** table
-decides between them: marked **Applied** gets the "I recently applied…" wording,
-anything else gets the one that makes no such claim.
+**The app picks from the contact's channel and role**, so there's no dropdown and
+no choosing.
+
+#### The BU opener
+
+`BU Eng` is the bucket that exists because you already share something — least
+gatekeeping, by far the easiest yes — and that fact was going into the drafts
+nowhere. So both first messages have a BU version, and the shared school leads:
+
+```
+Fellow BU engineer here — I'm a mechanical engineering student at Boston
+University working on biosensors and wearables…
+```
+
+It keys off the contact's **role** being `BU Eng`, which is only ever set from
+Boston University appearing in their **Education** and is never guessed from a
+job title — so "I saw you went to BU as well" is a claim the app established
+before writing it. Set the role by hand and the draft follows.
+
+#### The applied / not-applied fork is gone
+
+The LinkedIn opener used to have two versions and the **Companies** table chose
+between them: marked **Applied** got "I recently applied to the {company}
+{internship}…", anything else got wording that made no such claim. That's now one
+template. Both versions said the same thing to the reader — you'd like to talk —
+while doubling the wording to keep in sync, and the difference mattered to the
+app's conscience rather than to the person receiving it. If you want to mention
+an application, it's one line in the template.
+
+Your old `applied` wording is **left in `localStorage` rather than deleted**, so
+nothing you wrote is gone; it's simply no longer used. (Tapping **Reset to
+defaults** does clear it, along with everything else.)
 
 Every copy button **names what it will actually hand you**, and relabels itself
 live as you change the channel — `📋 Copy draft` told you nothing about whether
@@ -757,8 +786,9 @@ Placeholders substituted automatically:
 because it's the same for everyone you know there. A draft saying "I applied to
 the Marotta VP Eng" is what using the wrong one looks like.
 
-There are **four** templates. `applied` and `connect` are the short LinkedIn
-connect notes used by ⚡ Auto-populate; `outreach` and `followup` are the emails.
+The six keys, as stored: `outreach` and `outreachBU` are the emails, `connect`
+and `connectBU` the short LinkedIn connect notes, `followup` and `liFollowup` the
+two chases.
 
 A placeholder with **no value on file** comes through as a visible `[company]`
 rather than an empty gap — you notice `at [company]` before sending; you don't
@@ -895,17 +925,21 @@ A search **snippet** has no Education section to scope to, so the strict spellin
 is used there and it only decides which pair to *try* someone in. The profile read
 is what settles it.
 
-### The draft, and the claim it won't make
+### The draft it writes into the Note
 
-The Note is drafted from your **companies table**, not from the person:
+The Note gets the LinkedIn first message, picked the same way every other copy
+button picks — `connectBU` when the profile put Boston University in their
+education, `connect` otherwise. The status line always says which it used:
 
-- that company is in your list and marked **Applied** → the `applied` draft,
-  *"I recently applied to the {company} {internship} for 2027…"*
-- anything else → the `connect` draft, which says the same thing minus any claim
-  that you applied.
+```
+Filled in. Used the LinkedIn · first message (BU engineer) draft — Boston
+University is on their profile, so it opens on the school you share.
+```
 
-The app will not put an application you didn't make into your own outbox, so the
-companies table decides. The status line always says which draft it used and why.
+This used to fork on whether the company was marked **Applied**, and kept its own
+copy of that rule. It now calls `firstContactKind()` like everything else, so the
+⚡ preview can't drift from what 📋 Copy or the send queue would hand you.
+
 If the Note already has text, the draft is **appended** after a blank line.
 
 ### Company names get matched to your list
