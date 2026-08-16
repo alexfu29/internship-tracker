@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-08-16T01:14:18.757Z",
+  "updated": "2026-08-16T01:15:48.601Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -729,16 +729,18 @@
       "role": "Hiring",
       "channel": "LinkedIn",
       "email": "https://www.linkedin.com/in/laura-g-4b95b847",
-      "date": "",
+      "date": "2026-08-15",
       "note": "Hiring · Senior Talent Acquisition Partner @ Lexington Medical · unverified 2026-08-15",
       "responded": false,
       "respondedOn": null,
       "meetingOn": null,
-      "nudgedOn": [],
+      "nudgedOn": [
+        "2026-08-15"
+      ],
       "closed": false,
       "deleted": false,
       "workspace": "Hi Laura,\n\nI recently applied to the Lexington Medical Engineering Intern position for 2027. I'd love to connect with you to learn more about you and the company culture.\n\nWould you be down for a quick zoom meeting to connect?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
-      "updated": "2026-08-16T01:14:18.757Z"
+      "updated": "2026-08-16T01:15:48.601Z"
     },
     "msv3ttu3-d17a2x": {
       "name": "Andrew Marecki",
@@ -746,16 +748,18 @@
       "role": "VP Eng",
       "channel": "LinkedIn",
       "email": "https://www.linkedin.com/in/andrewmarecki",
-      "date": "",
+      "date": "2026-08-15",
       "note": "VP Eng · VP of Technology at Lexington Medical · unverified 2026-08-15",
       "responded": false,
       "respondedOn": null,
       "meetingOn": null,
-      "nudgedOn": [],
+      "nudgedOn": [
+        "2026-08-15"
+      ],
       "closed": false,
       "deleted": false,
       "workspace": "Hi Andrew,\n\nI recently applied to the Lexington Medical Engineering Intern position for 2027. I'd love to connect with you to learn more about your work and the company culture.\n\nWould you be down for a quick zoom meeting to connect?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
-      "updated": "2026-08-16T01:14:13.564Z"
+      "updated": "2026-08-16T01:15:48.601Z"
     },
     "msv3ttu3-qpp04a": {
       "name": "Carolyn Abrams",
@@ -763,16 +767,18 @@
       "role": "VP Eng",
       "channel": "LinkedIn",
       "email": "https://www.linkedin.com/in/carolyn-abrams-84128930",
-      "date": "",
+      "date": "2026-08-15",
       "note": "VP Eng · Welcome back · CHECK: listed as leadership, but the profile title doesn't read that way (2026-08-15)",
       "responded": false,
       "respondedOn": null,
       "meetingOn": null,
-      "nudgedOn": [],
+      "nudgedOn": [
+        "2026-08-15"
+      ],
       "closed": false,
       "deleted": false,
       "workspace": "Hi Carolyn,\n\nI recently applied to the Lexington Medical Engineering Intern position for 2027. I'd love to connect with you to learn more about your work and the company culture.\n\nWould you be down for a quick zoom meeting to connect?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
-      "updated": "2026-08-16T01:14:15.854Z"
+      "updated": "2026-08-16T01:15:48.601Z"
     }
   },
   "apps": {
@@ -1058,7 +1064,7 @@
     "mspe3qgh-f2u530": {
       "company": "Lexington Medical",
       "applied": true,
-      "coldEmailed": false,
+      "coldEmailed": true,
       "connected": false,
       "role": "Engineering Intern",
       "date": "2026-08-13",
@@ -1069,7 +1075,7 @@
       "meetingOn": null,
       "closed": false,
       "deleted": false,
-      "updated": "2026-08-16T01:14:10.518Z",
+      "updated": "2026-08-16T01:15:48.601Z",
       "workspace": "",
       "outcome": ""
     },
