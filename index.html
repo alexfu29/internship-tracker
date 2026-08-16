@@ -345,10 +345,14 @@
     background: var(--surface-2); color: var(--text-primary);
     font-size: 0.88rem; font-family: inherit; line-height: 1.5; resize: none;
   }
-  .ws-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  /* Two buttons now, on a 340px panel: they group to the right and the label
+     is allowed to drop onto its own line rather than squeezing them off it. */
+  .ws-foot { display: flex; align-items: center; justify-content: space-between;
+    gap: 8px; flex-wrap: wrap; }
   .ws-foot button.secondary { width: auto; padding: 6px 10px; margin: 0; flex: 0 0 auto;
     min-height: 34px; font-size: 0.78rem; }
-  .ws-saved { font-size: 0.7rem; color: var(--text-muted); }
+  .ws-foot-btns { display: flex; gap: 6px; flex: 0 0 auto; margin-left: auto; }
+  .ws-saved { font-size: 0.7rem; color: var(--text-muted); flex: 1 1 90px; min-width: 0; }
   .field { margin-bottom: 10px; }
   .field label { display: block; font-size: 0.78rem; color: var(--text-secondary); margin-bottom: 4px; }
   .field label .opt { color: var(--text-muted); font-weight: 400; }
@@ -1003,7 +1007,13 @@
     <textarea id="workspaceText" aria-label="Workspace notes for this entry"></textarea>
     <div class="ws-foot">
       <span class="ws-saved" id="workspaceSaved">Saves as you type</span>
-      <button type="button" class="secondary" id="workspaceCopy">📋 Copy</button>
+      <div class="ws-foot-btns">
+        <!-- Contacts only: a company has no draft to write. Hidden rather than
+             disabled, since "disabled" would read as broken. -->
+        <button type="button" class="secondary" id="workspaceRepop"
+          title="Throw this text away and write a fresh draft from what the tracker holds now">♻ Repopulate</button>
+        <button type="button" class="secondary" id="workspaceCopy">📋 Copy</button>
+      </div>
     </div>
   </div>
 </aside>
@@ -2836,6 +2846,7 @@
   var wsText = document.getElementById("workspaceText");
   var wsSaved = document.getElementById("workspaceSaved");
   var wsTitle = document.getElementById("workspaceTitle");
+  var wsRepop = document.getElementById("workspaceRepop");
   var wsTimer = null;
   var wsOpenFor = null;   // { bag, id } of the entry the popup is editing
 
@@ -2873,6 +2884,7 @@
     wsPop.classList.add("open");
     wsPop.setAttribute("aria-hidden", "false");
     document.body.classList.add("ws-side");
+    syncRepopBtn();
     if (!noFocus) wsText.focus();
   }
 
@@ -2889,6 +2901,7 @@
     wsPop.classList.add("open");
     wsPop.setAttribute("aria-hidden", "false");
     document.body.classList.add("ws-side");   // shifts the dialog to make room
+    syncRepopBtn();
     if (!noFocus) wsText.focus();
   }
   function hideWorkspace() {
@@ -2927,6 +2940,85 @@
   document.getElementById("workspaceClose").addEventListener("click", closeWorkspace);
   document.getElementById("workspaceCopy").addEventListener("click", function () {
     copyText(wsText.value, this);
+  });
+
+  /* ---- ♻ Repopulate: throw the draft away and write a fresh one ----
+     🔍 Find contacts writes the draft into the workspace at the moment it
+     creates the row, so a company you hadn't filled in yet — no internship
+     on file, not yet marked Applied — bakes a literal [internship], or the
+     wrong template entirely, into six workspaces at once. Fixing the company
+     row afterwards did nothing to them: the only way out was deleting the
+     contact and finding them again, which throws away the search.
+
+     So this regenerates from what the tracker holds *now*. It is destructive
+     on purpose — wiping what's there is the whole point — so it asks first,
+     and afterwards it names the template it used and any placeholder still
+     unfilled, rather than leaving you to diff two drafts by eye.
+     ---------------------------------------------------------------- */
+  var TPL_NAMES = {
+    outreach:   "Email · first message",
+    followup:   "Email · follow-up",
+    applied:    "LinkedIn · first message (applied)",
+    connect:    "LinkedIn · first message",
+    liFollowup: "LinkedIn · follow-up"
+  };
+
+  // Which draft this entry wants, and what to draft it from. Companies and a
+  // pending company get nothing — there is no such thing as a draft to a
+  // company — and the caller reads null as "hide the button".
+  function wsRepopFor() {
+    if (!wsOpenFor) return null;
+    if (wsOpenFor.pending) {
+      if (!wsOpenFor.isContact) return null;
+      // Nothing has been sent to a contact that doesn't exist yet, so it's
+      // the opener regardless of the date the form prefilled.
+      var f = formContact();
+      return { c: f, kind: firstContactKind(f), live: null };
+    }
+    if (wsOpenFor.bag !== "contacts") return null;
+    var e = wsEntry();
+    if (!e) return null;
+    // Already written to → the chase is the draft you want. Never contacted
+    // (every row 🔍 Find contacts makes) → the opener. Same split the send
+    // queue uses, so the two can't hand you different drafts.
+    return { c: e, kind: e.date ? followupKind(e) : firstContactKind(e), live: e };
+  }
+
+  function syncRepopBtn() {
+    wsRepop.style.display = wsRepopFor() ? "" : "none";
+  }
+
+  wsRepop.addEventListener("click", function () {
+    var t = wsRepopFor();
+    if (!t) return;   // button is hidden anyway; belt and braces
+    var had = wsText.value.trim();
+    if (had && !confirm("Replace everything in this workspace with a freshly " +
+      "generated draft? What you've written here will be lost.")) return;
+
+    var text = draftFor(t.c, t.kind);
+    wsText.value = text;
+
+    var what = TPL_NAMES[t.kind] || t.kind;
+    if (t.live) {
+      // Write it through immediately rather than leaning on the debounce: a
+      // button that says it replaced your text has to have replaced it.
+      var ok = flushWorkspace();
+      wsSaved.textContent = ok
+        ? "Repopulated from " + what
+        : "⚠ Entry is gone — copy your text out";
+      if (!ok) return;
+    } else {
+      wsSaved.textContent = "Repopulated from " + what + " — saved when you save the entry";
+    }
+
+    // Same known-placeholder list the send queue blocks on, so the two can't
+    // disagree about what counts as unfilled.
+    var left = text.match(new RegExp(OB_PLACEHOLDER.source, "g")) || [];
+    if (left.length) {
+      var uniq = left.filter(function (p, i) { return left.indexOf(p) === i; });
+      wsSaved.textContent += " · still missing " + uniq.join(" ");
+    }
+    if (t.live) render();   // the 📝 button's ● dot may have just come on
   });
 
   document.addEventListener("keydown", function (ev) {
@@ -3128,9 +3220,92 @@
      ---------------------------------------------------------------- */
   var LP_NOISE = /^(sign in|join now|view |people also|about$|articles by|courses by|activity$|experience$|education$|skills$|contact info)/i;
 
+  /* ---- BU, read off Education rather than off the page -----------
+     `BU Eng` is the one bucket that rests entirely on a fact about the
+     person, so it's the one where a loose match does real damage.
+     Testing the whole page for "boston university" fires on a "People
+     also viewed" sidebar, a reposted BU article, or someone who works
+     at Boston University Medical Center — none of which is a degree —
+     and it misses "BU", "Boston Univ." and "Questrom".
+
+     So: find the Education section and look only in there. Two rules
+     fall out of that, and both are deliberate.
+
+     If there IS an Education section and BU isn't in it, that's the
+     strongest "no" available — stronger than a match anywhere else on
+     the page, which is why a hit outside it is reported and then
+     rejected rather than quietly counted.
+
+     If there ISN'T one — the logged-out view often omits it — a page
+     match is all there is, and that isn't enough to call something
+     verified. It comes back as evidence marked weak, and the caller
+     turns that into `check this` rather than a claim. Pasting the
+     page while signed in always produces the section, and the row
+     already offers exactly that.
+     ---------------------------------------------------------------- */
+  // "BU" alone is only safe inside the Education block, where it can't be
+  // anything but the school. Everywhere else it needs the full name.
+  var RE_BU_ANY = /boston univ(?:ersity)?\b|questrom/i;
+  var RE_BU_EDU = /boston univ(?:ersity)?\b|questrom|\bBU\b/i;
+
+  /* The lines under a section heading, in either shape the parser sees:
+     "## Education" from the reader, or a bare "Education" line from a
+     page you copied yourself. Ends at the next heading of either kind. */
+  function sectionText(text, heading) {
+    var lines = String(text || "").split(/\r?\n/);
+    var head = new RegExp("^\\s*(?:#{1,6}\\s+)?" + heading + "\\s*$", "i");
+    var start = -1;
+    for (var i = 0; i < lines.length; i++) {
+      if (head.test(lines[i])) { start = i + 1; break; }
+    }
+    if (start === -1) return "";
+    var out = [];
+    for (var j = start; j < lines.length; j++) {
+      var l = lines[j];
+      if (/^\s*#{1,6}\s+\S/.test(l) || RE_SECTION.test(l)) break;
+      out.push(l);
+    }
+    return out.join("\n");
+  }
+
+  // The whole line the match sits on, so a row can quote the degree rather
+  // than just asserting "BU". Capped: some of these lines run long.
+  function quoteLine(block, re) {
+    var hit = block.split(/\r?\n/).filter(function (l) { return re.test(l); })[0] || "";
+    hit = hit.replace(/^[\s#*\->|]+/, "").replace(/\s+/g, " ").trim();
+    return hit.length > 90 ? hit.slice(0, 87) + "…" : hit;
+  }
+
+  /* null = nothing found. Otherwise { ok, strong, quote, why } — `why` is
+     written to be shown to you verbatim, because "BU Eng" on its own is the
+     app asserting something you can't check. */
+  function buEvidence(text) {
+    var edu = sectionText(text, "Education");
+    if (edu) {
+      if (RE_BU_EDU.test(edu)) {
+        return { ok: true, strong: true, quote: quoteLine(edu, RE_BU_EDU),
+                 why: "Boston University under Education" };
+      }
+      if (RE_BU_ANY.test(text)) {
+        return { ok: false, strong: false, quote: quoteLine(text, RE_BU_ANY),
+                 why: "Boston University is on the page but not in their Education — " +
+                      "usually a sidebar or a repost, not a degree" };
+      }
+      return null;
+    }
+    if (RE_BU_ANY.test(text)) {
+      return { ok: true, strong: false, quote: quoteLine(text, RE_BU_ANY),
+               why: "Boston University on the page, but this view has no Education " +
+                    "section to confirm it against" };
+    }
+    return null;
+  }
+
   function parseLinkedIn(text) {
     var t = String(text || "");
-    var out = { name: "", company: "", title: "", hasBU: /boston university/i.test(t) };
+    var bu = buEvidence(t);
+    var out = { name: "", company: "", title: "",
+                bu: bu, hasBU: !!(bu && bu.ok) };
 
     var h1 = t.match(/^# +(.+?)\s*$/m);
     if (h1) out.name = h1[1].trim();
@@ -3292,7 +3467,8 @@
   function lpFallback(url, why) {
     lpStatus(why + " Filled in what the URL gives — open the profile, select all, copy, " +
       "and paste it here for the company and their role.", true);
-    lpShow({ name: nameFromSlug(slugFrom(url)), company: "", title: "", hasBU: false, url: url });
+    lpShow({ name: nameFromSlug(slugFrom(url)), company: "", title: "",
+             bu: null, hasBU: false, url: url });
   }
 
   /* ---- preview, then apply ---- */
@@ -3314,8 +3490,13 @@
       (known && known !== got.company)
         ? "· matched “" + got.company + "” to your list"
         : (taken("cCompany") ? "· keeping what you typed" : ""));
+    // The BU line quotes what it read rather than asserting the affiliation:
+    // this is the one bucket you can't sanity-check from the job title.
+    var buSaid = got.bu
+      ? " · " + got.bu.why + (got.bu.quote ? " (“" + got.bu.quote + "”)" : "")
+      : "";
     html += lpRow("Their role", got.bucket,
-      got.title ? "· LinkedIn says “" + got.title + "”" + (got.hasBU ? " · Boston University on profile" : "") : "");
+      got.title ? "· LinkedIn says “" + got.title + "”" + buSaid : buSaid.replace(/^ · /, "· "));
     if (got.url) html += lpRow("Profile", got.url, taken("cEmail") ? "· keeping what you typed" : "");
     html += '<div class="lp-acts">' +
       '<button type="button" class="primary" id="lpUse">Use these</button>' +
@@ -3777,8 +3958,9 @@
       return "exec";
     }
     // BU has to come off the evidence, never a job title — same rule the
-    // profile parser follows.
-    if (/boston university/i.test(hay)) return "bu";
+    // profile parser follows. A search snippet has no Education section to
+    // scope to, so this is the strict spelling; verify does the real check.
+    if (RE_BU_ANY.test(hay)) return "bu";
     if (RE_HIRING.test(hay)) return "hiring";
     return "";
   }
@@ -3878,7 +4060,7 @@
           if (!p || !p.name || seen[p.linkedin]) return;
           // The result snippet usually names the school outright, which is the
           // BU evidence — worth keeping before the profile read confirms it.
-          p.snippetBU = /boston university/i.test(h.snippet || "");
+          p.snippetBU = RE_BU_ANY.test(h.snippet || "");
           seen[p.linkedin] = true; pool.push(p);
         });
         // Spaced for the same reason the profile reads are.
@@ -4153,9 +4335,13 @@
     var claimT = p.claimTitle;
     if (got.name) p.name = got.name;
     if (got.title) p.title = got.title;
-    p.buNote = (p.category === "bu")
-      ? (got.hasBU ? "Boston University on the profile" : "no Boston University on the public profile")
-      : "";
+    // Quote the evidence rather than assert the affiliation. This note is
+    // carried onto the contact row, so it's the only record of *why* someone
+    // was filed as BU once the finder is closed.
+    var bu = got.bu;
+    p.buNote = (p.category !== "bu") ? ""
+      : bu ? bu.why + (bu.quote ? ": “" + bu.quote + "”" : "")
+           : "no Boston University anywhere on the public profile";
     var sameCo = got.company ? sameCompany(got.company, FS.company) : false;
     // The bucket is a claim too: an "exec" whose real title reads like an
     // individual contributor is the same kind of error as a wrong employer.
@@ -4163,9 +4349,15 @@
     if (got.company && !sameCo) {
       p.verdict = "mismatch";
       p.claimNote = "profile says " + got.company + ", not " + FS.company;
-    } else if (p.category === "bu" && !got.hasBU) {
+    } else if (p.category === "bu" && !(bu && bu.ok)) {
       p.verdict = "mismatch";
-      p.claimNote = "no Boston University on the public profile";
+      p.claimNote = bu ? bu.why : "no Boston University anywhere on the public profile";
+      // Evidence with no Education section behind it is the reason this row
+      // says "check this" instead of "verified" — it hasn't been disproved,
+      // it just hasn't been established, and pasting the page settles it.
+    } else if (p.category === "bu" && !bu.strong) {
+      p.verdict = "mismatch";
+      p.claimNote = bu.why + " — paste the page to confirm the degree";
     } else if (!bucketOk) {
       p.verdict = "mismatch";
       p.claimNote = "listed as leadership, but the profile title doesn't read that way";
@@ -4525,9 +4717,19 @@
       h += '<p class="ob-rest">Not shown: ' + escapeHtml(bits.join(" · ")) + ".</p>";
     }
 
-    h += '<p class="ob-rest">Staging does not send anything. Each one is ' +
-      'rendered and screenshotted on this computer, then waits for you on the ' +
-      'agent\'s review page.</p>';
+    // This used to promise a rendered, screenshotted batch waiting on the
+    // agent's review page. None of that has been true since the deck moved
+    // into this dialog, and it read as "you need to install something" —
+    // which is a reason not to press the one button that opens the deck.
+    h += '<p class="ob-rest">Staging does not send anything. It hands you the ' +
+      'batch one card at a time, right here: open the profile or a compose ' +
+      'window, send it yourself, then tick <strong>✓ Sent — next</strong> or ' +
+      '<strong>Skip</strong>.' +
+      (SETTINGS.reviewIn === "agent"
+        ? " You've set these to go to the local agent instead, so it needs to be " +
+          "running — its start command is in Settings."
+        : "") +
+      "</p>";
 
     h += '<div class="lp-acts">' +
       '<button type="button" class="primary" id="obGo"' +
@@ -4598,7 +4800,7 @@
           ? '<button type="button" class="secondary" id="dkCopySubj">📋 Copy subject</button>'
           : "") +
         '<button type="button" class="secondary" id="dkOpen">' +
-        (isEmail ? "✉ Open compose" : "🔗 Open profile") + "</button>" +
+        (isEmail ? "✉ Open compose" : "🔗 Copy note & open profile") + "</button>" +
         '<span class="dk-right">' +
         '<button type="button" class="primary" id="dkSent">✓ Sent — next</button>' +
         '<button type="button" class="secondary" id="dkSkip">Skip</button></span></div>';
@@ -4660,6 +4862,13 @@
         ? gmailComposeUrl(job.to, job.subject, job.body)
         : linkHref(job.profileUrl);
       if (!url) { OB.status = "No usable link for this one."; OB.bad = true; renderOutbox(); return; }
+      // A LinkedIn connect box can't be pre-filled from a URL the way a Gmail
+      // compose window can, so the note has to travel on the clipboard. Copy
+      // it on the way out rather than making you come back for it — and copy
+      // *before* opening, because the clipboard write needs this document
+      // focused and the new tab takes that away. Both stay in the one click,
+      // so the popup blocker still sees a gesture.
+      if (!isEmail) copyText(job.body);
       window.open(url, "_blank", "noopener,noreferrer");
     });
 

@@ -265,10 +265,65 @@ The page underneath never moves either way.
 - The **📝 button shows a dot** when there's already something written in there, so
   you can tell without opening it.
 - **📋 Copy** puts the whole thing on the clipboard.
+- **♻ Repopulate** wipes it and writes a fresh draft — see below.
 - Tapping **📝 Workspace** again puts it away, as does **✕** or **Escape**.
 
 The workspace never re-points at another entry: opening a different one closes it
 first, after saving. That's how notes would end up on the wrong person.
+
+### ♻ Repopulate
+
+**🔍 Find contacts** writes the draft into the workspace at the moment it creates
+the row. So a company you hadn't finished filling in — no role on it yet, not yet
+marked **Applied** — bakes a literal `[internship]`, or the wrong template
+entirely, into six workspaces at once. Fixing the company row afterwards did
+nothing to them: the only way out was deleting the contact and finding them again,
+which throws away the search that found them.
+
+**♻ Repopulate** regenerates the draft from what the tracker holds *now*, in
+place. Fill in the company, tap it, and the six drafts are right.
+
+It is destructive on purpose — wiping what's in there is the entire point — so it
+**asks first** whenever there's anything to lose, and on an empty workspace it just
+writes. **✕** and **Escape** are unaffected; this is the one button here that
+throws text away.
+
+Afterwards the label **names the template it used and any placeholder still
+unfilled**:
+
+```
+Repopulated from LinkedIn · first message · still missing [internship]
+```
+
+Naming both is the point. Two drafts differing in one clause is not something you
+can diff by eye, so a button that silently swapped them would leave you re-reading
+the whole thing to find out whether it did anything — and a second `[internship]`
+is exactly the gap you tapped it to close. Unfilled placeholders are read with the
+same list the send queue blocks on, so the two can't disagree about what counts.
+
+Which of the five drafts you get is **not a choice you make**, same as everywhere
+else:
+
+| The contact | What you get |
+|---|---|
+| no date on it — every row 🔍 Find contacts creates | the **first message**, in their channel |
+| already contacted | the **follow-up**, in their channel |
+
+That's the same split **✉ Send queue** groups by, so the two can't hand you
+different drafts for the same person.
+
+**Companies don't have the button** — there's no such thing as a draft to a
+company. It's hidden rather than greyed out, since a disabled button reads as
+broken.
+
+On **＋ Cold contact** it's there before the row exists, drafting from what you've
+typed into the form so far; the label says `saved when you save the entry`, because
+that's still true of everything in the pending workspace.
+
+One thing it deliberately does **not** read: unsaved edits sitting in the form
+next to it. It regenerates from the saved entry, the same source the dialog's
+`📋 Copy` buttons use. Change the company on a contact and **Save changes** first,
+then repopulate.
 
 This is separate from the form's short **Note** field, which stays where it is. The
 note is the one-line "how did this go"; the workspace is where you draft the actual
@@ -497,11 +552,34 @@ Applications deliberately **do not** get a red flag — a quiet application at d
 
 Above the contacts table: tick people, hit **Stage N**, and you land in a deck
 you work down one card at a time — read it, **📋 Copy**, **✉ Open compose** or
-**🔗 Open profile**, send it yourself, **✓ Sent — next**. The card slides away
-and the next is dealt.
+**🔗 Copy note & open profile**, send it yourself, **✓ Sent — next** (or
+**Skip**). The card slides away and the next is dealt.
 
 **Nothing here sends anything.** It does the fetching and filling; the judgement
 and the click stay yours.
+
+**Staging is the only door to the deck**, and the picker used to describe it as
+sending your batch off to be "rendered and screenshotted" and left "on the
+agent's review page" — none of which had been true since the deck moved into
+this dialog. It read as *you need to install something first*, which is a good
+reason never to press the button, and without pressing it there is no card, no
+**Skip** and no **✓ Sent — next**: just a list of previews and a LinkedIn URL to
+copy out by hand. The picker now says what actually happens, and says it
+differently if you've switched reviewing to the local agent.
+
+### 🔗 Copy note & open profile
+
+One button, because on LinkedIn it's one action. A Gmail compose window can be
+pre-filled straight from a URL; **a LinkedIn connect box can't**, so the note has
+to travel on the clipboard, and having to come back to the deck for it after
+opening the profile is the step that makes a batch feel like work.
+
+It copies **before** it opens, which is not cosmetic: a clipboard write needs
+this document focused and the new tab takes that away. Both happen inside the one
+click, so the popup blocker still sees a real gesture.
+
+Email is unchanged — **✉ Open compose** already carries the subject and body into
+the compose window, so there is nothing to copy.
 
 Who shows up: **First message** (no contact date yet) and **Follow-up** (the
 `dueNudges()` set). Rows that can't be sent are shown greyed **with the reason**
@@ -709,11 +787,52 @@ isn't the thing you need:
 | `BU Eng` | **Boston University** engineers there — least gatekeeping, by far the easiest yes, because you already share something |
 
 `BU Eng` is deliberately **not** "any engineer". The BU connection is the entire
-point of the bucket, so it's set from Boston University actually appearing on the
-profile — never guessed from a job title. Their real title isn't thrown away: the
+point of the bucket, so it's set from Boston University actually appearing in
+their **Education** — never guessed from a job title, and never from the rest of
+the page. Their real title isn't thrown away: the
 preview shows it (`filed as VP Eng · LinkedIn says "Chairman and CEO"`) so you can
 see what was decided and overrule it before saving. With nothing to go on the role
 is left **blank** rather than guessed.
+
+### Where the BU evidence comes from
+
+`BU Eng` is the one bucket resting entirely on a fact about the person rather
+than on their title, so it's the one where a loose match does real damage. It
+used to test the whole page for "boston university", which fires on things that
+aren't a degree — a **People also viewed** sidebar, a reposted BU article, a lab
+manager who *works at* Boston University — and misses the ways people actually
+write it: `BU`, `Boston Univ.`, `Questrom`.
+
+So the page is sliced at its **Education** heading and only that block is read.
+Three outcomes, and the difference between them is the whole point:
+
+| What's on the page | Verdict |
+|---|---|
+| Education section, BU in it | **BU Eng.** The strongest answer available |
+| Education section, BU only *outside* it | **not BU.** A hit elsewhere is reported and then rejected — the section not naming BU is a stronger "no" than a sidebar is a "yes" |
+| no Education section (the logged-out view often omits it) | **evidence, marked weak.** 🔍 Find contacts turns that into `check this`, not `verified` |
+
+Inside the Education block `BU` on its own is unambiguous, so the abbreviation
+counts there and only there; everywhere else it takes the full name.
+
+Nothing here calls a model, and nothing extra leaves your machine — it reads the
+same text the profile reader already fetched, or the page you pasted. **Pasting
+the page while signed in always produces an Education section**, which is what
+turns a weak read into a settled one, and every unverified row already offers
+📋 paste the page to check it.
+
+The evidence is **quoted rather than asserted**, in the ⚡ preview, in the 🔍
+review, and in the note written onto the created contact — because `BU Eng` on
+its own is a claim you can't check once the finder is closed:
+
+```
+BU Eng · LinkedIn says "Senior Mechanical Engineer" ·
+  Boston University under Education ("Boston University — BS, Mechanical Engineering")
+```
+
+A search **snippet** has no Education section to scope to, so the strict spelling
+is used there and it only decides which pair to *try* someone in. The profile read
+is what settles it.
 
 ### The draft, and the claim it won't make
 
@@ -760,7 +879,7 @@ Each row comes back as one of:
 | Verdict | Means |
 |---|---|
 | `verified` | the profile was read and its employer matches this company |
-| `check this` | read, but something disagrees — different employer, no BU on a `BU Eng` row, or a title that doesn't read like leadership on a `VP Eng` row |
+| `check this` | read, but something disagrees — different employer, a `BU Eng` row whose **Education** doesn't confirm BU (or that has no Education section to confirm it against), or a title that doesn't read like leadership on a `VP Eng` row |
 | `unverified` | couldn't be read at all, or there was no profile link |
 
 `verified` means **the profile page agreed** — not that this is the right person
@@ -839,6 +958,8 @@ title. Three details worth knowing:
   returns works at the company, so without the school there's nothing left
   distinguishing them. The pair comes back **empty with a note** rather than
   naming two strangers — the same rule as `⚡ Auto-populate`: never guessed.
+  At the verify stage that tightens to their **Education** specifically — see
+  "Where the BU evidence comes from".
 
 #### Picking two out of dozens
 
