@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-08-16T00:44:04.554Z",
+  "updated": "2026-08-16T00:46:19.369Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -931,7 +931,8 @@
       "meetingOn": null,
       "closed": false,
       "deleted": false,
-      "updated": "2026-08-12T01:07:17.814Z"
+      "updated": "2026-08-16T00:46:18.952Z",
+      "workspace": ""
     },
     "mspe3cyj-nb20nm": {
       "company": "RTX",
