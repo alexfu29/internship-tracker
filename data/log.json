@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-08-16T00:42:48.208Z",
+  "updated": "2026-08-16T00:44:04.554Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -1046,8 +1046,8 @@
       "respondedOn": null,
       "meetingOn": null,
       "closed": false,
-      "deleted": false,
-      "updated": "2026-08-13T01:23:25.026Z"
+      "deleted": true,
+      "updated": "2026-08-16T00:44:04.554Z"
     },
     "msqu2pbn-6ouykl": {
       "company": "Mortenson",
