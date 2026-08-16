@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-08-16T19:51:12.277Z",
+  "updated": "2026-08-16T19:55:12.907Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -856,7 +856,7 @@
       "role": "BU eng",
       "channel": "LinkedIn",
       "email": "https://www.linkedin.com/in/yongning-ma/",
-      "date": "",
+      "date": "2026-08-16",
       "note": "Hi Yongning,\n\nI'm an engineering student at BU and I've been following what [company] is doing. I'd love to connect with you to learn more about your work and the company culture.\n\nWould you be down for a quick zoom meeting to connect?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
       "responded": false,
       "respondedOn": null,
@@ -865,7 +865,7 @@
       "closed": false,
       "deleted": false,
       "workspace": "Hi Yongning,\n\nI was looking at Linkedin and I saw that you work that Texas Instruments where I'd love to intern at, and also go to BU.\n\nWould you be down for a quick zoom meeting to connect to talk about your work and how BU helped you get there?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
-      "updated": "2026-08-16T19:48:07.556Z"
+      "updated": "2026-08-16T19:55:12.907Z"
     },
     "msw7yaaz-zet4ga": {
       "name": "Maha Noor",
