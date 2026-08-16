@@ -29,7 +29,7 @@
    index.html — that one is what's displayed, and it is true by construction
    because it lives in the file being executed. */
 
-var VERSION = "2026-08-16b";
+var VERSION = "2026-08-16c";
 var CACHE = "internship-tracker-" + VERSION;
 var SHELL = "./";
 
@@ -68,13 +68,31 @@ self.addEventListener("fetch", function (e) {
   try { url = new URL(req.url); } catch (err) { return; }
   if (url.origin !== self.location.origin) return;   // see the note above
 
+  /* `cache: "no-cache"` is the whole point of this line, and leaving it off
+     made the first version of this file a no-op.
+
+     "Network-first" only means the worker asks the network before the Cache
+     API. It says nothing about the browser's own HTTP cache, which sits
+     underneath and will happily answer a plain fetch() from a still-fresh
+     entry — and GitHub Pages serves this file with max-age=600. So the ten
+     minutes of staleness this worker was written to eliminate flowed straight
+     through it: the page ran the previous build while the worker sat there
+     believing it had gone to the network.
+
+     no-cache does not mean "don't cache". It means revalidate: send the
+     ETag, take a 304 when nothing changed. So the cost is a conditional
+     request, not a re-download.
+
+     Requested by URL rather than by passing `req`, because a navigation
+     request cannot be reconstructed with a different cache mode. Same-origin
+     GET only, so nothing is lost by dropping the original Request object. */
   e.respondWith(
-    fetch(req).then(function (resp) {
+    fetch(req.url, { cache: "no-cache", credentials: "same-origin" }).then(function (resp) {
       // Only keep a copy of a real answer. Caching a 404 or an opaque error
       // would hand it back as the offline version forever after.
       if (resp && resp.ok && resp.type === "basic") {
         var copy = resp.clone();
-        caches.open(CACHE).then(function (c) { c.put(req, copy); });
+        caches.open(CACHE).then(function (c) { c.put(req.url, copy); });
       }
       return resp;
     }).catch(function () {
