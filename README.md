@@ -590,19 +590,57 @@ reason never to press the button, and without pressing it there is no card, no
 copy out by hand. The picker now says what actually happens, and says it
 differently if you've switched reviewing to the local agent.
 
-### 🔗 Copy note & open profile
+### Copy · both · open
 
-One button, because on LinkedIn it's one action. A Gmail compose window can be
-pre-filled straight from a URL; **a LinkedIn connect box can't**, so the note has
-to travel on the clipboard, and having to come back to the deck for it after
-opening the profile is the step that makes a batch feel like work.
+Three buttons on a LinkedIn card, left to right:
 
-It copies **before** it opens, which is not cosmetic: a clipboard write needs
-this document focused and the new tab takes that away. Both happen inside the one
-click, so the popup blocker still sees a real gesture.
+```
+[📋 Copy note]   [📋🔗 Copy & open]   [🔗 Open profile]
+```
 
-Email is unchanged — **✉ Open compose** already carries the subject and body into
-the compose window, so there is nothing to copy.
+The **middle** one is the whole job in one tap and is what you'll use nearly
+every time. A Gmail compose window can be pre-filled straight from a URL; **a
+LinkedIn connect box can't**, so the note has to travel on the clipboard, and
+coming back to the deck for it after opening the profile is the step that makes
+a batch feel like work.
+
+The other two stay because the pair comes apart often enough: you reread a note
+after opening the profile and want it on the clipboard again without a second
+tab, or the profile is already open beside you and a third copy of it is just
+clutter. One combined button forces the side effect you didn't ask for.
+
+**Copy & open copies before it opens**, which isn't cosmetic — a clipboard write
+needs this document focused and the new tab takes that away. Both happen inside
+the one click, so the popup blocker still sees a real gesture.
+
+Email keeps its own set: a compose URL already carries the subject and body, so
+there's nothing to copy on the way out and the middle slot is **📋 Copy subject**
+instead.
+
+### ♻ Repopulate, on a row that says it has a placeholder
+
+A row carrying `[company]` or any other `[placeholder]` can't be ticked. That
+marker exists so you notice before sending — but the fix was somewhere else
+entirely: close the queue, find the contact, open the Workspace, repopulate,
+come back.
+
+So the blocked row carries the button itself:
+
+```
+⚠ the draft still has an unfilled [placeholder] in it   ♻ Repopulate
+```
+
+Same regeneration and the same `draftFor()` as the Workspace button, so the two
+can't hand you different text. It reports both outcomes because they need
+different things from you:
+
+- the draft was stale — usually one 🔍 Find contacts wrote before the company
+  row was filled in — so it's rewritten, the row unblocks, and the Stage count
+  goes up.
+- the value genuinely isn't on file, and no amount of regenerating invents it.
+  It names what's still missing and where to put it (`[internship]` lives on the
+  **company** row), and **leaves the row blocked** rather than tidying the
+  warning away.
 
 Who shows up: **First message** (no contact date yet) and **Follow-up** (the
 `dueNudges()` set). Rows that can't be sent are shown greyed **with the reason**
@@ -967,6 +1005,36 @@ Together those take a search from nothing to 47–74 profiles per company.
 A search for `recruiter` happily returns a VP, and filing them under Hiring
 makes the app assert something it never established. It also feeds `{learn}`, so
 a mis-filed engineer gets a draft offering to "learn more about *you*".
+
+That rule had a back door until it was caught on a real search. The code read
+`searchCategory(p) || p.category` — bucket them by their title, **and if the
+title says nothing, keep the bucket of the query that found them**. So a run
+against a mechanical contractor filed an *Assistant Billing Engineer* and a
+*Project Engineer* under **Hiring**, purely because DuckDuckGo returned them for
+`"…" recruiter`. Scoring can't save this: `hitScore()` docks a non-hiring title,
+but docking only reorders, and when every candidate is wrong the top two are
+still wrong.
+
+**Every pair now needs positive evidence from the person themselves**, which is
+the rule `BU Eng` always had. Nothing established, no bucket, and the pair comes
+back empty. Naming two strangers as your recruiting contact is worse than naming
+none — and it feeds `{learn}`, so a mis-filed engineer gets a draft offering to
+learn about "you" rather than "your work".
+
+That makes empty pairs more common, so an empty one now says **which kind of
+empty it is**, because only one of them means your query was wrong:
+
+```
+No Hiring — the 4 profiles those searches found don't say recruiting
+in their title, so none were filed here.
+No BU Eng — those searches found nobody.
+```
+
+A small company often has no recruiter on LinkedIn at all, and that is a real
+answer rather than a failed search. Those counts are taken **before** the pool
+de-duplicates: someone the BU query found who an earlier query already returned
+still means the BU query found somebody, and counting off the pool reported it
+as having found nobody.
 
 Every query runs, results are pooled, then each person is bucketed from their own
 title. Three details worth knowing:

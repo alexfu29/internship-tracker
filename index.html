@@ -1342,7 +1342,7 @@
      tell those apart from a change that genuinely didn't work. This string
      lives in the file being executed, so it cannot lie about which file that
      is. It's shown at the bottom of Settings. */
-  var APP_VERSION = "2026-08-16d";
+  var APP_VERSION = "2026-08-16e";
   var swReady = false, swCacheVersion = "", swNote = "";
 
   /* ============================================================
@@ -1840,8 +1840,9 @@
      also feeds {learn}, so a mis-filed engineer gets "learn more about you"
      instead of "your work". "hiring manager" survives as an exact phrase. */
   var RE_HIRING = new RegExp(
-    "\\b(recruit\\w*|sourcer|staffing|hiring manager|human resources|hrbp|hr" +
+    "\\b(recruit\\w*|sourcer|staffing|hiring manager|human resources|hrbp|hr|chro" +
     "|people ops|people operations|university relations|campus recruit\\w*)\\b" +
+    "|\\bpeople (and|&) culture\\b" +
     "|\\btalent (acquisition|partner|management|team|sourcing|development)\\b" +
     "|\\b(chief|head|vp|svp|evp|vice president|director|manager) of " +
     "(people|talent|hr|human resources|recruit\\w*|staffing)\\b", "i");
@@ -3059,13 +3060,10 @@
       wsSaved.textContent = "Repopulated from " + what + " — saved when you save the entry";
     }
 
-    // Same known-placeholder list the send queue blocks on, so the two can't
-    // disagree about what counts as unfilled.
-    var left = text.match(new RegExp(OB_PLACEHOLDER.source, "g")) || [];
-    if (left.length) {
-      var uniq = left.filter(function (p, i) { return left.indexOf(p) === i; });
-      wsSaved.textContent += " · still missing " + uniq.join(" ");
-    }
+    // Same helper the send queue uses, so the two can't disagree about what
+    // counts as unfilled.
+    var left = missingPlaceholders(text);
+    if (left.length) wsSaved.textContent += " · still missing " + left.join(" ");
     if (t.live) render();   // the 📝 button's ● dot may have just come on
   });
 
@@ -4048,22 +4046,40 @@
     FS.phase = "searching"; FS.msg = ""; FS.progress = "Searching…";
     renderFinder();
 
-    var pool = [], seen = {};
+    // Distinct profiles each pair's own queries surfaced, counted before the
+    // pool de-duplicates. Someone the BU query found who was already in the
+    // pool from an earlier query still means that query found somebody, and
+    // counting off the pool instead reported it as having found nobody.
+    var pool = [], seen = {}, byQuery = { hiring: {}, exec: {}, bu: {} };
     function step(i) {
       if (!FS) return;
       if (i >= plan.length) {
-        // Bucket by what the title says, not by the query that surfaced them.
-        // A search for "recruiter" happily returns a VP, and filing them under
-        // Hiring made the app assert something it never established — which is
-        // also how {learn} ends up writing "learn more about you" to an
-        // engineer. The query's own bucket is only the fallback.
-        pool.forEach(function (p) {
-          p.category = searchCategory(p) || p.category;
-        });
+        /* Bucket by what the person's own title says — and by nothing else.
+           This used to read `searchCategory(p) || p.category`, falling back
+           to the bucket of the query that surfaced them, and that fallback
+           was the bug: DuckDuckGo answers `"Welkin Mechanical" recruiter`
+           with whoever it likes, so an Assistant Billing Engineer and a
+           Project Engineer were filed under Hiring purely for turning up in
+           a recruiter search. The README already said the query doesn't
+           decide the bucket; the code kept a back door where it did.
+
+           Now a hit with nothing established gets no bucket at all, and a
+           pair with nobody in it comes back empty and says so. That is the
+           rule `BU Eng` has always followed, and there was never a reason
+           the other two should be softer about it: naming two strangers as
+           the recruiting contact is worse than naming none. It also feeds
+           {learn}, so a mis-filed engineer gets a draft offering to learn
+           about "you" rather than "your work". */
+        pool.forEach(function (p) { p.category = searchCategory(p); });
         // Two slots per pair out of a pool that's now dozens deep, so which
         // two matters more than how many were found.
         pool.forEach(function (p) { p.score = hitScore(p, p.category); });
         var found = [], catCount = { hiring: 0, exec: 0, bu: 0 };
+        // An empty pair means two different things — the searches found
+        // nobody, or they found people whose titles don't support the claim —
+        // and only one of those is worth re-running with different wording.
+        var askedFor = {};
+        CAT_ORDER.forEach(function (c) { askedFor[c] = Object.keys(byQuery[c]).length; });
         CAT_ORDER.forEach(function (cat) {
           pool.filter(function (p) {
             if (p.category !== cat) return false;
@@ -4084,18 +4100,40 @@
         });
         if (!found.length) {
           FS.phase = "idle";
-          fsSay("The search ran but turned up no LinkedIn profiles for " + FS.company +
-            ". Try the paste route, or widen the wording in Settings.", true);
+          // "Found no profiles" and "found plenty, none of whom do these jobs"
+          // are different answers and only one of them means the query was
+          // wrong. Since buckets now demand evidence, the second is common at
+          // a small company with no recruiter on LinkedIn, and reporting it as
+          // the first would send you off rewriting a query that worked.
+          fsSay(pool.length
+            ? "Found " + pool.length + " profile" + (pool.length === 1 ? "" : "s") +
+              " at " + FS.company + ", but none of their titles say recruiting or " +
+              "engineering leadership, and none show Boston University — so nothing " +
+              "was filed. Small companies often have no recruiter on LinkedIn. Paste a " +
+              "profile you've found yourself, or widen the wording in Settings."
+            : "The search ran but turned up no LinkedIn profiles for " + FS.company +
+              ". Try the paste route, or widen the wording in Settings.", true);
           return;
         }
         found.forEach(function (p, n) { p.i = n; p.use = true; p.claimName = p.name;
           p.claimTitle = p.title; p.verdict = "unverified"; p.claimNote = ""; p.buNote = ""; });
         FS.people = found;
-        // Name the empty pairs. "3 found" alone reads like there are only three
-        // people at the company, rather than one search coming back empty.
+        // Name the empty pairs, and say which kind of empty. "3 found" alone
+        // reads like there are only three people at the company, rather than
+        // one search coming back empty — and "no Hiring turned up" reads like
+        // the search failed, when usually it worked and nobody it found does
+        // that job. Only the first is worth re-running with new wording.
         var gaps = CAT_ORDER.filter(function (c) { return !catCount[c]; })
-          .map(function (c) { return CATS[c].label; });
-        FS.gapNote = gaps.length ? "No " + gaps.join(" or ") + " turned up in search." : "";
+          .map(function (c) {
+            var n = askedFor[c];
+            if (!n) return "No " + CATS[c].label + " — those searches found nobody.";
+            return "No " + CATS[c].label + " — the " + n + " profile" + (n === 1 ? "" : "s") +
+              " those searches found don't say " +
+              (c === "hiring" ? "recruiting in their title"
+                : c === "exec" ? "engineering leadership in their title"
+                : "Boston University anywhere") + ", so none were filed here.";
+          });
+        FS.gapNote = gaps.join(" ");
         finderVerify();
         return;
       }
@@ -4105,7 +4143,12 @@
       runSearch(plan[i].q).then(function (hits) {
         hits.forEach(function (h) {
           var p = fromSearchResult(h, plan[i].cat);
-          if (!p || !p.name || seen[p.linkedin]) return;
+          if (!p || !p.name) return;
+          // Counted before the dedupe below, and not their bucket — that is
+          // read off their own title. This is only what lets an empty pair
+          // say whether its searches came back empty or came back wrong.
+          byQuery[plan[i].cat][p.linkedin] = true;
+          if (seen[p.linkedin]) return;
           // The result snippet usually names the school outright, which is the
           // BU evidence — worth keeping before the profile read confirms it.
           p.snippetBU = RE_BU_ANY.test(h.snippet || "");
@@ -4609,6 +4652,19 @@
   }
 
   var OB_PLACEHOLDER = /\[(first|name|company|role|date|days|channel|internship|learn)\]/;
+  // One spelling, because the picker matches on it to decide whether to offer
+  // ♻ Repopulate. Two copies of this string would drift and the button would
+  // quietly stop appearing.
+  var OB_PLACEHOLDER_WHY = "the draft still has an unfilled [placeholder] in it";
+
+  // Which placeholders a draft still carries, named rather than counted —
+  // "[internship]" tells you to go fill in the company's role; "1 placeholder"
+  // tells you nothing. Built from OB_PLACEHOLDER so the list can't drift from
+  // the one the send queue blocks on.
+  function missingPlaceholders(text) {
+    var hits = String(text || "").match(new RegExp(OB_PLACEHOLDER.source, "g")) || [];
+    return hits.filter(function (p, i) { return hits.indexOf(p) === i; });
+  }
 
   // One unvalidated field holds the handle, and which kind it should be is
   // decided by `channel`. When those two disagree the row is unusable rather
@@ -4650,7 +4706,7 @@
     if (!t.ok) blockers.push(t.why);
     if (s.warn) blockers.push(s.warn);
     if (OB_PLACEHOLDER.test(s.subject) || OB_PLACEHOLDER.test(s.body)) {
-      blockers.push("the draft still has an unfilled [placeholder] in it");
+      blockers.push(OB_PLACEHOLDER_WHY);
     }
     return {
       id: c.id, contact: c, kind: kind, group: group,
@@ -4745,7 +4801,18 @@
           h += '<div class="ob-src">using your Workspace text</div>';
         }
         r.blockers.forEach(function (b) {
-          h += '<div class="ob-why">⚠ ' + escapeHtml(b) + "</div>";
+          h += '<div class="ob-why">⚠ ' + escapeHtml(b);
+          // The placeholder blocker is the one you can clear from here. It
+          // usually means a Workspace draft written before the company row
+          // was filled in — 🔍 Find contacts writes six of those at once —
+          // and the fix is the same regeneration ♻ Repopulate does in the
+          // Workspace. Offering it on the row that's complaining beats
+          // closing this, finding the contact, and opening the Workspace.
+          if (b === OB_PLACEHOLDER_WHY) {
+            h += ' <button type="button" class="ob-eye" data-repop="' + r.i +
+              '">♻ Repopulate</button>';
+          }
+          h += "</div>";
         });
         if (r.open) {
           h += '<div class="ob-prev">' +
@@ -4841,14 +4908,27 @@
             "</div>"
           : "") +
         '<div class="dk-body">' + obHighlight(job.body) + "</div></div>";
+      /* Three, left to right: copy · both · open. The middle one is the whole
+         job in one tap and is what you'll use nearly every time — but the
+         other two have to stay, because the pair comes apart often enough.
+         You reread a note after opening the profile and want it on the
+         clipboard again without a second tab; or the profile is already open
+         beside you and a third one is just clutter. A single combined button
+         forces the side effect you didn't ask for.
+
+         Email keeps its own set: a Gmail compose URL already carries the
+         subject and body, so there is nothing to copy on the way out and the
+         second slot is the subject line instead. */
       h += '<div class="dk-acts">' +
         '<button type="button" class="secondary" id="dkCopy">📋 Copy ' +
         (isEmail ? "body" : "note") + "</button>" +
-        (isEmail && job.subject
-          ? '<button type="button" class="secondary" id="dkCopySubj">📋 Copy subject</button>'
-          : "") +
+        (isEmail
+          ? (job.subject
+              ? '<button type="button" class="secondary" id="dkCopySubj">📋 Copy subject</button>'
+              : "")
+          : '<button type="button" class="secondary" id="dkBoth">📋🔗 Copy &amp; open</button>') +
         '<button type="button" class="secondary" id="dkOpen">' +
-        (isEmail ? "✉ Open compose" : "🔗 Copy note & open profile") + "</button>" +
+        (isEmail ? "✉ Open compose" : "🔗 Open profile") + "</button>" +
         '<span class="dk-right">' +
         '<button type="button" class="primary" id="dkSent">✓ Sent — next</button>' +
         '<button type="button" class="secondary" id="dkSkip">Skip</button></span></div>';
@@ -4904,21 +4984,22 @@
     // One window per click, which is also the only thing popup blockers
     // reliably allow — hence no "open all", which would silently open one
     // and swallow the rest.
-    on("dkOpen", function () {
+    function openJob() {
       var isEmail = job.channel === "Email" || EMAIL_TPL_KINDS[job.kind] === 1;
       var url = isEmail
         ? gmailComposeUrl(job.to, job.subject, job.body)
         : linkHref(job.profileUrl);
-      if (!url) { OB.status = "No usable link for this one."; OB.bad = true; renderOutbox(); return; }
-      // A LinkedIn connect box can't be pre-filled from a URL the way a Gmail
-      // compose window can, so the note has to travel on the clipboard. Copy
-      // it on the way out rather than making you come back for it — and copy
-      // *before* opening, because the clipboard write needs this document
-      // focused and the new tab takes that away. Both stay in the one click,
-      // so the popup blocker still sees a gesture.
-      if (!isEmail) copyText(job.body);
+      if (!url) { OB.status = "No usable link for this one."; OB.bad = true; renderOutbox(); return false; }
       window.open(url, "_blank", "noopener,noreferrer");
-    });
+      return true;
+    }
+    on("dkOpen", openJob);
+    // A LinkedIn connect box can't be pre-filled from a URL the way a Gmail
+    // compose window can, so the note has to travel on the clipboard. Copy
+    // *before* opening: the write needs this document focused and the new tab
+    // takes that away. Both stay inside the one click, so the popup blocker
+    // still sees a gesture.
+    on("dkBoth", function () { copyText(job.body); openJob(); });
 
     on("dkSent", function () { finishJob(job, "sent"); });
     on("dkSkip", function () { finishJob(job, "skipped"); });
@@ -4988,6 +5069,48 @@
         ev.stopPropagation();
         var r = OB.rows[+b.getAttribute("data-eye")];
         if (r) { r.open = !r.open; renderOutbox(); }
+      });
+    });
+
+    /* ♻ Repopulate, on a row blocked by an unfilled placeholder.
+       Same regeneration as the Workspace button, from the same draftFor() —
+       there is one definition of what this person's draft is, so the queue
+       and the Workspace can't hand you different text.
+
+       It reports honestly in both directions, because the two outcomes need
+       different things from you. A stale Workspace draft is fixed by this and
+       the row unblocks. A placeholder that survives means the value genuinely
+       isn't on file, and no amount of regenerating will invent it — so it
+       names what's still missing and leaves the row blocked rather than
+       tidying the warning away. */
+    outboxBody.querySelectorAll("button[data-repop]").forEach(function (b) {
+      b.addEventListener("click", function (ev) {
+        ev.preventDefault();
+        ev.stopPropagation();
+        var r = OB.rows[+b.getAttribute("data-repop")];
+        if (!r) return;
+        var c = DATA.contacts[r.id];
+        if (!c || c.deleted) {
+          OB.status = "That contact has been deleted."; OB.bad = true;
+          obRefreshRows(); renderOutbox(); return;
+        }
+        var fresh = draftFor(c, r.kind);
+        var left = missingPlaceholders(fresh);
+        c.workspace = fresh;
+        touch(c);
+        saveData();
+        OB.status = left.length
+          ? "Rewrote " + nameOf(c) + "'s draft, but " + left.join(" ") +
+            (left.length === 1 ? " is" : " are") + " still not on file — fill " +
+            (left.indexOf("[internship]") !== -1
+              ? "the role in on " + (c.company || "that company") + "'s row"
+              : "it in on the contact") + " and tap it again."
+          : "✓ " + nameOf(c) + "'s draft rewritten from " +
+            (TPL_NAMES[r.kind] || r.kind) + " — ready to tick.";
+        OB.bad = left.length > 0;
+        obRefreshRows();   // recomputes the blockers off the new text
+        renderOutbox();
+        render();          // the 📝 dot on that contact may have just come on
       });
     });
   }
