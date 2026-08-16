@@ -120,7 +120,7 @@
   /* Sized to the content, not to the screen. The one-line company row needs
      about 500px, so anything past this is dead space stretched across the
      card — and it leaves room either side for the log and workspace panels. */
-  .wrap { max-width: 640px; margin: 0 auto; padding: 0 14px; }
+  .wrap { max-width: 640px; margin: 0 auto; padding: 0 10px; }
 
   /* ---------- Two columns ----------
      Contacts left, companies right. They're separate lists you scan against
@@ -135,7 +135,7 @@
      minmax(0,1fr), not 1fr: a grid item's default min-width is min-content,
      so the widest table row would push the column past the page instead of
      scrolling inside .table-scroll the way it does in one column. */
-  .cols { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0 14px; align-items: start; }
+  .cols { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0 10px; align-items: start; }
   .cols > section { min-width: 0; }
 
   /* ---------- Slim controls ----------
@@ -156,7 +156,7 @@
   /* ---------- Header ---------- */
   header.app-header {
     display: flex; align-items: center; justify-content: space-between;
-    padding: 14px 14px 6px; max-width: 640px; margin: 0 auto;
+    padding: 10px 10px 4px; max-width: 640px; margin: 0 auto;
   }
   header.app-header h1 { font-size: 1.25rem; margin: 0; letter-spacing: -0.01em; }
   header.app-header h1 .sub {
@@ -190,10 +190,10 @@
   /* ---------- Cards ---------- */
   .card {
     background: var(--surface-1); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 16px; margin: 14px 0;
+    border-radius: var(--radius); padding: 10px 11px; margin: 9px 0;
   }
   .card > h2 {
-    font-size: 0.95rem; margin: 0 0 10px; color: var(--text-secondary);
+    font-size: 0.95rem; margin: 0 0 7px; color: var(--text-secondary);
     font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em;
     display: flex; align-items: center; justify-content: space-between; gap: 8px;
   }
@@ -236,26 +236,36 @@
   /* ---------- Stat tiles ---------- */
   /* auto-fit rather than a fixed 4, so the outcome tile joins the row on a
      wide screen and wraps instead of crushing the others when it can't */
-  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; }
-  @media (max-width: 420px) { .stats { grid-template-columns: repeat(2, 1fr); } }
+  /* One centred row rather than a stretched grid. The tiles count things
+     from both tables, so they belong over the middle of the page rather than
+     spread across it — and sized to their content, five of them fit on one
+     line at any width the two-column layout appears at. Wrapping is still
+     allowed so a phone folds them instead of overflowing. */
+  .stats { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
   .stat {
     background: var(--surface-1); border: 1px solid var(--border);
-    border-radius: 12px; padding: 10px 12px;
+    border-radius: 10px; padding: 6px 10px; flex: 0 1 auto; min-width: 104px;
   }
   .stat .label { font-size: 0.68rem; color: var(--text-secondary); }
   .stat .value { font-size: 1.5rem; font-weight: 600; letter-spacing: -0.02em; line-height: 1.15; }
   .stat .sub { font-size: 0.66rem; color: var(--text-muted); }
 
-  /* ---------- Log buttons + forms ---------- */
-  .log-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-  @media (max-width: 380px) { .log-btns { grid-template-columns: 1fr; } }
-  .log-btns button {
-    min-height: 52px; border-radius: 12px; border: 1px solid var(--border);
-    background: var(--surface-3); color: var(--text-primary);
-    font-size: 0.9rem; font-weight: 600; cursor: pointer;
+  /* ---------- Add buttons + forms ----------
+     ＋ Cold contact and ＋ Add company used to sit together in a "Log
+     something" card above both tables. They add to *one* list each, so they
+     now live in that list's own heading — the button is beside the thing it
+     adds to, and a whole card of vertical space goes away. */
+  .add-btn {
+    margin-left: auto; flex: 0 0 auto; border-radius: 8px;
+    border: 1px solid var(--border); background: var(--surface-3);
+    color: var(--text-primary); cursor: pointer;
+    padding: 4px 9px; min-height: 28px;
+    font-size: 0.78rem; font-weight: 600;
+    text-transform: none; letter-spacing: 0;   /* the h2 above is uppercase */
   }
-  .log-btns button.on { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
-  .log-btns button:active { transform: scale(0.98); }
+  .add-btn.on { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+  .add-btn:active { transform: scale(0.98); }
+  .card > h2 .h-title { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
 
   form.logform { display: none; }
   form.logform.open { display: block; }
@@ -643,9 +653,9 @@
   thead th {
     text-align: left; font-size: 0.68rem; text-transform: uppercase;
     letter-spacing: 0.04em; color: var(--text-muted); font-weight: 600;
-    padding: 0 8px 6px; border-bottom: 1px solid var(--baseline); white-space: nowrap;
+    padding: 0 7px 4px; border-bottom: 1px solid var(--baseline); white-space: nowrap;
   }
-  tbody td { padding: 9px 8px; border-bottom: 1px solid var(--gridline); vertical-align: top; }
+  tbody td { padding: 6px 7px; border-bottom: 1px solid var(--gridline); vertical-align: top; }
   tbody tr:last-child td { border-bottom: none; }
   tbody tr.is-closed { opacity: 0.5; }
   tbody tr.tappable { cursor: pointer; }
@@ -669,7 +679,7 @@
      keeps rows with no posting link the same height as rows that have one, so
      the list doesn't look ragged */
   table.companies td {
-    padding-top: 7px; padding-bottom: 7px; vertical-align: middle; height: 38px;
+    padding-top: 5px; padding-bottom: 5px; vertical-align: middle; height: 32px;
   }
   td.company .co-wrap, td.who .co-wrap { display: flex; align-items: center; }
   td.who .co-name { font-weight: 600; color: var(--text-primary); }
@@ -749,7 +759,7 @@
      compete with the live list above it, so: no fill, muted text, and it
      doesn't render at all until something is actually closed. */
   .archive:empty { display: none; }
-  .archive { margin-top: 12px; border-top: 1px solid var(--gridline); padding-top: 10px; }
+  .archive { margin-top: 8px; border-top: 1px solid var(--gridline); padding-top: 7px; }
   .archive-toggle {
     display: flex; align-items: center; gap: 7px; width: 100%;
     min-height: 38px; padding: 6px 8px; border-radius: 8px;
@@ -861,31 +871,23 @@
   <!-- Needs a nudge (renders only when non-empty) -->
   <div id="nudgeMount"></div>
 
-  <!-- Stats -->
-  <div class="stats slim" id="stats"></div>
-
-  <!-- Log -->
-  <section class="card slim">
-    <h2>Log something</h2>
-    <div class="log-btns">
-      <button type="button" id="btnShowContact">＋ Cold contact</button>
-      <button type="button" id="btnShowApp">＋ Add company</button>
-    </div>
-
-  </section>
+  <!-- Stats: one centred row, above both columns, since they count from both -->
+  <div class="stats" id="stats"></div>
 
   <!-- Tables: contacts left, companies right on a wide screen; stacked below
        1040px. One page scroll moves both — neither column scrolls alone. -->
   <div class="cols">
     <section class="card">
-      <h2>People contacted <span class="count" id="contactCount"></span></h2>
+      <h2><span class="h-title">People contacted</span><span class="count" id="contactCount"></span>
+        <button type="button" class="add-btn" id="btnShowContact">＋ Cold contact</button></h2>
       <div id="outboxMount"></div>
       <div class="table-scroll" id="contactTableMount"></div>
       <div class="archive" id="contactArchive"></div>
     </section>
 
     <section class="card">
-      <h2>Companies <span class="count" id="appCount"></span></h2>
+      <h2><span class="h-title">Companies</span><span class="count" id="appCount"></span>
+        <button type="button" class="add-btn" id="btnShowApp">＋ Add company</button></h2>
       <div id="aiPromptMount"></div>
       <div class="table-scroll" id="appTableMount"></div>
       <div class="dot-legend" id="appLegend"></div>
@@ -1377,7 +1379,7 @@
      tell those apart from a change that genuinely didn't work. This string
      lives in the file being executed, so it cannot lie about which file that
      is. It's shown at the bottom of Settings. */
-  var APP_VERSION = "2026-08-16h";
+  var APP_VERSION = "2026-08-16i";
   var swReady = false, swCacheVersion = "", swNote = "";
 
   /* ============================================================
@@ -2433,9 +2435,9 @@
      sort is active and disappears entirely in your own dragged order — an
      arrow there would be claiming an ordering rule that isn't running.
 
-     Tap a different column to sort by it, tap the one you're on to reverse.
-     There is no third tap back to custom: dragging is how you get your own
-     order, which is the rule the drag handles already followed. */
+     Three taps on one column: ↑, ↓, then none — and none is your own dragged
+     order. Dragging still gets you there directly; this just means the header
+     is a full cycle rather than a dead end you can only leave by dragging. */
   var SORT_HINT = {
     name: { asc: "A → Z", desc: "Z → A" },
     date: { asc: "Oldest first", desc: "Newest first" },
@@ -2449,17 +2451,30 @@
       th.innerHTML = escapeHtml(th.textContent) +
         (on ? '<span class="sort-arrow">' + (s.dir === "asc" ? "↑" : "↓") + "</span>" : "");
       th.classList.toggle("active", on);
-      th.setAttribute("title", on
-        ? SORT_HINT[col][s.dir] + " — tap to reverse"
-        : "Tap to sort: " + SORT_HINT[col][SORT_COLS[col]].toLowerCase());
+      var flipped = on && s.dir !== SORT_COLS[col];
+      th.setAttribute("title", !on
+        ? "Tap to sort: " + SORT_HINT[col][SORT_COLS[col]].toLowerCase()
+        : flipped
+          ? SORT_HINT[col][s.dir] + " — tap again for your own order"
+          : SORT_HINT[col][s.dir] + " — tap to reverse");
       th.addEventListener("click", function () {
         var cur = sortFor(kind);
-        // Same column reverses; a different one starts at its own default,
-        // because "newest first" and "A → Z" are the useful ends to open on.
-        var dir = cur.col === col
-          ? (cur.dir === "asc" ? "desc" : "asc")
-          : SORT_COLS[col];
-        setSortMode(kind, col + ":" + dir);
+        if (cur.col !== col) {
+          // A different column starts at its own useful end — "newest first"
+          // and "A → Z" are the ones you actually want to open on.
+          setSortMode(kind, col + ":" + SORT_COLS[col]);
+        } else if (!flipped) {
+          setSortMode(kind, col + ":" + (cur.dir === "asc" ? "desc" : "asc"));
+        } else {
+          // Third tap: back to your own order, arrow gone. Seeded from what's
+          // on screen the first time, so the list never jumps to an
+          // arrangement you didn't choose.
+          if (!customOrderFor(kind)) {
+            var tbody = document.querySelector("#" + mountId + " tbody");
+            if (tbody) setCustomOrder(kind, rowIdsIn(tbody));
+          }
+          setSortMode(kind, "custom");
+        }
         render();
       });
     });

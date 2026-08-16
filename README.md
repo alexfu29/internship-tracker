@@ -234,6 +234,24 @@ with no `https://`. That's normalised **at render time only** — the scheme is 
 to the link you tap, and what you typed is left exactly as you typed it. A value
 carrying some other scheme isn't made clickable at all.
 
+## The layout
+
+Everything is sized to be read, not to fill the window.
+
+The **stat row sits centred across the top** in a single line, above both
+columns, since it counts things from both. Five tiles fit on one row at any width
+the two-column layout appears at; a phone folds them onto two rather than
+squeezing them.
+
+**＋ Cold contact and ＋ Add company live in their own column's heading.** They
+used to sit together in a "Log something" card above both tables, which cost a
+whole card of vertical space to hold two buttons — and put them nowhere near the
+list each one adds to. Now the button is in the heading of the thing it adds to.
+
+Spacing throughout is deliberately tight — card padding, row padding, gutters and
+gaps are all pulled in. **Font sizes are untouched**: the point is to fit more
+rows on screen, not to make them harder to read.
+
 ## Per-entry workspaces
 
 Every contact and every company has **its own workspace** — a bigger, free-form
@@ -467,12 +485,22 @@ columns — independently of each other, and remembered per device.
 **The arrow is the whole indicator**, and it says two things at once: which column
 is sorting, and which way. `↑` ascending, `↓` descending, on exactly one header.
 
+Tapping one column cycles through three states:
+
+```
+↑  →  ↓  →  (no arrow)
+```
+
+**No arrow means your own order** — the one you get by dragging rows. Reaching it
+by a third tap rather than only by dragging means the header is a full cycle
+instead of a dead end. The first time you land there it's seeded from whatever
+was on screen, so the list never jumps to an arrangement you didn't choose, and
+it's saved from then on.
+
 - **Tap a different column** to sort by it, at whatever end is useful to open on.
-- **Tap the column you're on** to reverse it.
-- **Drag the bars** left of a name to make your own order. The arrow disappears —
-  leaving one would claim an ordering rule that isn't running.
-- **Both are remembered.** Your dragged order survives a sort and vice versa, and
-  each table keeps its own.
+- **Drag the bars** left of a name to go straight to your own order.
+- **Both are remembered**, per table and per device: a dragged order survives a
+  sort and vice versa.
 
 Status sorting is one rule rather than a hand-ranked list of every chip: a row's
 place is how long it's been sitting, so a **Replied** row sorts among the others
