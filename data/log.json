@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-08-16T00:47:36.572Z",
+  "updated": "2026-08-16T00:52:47.351Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -920,7 +920,7 @@
     },
     "mspe3a9i-fojs7c": {
       "company": "Anduril Industries",
-      "applied": false,
+      "applied": true,
       "coldEmailed": false,
       "connected": false,
       "role": "",
@@ -932,8 +932,9 @@
       "meetingOn": null,
       "closed": false,
       "deleted": false,
-      "updated": "2026-08-16T00:46:18.952Z",
-      "workspace": ""
+      "updated": "2026-08-16T00:52:46.120Z",
+      "workspace": "",
+      "outcome": ""
     },
     "mspe3cyj-nb20nm": {
       "company": "RTX",
