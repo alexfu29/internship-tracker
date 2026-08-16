@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-08-16T20:15:51.102Z",
+  "updated": "2026-08-16T20:16:11.654Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -899,7 +899,7 @@
       "closed": false,
       "deleted": false,
       "workspace": "Hi Jack,\n\nI'm a mechanical engineering student at BU working on wearables and embedded systems. I'd love to connect and hear about you at Anduril Industries.\n\nWould you be down for a quick zoom meeting to connect?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
-      "updated": "2026-08-16T20:14:54.350Z"
+      "updated": "2026-08-16T20:16:02.450Z"
     },
     "msw8jzki-zm6w1e": {
       "name": "Katie Nielsen",
@@ -916,7 +916,7 @@
       "closed": false,
       "deleted": false,
       "workspace": "Hi Katie,\n\nI'm a mechanical engineering student at BU working on wearables and embedded systems. I'd love to connect and hear about you at Anduril Industries.\n\nWould you be down for a quick zoom meeting to connect?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
-      "updated": "2026-08-16T20:14:54.350Z"
+      "updated": "2026-08-16T20:16:02.450Z"
     },
     "msw8jzkj-fh79kh": {
       "name": "Long Huynh",
@@ -933,7 +933,7 @@
       "closed": false,
       "deleted": false,
       "workspace": "Hi Long,\n\nI'm a mechanical engineering student at BU working on wearables and embedded systems. I'd love to connect and hear about your work at Anduril Industries.\n\nWould you be down for a quick zoom meeting to connect?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
-      "updated": "2026-08-16T20:14:54.350Z"
+      "updated": "2026-08-16T20:16:02.450Z"
     },
     "msw8jzkj-gpz901": {
       "name": "Gina Bishop",
@@ -950,7 +950,7 @@
       "closed": false,
       "deleted": false,
       "workspace": "Hi Gina,\n\nI'm a mechanical engineering student at BU working on wearables and embedded systems. I'd love to connect and hear about your work at Anduril Industries.\n\nWould you be down for a quick zoom meeting to connect?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
-      "updated": "2026-08-16T20:14:54.350Z"
+      "updated": "2026-08-16T20:16:02.450Z"
     },
     "msw8kx13-l4pph4": {
       "name": "Brian S.",
@@ -958,7 +958,7 @@
       "role": "BU eng",
       "channel": "LinkedIn",
       "email": "https://www.linkedin.com/in/brianhshin/",
-      "date": "",
+      "date": "2026-08-16",
       "note": "Hi Brianhshin,\n\nI was looking at Linkedin and I saw that you work that [company] where I'd love to intern at. \n\nWould you be down for a quick zoom meeting to connect to talk about your work and the company culture?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
       "responded": false,
       "respondedOn": null,
@@ -966,8 +966,8 @@
       "nudgedOn": [],
       "closed": false,
       "deleted": false,
-      "workspace": "Hi Brian,\n\nI'm a mechanical engineering student at BU working on wearables and embedded systems. I'd love to connect and hear about your work at Anduril Industries.\n\nWould you be down for a quick zoom meeting to connect?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
-      "updated": "2026-08-16T20:15:51.102Z"
+      "workspace": "Hi Brian,\n\nI'm a mechanical engineering student at BU working on wearables and embedded systems. I'd love to connect and hear about your work at Anduril Industries and how BU helped you.\n\nWould you be down for a quick zoom meeting to connect?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
+      "updated": "2026-08-16T20:16:11.654Z"
     },
     "msw8le0w-gvueed": {
       "name": "Ryan Hunter",
@@ -984,7 +984,7 @@
       "closed": false,
       "deleted": false,
       "workspace": "Hi Ryan,\n\nI'm a mechanical engineering student at BU working on wearables and embedded systems. I'd love to connect and hear about your work at Anduril Industries, and how BU helped you.\n\nWould you be down for a quick zoom meeting to connect?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
-      "updated": "2026-08-16T20:14:54.350Z"
+      "updated": "2026-08-16T20:16:02.450Z"
     }
   },
   "apps": {
@@ -1218,7 +1218,7 @@
     "mspe3a9i-fojs7c": {
       "company": "Anduril Industries",
       "applied": true,
-      "coldEmailed": false,
+      "coldEmailed": true,
       "connected": false,
       "role": "",
       "date": "2026-08-15",
@@ -1229,7 +1229,7 @@
       "meetingOn": null,
       "closed": false,
       "deleted": false,
-      "updated": "2026-08-16T20:02:46.320Z",
+      "updated": "2026-08-16T20:16:11.654Z",
       "workspace": "",
       "outcome": ""
     },
