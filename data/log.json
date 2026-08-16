@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-08-15T23:59:26.472Z",
+  "updated": "2026-08-16T00:00:01.912Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -1135,7 +1135,7 @@
       "coldEmailed": false,
       "connected": false,
       "outcome": "",
-      "role": "",
+      "role": "Product Development Intern",
       "date": "2026-08-14",
       "link": "https://careers.caterpillar.com/en/jobs/r0000380479/2027-engineering-corporate-intern-program-product-development-track/",
       "note": "",
@@ -1145,7 +1145,7 @@
       "closed": false,
       "deleted": false,
       "workspace": "",
-      "updated": "2026-08-15T23:58:52.550Z"
+      "updated": "2026-08-16T00:00:01.912Z"
     }
   }
 }
