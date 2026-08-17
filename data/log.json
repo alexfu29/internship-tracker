@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-08-17T13:57:57.280Z",
+  "updated": "2026-08-17T16:24:01.764Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -16,8 +16,10 @@
       "nudgedOn": [],
       "closed": false,
       "deleted": false,
-      "updated": "2026-08-13T14:44:24.918Z",
-      "workspace": ""
+      "updated": "2026-08-17T16:23:45.412Z",
+      "workspace": "",
+      "inviteAcceptedOn": "2026-08-17",
+      "withdrawnOn": null
     },
     "mshkbbji-or84t1": {
       "name": "Corin Williams",
@@ -106,8 +108,10 @@
       ],
       "closed": false,
       "deleted": false,
-      "updated": "2026-08-13T14:58:50.794Z",
-      "workspace": "Hi Alex,\n\n\nI hope you are doing well!\n\n\nI was scrolling on LinkedIn and saw that you also know Arnar. I was interested in your experience at New Balance and how you are able to blend kinesiology with engineering.\n\nI was wondering if you would be down for a quick zoom meeting to connect?\n\n\nI’m available weekdays after 6:30pm, and weekends after 2pm.\n\n\nBest,\n\nAlex Fu\n\nBU Class of 2029\n\nhttps://www.linkedin.com/in/alex-fu-bu/ "
+      "updated": "2026-08-17T16:23:49.562Z",
+      "workspace": "Hi Alex,\n\n\nI hope you are doing well!\n\n\nI was scrolling on LinkedIn and saw that you also know Arnar. I was interested in your experience at New Balance and how you are able to blend kinesiology with engineering.\n\nI was wondering if you would be down for a quick zoom meeting to connect?\n\n\nI’m available weekdays after 6:30pm, and weekends after 2pm.\n\n\nBest,\n\nAlex Fu\n\nBU Class of 2029\n\nhttps://www.linkedin.com/in/alex-fu-bu/ ",
+      "inviteAcceptedOn": "2026-08-17",
+      "withdrawnOn": null
     },
     "msm2ci1p-gmttt3": {
       "name": "Hector Grande",
@@ -960,14 +964,16 @@
       "email": "https://www.linkedin.com/in/brianhshin/",
       "date": "2026-08-16",
       "note": "Hi Brianhshin,\n\nI was looking at Linkedin and I saw that you work that [company] where I'd love to intern at. \n\nWould you be down for a quick zoom meeting to connect to talk about your work and the company culture?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
-      "responded": false,
-      "respondedOn": null,
+      "responded": true,
+      "respondedOn": "2026-08-17",
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
       "deleted": false,
       "workspace": "Hi Brian,\n\nI'm a mechanical engineering student at BU working on wearables and embedded systems. I'd love to connect and hear about your work at Anduril Industries and how BU helped you.\n\nWould you be down for a quick zoom meeting to connect?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
-      "updated": "2026-08-16T20:26:06.961Z"
+      "updated": "2026-08-17T16:24:01.764Z",
+      "inviteAcceptedOn": "2026-08-17",
+      "withdrawnOn": null
     },
     "msw8le0w-gvueed": {
       "name": "Ryan Hunter",
