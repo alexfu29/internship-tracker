@@ -244,10 +244,15 @@ that counted companies was a small lie about what the number belonged to.
 | Contacts | Companies |
 |---|---|
 | **Contacted** — people you actually sent something to; a row with no date is someone you *found*, not someone you wrote to | **Applied** |
-| **Waiting** — the same, minus the ones you dropped | **Interview** |
-| **Connected** — invitations accepted. A click, not an answer, so it is counted apart from Replied | **Waitlisted** |
-| **Replied** — they wrote back | **Accepted**, with denials underneath |
-| **Meetings** | |
+| **Waiting** — the same, minus the ones you dropped | **Waiting** — applied and heard nothing at all |
+| **Connected** — invitations accepted. A click, not an answer, so it is counted apart from Replied | **Interview** |
+| **Replied** — they wrote back | **Waitlisted** |
+| **Meetings** | **Accepted**, with denials underneath |
+
+Only applied rows can be **Waiting**: a company you merely bookmarked has
+nothing to answer. An outcome of any kind, a reply, or a meeting all mean
+something came back, so all three end the wait — and closed rows are out,
+because you stopped caring.
 
 Company counts include closed rows: archiving one doesn't un-answer it.
 
