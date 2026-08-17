@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-08-17T16:25:32.123Z",
+  "updated": "2026-08-17T16:25:48.438Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -733,7 +733,7 @@
       "updated": "2026-08-16T01:03:27.497Z"
     },
     "msv3ttu3-hlo285": {
-      "name": "Laura G.",
+      "name": "Laura Gagnon",
       "company": "Lexington Medical",
       "role": "Hiring",
       "channel": "LinkedIn",
@@ -749,7 +749,9 @@
       "closed": false,
       "deleted": false,
       "workspace": "Hi Laura,\n\nI recently applied to the Lexington Medical Engineering Intern position for 2027. I'd love to connect with you to learn more about you and the company culture.\n\nWould you be down for a quick zoom meeting to connect?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
-      "updated": "2026-08-16T01:15:48.601Z"
+      "updated": "2026-08-17T16:25:48.438Z",
+      "inviteAcceptedOn": "2026-08-17",
+      "withdrawnOn": null
     },
     "msv3ttu3-d17a2x": {
       "name": "Andrew Marecki",
