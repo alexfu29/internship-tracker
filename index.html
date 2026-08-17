@@ -208,8 +208,8 @@
   .card.nudge-card { border-left: 4px solid var(--status-critical); }
   .card.nudge-card > h2 { color: var(--status-critical); }
   .nudge-row {
-    padding: 10px; border-radius: 10px; background: var(--red-bg);
-    color: var(--red-ink); margin-bottom: 8px;
+    padding: 7px 9px; border-radius: 9px; background: var(--red-bg);
+    color: var(--red-ink); margin-bottom: 6px;
   }
   .nudge-row:last-child { margin-bottom: 0; }
   /* The name and the line under it are one tap target that opens the entry.
@@ -225,9 +225,9 @@
   .nudge-open:focus-visible { outline: 2px solid var(--red-ink); outline-offset: 1px; }
   .nudge-row .who { display: block; font-weight: 600; font-size: 0.92rem; }
   .nudge-row .meta { display: block; font-size: 0.78rem; opacity: 0.9; margin-top: 2px; }
-  .nudge-row .acts { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .nudge-row .acts { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; }
   .nudge-row .acts button {
-    flex: 1 1 auto; min-height: 40px; padding: 6px 10px; font-size: 0.78rem;
+    flex: 1 1 auto; min-height: 32px; padding: 4px 9px; font-size: 0.78rem;
     font-weight: 600; border-radius: 8px; cursor: pointer;
     border: 1px solid currentColor; background: transparent; color: inherit;
   }
@@ -302,7 +302,7 @@
     text-transform: uppercase; letter-spacing: 0.03em;
   }
   /* the body scrolls, the header stays put, so Save is never stranded */
-  .modal-body { flex: 1 1 auto; overflow-y: auto; padding: 14px 16px 20px; }
+  .modal-body { flex: 1 1 auto; overflow-y: auto; padding: 10px 12px 14px; }
   .modal-body .field textarea { min-height: 90px; }
 
   /* ---------- Workspace popup ----------
@@ -363,8 +363,8 @@
     min-height: 34px; font-size: 0.78rem; }
   .ws-foot-btns { display: flex; gap: 6px; flex: 0 0 auto; margin-left: auto; }
   .ws-saved { font-size: 0.7rem; color: var(--text-muted); flex: 1 1 90px; min-width: 0; }
-  .field { margin-bottom: 10px; }
-  .field label { display: block; font-size: 0.78rem; color: var(--text-secondary); margin-bottom: 4px; }
+  .field { margin-bottom: 7px; }
+  .field label { display: block; font-size: 0.78rem; color: var(--text-secondary); margin-bottom: 3px; }
   .field label .opt { color: var(--text-muted); font-weight: 400; }
   .field input[type=text], .field input[type=date], .field input[type=email],
   .field input[type=url], .field textarea, select {
@@ -373,16 +373,16 @@
     font-size: 0.9rem; font-family: inherit; min-height: var(--tap);
   }
   .field textarea { min-height: 60px; resize: vertical; }
-  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
   @media (max-width: 380px) { .row2 { grid-template-columns: 1fr; } }
 
   /* segmented control — "how did you reach out" */
-  .seg { display: flex; flex-wrap: wrap; gap: 6px; }
+  .seg { display: flex; flex-wrap: wrap; gap: 5px; }
   .seg label {
-    flex: 1 1 auto; text-align: center; padding: 9px 8px; border-radius: 8px;
+    flex: 1 1 auto; text-align: center; padding: 5px 8px; border-radius: 8px;
     border: 1px solid var(--border); background: var(--surface-2);
     font-size: 0.8rem; cursor: pointer; margin: 0; color: var(--text-primary);
-    min-height: 40px; display: flex; align-items: center; justify-content: center;
+    min-height: 32px; display: flex; align-items: center; justify-content: center;
   }
   .seg input { position: absolute; opacity: 0; width: 0; height: 0; }
   .seg input:checked + span { font-weight: 600; }
@@ -628,7 +628,7 @@
      stretched into a 2-up grid — a fixed grid forced long labels to wrap
      inside the button, which is what made them unreadable. Labels are short
      and each one says what it does on its own. */
-  .upd-group { margin-top: 12px; }
+  .upd-group { margin-top: 8px; }
   .upd-group-label {
     display: block; font-size: 0.64rem; font-weight: 600; text-transform: uppercase;
     letter-spacing: 0.06em; color: var(--text-muted); margin-bottom: 5px;
@@ -762,7 +762,7 @@
   .archive { margin-top: 8px; border-top: 1px solid var(--gridline); padding-top: 7px; }
   .archive-toggle {
     display: flex; align-items: center; gap: 7px; width: 100%;
-    min-height: 38px; padding: 6px 8px; border-radius: 8px;
+    min-height: 28px; padding: 3px 6px; border-radius: 8px;
     border: 1px solid transparent; background: transparent;
     color: var(--text-secondary); font-size: 0.78rem; font-weight: 600;
     font-family: inherit; cursor: pointer; text-align: left;
@@ -779,8 +779,22 @@
   .archive-table { margin-top: 4px; }
   .archive-table thead th { padding-top: 4px; }
 
+  /* The shortcut strip under a card heading. These used to be full-width
+     44px buttons, one per line, each with a 12px gap under it — three lines
+     of chrome above a table you were trying to read. They are shortcuts, so
+     they are sized like shortcuts and sit on one wrapping row. */
+  #outboxMount:empty, #aiPromptMount:empty { display: none; }
+  #outboxMount, #aiPromptMount {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 5px; margin-bottom: 6px;
+  }
+  #outboxMount button, #aiPromptMount button {
+    width: auto; flex: 0 0 auto; margin: 0;
+    padding: 4px 9px; min-height: 28px; border-radius: 8px; font-size: 0.78rem;
+  }
+  #outboxMount .ob-status { flex: 1 1 100%; margin: 0; }
+
   .dot-legend {
-    display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 10px;
+    display: flex; flex-wrap: wrap; gap: 2px 10px; margin-top: 6px;
     font-size: 0.7rem; color: var(--text-muted);
   }
   .dot-legend .lg { display: inline-flex; align-items: center; gap: 5px; }
@@ -814,37 +828,37 @@
   .drawer {
     position: fixed; top: 0; right: 0; bottom: 0; width: min(360px, 90vw);
     background: var(--surface-1); z-index: 41; transform: translateX(100%);
-    transition: transform 0.25s ease; overflow-y: auto; padding: 16px;
+    transition: transform 0.25s ease; overflow-y: auto; padding: 11px 12px;
     box-shadow: -4px 0 20px rgba(0,0,0,0.2);
   }
   .drawer.open { transform: translateX(0); }
-  .drawer h2 { font-size: 1.05rem; margin-top: 0; }
-  .drawer label { display: block; font-size: 0.8rem; color: var(--text-secondary); margin: 12px 0 4px; }
+  .drawer h2 { font-size: 1.05rem; margin: 0 0 4px; }
+  .drawer label { display: block; font-size: 0.8rem; color: var(--text-secondary); margin: 8px 0 3px; }
   .drawer input[type=text], .drawer input[type=password] {
-    width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border);
+    width: 100%; padding: 7px 9px; border-radius: 8px; border: 1px solid var(--border);
     background: var(--surface-2); color: var(--text-primary); font-size: 0.9rem;
-    min-height: var(--tap);
+    min-height: 34px;
   }
-  .drawer button.primary { margin-top: 14px; }
-  .drawer button.secondary { margin-top: 8px; }
+  .drawer button.primary { margin-top: 9px; }
+  .drawer button.secondary { margin-top: 6px; }
   .drawer .close-x { position: absolute; top: 10px; right: 10px; }
   .drawer .sync-status {
     font-size: 0.78rem; color: var(--text-muted); margin-top: 10px; white-space: pre-wrap;
   }
-  .drawer .tpl-help { font-size: 0.74rem; color: var(--text-muted); margin: 6px 0; }
+  .drawer .tpl-help { font-size: 0.74rem; color: var(--text-muted); margin: 4px 0; }
   .drawer .tpl-help code {
     background: var(--surface-3); border-radius: 4px; padding: 1px 4px;
     font-size: 0.72rem; white-space: nowrap;
   }
   .drawer textarea.tpl {
-    width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border);
+    width: 100%; padding: 7px 9px; border-radius: 8px; border: 1px solid var(--border);
     background: var(--surface-2); color: var(--text-primary);
     font-size: 0.82rem; font-family: inherit; line-height: 1.45; resize: vertical;
   }
   /* copy buttons echo their result in place — a copy you can't confirm is a copy you don't trust */
   button.copied { background: var(--status-good) !important; color: #ffffff !important;
                   border-color: var(--status-good) !important; }
-  .drawer hr { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
+  .drawer hr { border: none; border-top: 1px solid var(--border); margin: 11px 0; }
   .drawer .file-import { font-size: 0.82rem; }
   @media (prefers-reduced-motion: reduce) {
     .drawer, .modal, .ws-pop { transition: none; }
@@ -1379,7 +1393,7 @@
      tell those apart from a change that genuinely didn't work. This string
      lives in the file being executed, so it cannot lie about which file that
      is. It's shown at the bottom of Settings. */
-  var APP_VERSION = "2026-08-16i";
+  var APP_VERSION = "2026-08-16j";
   var swReady = false, swCacheVersion = "", swNote = "";
 
   /* ============================================================
@@ -2770,7 +2784,7 @@
     var list = pendingCompanies();
     if (!list.length) { mount.innerHTML = ""; return; }
     mount.innerHTML =
-      '<button class="secondary" id="copyAiBtn" style="margin-bottom:12px">' +
+      '<button class="secondary" id="copyAiBtn">' +
       '📋 Copy AI prompt (' + list.length + ' not applied)</button>';
     document.getElementById("copyAiBtn").addEventListener("click", function () {
       copyText(buildAiPrompt(pendingCompanies()), this);
@@ -5816,15 +5830,15 @@
     if (!built.rows.length && !staged && !obRecordNote) { mount.innerHTML = ""; return; }
     mount.innerHTML =
       (built.rows.length
-        ? '<button class="secondary" id="openOutboxBtn" style="margin-bottom:12px">' +
+        ? '<button class="secondary" id="openOutboxBtn">' +
           "✉ Send queue (" + ready + " ready)</button> "
         : "") +
       (staged
-        ? '<button class="primary" id="openDeckBtn" style="margin-bottom:12px">' +
+        ? '<button class="primary" id="openDeckBtn">' +
           "▶ " + staged + " staged — work through them</button>"
         : "") +
       (obRecordNote
-        ? '<p class="ob-status good" style="margin:0 0 12px">' +
+        ? '<p class="ob-status good">' +
           escapeHtml(obRecordNote) + "</p>"
         : "");
     var openBtn = document.getElementById("openOutboxBtn");

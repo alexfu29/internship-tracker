@@ -252,6 +252,30 @@ Spacing throughout is deliberately tight — card padding, row padding, gutters 
 gaps are all pulled in. **Font sizes are untouched**: the point is to fit more
 rows on screen, not to make them harder to read.
 
+The biggest single win was the **shortcut strip** under each heading — ✉ Send
+queue, ▶ N staged, 📋 Copy AI prompt. Those were full-width 44px buttons, one per
+line, each with a 12px gap beneath it: up to **112px of chrome** above the
+contacts table before you reached a single row. They're shortcuts, so they're now
+sized like shortcuts and share one wrapping row — **28px**.
+
+The rest, all spacing and no type:
+
+| | before → after |
+|---|---|
+| archive toggle (`▸ View closed…`) | 38 → 28px |
+| dot legend gap | 10 → 6px above, 14 → 10px between |
+| segmented controls (Applied yet? etc.) | 40 → 32px |
+| form field spacing | 10 → 7px, labels 4 → 3px |
+| dialog body padding | 14/16/20 → 10/12/14px |
+| nudge row | 10 → 7/9px, buttons 40 → 32px |
+| ⚙ drawer padding | 16 → 11/12px |
+| drawer labels · rules · inputs | 12/16/44 → 8/11/34px |
+
+**One deliberate trade:** several tap targets are now under the 44px normally
+recommended for touch. That's the cost of the density, and it was asked for
+knowingly — the frequently-tapped things on a phone (table rows, the ＋ buttons,
+form inputs) are the ones kept largest.
+
 ## Per-entry workspaces
 
 Every contact and every company has **its own workspace** — a bigger, free-form
