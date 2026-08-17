@@ -1419,7 +1419,7 @@
      tell those apart from a change that genuinely didn't work. This string
      lives in the file being executed, so it cannot lie about which file that
      is. It's shown at the bottom of Settings. */
-  var APP_VERSION = "2026-08-17b";
+  var APP_VERSION = "2026-08-17c";
   var swReady = false, swCacheVersion = "", swNote = "";
 
   /* ============================================================
@@ -3398,6 +3398,32 @@
     if (!noFocus) wsText.focus();
   }
 
+  /* Append a generated draft to whatever the dialog is currently editing.
+
+     The workspace opens with the dialog, but it can be put away with 📝 — and
+     writing into a textarea nothing is pointing at would drop the draft on the
+     floor. So it re-opens against the right target first: the entry being
+     edited, or the pending buffer on the Add form.
+
+     Appended after a blank line rather than replacing, for the same reason the
+     Note always was: whatever you had already written there is yours. */
+  function putDraftInWorkspace(text) {
+    if (!wsOpenFor) {
+      var live = editEntry();
+      if (live && editingEntry.bag === "contacts") {
+        openWorkspaceFor({ isContact: true, id: editingEntry.id, e: live }, true);
+      } else {
+        openWorkspaceForNew(true, true);
+      }
+    }
+    var cur = (wsText.value || "").trim();
+    wsText.value = cur ? cur + "\n\n" + text : text;
+    // A pending buffer is picked up by the save handler; a real entry has to
+    // be written now, since nothing else here will fire the input listener.
+    if (!wsOpenFor.pending) flushWorkspace();
+    syncRepopBtn();
+  }
+
   // Whatever is in the pending buffer, for the save handlers to attach.
   function pendingWorkspace() {
     return (wsOpenFor && wsOpenFor.pending) ? wsText.value : "";
@@ -4062,7 +4088,6 @@
     // decides and the ⚡ preview can't drift from what Copy or the send queue
     // would hand you.
     var company = document.getElementById("cCompany").value.trim();
-    var note = document.getElementById("cNote");
     var who = {
       name: document.getElementById("cName").value.trim(),
       company: company,
@@ -4070,10 +4095,21 @@
       channel: "LinkedIn", date: ""
     };
     var kind = firstContactKind(who);
-    var draft = fillTemplate(tplFor(kind), draftValues(who));
-    note.value = note.value.trim() ? note.value.trim() + "\n\n" + draft : draft;
+    /* The draft goes in the Workspace, not the Note.
 
-    lpStatus("Filled in. Used the " + (TPL_NAMES[kind] || kind) + " draft" +
+       It used to go in the Note, which is a dead end: the Note is the short
+       one-line "how did this go" field, and ✉ Send queue reads the Workspace.
+       So an auto-populated draft was never the message that got staged — the
+       queue quietly regenerated one from the template instead, and anything
+       the parse had filled in went nowhere. 🔍 Find contacts has always
+       written its drafts to the Workspace; this is the same thing.
+
+       On the Add form the Workspace is open in pending mode and its text is
+       lifted onto the row when you save. */
+    putDraftInWorkspace(fillTemplate(tplFor(kind), draftValues(who)));
+
+    lpStatus("Filled in, and the draft is in the Workspace ready to stage. Used the " +
+      (TPL_NAMES[kind] || kind) + " draft" +
       (isBUContact(who)
         ? " — Boston University is on their profile, so it opens on the school you share."
         : ".") );

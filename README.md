@@ -1144,10 +1144,10 @@ A search **snippet** has no Education section to scope to, so the strict spellin
 is used there and it only decides which pair to *try* someone in. The profile read
 is what settles it.
 
-### The draft it writes into the Note
+### The draft it writes into the Workspace
 
-The Note gets the LinkedIn first message, picked the same way every other copy
-button picks — `connectBU` when the profile put Boston University in their
+The **Workspace** gets the LinkedIn first message, picked the same way every
+other copy button picks — `connectBU` when the profile put Boston University in their
 education, `connect` otherwise. The status line always says which it used:
 
 ```
@@ -1159,7 +1159,20 @@ This used to fork on whether the company was marked **Applied**, and kept its ow
 copy of that rule. It now calls `firstContactKind()` like everything else, so the
 ⚡ preview can't drift from what 📋 Copy or the send queue would hand you.
 
-If the Note already has text, the draft is **appended** after a blank line.
+If the Workspace already has text, the draft is **appended** after a blank line —
+what you wrote is yours.
+
+It used to land in the **Note**, which was a dead end. The Note is the short
+one-line "how did this go" field; **✉ Send queue reads the Workspace**. So an
+auto-populated draft was never the message that got staged — the queue quietly
+regenerated one from the template and everything the parse had filled in went
+nowhere. 🔍 Find contacts has always written to the Workspace; this is now the
+same path, and the picker confirms it with `using your Workspace text`.
+
+On the **Add** form the Workspace is open in pending mode and its text is lifted
+onto the row when you save. If you've put the Workspace away with **📝**, it is
+re-opened against the right entry first — writing into a textarea nothing is
+pointing at would drop the draft on the floor.
 
 ### Company names get matched to your list
 
