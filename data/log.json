@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-08-17T17:36:55.206Z",
+  "updated": "2026-08-17T17:41:57.500Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -1055,7 +1055,7 @@
       "company": "Boeing",
       "role": "VP Eng",
       "channel": "LinkedIn",
-      "email": "",
+      "email": "https://www.linkedin.com/in/kristinculler/",
       "date": "",
       "note": "",
       "responded": false,
@@ -1065,7 +1065,7 @@
       "closed": false,
       "deleted": false,
       "workspace": "Hi Kristin,\n\nI'm a mechanical engineering student at Boston University working on wearables. I've been following what your team at Boeing is doing and would love to connect and hear about your work.\n\nWould you be down for a quick zoom meeting to connect?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
-      "updated": "2026-08-17T17:27:00.125Z"
+      "updated": "2026-08-17T17:41:57.500Z"
     },
     "msxin3gb-4yaklf": {
       "name": "Patrick G Smith",
@@ -1083,6 +1083,40 @@
       "deleted": false,
       "workspace": "",
       "updated": "2026-08-17T17:36:55.206Z"
+    },
+    "msxiriml-iuodhc": {
+      "name": "Thompson Cragwell",
+      "company": "Boeing",
+      "role": "BU eng",
+      "channel": "LinkedIn",
+      "email": "https://www.linkedin.com/in/thompsonacragwell/",
+      "date": "",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "nudgedOn": [],
+      "closed": false,
+      "deleted": false,
+      "workspace": "",
+      "updated": "2026-08-17T17:40:16.269Z"
+    },
+    "msxirydu-eyazro": {
+      "name": "Andrew Lawandy",
+      "company": "Boeing",
+      "role": "BU eng",
+      "channel": "LinkedIn",
+      "email": "https://www.linkedin.com/in/andrew-lawandy/",
+      "date": "",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "nudgedOn": [],
+      "closed": false,
+      "deleted": false,
+      "workspace": "",
+      "updated": "2026-08-17T17:40:36.690Z"
     }
   },
   "apps": {
