@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-08-16T21:16:37.602Z",
+  "updated": "2026-08-17T13:57:44.890Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -51,9 +51,9 @@
       "nudgedOn": [
         "2026-08-10"
       ],
-      "closed": false,
+      "closed": true,
       "deleted": false,
-      "updated": "2026-08-11T00:38:25.462Z"
+      "updated": "2026-08-17T13:57:39.954Z"
     },
     "msi88r4a-oz7vv4": {
       "name": "Mateo Galeano",
@@ -156,9 +156,9 @@
       "respondedOn": null,
       "meetingOn": null,
       "nudgedOn": [],
-      "closed": false,
+      "closed": true,
       "deleted": false,
-      "updated": "2026-08-11T02:01:19.220Z"
+      "updated": "2026-08-17T13:57:44.890Z"
     },
     "mso0o2dh-2atdno": {
       "name": "Kristin Kerestman",
