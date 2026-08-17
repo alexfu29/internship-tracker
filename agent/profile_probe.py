@@ -193,11 +193,38 @@ def pace(label):
     time.sleep(gap)
 
 
+def safe_goto(page, url):
+    """LinkedIn redirects mid-navigation - to a login, or to a checkpoint. That
+    makes goto() raise "interrupted by another navigation", which is not an
+    error so much as the answer to a different question. Swallow it and report
+    wherever we actually landed."""
+    try:
+        page.goto(url, timeout=NAV_TIMEOUT, wait_until="domcontentloaded")
+    except Exception as exc:
+        if "interrupted by another navigation" not in str(exc):
+            raise
+        page.wait_for_timeout(3000)
+    page.wait_for_timeout(2500)          # let the body settle
+    try:
+        return page.url, (page.evaluate("() => document.body.innerText") or "")
+    except Exception:
+        return page.url, ""
+
+
 def read_profile(page, url):
-    page.goto(url, timeout=NAV_TIMEOUT, wait_until="domcontentloaded")
-    page.wait_for_timeout(2500)          # let the profile body settle
-    text = page.evaluate("() => document.body.innerText")
-    return page.url, (text or "")
+    return safe_goto(page, url)
+
+
+def show_page(url, text, lines=14):
+    """Print what a page actually says. A checkpoint that asks for an emailed
+    code is ordinary new-device verification; one that talks about unusual
+    activity or proving you're not a robot is detection, and the two need
+    opposite responses."""
+    print("\n  landed on: %s" % url)
+    print("  ---- what the page says " + "-" * 40)
+    for line in [l for l in (text or "").split("\n") if l.strip()][:lines]:
+        print("  | " + line.strip()[:76])
+    print("  " + "-" * 64)
 
 
 def ensure_login(pw):
@@ -206,20 +233,32 @@ def ensure_login(pw):
         str(PROFILE_DIR), headless=False, channel=CHANNEL)
     page = ctx.pages[0] if ctx.pages else ctx.new_page()
     try:
-        page.goto("https://www.linkedin.com/feed/", timeout=NAV_TIMEOUT,
-                  wait_until="domcontentloaded")
-        page.wait_for_timeout(3000)
-        if not looks_walled(page.url, page.evaluate("() => document.body.innerText")):
+        url, text = safe_goto(page, "https://www.linkedin.com/feed/")
+        if not looks_walled(url, text):
             print("  already signed in.")
             return True
-        print("\n  A browser window is open. Sign into LinkedIn in it,")
-        print("  then come back here and press Enter.")
+
+        show_page(url, text)
+        if "/checkpoint/" in url:
+            print("\n  LinkedIn sent a CHECKPOINT before any profile was read.")
+            print("  Read the window. Which is it?")
+            print("    (a) a code emailed/texted to you  -> ordinary new-device")
+            print("        verification. Complete it in the window.")
+            print("    (b) unusual activity / prove you are not a robot -> this")
+            print("        is detection. Close the window and stop; automating")
+            print("        past it is what gets accounts restricted.")
+
+        print("\n  Sign in / finish up in the window, then press Enter here.")
+        print("  Press Enter without doing anything to stop.")
         input("  > ")
-        page.goto("https://www.linkedin.com/feed/", timeout=NAV_TIMEOUT,
-                  wait_until="domcontentloaded")
-        page.wait_for_timeout(3000)
-        ok = not looks_walled(page.url, page.evaluate("() => document.body.innerText"))
-        print("  signed in." if ok else "  still not signed in - stopping.")
+
+        url, text = safe_goto(page, "https://www.linkedin.com/feed/")
+        ok = not looks_walled(url, text)
+        if ok:
+            print("  signed in.")
+        else:
+            print("  still not through - stopping rather than retrying.")
+            show_page(url, text)
         return ok
     finally:
         ctx.close()
