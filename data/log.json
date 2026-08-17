@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-08-17T17:25:25.744Z",
+  "updated": "2026-08-17T17:36:55.206Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -1049,6 +1049,40 @@
       "deleted": false,
       "workspace": "Hi Eric,\n\nI'm a mechanical engineering student at Boston University working on biosensors\nand wearables. I've been following what your team at Boeing is doing and would\nlove to connect and hear about your work.\n\nWould you be down for a quick zoom meeting to connect?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
       "updated": "2026-08-17T17:25:25.744Z"
+    },
+    "msxiagbh-b6l4bn": {
+      "name": "Kristin Culler",
+      "company": "Boeing",
+      "role": "VP Eng",
+      "channel": "LinkedIn",
+      "email": "",
+      "date": "",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "nudgedOn": [],
+      "closed": false,
+      "deleted": false,
+      "workspace": "Hi Kristin,\n\nI'm a mechanical engineering student at Boston University working on wearables. I've been following what your team at Boeing is doing and would love to connect and hear about your work.\n\nWould you be down for a quick zoom meeting to connect?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
+      "updated": "2026-08-17T17:27:00.125Z"
+    },
+    "msxin3gb-4yaklf": {
+      "name": "Patrick G Smith",
+      "company": "Boeing",
+      "role": "BU eng",
+      "channel": "LinkedIn",
+      "email": "https://www.linkedin.com/in/patrick-g-smith/",
+      "date": "",
+      "note": "Hi Patrick,\n\nI'm a mechanical engineering student at BU working on wearables and embedded systems. I'd love to connect and hear about your work at [company].\n\nWould you be down for a quick zoom meeting?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "nudgedOn": [],
+      "closed": false,
+      "deleted": false,
+      "workspace": "",
+      "updated": "2026-08-17T17:36:55.206Z"
     }
   },
   "apps": {
