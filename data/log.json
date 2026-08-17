@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-08-17T16:25:22.185Z",
+  "updated": "2026-08-17T16:25:32.123Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -313,7 +313,7 @@
       "name": "Mike Anderson",
       "company": "RTX",
       "role": "VP eng",
-      "channel": "Email",
+      "channel": "LinkedIn",
       "email": "https://www.linkedin.com/in/mike-anderson-0a0a2916/",
       "date": "2026-08-12",
       "note": "Hi Mike,\n\nI recently applied to the Raytheon Mechanical Engineering Intern position for Summer 2027. I’d love to connect with you to learn more about your work and the company culture.\n\nWould you be down for a quick zoom meeting to connect?\n\nI’m available daily after 6:30pm and Sundays after 2pm.",
@@ -323,8 +323,10 @@
       "nudgedOn": [],
       "closed": false,
       "deleted": false,
-      "updated": "2026-08-17T16:25:22.185Z",
-      "workspace": ""
+      "updated": "2026-08-17T16:25:32.123Z",
+      "workspace": "",
+      "inviteAcceptedOn": "2026-08-17",
+      "withdrawnOn": null
     },
     "msquokes-dmccix": {
       "name": "Terry Kirn",
