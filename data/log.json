@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-08-17T13:57:44.890Z",
+  "updated": "2026-08-17T13:57:57.280Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -172,9 +172,9 @@
       "respondedOn": null,
       "meetingOn": null,
       "nudgedOn": [],
-      "closed": false,
+      "closed": true,
       "deleted": false,
-      "updated": "2026-08-11T02:03:46.565Z"
+      "updated": "2026-08-17T13:57:57.280Z"
     },
     "mspd06ul-g0rtum": {
       "name": "Ashley Bulloch",
