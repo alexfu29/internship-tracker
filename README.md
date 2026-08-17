@@ -238,10 +238,18 @@ carrying some other scheme isn't made clickable at all.
 
 Everything is sized to be read, not to fill the window.
 
-The **stat row sits centred across the top** in a single line, above both
-columns, since it counts things from both. Five tiles fit on one row at any width
-the two-column layout appears at; a phone folds them onto two rather than
-squeezing them.
+**Each column has its own stat row, above it.** A tile over the contacts table
+that counted companies was a small lie about what the number belonged to.
+
+| Contacts | Companies |
+|---|---|
+| **Contacted** — people you actually sent something to; a row with no date is someone you *found*, not someone you wrote to | **Applied** |
+| **Waiting** — the same, minus the ones you dropped | **Interview** |
+| **Connected** — invitations accepted. A click, not an answer, so it is counted apart from Replied | **Waitlisted** |
+| **Replied** — they wrote back | **Accepted**, with denials underneath |
+| **Meetings** | |
+
+Company counts include closed rows: archiving one doesn't un-answer it.
 
 **＋ Cold contact and ＋ Add company live in their own column's heading.** They
 used to sit together in a "Log something" card above both tables, which cost a
@@ -570,6 +578,60 @@ The tradeoff is that gaps have to be *visible* instead of prevented, so:
 
 Dates are still a date picker rather than free text, since the 7-day rule is
 computed from them.
+
+## Three LinkedIn things that aren't replies
+
+An invitation is not a message, and the two states it can be in were being
+squeezed into fields that meant something else.
+
+### ✓ Invite accepted
+
+They clicked accept. **That is not a reply** — they didn't write back — so it's
+its own toggle on a LinkedIn contact's dialog, it stamps the day you tapped it,
+and it shows as its own chip. It feeds the **Connected** tile, separately from
+Replied.
+
+**Four days later you're reminded to send the note**, in a green card that works
+like the nudge card: name, how long it's been, and the actions beside it. Sending
+a note (**Note sent**) buys another four days rather than leaving them on the
+list forever. Connecting and then never writing is the failure this exists to
+catch.
+
+While an invitation is accepted, the 7-day nudge steps aside — the four-day clock
+has taken over, and two cards naming the same person is how you learn to ignore
+both.
+
+### ↩ Worth withdrawing
+
+An invitation that is never accepted just sits there, and LinkedIn caps how many
+can be pending. After **three weeks** with no answer, the contact moves to an
+amber card suggesting you withdraw it.
+
+Counted from **when the invitation went out**, not from your last reminder:
+sending a follow-up note doesn't make a pending request any fresher.
+
+This is a third thing, and the distinction matters:
+
+| | What it means |
+|---|---|
+| **Ignore** | stop nudging me about this person. They stay live in the table |
+| **Drop it** | file them away as over — closes the entry |
+| **Withdrawn** | you cancelled the invitation *on LinkedIn*. The person isn't closed, they're just no longer pending |
+
+Past three weeks the advice stops being "send another note" and becomes
+"withdraw it", so those rows leave the nudge card for this one.
+
+### The chip order, fixed
+
+A company you'd never applied to but that had **written back** used to show
+`Not applied`, because that test ran before the reply test. The chip is meant to
+say the most useful true thing about a row, and "they answered" outranks "you
+haven't sent anything" every time.
+
+**Interview** is also a company outcome now, alongside Accepted / Waitlisted /
+Denied. It's green: green here means something came back to you, and an interview
+is the strongest thing short of an offer. It isn't terminal — that's what the
+word is for.
 
 ## The 7-day rule
 

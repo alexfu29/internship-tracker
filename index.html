@@ -52,6 +52,8 @@
     --red-ink:  #7a1414;
     --amber-bg: #fdf3df;
     --amber-ink:#6b4a00;
+    --green-bg: #e8f6e8;
+    --green-ink:#14521a;
 
     --radius: 14px;
     --tap: 44px;
@@ -80,6 +82,8 @@
       --red-ink:  #ff9d9d;
       --amber-bg: #332a10;
       --amber-ink:#ffd479;
+      --green-bg: #14290f;
+      --green-ink:#9fe6a0;
     }
   }
   :root[data-theme="dark"] {
@@ -105,6 +109,8 @@
     --red-ink:  #ff9d9d;
     --amber-bg: #332a10;
     --amber-ink:#ffd479;
+    --green-bg: #14290f;
+    --green-ink:#9fe6a0;
   }
 
   * { box-sizing: border-box; }
@@ -136,7 +142,7 @@
      so the widest table row would push the column past the page instead of
      scrolling inside .table-scroll the way it does in one column. */
   .cols { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0 10px; align-items: start; }
-  .cols > section { min-width: 0; }
+  .cols > .col { min-width: 0; }
 
   /* ---------- Slim controls ----------
      The stat tiles and the two log buttons are sized by their content, not by
@@ -207,6 +213,15 @@
   /* ---------- Nudge card (critical state) ---------- */
   .card.nudge-card { border-left: 4px solid var(--status-critical); }
   .card.nudge-card > h2 { color: var(--status-critical); }
+  /* Same shape as the nudge card, different colour, because they are the same
+     kind of thing: a short list of people with the action next to each name.
+     Green is good news you owe a reply to; amber is housekeeping. */
+  .card.note-card { border-left: 4px solid var(--status-good); }
+  .card.note-card > h2 { color: var(--status-good); }
+  .note-card .nudge-row { background: var(--green-bg); color: var(--green-ink); }
+  .card.wd-card { border-left: 4px solid var(--status-warning); }
+  .card.wd-card > h2 { color: var(--amber-ink); }
+  .wd-card .nudge-row { background: var(--amber-bg); color: var(--amber-ink); }
   .nudge-row {
     padding: 7px 9px; border-radius: 9px; background: var(--red-bg);
     color: var(--red-ink); margin-bottom: 6px;
@@ -241,7 +256,9 @@
      spread across it — and sized to their content, five of them fit on one
      line at any width the two-column layout appears at. Wrapping is still
      allowed so a phone folds them instead of overflowing. */
-  .stats { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
+  .stats { display: flex; flex-wrap: wrap; justify-content: center; gap: 5px;
+           margin: 9px 0 0; }
+  .stats:empty { display: none; }
   .stat {
     background: var(--surface-1); border: 1px solid var(--border);
     border-radius: 10px; padding: 6px 10px; flex: 0 1 auto; min-width: 104px;
@@ -882,15 +899,19 @@
   <!-- Shown only if the clipboard is blocked, so a draft is never lost -->
   <div id="draftFallback"></div>
 
-  <!-- Needs a nudge (renders only when non-empty) -->
+  <!-- Needs a nudge / accepted invites / withdraw list — each renders only
+       when non-empty, so a quiet week shows none of them -->
   <div id="nudgeMount"></div>
+  <div id="acceptMount"></div>
+  <div id="withdrawMount"></div>
 
-  <!-- Stats: one centred row, above both columns, since they count from both -->
-  <div class="stats" id="stats"></div>
 
   <!-- Tables: contacts left, companies right on a wide screen; stacked below
        1040px. One page scroll moves both — neither column scrolls alone. -->
   <div class="cols">
+   <div class="col">
+    <!-- Each stat row counts its own column, so it sits over that column -->
+    <div class="stats" id="statsContacts"></div>
     <section class="card">
       <h2><span class="h-title">People contacted</span><span class="count" id="contactCount"></span>
         <button type="button" class="add-btn" id="btnShowContact">＋ Cold contact</button></h2>
@@ -898,7 +919,10 @@
       <div class="table-scroll" id="contactTableMount"></div>
       <div class="archive" id="contactArchive"></div>
     </section>
+   </div>
 
+   <div class="col">
+    <div class="stats" id="statsApps"></div>
     <section class="card">
       <h2><span class="h-title">Companies</span><span class="count" id="appCount"></span>
         <button type="button" class="add-btn" id="btnShowApp">＋ Add company</button></h2>
@@ -907,6 +931,7 @@
       <div class="dot-legend" id="appLegend"></div>
       <div class="archive" id="appArchive"></div>
     </section>
+   </div>
   </div>
 
 </main>
@@ -1006,6 +1031,7 @@
         <label>If they came back, what was the answer?</label>
         <div class="seg" id="aOutcomeSeg">
           <label><input type="radio" name="aOutcome" value="none" checked><span>No answer yet</span></label>
+          <label><input type="radio" name="aOutcome" value="interview"><span>Interview</span></label>
           <label><input type="radio" name="aOutcome" value="accepted"><span>Accepted</span></label>
           <label><input type="radio" name="aOutcome" value="waitlist"><span>Waitlisted</span></label>
           <label><input type="radio" name="aOutcome" value="denied"><span>Denied</span></label>
@@ -1393,7 +1419,7 @@
      tell those apart from a change that genuinely didn't work. This string
      lives in the file being executed, so it cannot lie about which file that
      is. It's shown at the bottom of Settings. */
-  var APP_VERSION = "2026-08-16j";
+  var APP_VERSION = "2026-08-17a";
   var swReady = false, swCacheVersion = "", swNote = "";
 
   /* ============================================================
@@ -1802,6 +1828,8 @@
       });
   }
   function contacts() { return liveList(DATA.contacts); }
+  // Stats count dropped people too — see renderStats.
+  function allContacts() { return liveList(DATA.contacts); }
   function apps() { return liveList(DATA.apps); }
 
   /* ---- table order: by date, or your own -------------------------
@@ -1967,9 +1995,61 @@
   // red card. Closing would file them away as over, and "Reminder sent" would
   // be a lie about something you didn't send — neither says "not this one".
   function isMuted(c) { return c.muted === true; }
+  /* Two things that happen on LinkedIn and nowhere else.
+
+     An invitation that is *accepted* is not a reply — they clicked a button,
+     they didn't write back — so it gets its own field and its own follow-up
+     clock. Four days later you're reminded to send the note, which is the
+     whole point of connecting.
+
+     An invitation that is never accepted just sits there. After three weeks
+     it's worth withdrawing: LinkedIn caps how many can be pending, and a
+     stale request is a slot you can't use. That is different from `Drop it`,
+     which closes the entry, and from `Ignore`, which only stops the nudging —
+     withdrawing is an action you take on LinkedIn itself. */
+  var WITHDRAW_DAYS = 21;
+  var ACCEPT_NOTE_DAYS = 4;
+  function inviteAccepted(c) { return !!parseYmd(c && c.inviteAcceptedOn); }
+  function isWithdrawn(c) { return !!parseYmd(c && c.withdrawnOn); }
+
+  function needsWithdraw(c) {
+    if (!isLinkedInContact(c) || !parseYmd(c.date)) return false;
+    if (inviteAccepted(c) || isWithdrawn(c)) return false;
+    if (c.responded || c.meetingOn || c.closed) return false;
+    // Counted from when the invitation went out, not from your last reminder:
+    // sending a follow-up note doesn't make a pending request any fresher.
+    return ageDays(c.date) >= WITHDRAW_DAYS;
+  }
+  function withdrawList() {
+    return contacts().filter(needsWithdraw).sort(function (a, b) {
+      return ageDays(b.date) - ageDays(a.date);
+    });
+  }
+
+  // The clock restarts on a reminder, so tapping "Note sent" buys another
+  // four days rather than leaving them on the list forever.
+  function acceptNoteDue(c) {
+    if (!inviteAccepted(c)) return false;
+    if (c.responded || c.meetingOn || c.closed) return false;
+    var last = c.inviteAcceptedOn;
+    (c.nudgedOn || []).forEach(function (n) { if (n > last) last = n; });
+    return ageDays(last) >= ACCEPT_NOTE_DAYS;
+  }
+  function acceptNoteList() {
+    return contacts().filter(acceptNoteDue).sort(function (a, b) {
+      return ageDays(a.inviteAcceptedOn) - ageDays(b.inviteAcceptedOn);
+    });
+  }
+
   function needsNudge(c) {
     if (!parseYmd(c.date)) return false;   // nothing to count from
     if (isMuted(c)) return false;
+    /* Once the invitation is accepted the 4-day note clock takes over, and a
+       withdrawn one isn't being chased any more. Past three weeks the advice
+       stops being "send another note" and becomes "withdraw it", so those
+       move to that card too. Two cards naming the same person is how you
+       learn to ignore both. */
+    if (inviteAccepted(c) || isWithdrawn(c) || needsWithdraw(c)) return false;
     return !c.responded && !c.closed && !c.meetingOn && daysSilent(c) >= NUDGE_DAYS;
   }
   function dueNudges() {
@@ -2141,7 +2221,13 @@
   // How it actually ended. Same shape as the flags above: no old row carried
   // it, so a missing key honestly means "no answer yet". Anything unrecognised
   // reads as no answer rather than being trusted into the UI.
-  var OUTCOMES = { accepted: "Accepted", waitlist: "Waitlisted", denied: "Denied" };
+  /* Interview is an answer like the others — it replaces the waiting chip,
+     because once they've asked to talk, how many days it's been silent
+     stopped being the question. Green: this app's rule is that green means
+     something came back to you, and an interview is the strongest thing
+     short of an offer. It is not terminal, which is what the words are for. */
+  var OUTCOMES = { interview: "Interview", accepted: "Accepted",
+                   waitlist: "Waitlisted", denied: "Denied" };
   function outcomeOf(a) {
     var v = a && a.outcome;
     return OUTCOMES[v] ? v : "";
@@ -2154,7 +2240,8 @@
     var v = outcomeOf(a);
     if (!v) return null;
     return {
-      tone: v === "accepted" ? "good" : v === "waitlist" ? "warning" : "critical",
+      tone: (v === "accepted" || v === "interview") ? "good"
+        : v === "waitlist" ? "warning" : "critical",
       text: OUTCOMES[v]
     };
   }
@@ -2233,14 +2320,23 @@
       var oc = outcomeChip(e);
       if (oc) return oc;
     }
-    // A tracked-but-not-applied company is a to-do, not a waiting game.
-    if (!isContact && !isApplied(e)) return { tone: "warning", text: "Not applied" };
     if (e.meetingOn) {
       var md = parseYmd(e.meetingOn);
       var future = md && daysBetween(today, md) >= 0;
       return { tone: "good", text: (future ? "Meeting " : "Met ") + fmtShort(e.meetingOn) };
     }
     if (e.responded) return { tone: "good", text: "Replied" };
+    /* Moved below Replied and Meeting, which is a fix: a company you'd never
+       applied to but that had written back showed "Not applied", because this
+       test used to come first. The chip is meant to say the most useful true
+       thing about the row, and "they answered" outranks "you haven't sent
+       anything" every time. */
+    if (!isContact && !isApplied(e)) return { tone: "warning", text: "Not applied" };
+    // They clicked accept but haven't written — a real state, and not Replied.
+    if (isContact && inviteAccepted(e)) {
+      return { tone: "good", text: "Invite accepted" };
+    }
+    if (isContact && isWithdrawn(e)) return { tone: "muted", text: "Withdrawn" };
     // Say it out loud. A row that has quietly stopped nudging with nothing on
     // it to explain why is the same bug as a silent failure anywhere else.
     if (isContact && isMuted(e)) return { tone: "muted", text: "Ignored" };
@@ -2260,46 +2356,152 @@
       '<span class="txt">' + escapeHtml(st.text) + '</span></span>';
   }
 
+  /* The two LinkedIn-only lists. Same shape as the nudge card on purpose —
+     a short list of people with the action beside each name — because they
+     are the same kind of thing and a third layout would only be a third
+     thing to learn. Each renders nothing at all when its list is empty. */
+  function reminderCard(mountId, cls, heading, list, hint, acts) {
+    var mount = document.getElementById(mountId);
+    if (!mount) return;
+    if (!list.length) { mount.innerHTML = ""; return; }
+    var html = '<section class="card ' + cls + '"><h2>' + escapeHtml(heading) +
+      '<span class="count">' + list.length + "</span></h2>";
+    list.forEach(function (c) {
+      html += '<div class="nudge-row">' +
+        '<button type="button" class="nudge-open" data-open="' + c.id +
+        '" title="Open this contact"><span class="who">' + escapeHtml(nameOf(c)) +
+        (c.company ? ' <span style="font-weight:400">· ' + escapeHtml(c.company) + "</span>" : "") +
+        '</span><span class="meta">' + escapeHtml(acts.meta(c)) +
+        (c.email ? " · " + escapeHtml(c.email) : "") +
+        "</span></button><div class=\"acts\">" +
+        acts.buttons(c) + "</div></div>";
+    });
+    html += '<p class="hint">' + hint + "</p></section>";
+    mount.innerHTML = html;
+    mount.querySelectorAll("button[data-open]").forEach(function (b) {
+      b.addEventListener("click", function () { openEditor("contact", b.getAttribute("data-open")); });
+    });
+    mount.querySelectorAll("button[data-act]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        var c = DATA.contacts[b.getAttribute("data-id")];
+        if (!c || c.deleted) return;
+        acts.run(b.getAttribute("data-act"), c, b);
+      });
+    });
+  }
+
+  function renderAcceptNotes() {
+    reminderCard("acceptMount", "note-card", "✓ Accepted your invite — send the note",
+      acceptNoteList(),
+      "They connected but haven't written. Copy the note, send it on LinkedIn, then tap " +
+      "<strong>Note sent</strong> — that buys another four days.",
+      {
+        meta: function (c) {
+          var n = (c.nudgedOn || []).length;
+          return "accepted " + fmtShort(c.inviteAcceptedOn) + " · " +
+            ageDays(c.inviteAcceptedOn) + " days ago" +
+            (n ? " · " + n + " note" + (n > 1 ? "s" : "") + " sent" : "");
+        },
+        buttons: function (c) {
+          return '<button data-act="copy" data-id="' + c.id + '">📋 Copy note</button>' +
+            '<button data-act="nudged" data-id="' + c.id + '">Note sent</button>' +
+            '<button data-act="replied" data-id="' + c.id + '">They replied</button>';
+        },
+        run: function (act, c, btn) {
+          if (act === "copy") { copyText(draftFor(c, followupKind(c)), btn); return; }
+          if (act === "nudged") toggleRemindedToday(c);
+          if (act === "replied") { c.responded = true; c.respondedOn = TODAY; }
+          touch(c); saveData(); render();
+        }
+      });
+  }
+
+  function renderWithdrawList() {
+    reminderCard("withdrawMount", "wd-card", "↩ Worth withdrawing on LinkedIn",
+      withdrawList(),
+      "Three weeks with the invitation still pending. Withdrawing frees the slot — " +
+      "it is not the same as <strong>Drop it</strong>, which files the person away here. " +
+      "Do it on LinkedIn, then tap <strong>Withdrawn</strong>.",
+      {
+        meta: function (c) {
+          return "invited " + fmtShort(c.date) + " · " + ageDays(c.date) +
+            " days pending, no answer";
+        },
+        buttons: function (c) {
+          return '<button data-act="profile" data-id="' + c.id + '">🔗 Open profile</button>' +
+            '<button data-act="withdrawn" data-id="' + c.id + '">Withdrawn</button>' +
+            '<button data-act="accepted" data-id="' + c.id + '">They accepted</button>' +
+            '<button data-act="close" data-id="' + c.id + '">Drop it</button>';
+        },
+        run: function (act, c) {
+          if (act === "profile") {
+            var u = linkHref(c.email);
+            if (u) window.open(u, "_blank", "noopener,noreferrer");
+            return;
+          }
+          if (act === "withdrawn") c.withdrawnOn = TODAY;
+          if (act === "accepted") c.inviteAcceptedOn = TODAY;
+          if (act === "close") c.closed = true;
+          touch(c); saveData(); render();
+        }
+      });
+  }
+
   /* ============================================================
      5. RENDER
      Each region renders into its own mount so typing in a form is
      never wiped by an unrelated re-render.
      ============================================================ */
-  function renderStats() {
-    var cs = contacts(), as = apps();
-    var applied = as.filter(isApplied);
-    // Only things you've actually sent can come back to you — a company you
-    // merely bookmarked must not drag the reply rate down.
-    var sent = cs.concat(applied);
-    var replies = sent.filter(function (e) { return e.responded || e.meetingOn; }).length;
-    var meetings = sent.filter(function (e) { return !!e.meetingOn; }).length;
-    var rate = sent.length ? Math.round((replies / sent.length) * 100) : 0;
-
-    // Outcomes ride in one tile rather than three: accepted is the number
-    // you actually want, and waitlist/denied are context for it. Decided
-    // companies are counted across every company, closed ones included — an
-    // answer doesn't stop being an answer because you archived the row.
-    var decided = as.filter(function (a) { return outcomeOf(a); });
-    var accepted = decided.filter(function (a) { return outcomeOf(a) === "accepted"; }).length;
-    var waitlist = decided.filter(function (a) { return outcomeOf(a) === "waitlist"; }).length;
-    var denied = decided.filter(function (a) { return outcomeOf(a) === "denied"; }).length;
-    var outcomeSub = decided.length
-      ? waitlist + " waitlisted · " + denied + " denied"
-      : "no answers yet";
-
-    var tiles = [
-      { label: "Contacts", value: cs.length, sub: cs.length ? "people reached" : "none yet" },
-      { label: "Applied", value: applied.length,
-        sub: as.length ? "of " + as.length + " compan" + (as.length === 1 ? "y" : "ies") : "none yet" },
-      { label: "Replies", value: replies, sub: sent.length ? rate + "% of " + sent.length : "—" },
-      { label: "Meetings", value: meetings, sub: meetings ? "booked or held" : "none yet" },
-      { label: "Accepted", value: accepted, sub: outcomeSub }
-    ];
-    document.getElementById("stats").innerHTML = tiles.map(function (t) {
-      return '<div class="stat"><div class="label">' + t.label + '</div>' +
+  /* One row per column, counting that column only — a tile above the
+     contacts table that counted companies was a small lie about what the
+     number belonged to. */
+  function statTiles(mountId, tiles) {
+    document.getElementById(mountId).innerHTML = tiles.map(function (t) {
+      return '<div class="stat"><div class="label">' + escapeHtml(t.label) + '</div>' +
         '<div class="value">' + t.value + '</div>' +
         '<div class="sub">' + escapeHtml(t.sub) + '</div></div>';
     }).join("");
+  }
+
+  function renderStats() {
+    var cs = allContacts(), as = apps();
+
+    // "Contacted" is people you actually sent something to — a row with no
+    // date is someone you found, not someone you wrote to.
+    var contacted = cs.filter(function (c) { return !!parseYmd(c.date); });
+    var live = contacted.filter(function (c) { return !c.closed; });
+    var invited = cs.filter(inviteAccepted).length;
+    var replied = cs.filter(function (c) { return !!c.responded; }).length;
+    var met = cs.filter(function (c) { return !!c.meetingOn; }).length;
+
+    statTiles("statsContacts", [
+      { label: "Contacted", value: contacted.length,
+        sub: cs.length ? "of " + cs.length + " logged" : "none yet" },
+      { label: "Waiting", value: live.length,
+        sub: contacted.length - live.length
+          ? (contacted.length - live.length) + " dropped" : "none dropped" },
+      // Accepting an invitation is a click, not an answer, so it is counted
+      // apart from Replied rather than folded into it.
+      { label: "Connected", value: invited,
+        sub: invited ? "invites accepted" : "none yet" },
+      { label: "Replied", value: replied, sub: replied ? "wrote back" : "none yet" },
+      { label: "Meetings", value: met, sub: met ? "booked or held" : "none yet" }
+    ]);
+
+    // Counted across every company, closed ones included — archiving a row
+    // doesn't un-answer it.
+    var count = function (v) {
+      return as.filter(function (a) { return outcomeOf(a) === v; }).length;
+    };
+    var applied = as.filter(isApplied);
+    statTiles("statsApps", [
+      { label: "Applied", value: applied.length,
+        sub: as.length ? "of " + as.length + " compan" + (as.length === 1 ? "y" : "ies") : "none yet" },
+      { label: "Interview", value: count("interview"), sub: count("interview") ? "asked to talk" : "none yet" },
+      { label: "Waitlisted", value: count("waitlist"), sub: count("waitlist") ? "still live" : "none yet" },
+      { label: "Accepted", value: count("accepted"),
+        sub: count("denied") ? count("denied") + " denied" : "no denials" }
+    ]);
   }
 
   function renderNudges() {
@@ -2831,6 +3033,8 @@
     renderBanners();
     renderStats();
     renderNudges();
+    renderAcceptNotes();
+    renderWithdrawList();
     renderCompanyList();
     renderOutboxBtn();
     renderTables();
@@ -3009,6 +3213,12 @@
     html += '<div class="upd-group"><span class="upd-group-label">Status</span>' +
       '<div class="upd-acts">' + toggleBtn("replied", !!e.responded, "Replied");
     if (isContact) html += toggleBtn("nudged", remindedToday(e), "Reminder sent");
+    // LinkedIn-only states. Accepting an invitation is not replying, and
+    // withdrawing one is not dropping the person — see the two cards.
+    if (isContact && isLinkedInContact(e)) {
+      html += toggleBtn("invite", inviteAccepted(e), "Invite accepted");
+      html += toggleBtn("withdrawn", isWithdrawn(e), "Withdrawn");
+    }
     if (isContact) html += toggleBtn("muted", isMuted(e), "Ignored");
     html += toggleBtn("close", !!e.closed, "Closed");
     html += '</div></div>';
@@ -3071,6 +3281,14 @@
           live.respondedOn = live.responded ? TODAY : null;
         } else if (act === "nudged") {
           toggleRemindedToday(live);
+        } else if (act === "invite") {
+          // Stamped with the day you tapped it, because the 4-day note clock
+          // counts from when they accepted, not from now-ish.
+          live.inviteAcceptedOn = inviteAccepted(live) ? null : TODAY;
+          if (live.inviteAcceptedOn) live.withdrawnOn = null;   // can't be both
+        } else if (act === "withdrawn") {
+          live.withdrawnOn = isWithdrawn(live) ? null : TODAY;
+          if (live.withdrawnOn) live.inviteAcceptedOn = null;
         } else if (act === "muted") {
           live.muted = !live.muted;
         } else if (act === "close") {
