@@ -851,7 +851,7 @@
   .drawer.open { transform: translateX(0); }
   .drawer h2 { font-size: 1.05rem; margin: 0 0 4px; }
   .drawer label { display: block; font-size: 0.8rem; color: var(--text-secondary); margin: 8px 0 3px; }
-  .drawer input[type=text], .drawer input[type=password] {
+  .drawer input[type=text], .drawer input[type=password], .drawer input[type=number] {
     width: 100%; padding: 7px 9px; border-radius: 8px; border: 1px solid var(--border);
     background: var(--surface-2); color: var(--text-primary); font-size: 0.9rem;
     min-height: 34px;
@@ -1216,17 +1216,17 @@
 
   <table class="tpl-map">
     <tr><th></th><th>First message</th><th>Follow-up</th></tr>
-    <tr><th>Email</th><td>First email<br><span class="opt">Hiring / VP Eng / BU Eng / other</span></td><td>Email follow-up</td></tr>
-    <tr><th>LinkedIn</th><td>LinkedIn note<br><span class="opt">Hiring / VP Eng / BU Eng / other</span></td><td>LinkedIn follow-up</td></tr>
+    <tr><th>Email</th><td>First email<br><span class="opt">BU alum / in my field / other</span></td><td>Email follow-up</td></tr>
+    <tr><th>LinkedIn</th><td>LinkedIn note<br><span class="opt">BU alum / in my field / other</span></td><td>LinkedIn follow-up</td></tr>
   </table>
 
   <p class="tpl-help">
-    Each first message has a version per <strong>role</strong>, because the three buckets
-    are three different conversations: a recruiter can answer &ldquo;are you taking
-    interns&rdquo;, engineering leadership can&rsquo;t and shouldn&rsquo;t be asked to, and a
-    <strong>BU Eng</strong> is someone you already share a school with. Any other role &mdash;
-    blank, or something you typed &mdash; gets the plain version rather than being pushed
-    into a bucket. Follow-ups are one each, unchanged.
+    Each first message has a version per <strong>role</strong>. A <strong>BU Eng</strong>
+    is someone you already share a school with, and a <strong>Field Eng</strong> is
+    someone doing the work you want to do &mdash; different openings. Any other role
+    &mdash; blank, or an older <em>Hiring</em> / <em>VP Eng</em> row &mdash; gets the plain
+    version rather than being pushed into a bucket it never established. Follow-ups are
+    one each, unchanged.
   </p>
 
   <p class="tpl-help"><strong>What fills in automatically:</strong></p>
@@ -1251,17 +1251,13 @@
   <label for="tplOutreach">Email · first message <span style="color:var(--text-muted)">(any other role)</span></label>
   <textarea id="tplOutreach" class="tpl" rows="10"></textarea>
 
-  <label for="tplOutreachHiring">Email · first message — <em>Hiring</em>
-    <span style="color:var(--text-muted)">(role is Hiring)</span></label>
-  <textarea id="tplOutreachHiring" class="tpl" rows="10"></textarea>
-
-  <label for="tplOutreachExec">Email · first message — <em>VP Eng</em>
-    <span style="color:var(--text-muted)">(role is VP Eng)</span></label>
-  <textarea id="tplOutreachExec" class="tpl" rows="10"></textarea>
-
-  <label for="tplOutreachBU">Email · first message — <em>BU engineer</em>
+  <label for="tplOutreachBU">Email · first message — <em>BU alum</em>
     <span style="color:var(--text-muted)">(role is BU Eng)</span></label>
   <textarea id="tplOutreachBU" class="tpl" rows="10"></textarea>
+
+  <label for="tplOutreachField">Email · first message — <em>in my field</em>
+    <span style="color:var(--text-muted)">(role is Field Eng)</span></label>
+  <textarea id="tplOutreachField" class="tpl" rows="10"></textarea>
 
   <label for="tplFollowup">Email · follow-up <span style="color:var(--text-muted)">(the 7-day nudge)</span></label>
   <textarea id="tplFollowup" class="tpl" rows="10"></textarea>
@@ -1269,17 +1265,13 @@
   <label for="tplConnect">LinkedIn · first message <span style="color:var(--text-muted)">(any other role)</span></label>
   <textarea id="tplConnect" class="tpl" rows="9"></textarea>
 
-  <label for="tplConnectHiring">LinkedIn · first message — <em>Hiring</em>
-    <span style="color:var(--text-muted)">(role is Hiring)</span></label>
-  <textarea id="tplConnectHiring" class="tpl" rows="9"></textarea>
-
-  <label for="tplConnectExec">LinkedIn · first message — <em>VP Eng</em>
-    <span style="color:var(--text-muted)">(role is VP Eng)</span></label>
-  <textarea id="tplConnectExec" class="tpl" rows="9"></textarea>
-
-  <label for="tplConnectBU">LinkedIn · first message — <em>BU engineer</em>
+  <label for="tplConnectBU">LinkedIn · first message — <em>BU alum</em>
     <span style="color:var(--text-muted)">(role is BU Eng)</span></label>
   <textarea id="tplConnectBU" class="tpl" rows="9"></textarea>
+
+  <label for="tplConnectField">LinkedIn · first message — <em>in my field</em>
+    <span style="color:var(--text-muted)">(role is Field Eng)</span></label>
+  <textarea id="tplConnectField" class="tpl" rows="9"></textarea>
 
   <label for="tplLiFollowup">LinkedIn · follow-up</label>
   <textarea id="tplLiFollowup" class="tpl" rows="9"></textarea>
@@ -1310,9 +1302,10 @@
   <hr>
   <h2 style="font-size:0.95rem">Find contacts</h2>
   <p class="tpl-help">
-    <strong>🔍 Find contacts</strong> on a company looks for six people there — two
-    recruiters, two engineering leads, and two Boston University engineers — then checks
-    each one against their real profile before anything is saved.
+    <strong>🔍 Find contacts</strong> on a company looks for Boston University alumni
+    there, plus one engineer doing the work you want to do — then checks each one against
+    their real profile before anything is saved. How many of each, and what counts as your
+    field, are set below.
   </p>
   <p class="tpl-help">
     With an API key it searches for you. <strong>Leave the key blank</strong> and it copies
@@ -1352,6 +1345,41 @@
     <label><input type="radio" name="aiProvider" value="gemini"><span>Gemini</span></label>
   </div>
 
+  <label for="buPicksInput">BU alumni to find</label>
+  <input type="number" id="buPicksInput" min="1" max="12" step="1" placeholder="4">
+
+  <label for="fieldPicksInput">Engineers in my field to find</label>
+  <input type="number" id="fieldPicksInput" min="0" max="12" step="1" placeholder="1">
+
+  <label for="fieldTermsInput">What counts as my field
+    <span style="color:var(--text-muted)">(comma separated)</span></label>
+  <input type="text" id="fieldTermsInput"
+    placeholder="mechanical, biomedical, biosensor, wearable, human-machine interaction">
+  <p class="tpl-help">
+    Used three ways, so they stay in step: the searches 🔎 Search runs, the check that a
+    field pick's title actually bears it out, and the prompt you copy into Gemini.
+  </p>
+
+  <hr>
+  <h2 style="font-size:0.95rem">Reminder timings</h2>
+  <p class="tpl-help">
+    How long is too long is a judgement call, so it's yours. Blank or nonsense falls back
+    to the default rather than producing a broken day count.
+  </p>
+
+  <label for="nudgeDaysInput">Nudge after this many days of silence
+    <span style="color:var(--text-muted)">(default 7)</span></label>
+  <input type="number" id="nudgeDaysInput" min="1" max="365" step="1" placeholder="7">
+
+  <label for="acceptNoteDaysInput">Send a note this many days after an invite is accepted
+    <span style="color:var(--text-muted)">(default 4)</span></label>
+  <input type="number" id="acceptNoteDaysInput" min="1" max="365" step="1" placeholder="4">
+
+  <label for="withdrawDaysInput">Suggest withdrawing after this many days pending
+    <span style="color:var(--text-muted)">(default 21)</span></label>
+  <input type="number" id="withdrawDaysInput" min="1" max="365" step="1" placeholder="21">
+
+  <hr>
   <label for="gemKeyInput">Google Gemini API key <span style="color:var(--text-muted)">(optional)</span></label>
   <input type="password" id="gemKeyInput" placeholder="AIza…" autocomplete="off">
 
@@ -1419,7 +1447,7 @@
      tell those apart from a change that genuinely didn't work. This string
      lives in the file being executed, so it cannot lie about which file that
      is. It's shown at the bottom of Settings. */
-  var APP_VERSION = "2026-08-17c";
+  var APP_VERSION = "2026-08-17d";
   var swReady = false, swCacheVersion = "", swNote = "";
 
   /* ============================================================
@@ -1450,7 +1478,33 @@
      "YYYY-MM-DD" strings. Never UTC — a 7-day rule that flips at
      8pm local would be a bug you'd only notice at 2am.
      ============================================================ */
-  var NUDGE_DAYS = 7;
+  /* Every interval is a setting. They were constants, which meant "how long
+     is too long" was my guess baked into the file rather than yours — and it
+     is the kind of thing that changes once you have used it for a month.
+     Read through these, never off the raw value, so a blank or nonsense entry
+     falls back to the default instead of producing a NaN day count. */
+  var NUM_SETTINGS = [
+    { key: "nudgeDays",      id: "nudgeDaysInput" },
+    { key: "acceptNoteDays", id: "acceptNoteDaysInput" },
+    { key: "withdrawDays",   id: "withdrawDaysInput" },
+    { key: "buPicks",        id: "buPicksInput" },
+    { key: "fieldPicks",     id: "fieldPicksInput" }
+  ];
+  function numSet(key, dflt, lo, hi) {
+    var v = parseInt(SETTINGS[key], 10);
+    if (!isFinite(v) || v < lo || v > hi) return dflt;
+    return v;
+  }
+  function nudgeDays()      { return numSet("nudgeDays", 7, 1, 365); }
+  function withdrawDays()   { return numSet("withdrawDays", 21, 1, 365); }
+  function acceptNoteDays() { return numSet("acceptNoteDays", 4, 1, 365); }
+  function buPicks()        { return numSet("buPicks", 4, 1, 12); }
+  function fieldPicks()     { return numSet("fieldPicks", 1, 0, 12); }
+  function fieldTerms() {
+    var t = (SETTINGS.fieldTerms || "").trim();
+    return (t || "mechanical, biomedical, biosensor, wearable, human-machine interaction")
+      .split(",").map(function (x) { return x.trim(); }).filter(Boolean);
+  }
 
   function atMidnight(d) { return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
   function isoDate(d) {
@@ -1573,39 +1627,22 @@
       "\n" +
       "Thanks,\n" +
       "Alex",
-    // A recruiter is the one contact who can answer the process question
-    // directly, so this one asks it instead of talking about the work.
-    outreachHiring:
-      "Subject: Summer 2027 mechanical engineering internship at {company}\n" +
-      "\n" +
-      "Hi {first},\n" +
-      "\n" +
-      "I'm a mechanical engineering student at Boston University looking for a paid\n" +
-      "Summer 2027 internship, and you looked like the right person to ask.\n" +
-      "\n" +
-      "I work on biosensors, wearables and human-machine interaction. Is {company}\n" +
-      "taking mechanical or biomedical engineering interns for 2027, and what does the\n" +
-      "timeline look like?\n" +
-      "\n" +
-      "Happy to send my resume. Thanks for your time.\n" +
-      "\n" +
-      "Best,\n" +
-      "Alex",
-    // Engineering leadership cannot process an application and should not be
-    // asked to, so this asks about the work and the team instead.
-    outreachExec:
-      "Subject: BU mech-e student — a question about your team at {company}\n" +
+    // Somebody doing the work you want to do. Not a decision-maker and not
+    // asked to be one — this asks about the work, which is the only thing
+    // they can actually answer and the reason you picked them.
+    outreachField:
+      "Subject: BU mech-e student — a question about your work at {company}\n" +
       "\n" +
       "Hi {first},\n" +
       "\n" +
       "I'm a mechanical engineering student at Boston University working on biosensors,\n" +
-      "wearables and human-machine interaction, and I've been following what your team\n" +
-      "at {company} is building.\n" +
+      "wearables and human-machine interaction — which is why your work at {company}\n" +
+      "caught my eye.\n" +
       "\n" +
-      "I'm looking for a Summer 2027 internship. Rather than ask you to route a resume,\n" +
-      "I'd mostly like to hear about {learn} — and whether your group takes interns.\n" +
+      "I'm looking for a Summer 2027 internship. I'd mostly like to hear how you got\n" +
+      "into it and what the work actually looks like day to day.\n" +
       "\n" +
-      "Happy to send my resume either way. Thanks for your time.\n" +
+      "Happy to send my resume. Thanks for your time.\n" +
       "\n" +
       "Best,\n" +
       "Alex",
@@ -1643,22 +1680,13 @@
       "Would you be down for a quick zoom meeting to connect?\n" +
       "\n" +
       "I'm available daily after 6:30pm and Sundays after 2pm.",
-    // The recruiter version, short: one answerable question.
-    connectHiring:
-      "Hi {first},\n" +
-      "\n" +
-      "I'm a mechanical engineering student at Boston University looking for a Summer\n" +
-      "2027 internship. Is {company} taking mechanical or biomedical engineering interns\n" +
-      "next summer?\n" +
-      "\n" +
-      "Happy to send my resume — and glad to connect either way.",
-    // Engineering leadership: about the work, not the process.
-    connectExec:
+    // The same, short enough for a connection request.
+    connectField:
       "Hi {first},\n" +
       "\n" +
       "I'm a mechanical engineering student at Boston University working on biosensors\n" +
-      "and wearables. I've been following what your team at {company} is doing and would\n" +
-      "love to connect and hear about {learn}.\n" +
+      "and wearables. Your work at {company} is close to what I want to be doing and\n" +
+      "I'd love to connect and hear about {learn}.\n" +
       "\n" +
       "Would you be down for a quick zoom meeting to connect?\n" +
       "\n" +
@@ -2007,8 +2035,6 @@
      stale request is a slot you can't use. That is different from `Drop it`,
      which closes the entry, and from `Ignore`, which only stops the nudging —
      withdrawing is an action you take on LinkedIn itself. */
-  var WITHDRAW_DAYS = 21;
-  var ACCEPT_NOTE_DAYS = 4;
   function inviteAccepted(c) { return !!parseYmd(c && c.inviteAcceptedOn); }
   function isWithdrawn(c) { return !!parseYmd(c && c.withdrawnOn); }
 
@@ -2018,7 +2044,7 @@
     if (c.responded || c.meetingOn || c.closed) return false;
     // Counted from when the invitation went out, not from your last reminder:
     // sending a follow-up note doesn't make a pending request any fresher.
-    return ageDays(c.date) >= WITHDRAW_DAYS;
+    return ageDays(c.date) >= withdrawDays();
   }
   function withdrawList() {
     return contacts().filter(needsWithdraw).sort(function (a, b) {
@@ -2033,7 +2059,7 @@
     if (c.responded || c.meetingOn || c.closed) return false;
     var last = c.inviteAcceptedOn;
     (c.nudgedOn || []).forEach(function (n) { if (n > last) last = n; });
-    return ageDays(last) >= ACCEPT_NOTE_DAYS;
+    return ageDays(last) >= acceptNoteDays();
   }
   function acceptNoteList() {
     return contacts().filter(acceptNoteDue).sort(function (a, b) {
@@ -2050,7 +2076,7 @@
        move to that card too. Two cards naming the same person is how you
        learn to ignore both. */
     if (inviteAccepted(c) || isWithdrawn(c) || needsWithdraw(c)) return false;
-    return !c.responded && !c.closed && !c.meetingOn && daysSilent(c) >= NUDGE_DAYS;
+    return !c.responded && !c.closed && !c.meetingOn && daysSilent(c) >= nudgeDays();
   }
   function dueNudges() {
     return contacts().filter(needsNudge).sort(function (a, b) {
@@ -2083,7 +2109,12 @@
      is the BU connection, so it's set from evidence on the profile, never
      guessed from a job title.
      ---------------------------------------------------------------- */
-  var BUCKETS = { Hiring: 1, "VP Eng": 1, "BU Eng": 1 };
+  /* Two buckets now, not three. Recruiters and engineering leadership are
+     out: the BU connection is the one that actually gets answered, so the
+     search spends its slots there and on a single engineer doing the work you
+     want to do. Old rows still carrying "Hiring" or "VP Eng" keep their role
+     text and fall back to the plain templates — nothing is rewritten. */
+  var BUCKETS = { "BU Eng": 1, "Field Eng": 1 };
   /* Hiring means the recruiting *function* — talent acquisition, HR, People,
      a recruiter — not anyone whose headline mentions hiring.
 
@@ -2100,18 +2131,26 @@
     "|\\btalent (acquisition|partner|management|team|sourcing|development)\\b" +
     "|\\b(chief|head|vp|svp|evp|vice president|director|manager) of " +
     "(people|talent|hr|human resources|recruit\\w*|staffing)\\b", "i");
-  // [esa]?vp so EVP/SVP/AVP count — \bvp\b can't match inside "EVP", which is
-  // how an EVP of Technology fell through to no category at all.
+  // [esa]?vp so EVP/SVP/AVP count. Still used by the verify stage to sanity
+  // check a leadership claim on an older row; no search targets it any more.
   var RE_LEAD = /\b([esa]?vp|vice president|director|head of|chief|c[etoi]o|chairman|chairwoman|chair|president|founder|owner|partner|principal|staff|senior manager|engineering manager|manager|lead)\b/i;
+
+  // Somebody doing the work you want to do, from the terms in Settings.
+  function inMyField(title) {
+    var t = String(title || "").toLowerCase();
+    if (!t) return false;
+    return fieldTerms().some(function (term) { return t.indexOf(term.toLowerCase()) !== -1; });
+  }
 
   // `hasBU` comes from the profile text, not the title — see above. With
   // nothing to go on it returns nothing: an empty role reads as "fill this in",
   // where a guessed "VP Eng" would read as a fact the app never established.
   function bucketFor(title, hasBU) {
-    if (RE_HIRING.test(title || "")) return "Hiring";
     if (hasBU) return "BU Eng";
-    if (!String(title || "").trim()) return "";
-    return "VP Eng";
+    if (inMyField(title)) return "Field Eng";
+    // Nothing established, so nothing asserted — an empty role reads as
+    // "fill this in", where a guess reads as a fact.
+    return "";
   }
   // A recruiter wants to talk about themselves and the team; an engineer wants
   // to talk about the work. One placeholder rather than four forked templates.
@@ -2152,7 +2191,7 @@
      A contact whose role is none of the three — blank, or something you typed
      by hand — falls back to the plain opener rather than being pushed into a
      bucket it never established. Same rule as everywhere else here. */
-  var ROLE_TPL = { "Hiring": "Hiring", "VP Eng": "Exec", "BU Eng": "BU" };
+  var ROLE_TPL = { "BU Eng": "BU", "Field Eng": "Field" };
   function firstContactKind(c) {
     var suffix = ROLE_TPL[String((c && c.role) || "").trim()] || "";
     return (isLinkedInContact(c) ? "connect" : "outreach") + suffix;
@@ -2936,17 +2975,22 @@
     "Find people to contact at {company}. I'm a Boston University mechanical engineering\n" +
     "student looking for a paid Summer 2027 internship{roleLine}.\n" +
     "\n" +
-    "STEP 1 — run all three of these searches before you answer:\n" +
-    "  site:linkedin.com/in \"{company}\" recruiter OR \"talent acquisition\"\n" +
-    "  site:linkedin.com/in \"{company}\" \"engineering manager\" OR \"director of engineering\" OR \"VP engineering\"\n" +
-    "  site:linkedin.com/in \"{company}\" \"Boston University\" engineer\n" +
+    "I only want two kinds of people. Recruiters and engineering leadership are\n" +
+    "deliberately NOT wanted — do not include them.\n" +
     "\n" +
-    "STEP 2 — give me up to six people, two in each category:\n" +
-    "  hiring — recruiters, talent acquisition, or hiring managers for engineering roles.\n" +
-    "  exec   — engineering leadership: engineering manager, director, or VP of engineering.\n" +
-    "  bu     — engineers at {company} who went to Boston University. Say what shows the\n" +
-    "           BU connection. These matter most: least gatekeeping, and the shared school\n" +
-    "           makes them the likeliest to reply.\n" +
+    "STEP 1 — run all of these searches before you answer:\n" +
+    "  site:linkedin.com/in \"{company}\" \"Boston University\"\n" +
+    "  site:linkedin.com/in \"{company}\" \"Boston University\" engineer\n" +
+    "  site:linkedin.com/in \"{company}\" BU alumni\n" +
+    "  site:linkedin.com/in \"{company}\" {fieldwords}\n" +
+    "\n" +
+    "STEP 2 — give me up to {bun} people in \"bu\" and {fieldn} in \"field\":\n" +
+    "  bu    — people at {company} who went to Boston University. Say what shows the BU\n" +
+    "          connection, ideally from their education. This is most of what I want:\n" +
+    "          least gatekeeping, and the shared school makes them likeliest to reply.\n" +
+    "  field — ONE engineer at {company} doing work close to {fieldwords}. Not a manager,\n" +
+    "          not a director — somebody doing the work. Say what in their title or\n" +
+    "          profile shows it.\n" +
     "\n" +
     "THE linkedin FIELD — read this twice:\n" +
     "- If a search result shows a linkedin.com/in/ URL for the person, PUT IT IN. Copy it\n" +
@@ -2961,14 +3005,14 @@
     "- Public professional information only: name, job title, employer, profile URL. No\n" +
     "  personal email addresses, phone numbers or home addresses.\n" +
     "- Check they still work at {company}. A stale title is the usual failure here.\n" +
-    "- Fewer than six is fine — say which slots you couldn't fill in \"notes\". Don't pad the\n" +
-    "  list with people who don't fit, and don't skip someone obvious: a Director of Talent\n" +
-    "  Acquisition is a hiring contact even though the title doesn't say \"engineering\".\n" +
+    "- Do not guess the BU connection. If you cannot see Boston University for someone,\n" +
+    "  they are not a \"bu\" pick — leave the slot empty and say so in \"notes\".\n" +
+    "- Fewer than asked for is fine. Don't pad the list with people who don't fit.\n" +
     "\n" +
     "OUTPUT — only this JSON, in a ```json fence, with no text before or after it:\n" +
     "\n" +
     "```json\n" +
-    "{ \"people\": [ { \"name\": \"\", \"title\": \"\", \"category\": \"hiring|exec|bu\",\n" +
+    "{ \"people\": [ { \"name\": \"\", \"title\": \"\", \"category\": \"bu|field\",\n" +
     "                \"linkedin\": \"\", \"why\": \"\" } ],\n" +
     "  \"notes\": \"which slots you couldn't fill, and anything you couldn't verify\" }\n" +
     "```";
@@ -2981,6 +3025,11 @@
     var company = companyOf(a);
     return finderPromptTpl()
       .split("{company}").join(company)
+      // The counts and the field words come from Settings, so the pasted
+      // prompt asks for exactly what the built-in search would look for.
+      .split("{bun}").join(String(buPicks()))
+      .split("{fieldn}").join(String(fieldPicks()))
+      .split("{fieldwords}").join(fieldTerms().join(", "))
       .split("{roleLine}").join(a.role ? " — I've been looking at their " + a.role : "");
   }
 
@@ -3495,20 +3544,17 @@
      One list drives filling the boxes, reading them back, and the unknown
      placeholder check — adding a template used to mean remembering three
      separate places and the checks quietly skipped whichever you forgot. */
-  var TPL_BOXES = ["outreach", "outreachHiring", "outreachExec", "outreachBU",
-                   "followup", "connect", "connectHiring", "connectExec",
-                   "connectBU", "liFollowup"];
+  var TPL_BOXES = ["outreach", "outreachBU", "outreachField", "followup",
+                   "connect", "connectBU", "connectField", "liFollowup"];
   var TPL_NAMES = {
-    outreach:       "Email · first message",
-    outreachHiring: "Email · first message (Hiring)",
-    outreachExec:   "Email · first message (VP Eng)",
-    outreachBU:     "Email · first message (BU engineer)",
-    followup:       "Email · follow-up",
-    connect:        "LinkedIn · first message",
-    connectHiring:  "LinkedIn · first message (Hiring)",
-    connectExec:    "LinkedIn · first message (VP Eng)",
-    connectBU:      "LinkedIn · first message (BU engineer)",
-    liFollowup:     "LinkedIn · follow-up"
+    outreach:      "Email · first message",
+    outreachBU:    "Email · first message (BU alum)",
+    outreachField: "Email · first message (in my field)",
+    followup:      "Email · follow-up",
+    connect:       "LinkedIn · first message",
+    connectBU:     "LinkedIn · first message (BU alum)",
+    connectField:  "LinkedIn · first message (in my field)",
+    liFollowup:    "LinkedIn · follow-up"
   };
 
   // Which draft this entry wants, and what to draft it from. Companies and a
@@ -4146,11 +4192,12 @@
      worth doing, and stage 3 is where you get to disagree with it.
      ============================================================ */
   var CATS = {
-    hiring: { label: "Hiring", head: "Hiring — recruiters and hiring managers" },
-    exec:   { label: "VP Eng", head: "VP Eng — engineering leadership" },
-    bu:     { label: "BU Eng", head: "BU Eng — Boston University engineers there" }
+    bu:    { label: "BU Eng", head: "BU alumni — Boston University, at this company" },
+    field: { label: "Field Eng", head: "In my field — doing the work I want to do" }
   };
-  var CAT_ORDER = ["hiring", "exec", "bu"];
+  var CAT_ORDER = ["bu", "field"];
+  // How many of each to keep, both settable.
+  function catPicks(cat) { return cat === "bu" ? buPicks() : fieldPicks(); }
 
   var finderPanel = document.getElementById("finderPanel");
   var finderOverlay = document.getElementById("finderOverlay");
@@ -4189,9 +4236,12 @@
     if (FS.msg) h += '<p class="finder-note' + (FS.bad ? " bad" : "") + '">' + escapeHtml(FS.msg) + "</p>";
 
     if (FS.phase === "idle") {
-      h += '<p class="finder-note">Six people at <strong>' + escapeHtml(FS.company) +
-        '</strong> — two recruiters, two engineering leads, and two Boston University ' +
-        'engineers. Every one gets checked against their real profile before anything is saved.</p>';
+      h += '<p class="finder-note">Up to ' + (buPicks() + fieldPicks()) +
+        ' people at <strong>' + escapeHtml(FS.company) +
+        '</strong> — ' + buPicks() + ' Boston University alumni' +
+        (fieldPicks() ? ' and ' + fieldPicks() + ' engineer' + (fieldPicks() === 1 ? '' : 's') +
+          ' in your field' : '') +
+        '. Every one gets checked against their real profile before anything is saved.</p>';
       var sp = searchProvider();
       if (sp) {
         h += '<button type="button" class="primary" id="fLocal">🔎 Search' +
@@ -4485,18 +4535,14 @@
       if (m && ORG_TAIL.test(m[1])) s -= 5;
     }
 
-    // Fit for the pair they're in. The exec pair is engineering *leadership*
-    // — both halves matter, and each is docked separately: a Senior Mechanical
-    // Engineer is the right field but not leadership, a Guest Services Manager
-    // is the reverse, and neither should outrank a VP of Technology.
-    if (cat === "exec") {
-      var eng = /engineer|engineering|technology|technical|hardware|mechanical|r&d|research|product development/i.test(title);
-      var lead = RE_LEAD.test(title) || /\bexecutive\b/i.test(title);
-      s += eng ? 3 : -2;
-      if (!lead) s -= 4;   // an IC lands here via the query, not their title
-    }
-    if (cat === "hiring") {
-      s += /talent|recruit|people|\bhr\b|human resources|staffing/i.test(title) ? 2 : -2;
+    /* Fit for the pair they're in. The field pick wants somebody doing the
+       work, so a title in your terms scores and a title that isn't docks —
+       and leadership docks too, because a director of engineering is exactly
+       who this bucket replaced. */
+    if (cat === "field") {
+      s += inMyField(title) ? 3 : -3;
+      if (RE_LEAD.test(title)) s -= 2;
+      if (/engineer/i.test(title)) s += 1;
     }
     // The BU pair is the whole point of the bucket — a shared school is why
     // they answer. Someone the BU query merely happened to return, with no
@@ -4516,18 +4562,10 @@
   function searchCategory(p) {
     var title = String(p.title || "");
     var hay = title + " " + String(p.why || "");
-    if (RE_HIRING.test(title)) return "hiring";
-    if (RE_LEAD.test(title)) return "exec";
-    // "Accomplished senior executive" is leadership; "Account Executive" is
-    // sales, and is the one common title that word would otherwise mis-file.
-    if (/\bexecutive\b/i.test(title) && !/\baccount executive\b/i.test(title)) {
-      return "exec";
-    }
-    // BU has to come off the evidence, never a job title — same rule the
-    // profile parser follows. A search snippet has no Education section to
-    // scope to, so this is the strict spelling; verify does the real check.
+    // BU first: a BU alum who also works in your field is still the BU
+    // contact, because the shared school is the stronger reason to write.
     if (RE_BU_ANY.test(hay)) return "bu";
-    if (RE_HIRING.test(hay)) return "hiring";
+    if (inMyField(title)) return "field";
     return "";
   }
 
@@ -4547,22 +4585,19 @@
     // categories were routinely coming back empty — "director of engineering"
     // alone misses a VP Eng, and one BU query misses everyone who lists the
     // school without the word "engineer".
+    /* Every slot goes to a BU alum bar one, so most of the queries do too.
+       Still one quoted phrase per query — the company — because two quoted
+       phrases come back empty from this endpoint, which is the bug that once
+       made this find nobody at all. The field queries are built from the
+       terms in Settings, so changing what you work on changes the search. */
     var plan = [
-      // Exactly one quoted phrase per query — the company. Two quoted phrases
-      // together return *nothing* from this endpoint, which is why the old
-      // set found nobody: every query had two. Measured, not assumed:
-      // `"Lexington Medical" "engineering manager"` came back "No results
-      // found", and `"Lexington Medical" engineering manager` came back with
-      // eight profiles including the VP of Technology.
-      { cat: "hiring", q: 'site:linkedin.com/in ' + co + ' recruiter' },
-      { cat: "hiring", q: 'site:linkedin.com/in ' + co + ' talent acquisition' },
-      { cat: "hiring", q: 'site:linkedin.com/in ' + co + ' human resources' },
-      { cat: "exec", q: 'site:linkedin.com/in ' + co + ' engineering manager' },
-      { cat: "exec", q: 'site:linkedin.com/in ' + co + ' director engineering' },
-      { cat: "exec", q: 'site:linkedin.com/in ' + co + ' vice president engineering' },
-      { cat: "exec", q: 'site:linkedin.com/in ' + co + ' head of engineering' },
-      { cat: "bu", q: 'site:linkedin.com/in ' + co + ' Boston University' }
+      { cat: "bu", q: 'site:linkedin.com/in ' + co + ' Boston University' },
+      { cat: "bu", q: 'site:linkedin.com/in ' + co + ' Boston University engineer' },
+      { cat: "bu", q: 'site:linkedin.com/in ' + co + ' BU alumni' }
     ];
+    fieldTerms().slice(0, 4).forEach(function (term) {
+      plan.push({ cat: "field", q: 'site:linkedin.com/in ' + co + ' ' + term + ' engineer' });
+    });
     FS.phase = "searching"; FS.msg = ""; FS.progress = "Searching…";
     renderFinder();
 
@@ -4570,7 +4605,7 @@
     // pool de-duplicates. Someone the BU query found who was already in the
     // pool from an earlier query still means that query found somebody, and
     // counting off the pool instead reported it as having found nobody.
-    var pool = [], seen = {}, byQuery = { hiring: {}, exec: {}, bu: {} };
+    var pool = [], seen = {}, byQuery = { bu: {}, field: {} };
     function step(i) {
       if (!FS) return;
       if (i >= plan.length) {
@@ -4594,7 +4629,7 @@
         // Two slots per pair out of a pool that's now dozens deep, so which
         // two matters more than how many were found.
         pool.forEach(function (p) { p.score = hitScore(p, p.category); });
-        var found = [], catCount = { hiring: 0, exec: 0, bu: 0 };
+        var found = [], catCount = { bu: 0, field: 0 };
         // An empty pair means two different things — the searches found
         // nobody, or they found people whose titles don't support the claim —
         // and only one of those is worth re-running with different wording.
@@ -4613,7 +4648,7 @@
           })
             .sort(function (a, b) { return b.score - a.score; })
             .forEach(function (p) {
-              if (catCount[cat] >= 2) return;
+              if (catCount[cat] >= catPicks(cat)) return;
               catCount[cat]++;
               found.push(p);
             });
@@ -4627,10 +4662,9 @@
           // the first would send you off rewriting a query that worked.
           fsSay(pool.length
             ? "Found " + pool.length + " profile" + (pool.length === 1 ? "" : "s") +
-              " at " + FS.company + ", but none of their titles say recruiting or " +
-              "engineering leadership, and none show Boston University — so nothing " +
-              "was filed. Small companies often have no recruiter on LinkedIn. Paste a " +
-              "profile you've found yourself, or widen the wording in Settings."
+              " at " + FS.company + ", but none show Boston University and none of " +
+              "their titles mention " + fieldTerms().join(" / ") + " — so nothing was " +
+              "filed. Paste a profile you've found yourself, or widen the terms in Settings."
             : "The search ran but turned up no LinkedIn profiles for " + FS.company +
               ". Try the paste route, or widen the wording in Settings.", true);
           return;
@@ -4649,9 +4683,8 @@
             if (!n) return "No " + CATS[c].label + " — those searches found nobody.";
             return "No " + CATS[c].label + " — the " + n + " profile" + (n === 1 ? "" : "s") +
               " those searches found don't say " +
-              (c === "hiring" ? "recruiting in their title"
-                : c === "exec" ? "engineering leadership in their title"
-                : "Boston University anywhere") + ", so none were filed here.";
+              (c === "bu" ? "Boston University anywhere"
+                : fieldTerms().join(" / ") + " in their title") + ", so none were filed here.";
           });
         FS.gapNote = gaps.join(" ");
         finderVerify();
@@ -4829,7 +4862,7 @@
       // the same way a search hit's does. A model told us an "accomplished
       // senior executive" was a hiring contact; the title says otherwise, and
       // the title is the evidence. Its claim is only the fallback.
-      var cat = searchCategory({ title: title, why: why }) || claimedCat || "exec";
+      var cat = searchCategory({ title: title, why: why }) || claimedCat || "field";
       out.push({
         i: out.length, use: true, category: cat,
         name: name, title: title, why: why,
@@ -4954,9 +4987,11 @@
       : bu ? bu.why + (bu.quote ? ": “" + bu.quote + "”" : "")
            : "no Boston University anywhere on the public profile";
     var sameCo = got.company ? sameCompany(got.company, FS.company) : false;
-    // The bucket is a claim too: an "exec" whose real title reads like an
-    // individual contributor is the same kind of error as a wrong employer.
-    var bucketOk = p.category !== "exec" || RE_LEAD.test(p.title || "");
+    // The bucket is a claim too, and a wrong one is the same kind of error
+    // as a wrong employer.
+    // The bucket is a claim too. For a field pick that claim is "they do the
+    // work I want to do", so the title has to bear it out.
+    var bucketOk = p.category !== "field" || inMyField(p.title);
     if (got.company && !sameCo) {
       p.verdict = "mismatch";
       p.claimNote = "profile says " + got.company + ", not " + FS.company;
@@ -4971,7 +5006,7 @@
       p.claimNote = bu.why + " — paste the page to confirm the degree";
     } else if (!bucketOk) {
       p.verdict = "mismatch";
-      p.claimNote = "listed as leadership, but the profile title doesn't read that way";
+      p.claimNote = "the profile title doesn't mention " + fieldTerms().join(" / ");
     } else {
       p.verdict = "verified";
       p.claimNote = (claimT && got.title && claimT !== got.title) ? "was told: " + claimT : "";
@@ -5216,8 +5251,7 @@
 
   // Which templates open with a Subject: line. The LinkedIn three don't —
   // a connection request has no subject field to put one in.
-  var EMAIL_TPL_KINDS = { outreach: 1, outreachHiring: 1, outreachExec: 1,
-                          outreachBU: 1, followup: 1 };
+  var EMAIL_TPL_KINDS = { outreach: 1, outreachBU: 1, outreachField: 1, followup: 1 };
 
   // A sign-off keeps the break after it, so the name stays on its own line.
   var OB_SIGNOFF = /^(best|thanks|thank you|regards|best regards|cheers|sincerely)[,!.]?$/i;
@@ -6320,6 +6354,10 @@
     document.getElementById("aiKeyInput").value = getAiKey();
     document.getElementById("gemKeyInput").value = getGemKey();
     document.getElementById("gemModelInput").value = geminiModel();
+    NUM_SETTINGS.forEach(function (n) {
+      document.getElementById(n.id).value = SETTINGS[n.key] === undefined ? "" : SETTINGS[n.key];
+    });
+    document.getElementById("fieldTermsInput").value = SETTINGS.fieldTerms || "";
     setRadio(document, "aiProvider", SETTINGS.aiProvider === "gemini" ? "gemini" : "claude");
     document.getElementById("finderPromptInput").value = finderPromptTpl();
     document.getElementById("aiPromptInput").value = aiPromptTpl();
@@ -6383,6 +6421,12 @@
     setAiKey(document.getElementById("aiKeyInput").value.trim());
     setGemKey(document.getElementById("gemKeyInput").value.trim());
     SETTINGS.geminiModel = document.getElementById("gemModelInput").value.trim();
+    // Blank means "use the default", so it is stored as blank rather than
+    // coerced to a number here — numSet() does the reading.
+    NUM_SETTINGS.forEach(function (n) {
+      SETTINGS[n.key] = document.getElementById(n.id).value.trim();
+    });
+    SETTINGS.fieldTerms = document.getElementById("fieldTermsInput").value.trim();
     var apEl = document.querySelector('input[name="aiProvider"]:checked');
     SETTINGS.aiProvider = (apEl && apEl.value === "gemini") ? "gemini" : "claude";
     SETTINGS.finderPrompt = document.getElementById("finderPromptInput").value;
@@ -6434,7 +6478,7 @@
   });
 
   document.getElementById("resetTplBtn").addEventListener("click", function () {
-    if (!confirm("Replace all ten drafts with the built-in defaults? Your wording will be lost.")) return;
+    if (!confirm("Replace all eight drafts with the built-in defaults? Your wording will be lost.")) return;
     delete SETTINGS.templates;
     saveSettings(SETTINGS);
     TPL_BOXES.forEach(function (k) {

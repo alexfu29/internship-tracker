@@ -913,15 +913,15 @@ wording (BU mech-e, biosensors/HMI, Summer 2027); edit them to taste, then hit
 **Done editing drafts** — that saves and closes the drawer in one tap. **Reset to
 defaults** puts the built-in wording back.
 
-### Ten drafts, and you never pick one
+### Eight drafts, and you never pick one
 
 Two axes — the channel, and first message versus chase — plus **a first message
 per role**:
 
 | | First message | Follow-up |
 |---|---|---|
-| **Email** | `outreach` · `outreachHiring` · `outreachExec` · `outreachBU` | `followup` |
-| **LinkedIn** | `connect` · `connectHiring` · `connectExec` · `connectBU` | `liFollowup` |
+| **Email** | `outreach` · `outreachBU` · `outreachField` | `followup` |
+| **LinkedIn** | `connect` · `connectBU` · `connectField` | `liFollowup` |
 
 A LinkedIn note and a cold email are not the same piece of writing — one goes in
 a connection request and has to be short — so they're separate templates rather
@@ -937,10 +937,9 @@ same paragraph wastes the only thing that distinguishes them:
 
 | Role | What its opener does |
 |---|---|
-| `Hiring` | asks the one question a recruiter can actually answer — are you taking mechanical/biomedical interns for 2027, and when |
-| `VP Eng` | asks about the work and the team. Engineering leadership can't process an application and shouldn't be asked to |
-| `BU Eng` | leads with the shared school, which is the whole reason that bucket is worth having |
-| anything else | the plain opener |
+| `BU Eng` | leads with the shared school, which is the whole reason that bucket exists |
+| `Field Eng` | asks about the work — they're doing what you want to do, and it's the one thing they can actually answer |
+| anything else | the plain opener. Includes older `Hiring` / `VP Eng` rows, which keep their role text and are never rewritten |
 
 A role that is blank, or something you typed by hand, gets the **plain** version
 rather than being pushed into a bucket it never established — the same rule the
@@ -994,9 +993,9 @@ Placeholders substituted automatically:
 because it's the same for everyone you know there. A draft saying "I applied to
 the Marotta VP Eng" is what using the wrong one looks like.
 
-The six keys, as stored: `outreach` and `outreachBU` are the emails, `connect`
-and `connectBU` the short LinkedIn connect notes, `followup` and `liFollowup` the
-two chases.
+The eight keys, as stored: `outreach` / `outreachBU` / `outreachField` are the
+emails, `connect` / `connectBU` / `connectField` the short LinkedIn connect
+notes, and `followup` / `liFollowup` the two chases.
 
 A placeholder with **no value on file** comes through as a visible `[company]`
 rather than an empty gap — you notice `at [company]` before sending; you don't
@@ -1185,9 +1184,12 @@ match each other — neither is a prefix of the other.
 
 ## 🔍 Find contacts
 
-On a company's edit dialog: up to six people at that company, in three pairs —
-two `Hiring`, two `VP Eng`, two `BU Eng`. A pair comes back **empty with a note**
-rather than padded. Four stages, and **nothing reaches your log until the last
+On a company's edit dialog: **4 Boston University alumni and 1 engineer doing
+the work you want to do**. Recruiters and engineering leadership are gone — the
+BU connection is the one that actually gets answered, so the slots go there.
+
+Both counts, and what counts as your field, are in **Settings**. A bucket comes
+back **empty with a note** rather than padded. Four stages, and **nothing reaches your log until the last
 one**:
 
 ```
@@ -1481,6 +1483,28 @@ attempted.
 Opening `index.html` straight off disk (`file://`) has no secure context, so
 service workers are unavailable there; Settings says that rather than failing
 quietly, and everything except offline mode works as before.
+
+## Every interval is a setting
+
+"How long is too long" was my guess baked into the file. It's yours now, under
+**Settings**:
+
+| Setting | Default | Drives |
+|---|---|---|
+| Nudge after N days of silence | 7 | the red **Needs a nudge** card |
+| Note N days after an invite is accepted | 4 | the green **Accepted your invite** card |
+| Suggest withdrawing after N days pending | 21 | the amber **Worth withdrawing** card |
+| BU alumni to find | 4 | 🔍 Find contacts |
+| Engineers in my field to find | 1 | 🔍 Find contacts |
+| What counts as my field | mechanical, biomedical, biosensor, wearable, human-machine interaction | see below |
+
+Every one is read through a helper that falls back to the default on a blank or
+nonsense entry, rather than producing a `NaN` day count that quietly never fires.
+
+**The field terms are used three ways, so they can't drift**: the searches 🔎
+Search runs, the check that a field pick's title actually bears the claim out,
+and the `{fieldwords}` in the research prompt you copy into Gemini. Change what
+you work on and all three follow.
 
 ## Setup: the GitHub sync token
 
