@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-08-18T00:24:29.762Z",
+  "updated": "2026-08-18T00:25:08.260Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -1048,9 +1048,9 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
+      "deleted": true,
       "workspace": "Hi Eric,\n\nI love that _SOMETHING SPECIFIC_, and would love to connect.\n\nWould you be down for a quick zoom meeting?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
-      "updated": "2026-08-17T18:15:37.073Z"
+      "updated": "2026-08-18T00:25:08.260Z"
     },
     "msxiagbh-b6l4bn": {
       "name": "Kristin Culler",
