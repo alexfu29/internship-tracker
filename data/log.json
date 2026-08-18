@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-08-18T00:25:08.260Z",
+  "updated": "2026-08-18T00:25:19.801Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -1118,9 +1118,9 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
+      "deleted": true,
       "workspace": "Hi Andrew,\n\nI'd love to connect to talk about your Industrial Engineering experience at Boeing, and your decision to \nWould you be down for a quick zoom meeting?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
-      "updated": "2026-08-17T17:58:30.601Z"
+      "updated": "2026-08-18T00:25:19.801Z"
     }
   },
   "apps": {
