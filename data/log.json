@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-08-18T00:29:54.205Z",
+  "updated": "2026-08-18T00:31:03.166Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -1138,6 +1138,23 @@
       "deleted": false,
       "workspace": "Hi Brian,\n\nI love that you were able to work your way up Boeing. I'd love to connect to talk about how BU helped you.\n\nWould you be down for a quick zoom meeting?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
       "updated": "2026-08-18T00:29:54.205Z"
+    },
+    "msxxfm34-4d7lio": {
+      "name": "Shane McLeod",
+      "company": "Boeing",
+      "role": "BU Eng",
+      "channel": "LinkedIn",
+      "email": "https://www.linkedin.com/in/samcleod/",
+      "date": "",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "nudgedOn": [],
+      "closed": false,
+      "deleted": false,
+      "workspace": "Hi Shane,\n\nI love that your current role at Boeing aligned with your engineering concentration, and would love to connect to talk about how BU supported you.\n\nWould you be down for a quick zoom meeting?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
+      "updated": "2026-08-18T00:31:03.166Z"
     }
   },
   "apps": {
