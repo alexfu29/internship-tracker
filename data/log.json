@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-08-18T00:25:19.801Z",
+  "updated": "2026-08-18T00:28:11.334Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -1121,6 +1121,23 @@
       "deleted": true,
       "workspace": "Hi Andrew,\n\nI'd love to connect to talk about your Industrial Engineering experience at Boeing, and your decision to \nWould you be down for a quick zoom meeting?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
       "updated": "2026-08-18T00:25:19.801Z"
+    },
+    "msxxbvoz-1td3a5": {
+      "name": "Brian Alfon",
+      "company": "Boeing",
+      "role": "BU eng",
+      "channel": "LinkedIn",
+      "email": "https://www.linkedin.com/in/brian-alfon-a3713b8/",
+      "date": "",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "nudgedOn": [],
+      "closed": false,
+      "deleted": false,
+      "workspace": "Hi Brian,\n\nI'm a mechanical engineering student at BU working on wearables and embedded systems. I'd love to connect and hear about your work at Boeing.\n\nWould you be down for a quick zoom meeting?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
+      "updated": "2026-08-18T00:28:11.334Z"
     }
   },
   "apps": {
