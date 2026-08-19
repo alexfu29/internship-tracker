@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-08-19T23:41:21.367Z",
+  "updated": "2026-08-19T23:42:32.642Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -35,9 +35,9 @@
       "nudgedOn": [
         "2026-08-12"
       ],
-      "closed": false,
+      "closed": true,
       "deleted": false,
-      "updated": "2026-08-13T01:14:06.697Z"
+      "updated": "2026-08-19T23:42:32.642Z"
     },
     "mshkczcf-qe3j61": {
       "name": "Taylor Frey",
@@ -192,9 +192,9 @@
       "respondedOn": null,
       "meetingOn": null,
       "nudgedOn": [],
-      "closed": false,
+      "closed": true,
       "deleted": false,
-      "updated": "2026-08-12T00:36:53.805Z"
+      "updated": "2026-08-19T23:42:30.532Z"
     },
     "mspd1qpr-y62dgw": {
       "name": "Nick G",
@@ -208,9 +208,9 @@
       "respondedOn": null,
       "meetingOn": null,
       "nudgedOn": [],
-      "closed": false,
+      "closed": true,
       "deleted": false,
-      "updated": "2026-08-12T00:38:06.207Z"
+      "updated": "2026-08-19T23:42:30.279Z"
     },
     "mspd22n8-bzezsb": {
       "name": "Brian Hunnius",
@@ -224,9 +224,9 @@
       "respondedOn": null,
       "meetingOn": null,
       "nudgedOn": [],
-      "closed": false,
+      "closed": true,
       "deleted": false,
-      "updated": "2026-08-12T00:38:21.668Z"
+      "updated": "2026-08-19T23:42:30.001Z"
     },
     "mspdxeap-ma0ebm": {
       "name": "Vicky Ho",
@@ -240,9 +240,9 @@
       "respondedOn": null,
       "meetingOn": null,
       "nudgedOn": [],
-      "closed": false,
+      "closed": true,
       "deleted": false,
-      "updated": "2026-08-12T01:02:43.105Z"
+      "updated": "2026-08-19T23:42:29.781Z"
     },
     "mspe0f3c-5pt9bg": {
       "name": "Joshua Branch",
@@ -256,9 +256,9 @@
       "respondedOn": null,
       "meetingOn": null,
       "nudgedOn": [],
-      "closed": false,
+      "closed": true,
       "deleted": false,
-      "updated": "2026-08-12T01:05:04.104Z"
+      "updated": "2026-08-19T23:42:29.548Z"
     },
     "mspe0nns-jhsg5e": {
       "name": "Ravi Singaraju",
@@ -272,9 +272,9 @@
       "respondedOn": null,
       "meetingOn": null,
       "nudgedOn": [],
-      "closed": false,
+      "closed": true,
       "deleted": false,
-      "updated": "2026-08-12T01:05:15.208Z"
+      "updated": "2026-08-19T23:42:29.140Z"
     },
     "msqukhlt-r35aj3": {
       "name": "Melissa Brown",
@@ -288,9 +288,9 @@
       "respondedOn": null,
       "meetingOn": null,
       "nudgedOn": [],
-      "closed": false,
+      "closed": true,
       "deleted": false,
-      "updated": "2026-08-13T11:18:35.624Z",
+      "updated": "2026-08-19T23:42:31.207Z",
       "workspace": ""
     },
     "msqulsw0-54cc9k": {
@@ -305,9 +305,9 @@
       "respondedOn": null,
       "meetingOn": null,
       "nudgedOn": [],
-      "closed": false,
+      "closed": true,
       "deleted": false,
-      "updated": "2026-08-13T01:37:21.792Z"
+      "updated": "2026-08-19T23:42:32.456Z"
     },
     "msqunxur-hia9aq": {
       "name": "Mike Anderson",
@@ -340,9 +340,9 @@
       "respondedOn": null,
       "meetingOn": null,
       "nudgedOn": [],
-      "closed": false,
+      "closed": true,
       "deleted": false,
-      "updated": "2026-08-13T01:39:40.813Z"
+      "updated": "2026-08-19T23:42:32.284Z"
     },
     "msqupycc-6q4v1f": {
       "name": "Madison Moore",
@@ -356,9 +356,9 @@
       "respondedOn": null,
       "meetingOn": null,
       "nudgedOn": [],
-      "closed": false,
+      "closed": true,
       "deleted": false,
-      "updated": "2026-08-13T01:41:36.733Z"
+      "updated": "2026-08-19T23:42:32.112Z"
     },
     "msqurpht-f0dgw2": {
       "name": "Stone Harris",
@@ -372,9 +372,9 @@
       "respondedOn": null,
       "meetingOn": null,
       "nudgedOn": [],
-      "closed": false,
+      "closed": true,
       "deleted": false,
-      "updated": "2026-08-13T01:43:11.081Z"
+      "updated": "2026-08-19T23:42:31.938Z"
     },
     "msqv4mel-r541rc": {
       "name": "Kathy Grumka",
@@ -388,9 +388,9 @@
       "respondedOn": null,
       "meetingOn": null,
       "nudgedOn": [],
-      "closed": false,
+      "closed": true,
       "deleted": false,
-      "updated": "2026-08-13T01:58:42.844Z",
+      "updated": "2026-08-19T23:42:31.582Z",
       "workspace": ""
     },
     "msqv5e2o-9opspr": {
@@ -405,9 +405,9 @@
       "respondedOn": null,
       "meetingOn": null,
       "nudgedOn": [],
-      "closed": false,
+      "closed": true,
       "deleted": false,
-      "updated": "2026-08-13T01:54:00.510Z"
+      "updated": "2026-08-19T23:42:31.753Z"
     },
     "msqve1cx-kmcpx8": {
       "name": "Steve Fox",
@@ -421,9 +421,9 @@
       "respondedOn": null,
       "meetingOn": null,
       "nudgedOn": [],
-      "closed": false,
+      "closed": true,
       "deleted": false,
-      "updated": "2026-08-13T17:52:23.101Z",
+      "updated": "2026-08-19T23:42:30.987Z",
       "workspace": ""
     },
     "msqvfybw-8jnyc6": {
@@ -438,9 +438,9 @@
       "respondedOn": null,
       "meetingOn": null,
       "nudgedOn": [],
-      "closed": false,
+      "closed": true,
       "deleted": false,
-      "updated": "2026-08-13T02:07:02.527Z",
+      "updated": "2026-08-19T23:42:31.394Z",
       "workspace": ""
     },
     "msqvonsn-18jx7i": {
@@ -455,9 +455,9 @@
       "respondedOn": null,
       "meetingOn": null,
       "nudgedOn": [],
-      "closed": false,
+      "closed": true,
       "deleted": false,
-      "updated": "2026-08-16T00:22:38.720Z",
+      "updated": "2026-08-19T23:42:30.752Z",
       "workspace": ""
     },
     "msrnj934-5nlqc9": {
