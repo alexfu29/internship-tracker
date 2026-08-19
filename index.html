@@ -1379,6 +1379,15 @@
     <span style="color:var(--text-muted)">(default 21)</span></label>
   <input type="number" id="withdrawDaysInput" min="1" max="365" step="1" placeholder="21">
 
+  <!-- A save button beside the numbers it saves. The one at the top of the
+       drawer already saved these, but it is a long scroll away from here, so
+       typing a number and seeing no button next to it reads as "there is
+       nowhere to confirm this" — and the numbers never took. This saves the
+       counts above and these timings, and re-renders so the flags move
+       straight away rather than on the next reload. -->
+  <button class="primary" id="saveNumsBtn">Save these numbers</button>
+  <div class="sync-status" id="numsStatus"></div>
+
   <hr>
   <label for="gemKeyInput">Google Gemini API key <span style="color:var(--text-muted)">(optional)</span></label>
   <input type="password" id="gemKeyInput" placeholder="AIza…" autocomplete="off">
@@ -1447,7 +1456,7 @@
      tell those apart from a change that genuinely didn't work. This string
      lives in the file being executed, so it cannot lie about which file that
      is. It's shown at the bottom of Settings. */
-  var APP_VERSION = "2026-08-17d";
+  var APP_VERSION = "2026-08-19a";
   var swReady = false, swCacheVersion = "", swNote = "";
 
   /* ============================================================
@@ -6432,10 +6441,27 @@
     SETTINGS.finderPrompt = document.getElementById("finderPromptInput").value;
     saveSettings(SETTINGS);
     setSyncStatus("Saved. Syncing…");
+    render();
     renderBanners();
     lastKnownSha = null;
     syncPull(true);
   });
+  /* Saves exactly the boxes it sits under — the search counts, the field
+     words, and the reminder timings — and nothing else, so it can't overwrite
+     a token or a template with whatever the drawer happened to be showing. */
+  document.getElementById("saveNumsBtn").addEventListener("click", function () {
+    NUM_SETTINGS.forEach(function (n) {
+      SETTINGS[n.key] = document.getElementById(n.id).value.trim();
+    });
+    SETTINGS.fieldTerms = document.getElementById("fieldTermsInput").value.trim();
+    saveSettings(SETTINGS);
+    render();
+    document.getElementById("numsStatus").textContent =
+      "Saved. Nudge at " + nudgeDays() + " days, note " + acceptNoteDays() +
+      " days after an accept, withdraw at " + withdrawDays() + " days; finding " +
+      buPicks() + " BU alumni and " + fieldPicks() + " in my field.";
+  });
+
   document.getElementById("testSyncBtn").addEventListener("click", function () {
     setSyncStatus("Testing…");
     lastKnownSha = null;
