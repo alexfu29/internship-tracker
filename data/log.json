@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-08-20T18:46:47.593Z",
+  "updated": "2026-08-20T18:55:23.838Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -1625,6 +1625,24 @@
       "deleted": false,
       "workspace": "",
       "updated": "2026-08-16T01:16:04.262Z"
+    },
+    "mt1vrkoq-igsn6q": {
+      "company": "ONEOK Inc",
+      "applied": true,
+      "coldEmailed": false,
+      "connected": false,
+      "outcome": "",
+      "role": "Engineering Intern",
+      "date": "2026-08-20",
+      "link": "https://oneok.wd1.myworkdayjobs.com/en-US/ONEOK_Early_Careers/jobTasks/completed/application?source=Handshake",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "closed": false,
+      "deleted": false,
+      "workspace": "",
+      "updated": "2026-08-20T18:55:23.838Z"
     }
   }
 }
