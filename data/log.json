@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-08-19T23:42:32.642Z",
+  "updated": "2026-08-20T18:43:28.813Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -523,10 +523,10 @@
       "respondedOn": null,
       "meetingOn": null,
       "nudgedOn": [],
-      "closed": false,
+      "closed": true,
       "deleted": false,
       "workspace": "Hi Alina,\n\nI'm a mechanical engineering student at Boston University and I've been\nfollowing what Lexington Medical, Inc. is doing. I'd love to connect with you to learn more about you and the company culture.\n\nWould you be down for a quick zoom meeting to connect?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
-      "updated": "2026-08-14T01:27:43.689Z"
+      "updated": "2026-08-20T18:43:28.813Z"
     },
     "msrsqg7c-4s1q0q": {
       "name": "Robin Ganek",
