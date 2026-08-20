@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-08-20T18:46:38.266Z",
+  "updated": "2026-08-20T18:46:47.593Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -1569,7 +1569,9 @@
       "meetingOn": null,
       "closed": false,
       "deleted": false,
-      "updated": "2026-08-13T01:25:56.846Z"
+      "updated": "2026-08-20T18:46:47.593Z",
+      "outcome": "",
+      "workspace": ""
     },
     "msqub95u-fnpwqn": {
       "company": "Herrick Technology Laboratories, Inc.",
