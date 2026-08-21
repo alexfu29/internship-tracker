@@ -1354,7 +1354,7 @@
   <label for="fieldTermsInput">What counts as my field
     <span style="color:var(--text-muted)">(comma separated)</span></label>
   <input type="text" id="fieldTermsInput"
-    placeholder="mechanical, biomedical, biosensor, wearable, human-machine interaction">
+    placeholder="mechanical, biomedical, biosensor, wearable, human-machine interaction, human factors">
   <p class="tpl-help">
     Used three ways, so they stay in step: the searches 🔎 Search runs, the check that a
     field pick's title actually bears it out, and the prompt you copy into Gemini.
@@ -1398,7 +1398,14 @@
   <label for="aiKeyInput">Anthropic API key <span style="color:var(--text-muted)">(optional)</span></label>
   <input type="password" id="aiKeyInput" placeholder="sk-ant-…" autocomplete="off">
 
-  <label for="finderPromptInput">Research prompt <span style="color:var(--text-muted)">(<code>{company}</code>)</span></label>
+  <label for="finderPromptInput">Research prompt</label>
+  <p class="tpl-help">
+    What <strong>📋 Copy the research prompt</strong> hands you, and what the API is asked
+    when a key is saved. Filled in for you: <code>{company}</code>, <code>{roleLine}</code>,
+    and <code>{bun}</code> / <code>{fieldn}</code> / <code>{fieldwords}</code> from the
+    counts and field terms above &mdash; so the prompt asks for exactly what 🔎 Search
+    would have looked for.
+  </p>
   <textarea id="finderPromptInput" class="tpl" rows="14"></textarea>
   <button class="secondary" id="resetFinderBtn">Reset prompt to default</button>
 
@@ -1407,7 +1414,9 @@
   <p class="tpl-help">
     What the <strong>Copy AI prompt</strong> button sends. <code>{companies}</code> is
     replaced with your numbered list of companies you haven't applied to, including
-    the role, link and note you saved for each.
+    the role, link and note you saved for each, and <code>{fieldwords}</code> with the
+    field terms above &mdash; the same ones the contact search uses, so the two never
+    describe you differently.
   </p>
   <p class="tpl-help">
     Keep <code>{companies}</code> somewhere in the text. If you delete it the list
@@ -1456,7 +1465,7 @@
      tell those apart from a change that genuinely didn't work. This string
      lives in the file being executed, so it cannot lie about which file that
      is. It's shown at the bottom of Settings. */
-  var APP_VERSION = "2026-08-19a";
+  var APP_VERSION = "2026-08-20a";
   var swReady = false, swCacheVersion = "", swNote = "";
 
   /* ============================================================
@@ -1511,7 +1520,7 @@
   function fieldPicks()     { return numSet("fieldPicks", 1, 0, 12); }
   function fieldTerms() {
     var t = (SETTINGS.fieldTerms || "").trim();
-    return (t || "mechanical, biomedical, biosensor, wearable, human-machine interaction")
+    return (t || "mechanical, biomedical, biosensor, wearable, human-machine interaction, human factors")
       .split(",").map(function (x) { return x.trim(); }).filter(Boolean);
   }
 
@@ -2930,8 +2939,7 @@
   var DEFAULT_AI_PROMPT = "" +
 "I'm a mechanical engineering undergraduate at Boston University looking for a\n" +
 "PAID Summer 2027 internship (roughly June–August 2027) in the Boston or New York\n" +
-"City metro area. I'm interested in mechanical engineering, biomedical engineering,\n" +
-"biosensors, wearables, human factors, and human-machine interaction. I'll be\n" +
+"City metro area. I'm interested in work involving {fieldwords}. I'll be\n" +
 "applying as a sophomore/junior-eligible student.\n" +
 "\n" +
 "For each company below, open its OFFICIAL careers/jobs page and check whether it\n" +
@@ -2958,7 +2966,7 @@
 "3. \"NONE FOUND\" is a useful, correct answer. Don't pad the list with unrelated\n" +
 "   roles or full-time positions to seem thorough.\n" +
 "4. If a company posts many jobs, include only internships/co-ops relevant to\n" +
-"   mechanical or biomedical engineering and the areas above.\n" +
+"   the areas above.\n" +
 "5. If postings aren't up yet, tell me the month they historically open and where\n" +
 "   the site says to watch.\n" +
 "6. Flag anything that would disqualify me as a rising junior, or that requires US\n" +
@@ -2973,7 +2981,8 @@
   }
 
   /* ---- the Find-contacts prompt ----------------------------------
-     Six people in three pairs. It carries the same anti-invention rules
+     Boston University alumni, plus however many engineers in your field
+     Settings asks for. It carries the same anti-invention rules
      that make the company prompt trustworthy, because the failure that
      matters here is a plausible-looking profile URL for a person who
      doesn't work there. A blank URL is explicitly a correct answer —
@@ -2984,8 +2993,9 @@
     "Find people to contact at {company}. I'm a Boston University mechanical engineering\n" +
     "student looking for a paid Summer 2027 internship{roleLine}.\n" +
     "\n" +
-    "I only want two kinds of people. Recruiters and engineering leadership are\n" +
-    "deliberately NOT wanted — do not include them.\n" +
+    "I only want the two kinds of people below, and the BU alumni are the point of\n" +
+    "this — recruiters and engineering leadership are deliberately NOT wanted, so do\n" +
+    "not include them however senior or however good a match they look.\n" +
     "\n" +
     "STEP 1 — run all of these searches before you answer:\n" +
     "  site:linkedin.com/in \"{company}\" \"Boston University\"\n" +
@@ -2997,9 +3007,9 @@
     "  bu    — people at {company} who went to Boston University. Say what shows the BU\n" +
     "          connection, ideally from their education. This is most of what I want:\n" +
     "          least gatekeeping, and the shared school makes them likeliest to reply.\n" +
-    "  field — ONE engineer at {company} doing work close to {fieldwords}. Not a manager,\n" +
+    "  field — someone at {company} doing work close to {fieldwords}. Not a manager,\n" +
     "          not a director — somebody doing the work. Say what in their title or\n" +
-    "          profile shows it.\n" +
+    "          profile shows it. If {fieldn} above is 0, skip this category entirely.\n" +
     "\n" +
     "THE linkedin FIELD — read this twice:\n" +
     "- If a search result shows a linkedin.com/in/ URL for the person, PUT IT IN. Copy it\n" +
@@ -3047,8 +3057,14 @@
     var tpl = aiPromptTpl();
     // If {companies} got deleted while editing, append the list rather than
     // handing over a research prompt with nothing to research.
-    if (tpl.indexOf("{companies}") === -1) return tpl + "\n\nCompanies:\n" + lines;
-    return tpl.split("{companies}").join(lines);
+    // {fieldwords} is substituted here too, or the one line saying what I work
+    // on goes out with a literal placeholder in it. Same terms as Settings, so
+    // the company hunt and the contact hunt cannot describe me differently.
+    var words = fieldTerms().join(", ");
+    if (tpl.indexOf("{companies}") === -1) {
+      return tpl.split("{fieldwords}").join(words) + "\n\nCompanies:\n" + lines;
+    }
+    return tpl.split("{companies}").join(lines).split("{fieldwords}").join(words);
   }
 
   function renderAiPrompt() {

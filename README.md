@@ -444,7 +444,9 @@ defense-adjacent.
 
 The whole prompt is editable in **Settings → AI research prompt**, with the same
 Done / Reset pattern as the email drafts. `{companies}` is where your numbered list
-gets substituted. Delete it and the list is **appended at the end** rather than
+gets substituted, and `{fieldwords}` is what counts as your field, from Settings —
+the same terms 🔍 Find contacts uses, so the two hunts can't describe you
+differently. Delete it and the list is **appended at the end** rather than
 dropped, so the prompt can't end up with nothing to research — and the first tap of
 Done tells you it happened.
 
@@ -1402,9 +1404,8 @@ had left them out to comply with "never construct a URL" — reading a rule agai
 opposite explicitly: if a search result shows a profile URL, include it, you are not
 vouching for it, it gets checked automatically afterwards, and blanking every URL to
 be safe is the wrong answer because it makes the list useless. It also spells out
-the three searches to run, and that a Director of Talent Acquisition counts as a
-hiring contact even though the title doesn't say "engineering" — the same run missed
-exactly that person.
+the searches to run, and that recruiters and engineering leadership are not wanted
+however good a match they look — the BU alumni are the point of it.
 
 **📋 Copy the research prompt is always there**, next to whichever search buttons
 you have. It puts the full prompt on your clipboard to run in Gemini, Claude or
@@ -1496,15 +1497,18 @@ quietly, and everything except offline mode works as before.
 | Suggest withdrawing after N days pending | 21 | the amber **Worth withdrawing** card |
 | BU alumni to find | 4 | 🔍 Find contacts |
 | Engineers in my field to find | 1 | 🔍 Find contacts |
-| What counts as my field | mechanical, biomedical, biosensor, wearable, human-machine interaction | see below |
+| What counts as my field | mechanical, biomedical, biosensor, wearable, human-machine interaction, human factors | see below |
 
 Every one is read through a helper that falls back to the default on a blank or
 nonsense entry, rather than producing a `NaN` day count that quietly never fires.
 
-**The field terms are used three ways, so they can't drift**: the searches 🔎
-Search runs, the check that a field pick's title actually bears the claim out,
-and the `{fieldwords}` in the research prompt you copy into Gemini. Change what
-you work on and all three follow.
+**The field terms are used four ways, so they can't drift**: the searches 🔎
+Search runs (the first four terms, one query each), the check that a field
+pick's title actually bears the claim out, the `{fieldwords}` in the contact
+research prompt, and the `{fieldwords}` in **Copy AI prompt** — the line that
+tells a model what work I'm interested in. Change what you work on and all four
+follow, rather than the company hunt and the contact hunt describing you
+differently.
 
 ## Setup: the GitHub sync token
 
