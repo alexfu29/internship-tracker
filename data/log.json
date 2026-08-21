@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-08-21T22:43:50.148Z",
+  "updated": "2026-08-21T22:44:58.755Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -872,11 +872,13 @@
       "responded": false,
       "respondedOn": null,
       "meetingOn": null,
-      "nudgedOn": [],
+      "nudgedOn": [
+        "2026-08-21"
+      ],
       "closed": false,
       "deleted": false,
       "workspace": "Hi Yongning,\n\nI was looking at Linkedin and I saw that you work that Texas Instruments where I'd love to intern at, and also go to BU.\n\nWould you be down for a quick zoom meeting to connect to talk about your work and how BU helped you get there?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
-      "updated": "2026-08-21T22:43:50.148Z",
+      "updated": "2026-08-21T22:44:58.755Z",
       "inviteAcceptedOn": "2026-08-17",
       "withdrawnOn": null
     },
