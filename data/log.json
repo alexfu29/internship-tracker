@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-08-21T22:59:31.953Z",
+  "updated": "2026-08-21T23:35:55.040Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -1566,13 +1566,13 @@
       "role": "",
       "date": "2026-08-12",
       "link": "",
-      "note": "HVAC\nhandshake",
+      "note": "",
       "responded": false,
       "respondedOn": null,
       "meetingOn": null,
       "closed": false,
       "deleted": false,
-      "updated": "2026-08-21T22:59:15.488Z",
+      "updated": "2026-08-21T23:35:55.040Z",
       "outcome": "",
       "workspace": ""
     },
