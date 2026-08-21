@@ -1235,8 +1235,8 @@
     <tr><td><code>{name}</code></td><td>their full name</td></tr>
     <tr><td><code>{company}</code></td><td>the company on the contact</td></tr>
     <tr><td><code>{internship}</code></td><td>the job <em>you</em> applied to, read off that company's row</td></tr>
-    <tr><td><code>{role}</code></td><td>who they are — <strong>Hiring</strong>, <strong>VP Eng</strong> or <strong>BU Eng</strong></td></tr>
-    <tr><td><code>{learn}</code></td><td>“you” for a recruiter, “your work” for an engineer</td></tr>
+    <tr><td><code>{role}</code></td><td>who they are — <strong>BU Eng</strong> or <strong>Field Eng</strong>, or whatever an older row says</td></tr>
+    <tr><td><code>{learn}</code></td><td>“your work” for an engineer, “you” only on an older <em>Hiring</em> row</td></tr>
     <tr><td><code>{date}</code></td><td>when you first contacted them</td></tr>
     <tr><td><code>{days}</code></td><td>days since your last contact or reminder</td></tr>
     <tr><td><code>{channel}</code></td><td>Email / LinkedIn / Other, as logged</td></tr>
@@ -1356,8 +1356,10 @@
   <input type="text" id="fieldTermsInput"
     placeholder="mechanical, biomedical, biosensor, wearable, human-machine interaction, human factors">
   <p class="tpl-help">
-    Used three ways, so they stay in step: the searches 🔎 Search runs, the check that a
-    field pick's title actually bears it out, and the prompt you copy into Gemini.
+    Used four ways, so they stay in step: the searches 🔎 Search runs (the first four
+    terms, one query each), the check that a field pick's title actually bears it out,
+    the research prompt below, and the <strong>Copy AI prompt</strong> line saying what
+    work you're after.
   </p>
 
   <hr>
@@ -1465,7 +1467,7 @@
      tell those apart from a change that genuinely didn't work. This string
      lives in the file being executed, so it cannot lie about which file that
      is. It's shown at the bottom of Settings. */
-  var APP_VERSION = "2026-08-20a";
+  var APP_VERSION = "2026-08-20b";
   var swReady = false, swCacheVersion = "", swNote = "";
 
   /* ============================================================
@@ -1686,8 +1688,8 @@
       "Best,\n" +
       "Alex",
     // The LinkedIn connect notes. Short on purpose — these go in a connection
-    // request, not an inbox. {learn} is "you" for a recruiter and "your work"
-    // for an engineer.
+    // request, not an inbox. {learn} is "your work" for an engineer, which is
+    // everyone the search files, and "you" only on an older Hiring row.
     connect:
       "Hi {first},\n" +
       "\n" +
@@ -2114,34 +2116,35 @@
   function isConnected(a) { return a.connected === true; }
 
   /* ---- who this person is, in three words ------------------------
-     A contact's `role` holds one of exactly three buckets rather than their
+     A contact's `role` holds one of exactly two buckets rather than their
      literal job title. The title is what LinkedIn says; the bucket is what
      you actually need to know when scanning a list of people to approach.
 
-       Hiring  — recruiters and hiring managers: they decide, so ask about them
-       VP Eng  — engineering leadership: more power, harder to reach
-       BU Eng  — Boston University engineers at that company: least power,
-                 by far the easiest yes, because you already share something
+       BU Eng    — Boston University people at that company: least power, by
+                   far the easiest yes, because you already share something
+       Field Eng — somebody doing the work you want to do: the one person who
+                   can say what that work is actually like
+
+     Recruiters and engineering leadership had buckets of their own once. They
+     don't now: the BU connection is the one that actually gets answered, so
+     the search spends its slots there and on the field engineer. Old rows
+     still carrying "Hiring" or "VP Eng" keep their role text and fall back to
+     the plain templates — nothing is rewritten underneath you.
 
      BU Eng is deliberately not "any engineer" — the whole point of the bucket
      is the BU connection, so it's set from evidence on the profile, never
      guessed from a job title.
      ---------------------------------------------------------------- */
-  /* Two buckets now, not three. Recruiters and engineering leadership are
-     out: the BU connection is the one that actually gets answered, so the
-     search spends its slots there and on a single engineer doing the work you
-     want to do. Old rows still carrying "Hiring" or "VP Eng" keep their role
-     text and fall back to the plain templates — nothing is rewritten. */
   var BUCKETS = { "BU Eng": 1, "Field Eng": 1 };
   /* Hiring means the recruiting *function* — talent acquisition, HR, People,
      a recruiter — not anyone whose headline mentions hiring.
 
-     The bare word "hiring" used to be in here, and LinkedIn headlines are
-     full of "We're hiring!". A VP of Engineering advertising open roles was
-     landing in the Hiring pair, which is the opposite of useful: that pair
-     exists so you can write to whoever runs recruiting for the company. It
-     also feeds {learn}, so a mis-filed engineer gets "learn more about you"
-     instead of "your work". "hiring manager" survives as an exact phrase. */
+     No bucket targets recruiters any more, so this is down to two jobs:
+     telling looksLikeRole() that a search result's first segment is a job
+     title rather than a name, and keeping {learn} right on an older `Hiring`
+     row. The bare word "hiring" used to be in here, and LinkedIn headlines
+     are full of "We're hiring!" — a VP of Engineering advertising open roles
+     matched it. "hiring manager" survives as an exact phrase. */
   var RE_HIRING = new RegExp(
     "\\b(recruit\\w*|sourcer|staffing|hiring manager|human resources|hrbp|hr|chro" +
     "|people ops|people operations|university relations|campus recruit\\w*)\\b" +
@@ -2162,7 +2165,7 @@
 
   // `hasBU` comes from the profile text, not the title — see above. With
   // nothing to go on it returns nothing: an empty role reads as "fill this in",
-  // where a guessed "VP Eng" would read as a fact the app never established.
+  // where a guessed "BU Eng" would read as a fact the app never established.
   function bucketFor(title, hasBU) {
     if (hasBU) return "BU Eng";
     if (inMyField(title)) return "Field Eng";
@@ -2170,8 +2173,9 @@
     // "fill this in", where a guess reads as a fact.
     return "";
   }
-  // A recruiter wants to talk about themselves and the team; an engineer wants
-  // to talk about the work. One placeholder rather than four forked templates.
+  // An engineer wants to talk about the work. Only an older `Hiring` row
+  // reaches "you" now — nothing the search files can — and it stays because
+  // rewriting what you already wrote to somebody is not this app's business.
   function learnFor(role) { return role === "Hiring" ? "you" : "your work"; }
 
   /* ---- which draft, for whom ------------------------------------
@@ -2201,14 +2205,15 @@
      in the template. The old `applied` text is left untouched in
      localStorage rather than deleted, so nothing you wrote is lost. */
   function isBUContact(c) { return (c && c.role) === "BU Eng"; }
-  /* The three buckets are three different conversations: a recruiter can
-     answer "are you taking interns", engineering leadership can't and
-     shouldn't be asked to, and a BU engineer is someone you already share
-     something with. So each gets its own opener on each channel.
+  /* The two buckets are two different conversations: a BU engineer is someone
+     you already share a school with, and a field engineer is doing the work
+     you want to do and can say what it's like. So each gets its own opener on
+     each channel.
 
-     A contact whose role is none of the three — blank, or something you typed
-     by hand — falls back to the plain opener rather than being pushed into a
-     bucket it never established. Same rule as everywhere else here. */
+     A contact whose role is neither — blank, something you typed by hand, or
+     an older `Hiring` / `VP Eng` row — falls back to the plain opener rather
+     than being pushed into a bucket it never established. Same rule as
+     everywhere else here. */
   var ROLE_TPL = { "BU Eng": "BU", "Field Eng": "Field" };
   function firstContactKind(c) {
     var suffix = ROLE_TPL[String((c && c.role) || "").trim()] || "";
@@ -3001,7 +3006,8 @@
     "  site:linkedin.com/in \"{company}\" \"Boston University\"\n" +
     "  site:linkedin.com/in \"{company}\" \"Boston University\" engineer\n" +
     "  site:linkedin.com/in \"{company}\" BU alumni\n" +
-    "  site:linkedin.com/in \"{company}\" {fieldwords}\n" +
+    "  site:linkedin.com/in \"{company}\" <term> engineer   <- once per term in:\n" +
+    "      {fieldwords}\n" +
     "\n" +
     "STEP 2 — give me up to {bun} people in \"bu\" and {fieldn} in \"field\":\n" +
     "  bu    — people at {company} who went to Boston University. Say what shows the BU\n" +
@@ -3009,7 +3015,8 @@
     "          least gatekeeping, and the shared school makes them likeliest to reply.\n" +
     "  field — someone at {company} doing work close to {fieldwords}. Not a manager,\n" +
     "          not a director — somebody doing the work. Say what in their title or\n" +
-    "          profile shows it. If {fieldn} above is 0, skip this category entirely.\n" +
+    "          profile shows it. If the count above is 0, skip this category\n" +
+    "          entirely.\n" +
     "\n" +
     "THE linkedin FIELD — read this twice:\n" +
     "- If a search result shows a linkedin.com/in/ URL for the person, PUT IT IN. Copy it\n" +
@@ -4202,11 +4209,12 @@
   }, true);
 
   /* ============================================================
-     6C. FIND CONTACTS — six people at one company
+     6C. FIND CONTACTS — BU alumni, and an engineer in my field
 
      Four stages, and nothing reaches the log until the last one:
 
-       find    → six candidates, from web search or from JSON you paste
+       find    → as many of each as Settings asks for, from web search
+                 or from JSON you paste
        verify  → each profile URL read back through 6B's parser
        review  → claimed vs actually-found, side by side, with tickboxes
        write   → ordinary contact rows, only for what you left ticked
@@ -4522,7 +4530,7 @@
   /* ---- ranking a pool of search hits ----------------------------------
      A search for "Lexington Medical" also returns Lexington Medical *Center*,
      an unrelated hospital, and its nurse recruiters and guest-services
-     managers otherwise outrank the VP of Technology you actually wanted.
+     managers otherwise outrank the BU alum you actually wanted.
      sameCompany() can't help: it treats a whole-word prefix as a match on
      purpose, so "Marotta" finds "Marotta Controls, Inc." — and that same rule
      makes the hospital look like your company.
@@ -4560,7 +4568,7 @@
       if (m && ORG_TAIL.test(m[1])) s -= 5;
     }
 
-    /* Fit for the pair they're in. The field pick wants somebody doing the
+    /* Fit for the bucket they're in. The field pick wants somebody doing the
        work, so a title in your terms scores and a title that isn't docks —
        and leadership docks too, because a director of engineering is exactly
        who this bucket replaced. */
@@ -4569,7 +4577,7 @@
       if (RE_LEAD.test(title)) s -= 2;
       if (/engineer/i.test(title)) s += 1;
     }
-    // The BU pair is the whole point of the bucket — a shared school is why
+    // The BU bucket is the whole point of this — a shared school is why
     // they answer. Someone the BU query merely happened to return, with no
     // BU anywhere in the result, is just another engineer, so evidence wins
     // rather than merely scoring higher.
@@ -4577,13 +4585,14 @@
     return s;
   }
 
-  /* Which pair a search hit really belongs in, read off the person rather
+  /* Which bucket a search hit really belongs in, read off the person rather
      than off the query that surfaced them. Returns "" when the title says
      nothing, so the caller keeps the query's guess rather than inventing one.
 
-     Order matters and mirrors bucketFor(): a recruiter who went to BU is
-     still a recruiter, because the bucket is about how you approach them.
-     BU only wins for someone who isn't obviously hiring or leadership. */
+     Order matters and mirrors bucketFor(): BU is checked first, so someone
+     who went there and works in your field is filed as the BU contact. The
+     bucket is about how you open the conversation, and the shared school is
+     the stronger opening of the two. */
   function searchCategory(p) {
     var title = String(p.title || "");
     var hay = title + " " + String(p.why || "");
@@ -4606,10 +4615,9 @@
     // an over-clever query comes back with nothing at all, which reads as
     // "nobody works there" rather than "that query was wrong".
     // Every query runs and everything is pooled: which query found someone
-    // says nothing about who they are. Widened because two of the three
-    // categories were routinely coming back empty — "director of engineering"
-    // alone misses a VP Eng, and one BU query misses everyone who lists the
-    // school without the word "engineer".
+    // says nothing about who they are. Widened because one BU query misses
+    // everyone who lists the school without the word "engineer", and BU is
+    // where nearly every slot goes.
     /* Every slot goes to a BU alum bar one, so most of the queries do too.
        Still one quoted phrase per query — the company — because two quoted
        phrases come back empty from this endpoint, which is the bug that once
@@ -4626,7 +4634,7 @@
     FS.phase = "searching"; FS.msg = ""; FS.progress = "Searching…";
     renderFinder();
 
-    // Distinct profiles each pair's own queries surfaced, counted before the
+    // Distinct profiles each bucket's own queries surfaced, counted before the
     // pool de-duplicates. Someone the BU query found who was already in the
     // pool from an earlier query still means that query found somebody, and
     // counting off the pool instead reported it as having found nobody.
@@ -4644,18 +4652,19 @@
            decide the bucket; the code kept a back door where it did.
 
            Now a hit with nothing established gets no bucket at all, and a
-           pair with nobody in it comes back empty and says so. That is the
-           rule `BU Eng` has always followed, and there was never a reason
-           the other two should be softer about it: naming two strangers as
-           the recruiting contact is worse than naming none. It also feeds
-           {learn}, so a mis-filed engineer gets a draft offering to learn
-           about "you" rather than "your work". */
+           bucket with nobody in it comes back empty and says so. That is the
+           rule `BU Eng` has always followed, and there was never a reason the
+           other one should be softer about it: naming a stranger as somebody
+           doing your work is worse than naming nobody. The bucket also picks
+           the opener, so a mis-filed row leads with a school they never went
+           to. */
         pool.forEach(function (p) { p.category = searchCategory(p); });
-        // Two slots per pair out of a pool that's now dozens deep, so which
-        // two matters more than how many were found.
+        // The slots come from Settings — four BU and one field by default —
+        // out of a pool that's now dozens deep, so which ones matters far
+        // more than how many were found.
         pool.forEach(function (p) { p.score = hitScore(p, p.category); });
         var found = [], catCount = { bu: 0, field: 0 };
-        // An empty pair means two different things — the searches found
+        // An empty bucket means two different things — the searches found
         // nobody, or they found people whose titles don't support the claim —
         // and only one of those is worth re-running with different wording.
         var askedFor = {};
@@ -4663,11 +4672,11 @@
         CAT_ORDER.forEach(function (cat) {
           pool.filter(function (p) {
             if (p.category !== cat) return false;
-            // The BU pair is the shared school and nothing else. Everyone the
-            // BU query returns works at the company, so without that evidence
-            // they are simply another engineer — and filing them here would
-            // guess the one thing this bucket is never allowed to guess. An
-            // empty pair that says so beats two confident wrong answers.
+            // The BU bucket is the shared school and nothing else. Everyone
+            // the BU query returns works at the company, so without that
+            // evidence they are simply another engineer — and filing them here
+            // would guess the one thing this bucket is never allowed to guess.
+            // An empty bucket that says so beats four confident wrong answers.
             if (cat === "bu" && !p.snippetBU) return false;
             return true;
           })
@@ -4683,7 +4692,7 @@
           // "Found no profiles" and "found plenty, none of whom do these jobs"
           // are different answers and only one of them means the query was
           // wrong. Since buckets now demand evidence, the second is common at
-          // a small company with no recruiter on LinkedIn, and reporting it as
+          // a small company with no BU alum on LinkedIn, and reporting it as
           // the first would send you off rewriting a query that worked.
           fsSay(pool.length
             ? "Found " + pool.length + " profile" + (pool.length === 1 ? "" : "s") +
@@ -4697,11 +4706,12 @@
         found.forEach(function (p, n) { p.i = n; p.use = true; p.claimName = p.name;
           p.claimTitle = p.title; p.verdict = "unverified"; p.claimNote = ""; p.buNote = ""; });
         FS.people = found;
-        // Name the empty pairs, and say which kind of empty. "3 found" alone
-        // reads like there are only three people at the company, rather than
-        // one search coming back empty — and "no Hiring turned up" reads like
-        // the search failed, when usually it worked and nobody it found does
-        // that job. Only the first is worth re-running with new wording.
+        // Name the empty buckets, and say which kind of empty. "3 found"
+        // alone reads like there are only three people at the company, rather
+        // than one search coming back empty — and "no BU alumni turned up"
+        // reads like the search failed, when usually it worked and nobody it
+        // found went there. Only the first is worth re-running with new
+        // wording.
         var gaps = CAT_ORDER.filter(function (c) { return !catCount[c]; })
           .map(function (c) {
             var n = askedFor[c];
@@ -4723,7 +4733,7 @@
           var p = fromSearchResult(h, plan[i].cat);
           if (!p || !p.name) return;
           // Counted before the dedupe below, and not their bucket — that is
-          // read off their own title. This is only what lets an empty pair
+          // read off their own title. This is only what lets an empty bucket
           // say whether its searches came back empty or came back wrong.
           byQuery[plan[i].cat][p.linkedin] = true;
           if (seen[p.linkedin]) return;
@@ -4872,7 +4882,10 @@
     if (!Array.isArray(list)) return [];
     var out = [];
     list.forEach(function (p) {
-      if (!p || out.length >= 6) return;
+      // The cap is what Settings asked for, not a hardcoded six — that six
+      // was three pairs of two, and it silently dropped the tail of a longer
+      // reply once the counts became yours to set.
+      if (!p || out.length >= buPicks() + fieldPicks()) return;
       var name = String(p.name || "").trim();
       // Same extractor the paste box uses, so a bare "linkedin.com/in/foo" or a
       // URL wrapped in other text still lands. It returns "" for anything that
@@ -4884,9 +4897,10 @@
       var title = String(p.title || "").trim();
       var why = String(p.why || "").trim();
       // The category is a claim like any other, so it gets read off the title
-      // the same way a search hit's does. A model told us an "accomplished
-      // senior executive" was a hiring contact; the title says otherwise, and
-      // the title is the evidence. Its claim is only the fallback.
+      // the same way a search hit's does. A model once handed back an
+      // "accomplished senior executive" as somebody worth writing to; the
+      // title says otherwise, and the title is the evidence. Its claim is
+      // only the fallback.
       var cat = searchCategory({ title: title, why: why }) || claimedCat || "field";
       out.push({
         i: out.length, use: true, category: cat,

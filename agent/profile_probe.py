@@ -67,8 +67,11 @@ except ImportError:
 
 
 # --------------------------------------------------------------------------
-# The three test subjects - one per bucket, pulled from data/log.json.
-# Two share a company on purpose: it separates what changes between buckets
+# The three test subjects, pulled from data/log.json. The labels are the role
+# text those rows actually carry - two of them predate the BU-only search and
+# are kept as-is, because what is being tested here is the BU read, and a row
+# with no BU on it is exactly the negative case that needs covering.
+# Two share a company on purpose: it separates what changes between people
 # from what changes between companies.
 # --------------------------------------------------------------------------
 SUBJECTS = [

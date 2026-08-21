@@ -30,7 +30,8 @@ Four things it does beyond logging, each with its own section below:
 
 1. **The 7-day rule** — who's gone quiet, and the red card that says so.
 2. **⚡ Auto-populate** — paste a LinkedIn profile, get a filled-in contact.
-3. **🔍 Find contacts** — find six people at a company, verified before they land.
+3. **🔍 Find contacts** — find BU alumni at a company, plus an engineer doing the
+   work you want to do, verified before they land.
 4. **✉ Send queue** — stage a batch of personalized messages and work down it.
 
 Three rules the code keeps coming back to, worth knowing before changing any of
@@ -333,12 +334,12 @@ first, after saving. That's how notes would end up on the wrong person.
 **🔍 Find contacts** writes the draft into the workspace at the moment it creates
 the row. So a company you hadn't finished filling in — no role on it yet, not yet
 marked **Applied** — bakes a literal `[internship]`, or the wrong template
-entirely, into six workspaces at once. Fixing the company row afterwards did
+entirely, into every workspace it just created. Fixing the company row afterwards did
 nothing to them: the only way out was deleting the contact and finding them again,
 which throws away the search that found them.
 
 **♻ Repopulate** regenerates the draft from what the tracker holds *now*, in
-place. Fill in the company, tap it, and the six drafts are right.
+place. Fill in the company, tap it, and the drafts are right.
 
 It is destructive on purpose — wiping what's in there is the entire point — so it
 **asks first** whenever there's anything to lose, and on an empty workspace it just
@@ -934,7 +935,7 @@ no choosing.
 
 #### One opener per bucket
 
-The three buckets are three different conversations, and sending all of them the
+The two buckets are two different conversations, and sending both of them the
 same paragraph wastes the only thing that distinguishes them:
 
 | Role | What its opener does |
@@ -987,13 +988,13 @@ Placeholders substituted automatically:
 | `{date}` | date you first contacted them (e.g. Jul 25) |
 | `{days}` | days since your last contact or reminder |
 | `{internship}` | the role **you** applied to, read off that company's row |
-| `{learn}` | "you" for a recruiter, "your work" for an engineer |
+| `{learn}` | "your work" for an engineer — everyone the search files — and "you" only on an older `Hiring` row |
 
 `{role}` and `{internship}` are easy to confuse and are not the same thing.
-`{role}` is the **person's** bucket — `Hiring`, `VP Eng`, `BU Eng`.
+`{role}` is the **person's** bucket — `BU Eng` or `Field Eng`.
 `{internship}` is the job **you** applied to, which lives on the company row
 because it's the same for everyone you know there. A draft saying "I applied to
-the Marotta VP Eng" is what using the wrong one looks like.
+the Marotta BU Eng" is what using the wrong one looks like.
 
 The eight keys, as stored: `outreach` / `outreachBU` / `outreachField` are the
 emails, `connect` / `connectBU` / `connectField` the short LinkedIn connect
@@ -1087,21 +1088,25 @@ Same choice 🔍 Find contacts already makes. Type a date in yourself, or let
 
 ### Their role is a bucket, not a job title
 
-The `role` field on an auto-populated contact holds one of exactly three values,
+The `role` field on an auto-populated contact holds one of exactly two values,
 because when you're scanning a list of people to approach, their literal title
 isn't the thing you need:
 
 | Bucket | Who, and why it matters |
 |---|---|
-| `Hiring` | the **recruiting function** — talent acquisition, recruiters, sourcers, HR, People. Not anyone whose headline happens to say "hiring": LinkedIn is full of *"We're hiring!"*, and that was landing VPs of Engineering here |
-| `VP Eng` | engineering leadership — more power, harder to reach. EVP/SVP count |
-| `BU Eng` | **Boston University** engineers there — least gatekeeping, by far the easiest yes, because you already share something |
+| `BU Eng` | **Boston University** people there — least gatekeeping, by far the easiest yes, because you already share something |
+| `Field Eng` | somebody doing the work you want to do, from the terms in **Settings** — the one person who can say what that work is actually like |
+
+Recruiters and engineering leadership had buckets of their own once. They don't
+now: the BU connection is the one that actually gets answered, so the slots go
+there. Rows written back then keep their `Hiring` / `VP Eng` text and are never
+rewritten underneath you.
 
 `BU Eng` is deliberately **not** "any engineer". The BU connection is the entire
 point of the bucket, so it's set from Boston University actually appearing in
 their **Education** — never guessed from a job title, and never from the rest of
 the page. Their real title isn't thrown away: the
-preview shows it (`filed as VP Eng · LinkedIn says "Chairman and CEO"`) so you can
+preview shows it (`filed as BU Eng · LinkedIn says "Chairman and CEO"`) so you can
 see what was decided and overrule it before saving. With nothing to go on the role
 is left **blank** rather than guessed.
 
@@ -1142,7 +1147,7 @@ BU Eng · LinkedIn says "Senior Mechanical Engineer" ·
 ```
 
 A search **snippet** has no Education section to scope to, so the strict spelling
-is used there and it only decides which pair to *try* someone in. The profile read
+is used there and it only decides which bucket to *try* someone in. The profile read
 is what settles it.
 
 ### The draft it writes into the Workspace
@@ -1195,7 +1200,8 @@ back **empty with a note** rather than padded. Four stages, and **nothing reache
 one**:
 
 ```
-find    → pool every query, bucket by job title, score, take two per pair
+find    → pool every query, bucket by job title, score, take as many
+          of each as Settings asks for
 verify  → each profile URL read back and parsed — missing links looked up first
 review  → what was claimed vs what the profile actually says, with tickboxes
 write   → ordinary cold-contact rows, only for what you left ticked
@@ -1210,11 +1216,11 @@ Each row comes back as one of:
 | Verdict | Means |
 |---|---|
 | `verified` | the profile was read and its employer matches this company |
-| `check this` | read, but something disagrees — different employer, a `BU Eng` row whose **Education** doesn't confirm BU (or that has no Education section to confirm it against), or a title that doesn't read like leadership on a `VP Eng` row |
+| `check this` | read, but something disagrees — different employer, a `BU Eng` row whose **Education** doesn't confirm BU (or that has no Education section to confirm it against), or a title that doesn't read like leadership on an older `VP Eng` row |
 | `unverified` | couldn't be read at all, or there was no profile link |
 
 `verified` means **the profile page agreed** — not that this is the right person
-to write to. Read the six before you send anything.
+to write to. Read them before you send anything.
 
 A **sign-in wall counts as a failure, not a profile.** LinkedIn answers a reader
 it doesn't like with a signup or "Security verification" page, and those parse
@@ -1223,8 +1229,8 @@ challenge page becomes a confidently wrong contact, which is worse than a failed
 read, so any page that looks like a wall is forced to `unverified`.
 
 Each created contact also gets **the draft already written into its workspace**,
-ready to send. Six people with six empty workspaces is six more things to do by
-hand, which was the thing this was meant to save.
+ready to send. Five people with five empty workspaces is five more things to do
+by hand, which was the thing this was meant to save.
 
 ### Searching, with no key and nothing to install
 
@@ -1269,7 +1275,7 @@ about it. Getting either wrong returns *literally* "No results found":
 
 Together those take a search from nothing to 47–74 profiles per company.
 
-#### Which pair someone lands in
+#### Which bucket someone lands in
 
 **The query that found you doesn't decide your bucket — your job title does.**
 A search for `recruiter` happily returns a VP, and filing them under Hiring
@@ -1285,22 +1291,22 @@ against a mechanical contractor filed an *Assistant Billing Engineer* and a
 but docking only reorders, and when every candidate is wrong the top two are
 still wrong.
 
-**Every pair now needs positive evidence from the person themselves**, which is
-the rule `BU Eng` always had. Nothing established, no bucket, and the pair comes
-back empty. Naming two strangers as your recruiting contact is worse than naming
-none — and it feeds `{learn}`, so a mis-filed engineer gets a draft offering to
-learn about "you" rather than "your work".
+**Every bucket needs positive evidence from the person themselves**, which is
+the rule `BU Eng` always had. Nothing established, no bucket, and the bucket
+comes back empty. Naming four strangers as your BU connection is worse than
+naming none — and the bucket picks the opener, so a mis-filed row leads with a
+school they never went to.
 
-That makes empty pairs more common, so an empty one now says **which kind of
+That makes empty buckets more common, so an empty one now says **which kind of
 empty it is**, because only one of them means your query was wrong:
 
 ```
-No Hiring — the 4 profiles those searches found don't say recruiting
-in their title, so none were filed here.
+No Field Eng — the 4 profiles those searches found don't say
+mechanical / biomedical / biosensor in their title, so none were filed here.
 No BU Eng — those searches found nobody.
 ```
 
-A small company often has no recruiter on LinkedIn at all, and that is a real
+A small company often has no BU alum on LinkedIn at all, and that is a real
 answer rather than a failed search. Those counts are taken **before** the pool
 de-duplicates: someone the BU query found who an earlier query already returned
 still means the BU query found somebody, and counting off the pool reported it
@@ -1309,33 +1315,34 @@ as having found nobody.
 Every query runs, results are pooled, then each person is bucketed from their own
 title. Three details worth knowing:
 
-- **Hiring means the recruiting function** — talent acquisition, recruiter,
-  sourcer, HR, People — not anyone whose headline says "hiring". LinkedIn
-  headlines are full of *"We're hiring!"*, and that alone was putting VPs of
-  Engineering in the Hiring pair.
-- **EVP/SVP count as leadership.** `\bvp\b` cannot match inside "EVP", so an EVP
-  of Technology used to land in no bucket at all.
+- **BU is checked first.** Someone who went there *and* works in your field is
+  filed as the BU contact: the bucket decides how you open, and the shared
+  school is the stronger opening of the two.
+- **A field pick is somebody doing the work, not running it.** `hitScore()`
+  docks leadership, because a director of engineering is exactly who this
+  bucket replaced.
 - **A BU pick requires Boston University in the evidence.** Everyone the BU query
   returns works at the company, so without the school there's nothing left
-  distinguishing them. The pair comes back **empty with a note** rather than
-  naming two strangers — the same rule as `⚡ Auto-populate`: never guessed.
+  distinguishing them. The bucket comes back **empty with a note** rather than
+  naming strangers — the same rule as `⚡ Auto-populate`: never guessed.
   At the verify stage that tightens to their **Education** specifically — see
   "Where the BU evidence comes from".
 
-#### Picking two out of dozens
+#### Picking five out of dozens
 
-With a pool that deep, *which* two matters more than how many were found, so hits
-are scored:
+With a pool that deep, *which* five matters more than how many were found, so
+hits are scored:
 
 | Signal | Why |
 |---|---|
 | their headline names the employer | strongest evidence it's the right person |
 | **extra organisation words dock heavily** | `Lexington Medical Center` is an unrelated hospital, and `sameCompany()` matches it *on purpose* — that prefix rule is what makes "Marotta" find "Marotta Controls, Inc." |
 | the company appears **only in their name** earns nothing | a search for Draper returns Kristen Draper, who recruits for someone else |
-| exec needs engineering **and** leadership, docked separately | a Senior Mechanical Engineer is the right field but not leadership; a Guest Services Manager is the reverse |
+| a field pick scores on your terms and docks on leadership | a Senior Mechanical Engineer is what this bucket is for; a Director of Engineering is what it replaced |
+| a BU pick with no Boston University in the result docks hard | everyone the BU query returns works there, so the school is the only thing that makes them a BU pick |
 
 Checked across Draper, Whoop, Marotta Controls, Boston Scientific and Medtronic:
-hiring and engineering leadership land the right people in all five.
+the right people land in all five.
 
 #### Getting past the sign-in wall
 
