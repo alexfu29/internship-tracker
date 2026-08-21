@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-08-21T22:50:20.545Z",
+  "updated": "2026-08-21T22:52:23.617Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -1590,8 +1590,9 @@
       "meetingOn": null,
       "closed": false,
       "deleted": false,
-      "updated": "2026-08-20T18:46:38.266Z",
-      "workspace": ""
+      "updated": "2026-08-21T22:52:23.617Z",
+      "workspace": "",
+      "outcome": ""
     },
     "msqvsziz-b76el2": {
       "company": "Welkin Mechanical",
