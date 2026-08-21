@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-08-21T22:45:05.046Z",
+  "updated": "2026-08-21T22:49:35.016Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -679,9 +679,10 @@
       "closed": false,
       "deleted": false,
       "workspace": "Hi Richard,\n\nI recently applied to the Caterpillar Product Development Internship for 2027. I'd love to connect with you to learn more about you and the company culture.\n\nWould you be down for a quick zoom meeting to connect?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
-      "updated": "2026-08-21T22:45:05.046Z",
+      "updated": "2026-08-21T22:49:35.015Z",
       "inviteAcceptedOn": "2026-08-17",
-      "withdrawnOn": null
+      "withdrawnOn": null,
+      "muted": true
     },
     "msv1f8f9-w5mx2x": {
       "name": "Ella Conley",
