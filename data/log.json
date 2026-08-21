@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-08-21T23:46:48.178Z",
+  "updated": "2026-08-21T23:47:00.767Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -1674,9 +1674,9 @@
       "coldEmailed": false,
       "connected": false,
       "outcome": "",
-      "role": "https://ryder.wd5.myworkdayjobs.com/en-US/RyderCareers/userHome",
+      "role": "Industrial Engineering Intern",
       "date": "2026-08-21",
-      "link": "",
+      "link": "https://ryder.wd5.myworkdayjobs.com/en-US/RyderCareers/userHome",
       "note": "",
       "responded": false,
       "respondedOn": null,
@@ -1684,7 +1684,7 @@
       "closed": false,
       "deleted": false,
       "workspace": "",
-      "updated": "2026-08-21T23:46:48.178Z"
+      "updated": "2026-08-21T23:47:00.767Z"
     }
   }
 }
