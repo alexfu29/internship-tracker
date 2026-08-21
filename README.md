@@ -444,7 +444,8 @@ asks it to flag citizenship requirements, since some of these are
 defense-adjacent.
 
 The whole prompt is editable in **Settings → AI research prompt**, with the same
-Done / Reset pattern as the email drafts. `{companies}` is where your numbered list
+Done / Reset pattern as the email drafts. A box you haven't touched **saves
+nothing** — see "A saved prompt nobody ever wrote" below for why that matters. `{companies}` is where your numbered list
 gets substituted, and `{fieldwords}` is what counts as your field, from Settings —
 the same terms 🔍 Find contacts uses, so the two hunts can't describe you
 differently. Delete it and the list is **appended at the end** rather than
@@ -1231,6 +1232,34 @@ read, so any page that looks like a wall is forced to `unverified`.
 Each created contact also gets **the draft already written into its workspace**,
 ready to send. Five people with five empty workspaces is five more things to do
 by hand, which was the thing this was meant to save.
+
+### A saved prompt nobody ever wrote
+
+**Save settings** wrote the Find-contacts box back to `localStorage` along with
+the token, the keys and the counts. That box is pre-filled with whatever the
+default was the day you opened it — so the first time anyone saved a sync token,
+that day's prompt was frozen as *"my custom prompt"*, and every improvement to
+it since then went out to nobody.
+
+It surfaced the way this kind of bug always does. A prompt copied out of the app
+in August still asked for **three pairs of two**, naming recruiters and VP Eng,
+months after the search stopped working that way — on a device whose Settings
+looked untouched. Nothing in the app said the box was pinned, and the code that
+pinned it was a single assignment sitting between the API keys and the counts.
+
+Two halves to the fix:
+
+- **An untouched box saves nothing.** `storePrompt()` compares what's in the box
+  to the current default and stores it only if they differ, so the same freeze
+  can't happen again. The eight drafts follow the same rule.
+- **The prompts already frozen are let go.** Every default this app has ever
+  shipped is fingerprinted in `SHIPPED_PROMPTS` (djb2 plus the length). A saved
+  prompt matching one is a frozen copy nobody wrote, so it's dropped at boot and
+  the current default takes over. **Wording you actually edited matches nothing
+  in that list and is never touched** — it's equality, not similarity.
+
+Settings then says which of the three you're looking at: the built-in prompt,
+your own wording, or a stale copy that was just released.
 
 ### Searching, with no key and nothing to install
 

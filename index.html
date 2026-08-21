@@ -1410,6 +1410,7 @@
   </p>
   <textarea id="finderPromptInput" class="tpl" rows="14"></textarea>
   <button class="secondary" id="resetFinderBtn">Reset prompt to default</button>
+  <div class="sync-status" id="finderStatus"></div>
 
   <hr>
   <h2 style="font-size:0.95rem">AI research prompt</h2>
@@ -1467,7 +1468,7 @@
      tell those apart from a change that genuinely didn't work. This string
      lives in the file being executed, so it cannot lie about which file that
      is. It's shown at the bottom of Settings. */
-  var APP_VERSION = "2026-08-20b";
+  var APP_VERSION = "2026-08-20c";
   var swReady = false, swCacheVersion = "", swNote = "";
 
   /* ============================================================
@@ -3046,6 +3047,71 @@
   function finderPromptTpl() {
     var t = SETTINGS.finderPrompt;
     return (typeof t === "string" && t.trim().length) ? t : DEFAULT_FINDER_PROMPT;
+  }
+
+  /* ---- a saved prompt nobody ever wrote --------------------------------
+     `Save settings` writes the Find-contacts box back to localStorage along
+     with the token, the keys and the counts — and that box is pre-filled
+     with whatever the default was on the day you opened it. So the first
+     time anyone saved a sync token, that day's default was frozen as "my
+     custom prompt", and every improvement since then went out to nobody.
+
+     It surfaced the way this kind of bug always does: a prompt copied out of
+     the app months later still asked for three pairs of two, naming
+     recruiters and VP Eng, on a device whose Settings looked untouched. The
+     search had stopped working that way in August; the box had been pinned
+     since spring.
+
+     A frozen copy is recognisable — it is byte-identical to a default this
+     app once shipped. Every one of those is fingerprinted below, so a saved
+     prompt matching one is let go and the current default takes over.
+     Anything you actually edited matches nothing here and is left exactly as
+     you left it: this is equality, not similarity, and it never rewrites
+     your wording.
+
+     djb2, because it has to agree with the script that generated the list
+     and both are ten lines. The length is appended, so two prompts have to
+     collide on both to be confused for each other.
+     ---------------------------------------------------------------- */
+  function promptFp(s) {
+    var h = 5381;
+    for (var i = 0; i < s.length; i++) h = ((h * 33) ^ s.charCodeAt(i)) >>> 0;
+    return h + ":" + s.length;
+  }
+  var SHIPPED_PROMPTS = {
+    finderPrompt: [
+      "3722379636:1352",   // the original: six people, three pairs of two
+      "1020886794:2243",   // + the "PUT IT IN" rules for blank URLs
+      "2024794224:2365",   // two buckets: BU alumni and one field engineer
+      "1244187682:2516"    // BU named as the point of the search
+    ],
+    aiPrompt: [
+      "3684439366:1884"    // my field written in as prose, before {fieldwords}
+    ]
+  };
+  function defaultPromptFor(key) {
+    return key === "aiPrompt" ? DEFAULT_AI_PROMPT : DEFAULT_FINDER_PROMPT;
+  }
+  function unfreezeStalePrompts() {
+    var freed = [];
+    Object.keys(SHIPPED_PROMPTS).forEach(function (k) {
+      var saved = SETTINGS[k];
+      if (typeof saved !== "string" || !saved.trim().length) return;
+      if (saved === defaultPromptFor(k) ||
+          SHIPPED_PROMPTS[k].indexOf(promptFp(saved)) !== -1) {
+        delete SETTINGS[k];
+        freed.push(k);
+      }
+    });
+    if (freed.length) saveSettings(SETTINGS);
+    return freed;
+  }
+  /* Storing a copy of the default is what froze the last one, so a box you
+     haven't touched saves nothing at all and goes on following the built-in
+     prompt. Only your own wording is written down. */
+  function storePrompt(key, value) {
+    if (value === defaultPromptFor(key) || !value.trim().length) delete SETTINGS[key];
+    else SETTINGS[key] = value;
   }
   function buildFinderPrompt(a) {
     var company = companyOf(a);
@@ -6401,7 +6467,19 @@
     document.getElementById("finderPromptInput").value = finderPromptTpl();
     document.getElementById("aiPromptInput").value = aiPromptTpl();
     setTplStatus("");
-    setAiStatus("");
+    // Which box you are looking at — the built-in prompt, your own wording,
+    // or a stale copy that was just let go — rather than leaving you to
+    // diff it against a README.
+    setFinderStatus(UNFROZEN_PROMPTS.indexOf("finderPrompt") !== -1
+      ? "This was a saved copy of an older built-in prompt, so it has been let go — " +
+        "you're on the current one."
+      : (SETTINGS.finderPrompt ? "This is your own wording. Reset prompt to default " +
+         "takes the current built-in one." : ""));
+    setAiStatus(UNFROZEN_PROMPTS.indexOf("aiPrompt") !== -1
+      ? "This was a saved copy of an older built-in prompt, so it has been let go — " +
+        "you're on the current one."
+      : (SETTINGS.aiPrompt ? "This is your own wording. Reset prompt to default " +
+         "takes the current built-in one." : ""));
     tplWarned = false;
     aiWarned = false;
     drawer.classList.add("open"); overlay.classList.add("open");
@@ -6413,6 +6491,10 @@
   }
   function setAiStatus(msg) {
     var el = document.getElementById("aiStatus");
+    if (el) el.textContent = msg;
+  }
+  function setFinderStatus(msg) {
+    var el = document.getElementById("finderStatus");
     if (el) el.textContent = msg;
   }
   function closeDrawer() {
@@ -6468,7 +6550,7 @@
     SETTINGS.fieldTerms = document.getElementById("fieldTermsInput").value.trim();
     var apEl = document.querySelector('input[name="aiProvider"]:checked');
     SETTINGS.aiProvider = (apEl && apEl.value === "gemini") ? "gemini" : "claude";
-    SETTINGS.finderPrompt = document.getElementById("finderPromptInput").value;
+    storePrompt("finderPrompt", document.getElementById("finderPromptInput").value);
     saveSettings(SETTINGS);
     setSyncStatus("Saved. Syncing…");
     render();
@@ -6504,9 +6586,12 @@
   document.getElementById("doneTplBtn").addEventListener("click", function () {
     SETTINGS.templates = {};
     TPL_BOXES.forEach(function (k) {
-      SETTINGS.templates[k] =
-        document.getElementById("tpl" + k.charAt(0).toUpperCase() + k.slice(1)).value;
+      // Same rule as the prompts: a draft identical to the built-in one is
+      // not saved, so it keeps following the built-in one.
+      var v = document.getElementById("tpl" + k.charAt(0).toUpperCase() + k.slice(1)).value;
+      if (v !== DEFAULT_TPL[k]) SETTINGS.templates[k] = v;
     });
+    if (!Object.keys(SETTINGS.templates).length) delete SETTINGS.templates;
     saveSettings(SETTINGS);
     render();
 
@@ -6515,7 +6600,7 @@
       internship: 1, learn: 1
     };
     var unknown = [];
-    TPL_BOXES.map(function (k) { return SETTINGS.templates[k]; }).forEach(function (t) {
+    TPL_BOXES.map(function (k) { return tplFor(k); }).forEach(function (t) {
       (String(t).match(/\{(\w+)\}/g) || []).forEach(function (m) {
         var k = m.slice(1, -1);
         if (!known[k] && unknown.indexOf(m) === -1) unknown.push(m);
@@ -6548,15 +6633,15 @@
     delete SETTINGS.finderPrompt;
     saveSettings(SETTINGS);
     document.getElementById("finderPromptInput").value = finderPromptTpl();
-    setTplStatus("Find-contacts prompt reset to the built-in default.");
+    setFinderStatus("Reset to the built-in prompt.");
   });
 
   var aiWarned = false;
   document.getElementById("doneAiBtn").addEventListener("click", function () {
-    SETTINGS.aiPrompt = document.getElementById("aiPromptInput").value;
+    storePrompt("aiPrompt", document.getElementById("aiPromptInput").value);
     saveSettings(SETTINGS);
     render();
-    if (SETTINGS.aiPrompt.indexOf("{companies}") === -1 && !aiWarned) {
+    if (aiPromptTpl().indexOf("{companies}") === -1 && !aiWarned) {
       aiWarned = true;
       setAiStatus("Saved — but {companies} is gone, so the company list will be appended " +
         "at the end instead of sitting where you want it. Tap Done again to keep it as-is.");
@@ -6611,6 +6696,9 @@
      ============================================================ */
   document.getElementById("cDate").value = TODAY;
   document.getElementById("aDate").value = TODAY;
+  // Before anything can copy a prompt out: drop any saved prompt that is
+  // just a frozen copy of a default we used to ship. See unfreezeStalePrompts.
+  var UNFROZEN_PROMPTS = unfreezeStalePrompts();
   render();
   if (getPAT()) syncPull(false);
 
