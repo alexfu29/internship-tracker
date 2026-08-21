@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-08-21T23:35:55.040Z",
+  "updated": "2026-08-21T23:46:21.591Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -1556,7 +1556,9 @@
       "meetingOn": null,
       "closed": false,
       "deleted": false,
-      "updated": "2026-08-13T01:24:18.831Z"
+      "updated": "2026-08-21T23:46:21.591Z",
+      "outcome": "",
+      "workspace": ""
     },
     "msqu74dq-1nzj1d": {
       "company": "Polise Consulting Engineers, P.C.",
