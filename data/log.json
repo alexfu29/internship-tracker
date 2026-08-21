@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-08-20T18:55:23.838Z",
+  "updated": "2026-08-21T00:36:32.697Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -1643,6 +1643,24 @@
       "deleted": false,
       "workspace": "",
       "updated": "2026-08-20T18:55:23.838Z"
+    },
+    "mt27yek9-c3e55a": {
+      "company": "GE aero (manufacturing)",
+      "applied": false,
+      "coldEmailed": false,
+      "connected": false,
+      "outcome": "",
+      "role": "Manufacturing",
+      "date": "2026-08-20",
+      "link": "https://careers.geaerospace.com/global/en/job/R5029659/Manufacturing-Engineering-Intern-US-Summer-2027?source=Handshake",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "closed": false,
+      "deleted": false,
+      "workspace": "",
+      "updated": "2026-08-21T00:36:32.697Z"
     }
   }
 }
