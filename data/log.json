@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-08-21T23:46:21.591Z",
+  "updated": "2026-08-21T23:46:48.178Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -1667,6 +1667,24 @@
       "deleted": false,
       "workspace": "",
       "updated": "2026-08-21T22:59:28.620Z"
+    },
+    "mt3lmacy-mztaow": {
+      "company": "Ryder",
+      "applied": true,
+      "coldEmailed": false,
+      "connected": false,
+      "outcome": "",
+      "role": "https://ryder.wd5.myworkdayjobs.com/en-US/RyderCareers/userHome",
+      "date": "2026-08-21",
+      "link": "",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "closed": false,
+      "deleted": false,
+      "workspace": "",
+      "updated": "2026-08-21T23:46:48.178Z"
     }
   }
 }
