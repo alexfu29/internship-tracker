@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-08-21T00:43:59.508Z",
+  "updated": "2026-08-21T00:57:29.005Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -1249,9 +1249,9 @@
       "meetingOn": null,
       "closed": false,
       "deleted": false,
-      "updated": "2026-08-14T23:57:53.030Z",
+      "updated": "2026-08-21T00:57:29.005Z",
       "workspace": "",
-      "outcome": ""
+      "outcome": "denied"
     },
     "msm3oz66-fge3lm": {
       "company": "Marotta Controls",
