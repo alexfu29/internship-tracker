@@ -1468,7 +1468,7 @@
      tell those apart from a change that genuinely didn't work. This string
      lives in the file being executed, so it cannot lie about which file that
      is. It's shown at the bottom of Settings. */
-  var APP_VERSION = "2026-08-20c";
+  var APP_VERSION = "2026-08-22a";
   var swReady = false, swCacheVersion = "", swNote = "";
 
   /* ============================================================
@@ -5449,14 +5449,28 @@
 
   function outboxBuild(onlyId) {
     var rows = [], rest = { replied: 0, meeting: 0, waiting: 0, ignored: 0 };
-    var dueIds = {};
+    var dueIds = {}, noteIds = {};
     dueNudges().forEach(function (c) { dueIds[c.id] = true; });
+    /* The accepted-invite note is the third message you can owe somebody, and
+       it was the one the queue couldn't stage: needsNudge() steps aside while
+       the four-day clock runs, so these fell through to "still inside the 7
+       days" and the green card had to be worked one copy at a time.
+
+       Muted is checked here and not in acceptNoteDue() because it means two
+       different things in the two places: the card still lists an ignored
+       contact, but jobVoidReason() refuses to send to one — so staging it
+       would only deal a card that voids itself. */
+    acceptNoteList().forEach(function (c) { noteIds[c.id] = true; });
 
     contacts().forEach(function (c) {
       if (c.closed) return;
       if (onlyId && c.id !== onlyId) return;
       if (!c.date) {
         rows.push(outboxRow(c, firstContactKind(c), "first"));
+      } else if (noteIds[c.id] && !isMuted(c)) {
+        // Same draft the card's "📋 Copy note" produces, so the two can't
+        // hand you different wording.
+        rows.push(outboxRow(c, followupKind(c), "note"));
       } else if (dueIds[c.id]) {
         rows.push(outboxRow(c, followupKind(c), "follow"));
       } else if (onlyId) {
@@ -5491,6 +5505,7 @@
   function renderPicker() {
     var groups = [
       ["first", "First message — nothing sent to these yet"],
+      ["note", "✓ Accepted your invite — send the note"],
       ["follow", "Follow-up — 7+ days silent"]
     ];
     var h = "";
@@ -5505,8 +5520,9 @@
 
     if (!OB.rows.length) {
       h += '<p class="finder-note">Nobody is waiting on a message right now. ' +
-        'People show up here when they have no contact date yet, or once ' +
-        "they've been silent for 7 days.</p>";
+        'People show up here when they have no contact date yet, once an ' +
+        "invitation they accepted is waiting on its note, or once they've " +
+        "been silent for 7 days.</p>";
     }
 
     groups.forEach(function (g) {
@@ -5894,7 +5910,8 @@
     if (c && !c.deleted) {
       if (c.date !== snap.date) { c.date = snap.date; undone.push("un-dated the contact"); }
       if ((c.nudgedOn || []).length !== snap.nudgedOn.length) {
-        c.nudgedOn = snap.nudgedOn; undone.push("put the 7-day clock back");
+        c.nudgedOn = snap.nudgedOn;
+        undone.push("put the " + (inviteAccepted(c) ? "note clock" : "7-day clock") + " back");
       }
       touch(c);
     }
@@ -6163,8 +6180,12 @@
       c.date = TODAY;
       touched.push("first contact dated");
     } else if ((c.nudgedOn || []).indexOf(TODAY) === -1) {
+      // One write, two clocks read off it — and while an invitation is
+      // accepted the four-day note clock is the one that stepped in front of
+      // needsNudge(). Say which one you actually restarted.
+      var whichClock = inviteAccepted(c) ? "note clock" : "7-day clock";
       c.nudgedOn = (c.nudgedOn || []).concat([TODAY]);
-      touched.push("7-day clock restarted");
+      touched.push(whichClock + " restarted");
     }
 
     // The company's cold-email dot. Per the README this flag is the coarse

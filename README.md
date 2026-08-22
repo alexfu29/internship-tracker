@@ -827,8 +827,24 @@ different things from you:
   **company** row), and **leaves the row blocked** rather than tidying the
   warning away.
 
-Who shows up: **First message** (no contact date yet) and **Follow-up** (the
-`dueNudges()` set). Rows that can't be sent are shown greyed **with the reason**
+Who shows up: all three of the things you can owe somebody a message for —
+**First message** (no contact date yet), **✓ Accepted your invite — send the
+note** (the `acceptNoteList()` set), and **Follow-up** (the `dueNudges()` set).
+
+The middle one used to be the gap. `needsNudge()` deliberately steps aside while
+the four-day note clock runs, so an accepted invitation showed up nowhere in the
+queue — it was counted under "still inside the 7 days" and the green card had to
+be worked one **📋 Copy note** at a time, which is exactly the batch this dialog
+exists to save you. It stages the same `followupKind()` draft the card's copy
+button produces, and ticking **✓ Sent — next** restarts the four-day clock the
+same way **Note sent** does, because both go through `nudgedOn`.
+
+An **ignored** contact is the one place the queue is stricter than the card: the
+green card still lists them, but `jobVoidReason()` refuses to send to a muted
+contact, so staging one would only deal a card that voids itself. They stay in
+the `N ignored` count instead.
+
+Rows that can't be sent are shown greyed **with the reason**
 rather than hidden — the handle field is one unvalidated box, so a LinkedIn URL
 sitting on an `Email` contact is caught and named, because `firstContactKind()`
 keys off the channel alone and would otherwise paste a full email, `Subject:`
