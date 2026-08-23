@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-08-23T00:19:22.482Z",
+  "updated": "2026-08-23T00:19:32.905Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -1692,9 +1692,9 @@
       "coldEmailed": false,
       "connected": false,
       "outcome": "",
-      "role": "",
+      "role": "Systems Engineer",
       "date": "2026-08-22",
-      "link": "",
+      "link": "https://jobs.smartrecruiters.com/oneclick-ui/company/WesternDigital/publication/7bac11b3-fc38-4967-bb41-20ccf161bc6b/success?dcr_ci=WesternDigital&sid=251b73e2-8446-4498-b719-f6232e0b8972",
       "note": "",
       "responded": false,
       "respondedOn": null,
@@ -1702,7 +1702,7 @@
       "closed": false,
       "deleted": false,
       "workspace": "",
-      "updated": "2026-08-23T00:19:22.482Z"
+      "updated": "2026-08-23T00:19:32.905Z"
     }
   }
 }
