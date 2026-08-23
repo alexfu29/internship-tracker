@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-08-23T00:02:01.752Z",
+  "updated": "2026-08-23T00:19:22.482Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -1685,6 +1685,24 @@
       "deleted": false,
       "workspace": "",
       "updated": "2026-08-21T23:47:00.767Z"
+    },
+    "mt5280z6-dxkku6": {
+      "company": "Western DIgital",
+      "applied": true,
+      "coldEmailed": false,
+      "connected": false,
+      "outcome": "",
+      "role": "",
+      "date": "2026-08-22",
+      "link": "",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "closed": false,
+      "deleted": false,
+      "workspace": "",
+      "updated": "2026-08-23T00:19:22.482Z"
     }
   }
 }
