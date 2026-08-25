@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-08-25T00:29:28.232Z",
+  "updated": "2026-08-25T00:45:05.875Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -1704,6 +1704,24 @@
       "deleted": false,
       "workspace": "",
       "updated": "2026-08-23T00:19:32.905Z"
+    },
+    "mt7y0t77-xookod": {
+      "company": "Libra",
+      "applied": false,
+      "coldEmailed": false,
+      "connected": false,
+      "outcome": "",
+      "role": "",
+      "date": "2026-08-24",
+      "link": "https://job-boards.greenhouse.io/thelibragroup/jobs/8450925002?gh_src=Handshake&iisn=Handshake&iis=Handshake&src=Handshake&source=Handshake&ref=Handshake&utm_medium=Handshake&referral=Handshake&utm_source=Handshake&__jvst=Handshake&__jvsd=Handshake&sourceDetails=Handshake&trid=Handshake&lever-source%5B%5D=Handshake&Source=Handshake&rb=Handshake&jobBoardSource=Handshake&channel=Handshake&rcid=Handshake",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "closed": false,
+      "deleted": false,
+      "workspace": "",
+      "updated": "2026-08-25T00:45:05.875Z"
     }
   }
 }
