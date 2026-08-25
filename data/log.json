@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-08-23T00:19:32.905Z",
+  "updated": "2026-08-25T00:28:57.078Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -323,7 +323,7 @@
       "nudgedOn": [],
       "closed": false,
       "deleted": false,
-      "updated": "2026-08-21T22:50:10.786Z",
+      "updated": "2026-08-25T00:28:42.420Z",
       "workspace": "",
       "inviteAcceptedOn": "2026-08-17",
       "withdrawnOn": null
@@ -679,7 +679,7 @@
       "closed": false,
       "deleted": false,
       "workspace": "Hi Richard,\n\nI recently applied to the Caterpillar Product Development Internship for 2027. I'd love to connect with you to learn more about you and the company culture.\n\nWould you be down for a quick zoom meeting to connect?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
-      "updated": "2026-08-21T22:49:35.015Z",
+      "updated": "2026-08-25T00:28:39.320Z",
       "inviteAcceptedOn": "2026-08-17",
       "withdrawnOn": null,
       "muted": true
@@ -752,8 +752,8 @@
       "closed": false,
       "deleted": false,
       "workspace": "Hi Laura,\n\nI recently applied to the Lexington Medical Engineering Intern position for 2027. I'd love to connect with you to learn more about you and the company culture.\n\nWould you be down for a quick zoom meeting to connect?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
-      "updated": "2026-08-21T22:49:58.218Z",
-      "inviteAcceptedOn": "2026-08-17",
+      "updated": "2026-08-25T00:28:33.993Z",
+      "inviteAcceptedOn": "2026-08-24",
       "withdrawnOn": null
     },
     "msv3ttu3-d17a2x": {
@@ -806,10 +806,10 @@
       "respondedOn": null,
       "meetingOn": null,
       "nudgedOn": [],
-      "closed": false,
+      "closed": true,
       "deleted": false,
       "workspace": "Hi Kathir,\n\nI was looking at Linkedin and I saw that you work that Texas Instruments where I'd love to intern at. \n\nWould you be down for a quick zoom meeting to connect to talk about your work and the company culture?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
-      "updated": "2026-08-16T20:01:40.258Z"
+      "updated": "2026-08-25T00:28:23.179Z"
     },
     "msw7nwwl-t55boq": {
       "name": "Mike Steinthal",
@@ -840,10 +840,10 @@
       "respondedOn": null,
       "meetingOn": null,
       "nudgedOn": [],
-      "closed": false,
+      "closed": true,
       "deleted": false,
       "workspace": "Hi Kevin,\n\nI was looking at Linkedin and I saw that you work that Texas Instruments where I'd love to intern at. \n\nWould you be down for a quick zoom meeting to connect to talk about your work and the company culture?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
-      "updated": "2026-08-16T20:02:15.305Z"
+      "updated": "2026-08-25T00:28:23.054Z"
     },
     "msw7nwwl-cjm6qg": {
       "name": "Minh Le",
@@ -895,10 +895,10 @@
       "respondedOn": null,
       "meetingOn": null,
       "nudgedOn": [],
-      "closed": false,
+      "closed": true,
       "deleted": false,
       "workspace": "Hi Maha,\n\nI was looking at Linkedin and I saw that you work that Texas Instruments where I'd love to intern at, and you also went to BU.\n\nWould you be down for a quick zoom meeting to connect to talk about your work and how BU helped you get there?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
-      "updated": "2026-08-16T19:51:12.276Z"
+      "updated": "2026-08-25T00:28:23.306Z"
     },
     "msw8jzki-7izu6x": {
       "name": "Jack Wu",
@@ -912,10 +912,10 @@
       "respondedOn": null,
       "meetingOn": null,
       "nudgedOn": [],
-      "closed": false,
+      "closed": true,
       "deleted": false,
       "workspace": "Hi Jack,\n\nI'm a mechanical engineering student at BU working on wearables and embedded systems. I'd love to connect and hear about you at Anduril Industries.\n\nWould you be down for a quick zoom meeting to connect?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
-      "updated": "2026-08-16T20:21:57.686Z"
+      "updated": "2026-08-25T00:28:22.615Z"
     },
     "msw8jzki-zm6w1e": {
       "name": "Katie Nielsen",
@@ -929,10 +929,10 @@
       "respondedOn": null,
       "meetingOn": null,
       "nudgedOn": [],
-      "closed": false,
+      "closed": true,
       "deleted": false,
       "workspace": "Hi Katie,\n\nI'm a mechanical engineering student at BU working on wearables and embedded systems. I'd love to connect and hear about your work at Anduril Industries.\n\nWould you be down for a quick zoom meeting to connect?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
-      "updated": "2026-08-16T20:23:02.530Z"
+      "updated": "2026-08-25T00:28:22.491Z"
     },
     "msw8jzkj-fh79kh": {
       "name": "Long Huynh",
@@ -946,10 +946,10 @@
       "respondedOn": null,
       "meetingOn": null,
       "nudgedOn": [],
-      "closed": false,
+      "closed": true,
       "deleted": false,
       "workspace": "Hi Long,\n\nI'm a mechanical engineering student at BU working on wearables and embedded systems. I'd love to connect and hear about your work at Anduril Industries.\n\nWould you be down for a quick zoom meeting to connect?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
-      "updated": "2026-08-16T20:25:33.181Z"
+      "updated": "2026-08-25T00:28:22.358Z"
     },
     "msw8jzkj-gpz901": {
       "name": "Gina Bishop",
@@ -963,10 +963,10 @@
       "respondedOn": null,
       "meetingOn": null,
       "nudgedOn": [],
-      "closed": false,
+      "closed": true,
       "deleted": false,
       "workspace": "Hi Gina,\n\nI'm a mechanical engineering student at BU working on wearables and embedded systems. I'd love to connect and hear about your work at Anduril Industries.\n\nWould you be down for a quick zoom meeting to connect?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
-      "updated": "2026-08-16T20:21:28.001Z"
+      "updated": "2026-08-25T00:28:22.741Z"
     },
     "msw8kx13-l4pph4": {
       "name": "Brian S.",
@@ -976,14 +976,14 @@
       "email": "https://www.linkedin.com/in/brianhshin/",
       "date": "2026-08-16",
       "note": "Hi Brianhshin,\n\nI was looking at Linkedin and I saw that you work that [company] where I'd love to intern at. \n\nWould you be down for a quick zoom meeting to connect to talk about your work and the company culture?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
-      "responded": true,
-      "respondedOn": "2026-08-17",
+      "responded": false,
+      "respondedOn": null,
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
       "deleted": false,
       "workspace": "Hi Brian,\n\nI'm a mechanical engineering student at BU working on wearables and embedded systems. I'd love to connect and hear about your work at Anduril Industries and how BU helped you.\n\nWould you be down for a quick zoom meeting to connect?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
-      "updated": "2026-08-17T16:24:01.764Z",
+      "updated": "2026-08-25T00:28:46.675Z",
       "inviteAcceptedOn": "2026-08-17",
       "withdrawnOn": null
     },
@@ -999,10 +999,10 @@
       "respondedOn": null,
       "meetingOn": null,
       "nudgedOn": [],
-      "closed": false,
+      "closed": true,
       "deleted": false,
       "workspace": "Hi Ryan,\n\nI'm a mechanical engineering student at BU working on wearables and embedded systems. I'd love to connect and hear about your work at Anduril Industries, and how BU helped you.\n\nWould you be down for a quick zoom meeting to connect?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
-      "updated": "2026-08-16T20:17:05.320Z"
+      "updated": "2026-08-25T00:28:22.866Z"
     },
     "msxi8fhs-bwtyxc": {
       "name": "Janna M.",
@@ -1019,9 +1019,10 @@
       "closed": false,
       "deleted": false,
       "workspace": "Hi Janna,\n\nI'm a mechanical engineering student at BU working on wearables and embedded systems. I'd love to connect and hear about your work at Boeing.\n\nWould you be down for a quick zoom meeting?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
-      "updated": "2026-08-19T23:41:21.366Z",
+      "updated": "2026-08-25T00:28:52.331Z",
       "inviteAcceptedOn": "2026-08-19",
-      "withdrawnOn": null
+      "withdrawnOn": null,
+      "muted": false
     },
     "msxi8fhs-n58f8v": {
       "name": "Kelli Abramson",
@@ -1035,10 +1036,10 @@
       "respondedOn": null,
       "meetingOn": null,
       "nudgedOn": [],
-      "closed": false,
+      "closed": true,
       "deleted": false,
       "workspace": "Hi Kelli,\n\nI'm a mechanical engineering student at BU working on wearables and embedded systems. I'd love to connect and hear about your work at Boeing.\n\nWould you be down for a quick zoom meeting?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
-      "updated": "2026-08-18T00:21:40.141Z"
+      "updated": "2026-08-25T00:28:23.554Z"
     },
     "msxi8fhs-4eh8mx": {
       "name": "Eric Engel",
@@ -1071,10 +1072,10 @@
       "nudgedOn": [
         "2026-08-17"
       ],
-      "closed": false,
+      "closed": true,
       "deleted": false,
       "workspace": "Hi Kristin,\n\nI love that you were able to work on many different and unique programs throughout your time at Boeing, especially as a Systems Engineer, and would love to connect.\n\nWould you be down for a quick zoom meeting?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
-      "updated": "2026-08-17T17:47:43.353Z"
+      "updated": "2026-08-25T00:28:23.929Z"
     },
     "msxin3gb-4yaklf": {
       "name": "Patrick G Smith",
@@ -1088,10 +1089,10 @@
       "respondedOn": null,
       "meetingOn": null,
       "nudgedOn": [],
-      "closed": false,
+      "closed": true,
       "deleted": false,
       "workspace": "Hi Patrick,\n\nI saw you went to BU for your MS in Mechatronics, and wanted to learn more about the program, and how supports you at Boeing today.\n\nWould you be down for a quick zoom meeting?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
-      "updated": "2026-08-17T18:15:32.762Z"
+      "updated": "2026-08-25T00:28:23.679Z"
     },
     "msxiriml-iuodhc": {
       "name": "Thompson Cragwell",
@@ -1105,10 +1106,10 @@
       "respondedOn": null,
       "meetingOn": null,
       "nudgedOn": [],
-      "closed": false,
+      "closed": true,
       "deleted": false,
       "workspace": "Hi Thompson,\n\nI'd love to connect to see how BU and the Space Physics & Technology Lab helped you gain your current position of Lead Space Mechanical Engineer at Boeing.\n\nWould you be down for a quick zoom meeting?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
-      "updated": "2026-08-17T18:06:48.907Z"
+      "updated": "2026-08-25T00:28:23.803Z"
     },
     "msxirydu-eyazro": {
       "name": "Andrew Lawandy",
@@ -1156,10 +1157,10 @@
       "respondedOn": null,
       "meetingOn": null,
       "nudgedOn": [],
-      "closed": false,
+      "closed": true,
       "deleted": false,
       "workspace": "Hi Shane,\n\nI love that your current role at Boeing aligned with your engineering concentration, and would love to connect to talk about how BU supported you.\n\nWould you be down for a quick zoom meeting?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
-      "updated": "2026-08-18T00:31:28.776Z"
+      "updated": "2026-08-25T00:28:23.430Z"
     }
   },
   "apps": {
