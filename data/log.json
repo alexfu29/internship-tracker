@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-08-31T18:24:56.727Z",
+  "updated": "2026-08-31T18:32:00.687Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -1729,6 +1729,24 @@
       "deleted": false,
       "workspace": "",
       "updated": "2026-08-25T00:45:05.875Z"
+    },
+    "mthkrx8o-1pcdth": {
+      "company": "Simpson Gumpertz & Heger",
+      "applied": true,
+      "coldEmailed": false,
+      "connected": false,
+      "outcome": "",
+      "role": "Engineering Intern",
+      "date": "2026-08-31",
+      "link": "https://www.sgh.com/careers/job-openings/view-job/?gh_jid=8730663002",
+      "note": "Civil Eng",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "closed": false,
+      "deleted": false,
+      "workspace": "",
+      "updated": "2026-08-31T18:32:00.687Z"
     }
   }
 }
