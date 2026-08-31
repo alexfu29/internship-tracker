@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-08-31T18:14:10.088Z",
+  "updated": "2026-08-31T18:24:56.727Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -1534,19 +1534,21 @@
     },
     "msqu2pbn-6ouykl": {
       "company": "Mortenson",
-      "applied": false,
+      "applied": true,
       "coldEmailed": false,
       "connected": false,
-      "role": "",
+      "role": "Safety Engineering Intern",
       "date": "2026-08-12",
-      "link": "",
+      "link": "https://fa-esgu-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1/my-profile",
       "note": "check handshake",
       "responded": false,
       "respondedOn": null,
       "meetingOn": null,
       "closed": false,
       "deleted": false,
-      "updated": "2026-08-13T01:22:30.707Z"
+      "updated": "2026-08-31T18:24:56.727Z",
+      "outcome": "",
+      "workspace": ""
     },
     "msqu50r3-qdtj5l": {
       "company": "Arco",
