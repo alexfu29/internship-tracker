@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-08-31T18:06:06.719Z",
+  "updated": "2026-08-31T18:14:10.088Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -1513,7 +1513,8 @@
       "meetingOn": null,
       "closed": false,
       "deleted": false,
-      "updated": "2026-08-13T01:18:45.651Z"
+      "updated": "2026-08-31T18:14:10.088Z",
+      "workspace": ""
     },
     "msqtzf4u-arz99x": {
       "company": "Simon-Kucher",
