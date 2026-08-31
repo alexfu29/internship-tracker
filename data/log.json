@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-08-25T00:45:05.875Z",
+  "updated": "2026-08-31T18:04:26.450Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -62,7 +62,7 @@
       "company": "New Balance",
       "role": "Product Engineer",
       "channel": "LinkedIn",
-      "email": "",
+      "email": "https://www.linkedin.com/in/mateo-galeano/",
       "date": "2026-08-06",
       "note": "https://www.linkedin.com/in/mateo-galeano/",
       "responded": false,
@@ -71,7 +71,7 @@
       "nudgedOn": [],
       "closed": false,
       "deleted": false,
-      "updated": "2026-08-13T18:34:37.425Z",
+      "updated": "2026-08-31T18:04:26.450Z",
       "workspace": "",
       "muted": true
     },
