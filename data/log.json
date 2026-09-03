@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-09-03T01:42:14.758Z",
+  "updated": "2026-09-03T20:07:24.524Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -1768,6 +1768,24 @@
       "deleted": false,
       "workspace": "",
       "updated": "2026-09-03T01:41:35.977Z"
+    },
+    "mtlyi7vw-07ow8e": {
+      "company": "Relativity Space",
+      "applied": true,
+      "coldEmailed": false,
+      "connected": false,
+      "outcome": "",
+      "role": "",
+      "date": "2026-09-03",
+      "link": "https://app.ripplematch.com/v2/student/all-jobs",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "closed": false,
+      "deleted": false,
+      "workspace": "",
+      "updated": "2026-09-03T20:07:24.524Z"
     }
   }
 }
