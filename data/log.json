@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-09-03T01:17:14.221Z",
+  "updated": "2026-09-03T01:41:35.977Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -1750,6 +1750,24 @@
       "deleted": false,
       "workspace": "",
       "updated": "2026-08-31T18:32:00.687Z"
+    },
+    "mtkv050p-2fu3zb": {
+      "company": "Siemens Healthineers",
+      "applied": true,
+      "coldEmailed": false,
+      "connected": false,
+      "outcome": "",
+      "role": "Medical Services Engineering Intern",
+      "date": "2026-09-02",
+      "link": "https://careers.siemens-healthineers.com/global/en/applythankyou?status=success&jobSeqNo=SHDSHWUSR30018EXTERNALENGLOBAL&jobTitle=SkillBridge%20Intern%20-%20Medical%20Imaging%20Service%20Engineer%2C%20Nationwide%20Opportunities&jobId=R-30018&candidateHomeUrl=https://onehealthineers.wd3.myworkdayjobs.com/SHSJB/login?Job_Application_ID=00a96948c728900175a339bf50ff0003&jobApplicationId=00a96948c728900175a339bf50ff0003&candidateId=832683&thankYouUri=NuRqWfVAwycp1XuCaCwK4khGtBmf7oe8poZ2R3z4YGXJN7b0YxOi1dUz6zb6kD%2B8vcDUwlcA05DHpWmzfiU%3D",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "closed": false,
+      "deleted": false,
+      "workspace": "",
+      "updated": "2026-09-03T01:41:35.977Z"
     }
   }
 }
