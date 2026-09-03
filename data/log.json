@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-09-03T00:30:00.905Z",
+  "updated": "2026-09-03T00:32:30.741Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -1498,7 +1498,8 @@
       "meetingOn": null,
       "closed": false,
       "deleted": false,
-      "updated": "2026-08-13T01:16:40.151Z"
+      "updated": "2026-09-03T00:32:30.741Z",
+      "workspace": ""
     },
     "msqtxvo3-riyp35": {
       "company": "Appian Corp",
