@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-09-03T00:32:30.741Z",
+  "updated": "2026-09-03T01:13:52.362Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -1557,7 +1557,7 @@
       "applied": false,
       "coldEmailed": false,
       "connected": false,
-      "role": "",
+      "role": "Lubricants Intern",
       "date": "2026-08-12",
       "link": "",
       "note": "check handshake",
@@ -1566,7 +1566,7 @@
       "meetingOn": null,
       "closed": false,
       "deleted": false,
-      "updated": "2026-08-21T23:46:21.591Z",
+      "updated": "2026-09-03T01:13:52.362Z",
       "outcome": "",
       "workspace": ""
     },
