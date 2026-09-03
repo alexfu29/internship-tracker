@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-09-03T20:10:32.728Z",
+  "updated": "2026-09-03T20:10:43.840Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -1840,6 +1840,42 @@
       "deleted": false,
       "workspace": "",
       "updated": "2026-09-03T20:10:32.728Z"
+    },
+    "mtlymeaf-laxiby": {
+      "company": "Moderna",
+      "applied": false,
+      "coldEmailed": false,
+      "connected": false,
+      "outcome": "",
+      "role": "",
+      "date": "2026-09-03",
+      "link": "",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "closed": false,
+      "deleted": false,
+      "workspace": "",
+      "updated": "2026-09-03T20:10:39.447Z"
+    },
+    "mtlymhog-spfvap": {
+      "company": "FormLabs",
+      "applied": false,
+      "coldEmailed": false,
+      "connected": false,
+      "outcome": "",
+      "role": "",
+      "date": "2026-09-03",
+      "link": "",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "closed": false,
+      "deleted": false,
+      "workspace": "",
+      "updated": "2026-09-03T20:10:43.840Z"
     }
   }
 }
