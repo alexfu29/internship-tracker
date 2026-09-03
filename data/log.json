@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-09-03T20:10:27.732Z",
+  "updated": "2026-09-03T20:10:32.728Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -1822,6 +1822,24 @@
       "deleted": false,
       "workspace": "",
       "updated": "2026-09-03T20:10:27.732Z"
+    },
+    "mtlym93s-81sn53": {
+      "company": "Argonne National Laboratory - SULI",
+      "applied": false,
+      "coldEmailed": false,
+      "connected": false,
+      "outcome": "",
+      "role": "",
+      "date": "2026-09-03",
+      "link": "",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "closed": false,
+      "deleted": false,
+      "workspace": "",
+      "updated": "2026-09-03T20:10:32.728Z"
     }
   }
 }
