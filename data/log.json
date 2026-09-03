@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-09-03T20:07:24.524Z",
+  "updated": "2026-09-03T20:10:21.207Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -1786,6 +1786,24 @@
       "deleted": false,
       "workspace": "",
       "updated": "2026-09-03T20:07:24.524Z"
+    },
+    "mtlym07r-j5yk30": {
+      "company": "Brookhaven National Laboratory - SULI",
+      "applied": false,
+      "coldEmailed": false,
+      "connected": false,
+      "outcome": "",
+      "role": "",
+      "date": "2026-09-03",
+      "link": "",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "closed": false,
+      "deleted": false,
+      "workspace": "",
+      "updated": "2026-09-03T20:10:21.207Z"
     }
   }
 }
