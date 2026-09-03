@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-08-31T19:26:45.452Z",
+  "updated": "2026-09-03T00:30:00.905Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -1324,7 +1324,8 @@
       "meetingOn": null,
       "closed": false,
       "deleted": false,
-      "updated": "2026-08-11T02:04:34.599Z"
+      "updated": "2026-09-03T00:30:00.905Z",
+      "workspace": ""
     },
     "mso0p9bw-5ecqjg": {
       "company": "Texas Instruments",
@@ -1512,8 +1513,8 @@
       "respondedOn": null,
       "meetingOn": null,
       "closed": false,
-      "deleted": false,
-      "updated": "2026-08-31T18:14:10.088Z",
+      "deleted": true,
+      "updated": "2026-09-03T00:29:53.416Z",
       "workspace": ""
     },
     "msqtzf4u-arz99x": {
