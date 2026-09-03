@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-09-03T01:13:52.362Z",
+  "updated": "2026-09-03T01:17:14.221Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -1486,10 +1486,10 @@
     },
     "msqtv6tz-2ugcbx": {
       "company": "Phillips 66",
-      "applied": false,
+      "applied": true,
       "coldEmailed": false,
       "connected": false,
-      "role": "",
+      "role": "Lubricants + Midstream Engineering Intern",
       "date": "2026-08-12",
       "link": "several on handshake",
       "note": "",
@@ -1498,8 +1498,9 @@
       "meetingOn": null,
       "closed": false,
       "deleted": false,
-      "updated": "2026-09-03T00:32:30.741Z",
-      "workspace": ""
+      "updated": "2026-09-03T01:17:14.221Z",
+      "workspace": "",
+      "outcome": ""
     },
     "msqtxvo3-riyp35": {
       "company": "Appian Corp",
