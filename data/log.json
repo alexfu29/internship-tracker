@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-09-05T21:48:47.855Z",
+  "updated": "2026-09-05T21:56:08.235Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -1843,13 +1843,13 @@
     },
     "mtlymeaf-laxiby": {
       "company": "Moderna",
-      "applied": false,
+      "applied": true,
       "coldEmailed": false,
       "connected": false,
       "outcome": "",
       "role": "",
       "date": "2026-09-03",
-      "link": "",
+      "link": "https://modernatx.wd1.myworkdayjobs.com/en-US/M_tx/userHome",
       "note": "",
       "responded": false,
       "respondedOn": null,
@@ -1857,7 +1857,7 @@
       "closed": false,
       "deleted": false,
       "workspace": "",
-      "updated": "2026-09-03T20:10:39.447Z"
+      "updated": "2026-09-05T21:56:08.235Z"
     },
     "mtlymhog-spfvap": {
       "company": "FormLabs",
