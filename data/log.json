@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-09-03T20:10:43.840Z",
+  "updated": "2026-09-05T19:02:41.891Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -1876,6 +1876,24 @@
       "deleted": false,
       "workspace": "",
       "updated": "2026-09-03T20:10:43.840Z"
+    },
+    "mtne8etz-uwtuga": {
+      "company": "Proctor + Gamble",
+      "applied": true,
+      "coldEmailed": false,
+      "connected": false,
+      "outcome": "",
+      "role": "engineering or sum",
+      "date": "2026-09-04",
+      "link": "https://pg.wd5.myworkdayjobs.com/en-US/1000/userHome",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "closed": false,
+      "deleted": false,
+      "workspace": "",
+      "updated": "2026-09-04T20:15:30.597Z"
     }
   }
 }
