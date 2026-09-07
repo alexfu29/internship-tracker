@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-09-07T00:57:55.132Z",
+  "updated": "2026-09-07T01:50:27.594Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -1930,6 +1930,24 @@
       "deleted": false,
       "workspace": "",
       "updated": "2026-09-07T00:57:55.132Z"
+    },
+    "mtql2xvu-dx5e9g": {
+      "company": "J&J",
+      "applied": true,
+      "coldEmailed": false,
+      "connected": false,
+      "outcome": "",
+      "role": "",
+      "date": "2026-09-06",
+      "link": "https://jj.wd5.myworkdayjobs.com/en-US/JJ/userHome",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "closed": false,
+      "deleted": false,
+      "workspace": "",
+      "updated": "2026-09-07T01:50:27.594Z"
     }
   }
 }
