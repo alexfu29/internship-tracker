@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-09-06T20:06:05.671Z",
+  "updated": "2026-09-07T00:57:55.132Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -1912,6 +1912,24 @@
       "deleted": false,
       "workspace": "",
       "updated": "2026-09-05T20:14:52.458Z"
+    },
+    "mtqj7dfg-vf1ncb": {
+      "company": "Amgen",
+      "applied": true,
+      "coldEmailed": false,
+      "connected": false,
+      "outcome": "",
+      "role": "Undergrad Intern",
+      "date": "2026-09-06",
+      "link": "https://amgen.wd1.myworkdayjobs.com/en-US/Careers/userHome",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "closed": false,
+      "deleted": false,
+      "workspace": "",
+      "updated": "2026-09-07T00:57:55.132Z"
     }
   }
 }
