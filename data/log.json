@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-09-08T21:02:59.129Z",
+  "updated": "2026-09-08T21:03:48.225Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -1966,6 +1966,24 @@
       "deleted": false,
       "workspace": "",
       "updated": "2026-09-08T21:02:59.129Z"
+    },
+    "mtt5q03l-gzrz5e": {
+      "company": "Naval Surface Warfare Center Dahlgren Division (NSWCDD)",
+      "applied": false,
+      "coldEmailed": false,
+      "connected": false,
+      "outcome": "",
+      "role": "Systems Engineer",
+      "date": "2026-09-08",
+      "link": "handshake",
+      "note": "VA",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "closed": false,
+      "deleted": false,
+      "workspace": "",
+      "updated": "2026-09-08T21:03:48.225Z"
     }
   }
 }
