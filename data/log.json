@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-09-08T21:09:58.847Z",
+  "updated": "2026-09-08T21:12:16.395Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -1969,7 +1969,7 @@
     },
     "mtt5q03l-gzrz5e": {
       "company": "Naval Surface Warfare Center Dahlgren Division (NSWCDD)",
-      "applied": false,
+      "applied": true,
       "coldEmailed": false,
       "connected": false,
       "outcome": "",
@@ -1983,11 +1983,11 @@
       "closed": false,
       "deleted": false,
       "workspace": "",
-      "updated": "2026-09-08T21:03:48.225Z"
+      "updated": "2026-09-08T21:12:06.655Z"
     },
     "mtt5qbkc-4rj844": {
       "company": "Sylvamo Corporation",
-      "applied": false,
+      "applied": true,
       "coldEmailed": false,
       "connected": false,
       "outcome": "",
@@ -2001,11 +2001,29 @@
       "closed": false,
       "deleted": false,
       "workspace": "",
-      "updated": "2026-09-08T21:04:23.065Z"
+      "updated": "2026-09-08T21:12:10.184Z"
     },
     "mtt5xy2n-60igqt": {
       "company": "Legend Biotech USA",
-      "applied": false,
+      "applied": true,
+      "coldEmailed": false,
+      "connected": false,
+      "outcome": "",
+      "role": "",
+      "date": "2026-09-08",
+      "link": "handshake",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "closed": false,
+      "deleted": false,
+      "workspace": "",
+      "updated": "2026-09-08T21:12:16.395Z"
+    },
+    "mtt60lnu-xf82t7": {
+      "company": "Whelix",
+      "applied": true,
       "coldEmailed": false,
       "connected": false,
       "outcome": "",
@@ -2019,7 +2037,7 @@
       "closed": false,
       "deleted": false,
       "workspace": "",
-      "updated": "2026-09-08T21:09:58.847Z"
+      "updated": "2026-09-08T21:12:02.730Z"
     }
   }
 }
