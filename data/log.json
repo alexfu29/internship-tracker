@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-09-08T21:12:43.808Z",
+  "updated": "2026-09-08T21:21:03.991Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -1452,7 +1452,7 @@
     },
     "mspe3qgh-f2u530": {
       "company": "Lexington Medical",
-      "applied": true,
+      "applied": false,
       "coldEmailed": true,
       "connected": false,
       "role": "Engineering Intern",
@@ -1464,7 +1464,7 @@
       "meetingOn": null,
       "closed": false,
       "deleted": false,
-      "updated": "2026-08-16T01:15:48.601Z",
+      "updated": "2026-09-08T21:21:03.991Z",
       "workspace": "",
       "outcome": ""
     },
