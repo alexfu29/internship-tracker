@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-09-08T21:04:03.084Z",
+  "updated": "2026-09-08T21:04:23.065Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -1991,17 +1991,17 @@
       "coldEmailed": false,
       "connected": false,
       "outcome": "",
-      "role": "",
+      "role": "Engineer",
       "date": "2026-09-08",
-      "link": "",
-      "note": "",
+      "link": "handshake",
+      "note": "manufacturing, NY",
       "responded": false,
       "respondedOn": null,
       "meetingOn": null,
       "closed": false,
       "deleted": false,
       "workspace": "",
-      "updated": "2026-09-08T21:04:03.084Z"
+      "updated": "2026-09-08T21:04:23.065Z"
     }
   }
 }
