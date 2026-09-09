@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-09-09T14:47:10.790Z",
+  "updated": "2026-09-09T14:50:02.720Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -106,11 +106,12 @@
       "respondedOn": null,
       "meetingOn": null,
       "nudgedOn": [
-        "2026-08-13"
+        "2026-08-13",
+        "2026-09-09"
       ],
       "closed": false,
       "deleted": false,
-      "updated": "2026-09-09T14:47:10.790Z",
+      "updated": "2026-09-09T14:50:02.720Z",
       "workspace": "Hi Alex,\n\nFollowing up on my note.\n\nI'd love to go over my resume to see how it can better align to theoretically fill a role on your team; I'm interested in your work that intersects engineering and physiology, something I'm pursuing.\n\nI'm available Tuesdays from 11-3, Wednesdays from 11-1 & 3-6, and Thursdays from 11-5.",
       "inviteAcceptedOn": "2026-08-17",
       "withdrawnOn": null
