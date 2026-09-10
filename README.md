@@ -630,6 +630,14 @@ This is a third thing, and the distinction matters:
 Past three weeks the advice stops being "send another note" and becomes
 "withdraw it", so those rows leave the nudge card for this one.
 
+**Ignoring or dropping someone doesn't take them off this card.** Both are
+decisions about this tracker — stop chasing, file away — and neither one
+reaches into LinkedIn, so the invitation is still pending there and still
+holding a slot. Those are exactly the people you'd otherwise never think about
+again, so they stay listed (marked `dropped` or `ignored`) until you withdraw
+it on LinkedIn and tap **Withdrawn**. A **reply** or a **booked meeting** does
+clear the card: the request did its job.
+
 ### The chip order, fixed
 
 A company you'd never applied to but that had **written back** used to show
