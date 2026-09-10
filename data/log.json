@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-09-10T21:37:17.817Z",
+  "updated": "2026-09-10T21:37:50.734Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -1081,7 +1081,8 @@
       "closed": true,
       "deleted": false,
       "workspace": "Hi Kelli,\n\nI'm a mechanical engineering student at BU working on wearables and embedded systems. I'd love to connect and hear about your work at Boeing.\n\nWould you be down for a quick zoom meeting?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
-      "updated": "2026-08-25T00:28:23.554Z"
+      "updated": "2026-09-10T21:37:50.734Z",
+      "withdrawnOn": "2026-09-10"
     },
     "msxi8fhs-4eh8mx": {
       "name": "Eric Engel",
