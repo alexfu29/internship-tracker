@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-09-10T21:34:32.488Z",
+  "updated": "2026-09-10T21:34:39.827Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -805,7 +805,8 @@
       "closed": true,
       "deleted": false,
       "workspace": "Hi Andrew,\n\nI recently applied to the Lexington Medical Engineering Intern position for 2027. I'd love to connect with you to learn more about your work and the company culture.\n\nWould you be down for a quick zoom meeting to connect?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
-      "updated": "2026-08-22T23:51:51.199Z"
+      "updated": "2026-09-10T21:34:39.827Z",
+      "withdrawnOn": "2026-09-10"
     },
     "msv3ttu3-qpp04a": {
       "name": "Carolyn Abrams",
