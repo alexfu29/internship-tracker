@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-09-10T21:30:44.940Z",
+  "updated": "2026-09-10T21:30:57.040Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -167,8 +167,9 @@
       "nudgedOn": [],
       "closed": true,
       "deleted": false,
-      "updated": "2026-09-10T19:31:26.398Z",
-      "workspace": ""
+      "updated": "2026-09-10T21:30:57.040Z",
+      "workspace": "",
+      "withdrawnOn": "2026-09-10"
     },
     "mso0o2dh-2atdno": {
       "name": "Kristin Kerestman",
@@ -201,7 +202,8 @@
       "nudgedOn": [],
       "closed": true,
       "deleted": false,
-      "updated": "2026-08-19T23:42:30.532Z"
+      "updated": "2026-09-10T21:30:56.509Z",
+      "withdrawnOn": "2026-09-10"
     },
     "mspd1qpr-y62dgw": {
       "name": "Nick G",
