@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-09-10T21:32:16.143Z",
+  "updated": "2026-09-10T21:32:23.759Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -375,7 +375,8 @@
       "nudgedOn": [],
       "closed": true,
       "deleted": false,
-      "updated": "2026-08-19T23:42:32.112Z"
+      "updated": "2026-09-10T21:32:23.759Z",
+      "withdrawnOn": "2026-09-10"
     },
     "msqurpht-f0dgw2": {
       "name": "Stone Harris",
