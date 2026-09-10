@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-09-10T21:33:02.621Z",
+  "updated": "2026-09-10T21:33:11.111Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -444,8 +444,9 @@
       "nudgedOn": [],
       "closed": true,
       "deleted": false,
-      "updated": "2026-08-19T23:42:30.987Z",
-      "workspace": ""
+      "updated": "2026-09-10T21:33:11.111Z",
+      "workspace": "",
+      "withdrawnOn": "2026-09-10"
     },
     "msqvfybw-8jnyc6": {
       "name": "William Dimas",
