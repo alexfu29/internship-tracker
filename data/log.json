@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-09-10T21:30:57.040Z",
+  "updated": "2026-09-10T21:31:06.498Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -219,7 +219,8 @@
       "nudgedOn": [],
       "closed": true,
       "deleted": false,
-      "updated": "2026-08-19T23:42:30.279Z"
+      "updated": "2026-09-10T21:31:06.498Z",
+      "withdrawnOn": "2026-09-10"
     },
     "mspd22n8-bzezsb": {
       "name": "Brian Hunnius",
