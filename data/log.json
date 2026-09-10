@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-09-10T21:31:49.424Z",
+  "updated": "2026-09-10T21:31:59.965Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -304,8 +304,9 @@
       "nudgedOn": [],
       "closed": true,
       "deleted": false,
-      "updated": "2026-09-10T19:30:54.217Z",
-      "workspace": ""
+      "updated": "2026-09-10T21:31:59.965Z",
+      "workspace": "",
+      "withdrawnOn": "2026-09-10"
     },
     "msqulsw0-54cc9k": {
       "name": "April Brooks",
