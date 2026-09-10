@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-09-10T21:32:09.066Z",
+  "updated": "2026-09-10T21:32:16.143Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -358,7 +358,8 @@
       "nudgedOn": [],
       "closed": true,
       "deleted": false,
-      "updated": "2026-08-19T23:42:32.284Z"
+      "updated": "2026-09-10T21:32:16.143Z",
+      "withdrawnOn": "2026-09-10"
     },
     "msqupycc-6q4v1f": {
       "name": "Madison Moore",
