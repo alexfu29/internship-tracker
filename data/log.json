@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-09-10T21:31:22.624Z",
+  "updated": "2026-09-10T21:31:32.739Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -253,7 +253,8 @@
       "nudgedOn": [],
       "closed": true,
       "deleted": false,
-      "updated": "2026-08-19T23:42:29.781Z"
+      "updated": "2026-09-10T21:31:32.739Z",
+      "withdrawnOn": "2026-09-10"
     },
     "mspe0f3c-5pt9bg": {
       "name": "Joshua Branch",
