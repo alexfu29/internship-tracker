@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-09-10T21:32:30.870Z",
+  "updated": "2026-09-10T21:32:44.456Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -426,7 +426,8 @@
       "nudgedOn": [],
       "closed": true,
       "deleted": false,
-      "updated": "2026-08-19T23:42:31.753Z"
+      "updated": "2026-09-10T21:32:44.456Z",
+      "withdrawnOn": "2026-09-10"
     },
     "msqve1cx-kmcpx8": {
       "name": "Steve Fox",
