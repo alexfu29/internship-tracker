@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-09-10T20:15:02.237Z",
+  "updated": "2026-09-10T20:15:18.074Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -1168,6 +1168,23 @@
       "deleted": false,
       "workspace": "Hi Shane,\n\nI love that your current role at Boeing aligned with your engineering concentration, and would love to connect to talk about how BU supported you.\n\nWould you be down for a quick zoom meeting?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
       "updated": "2026-08-25T00:28:23.430Z"
+    },
+    "mtvyvby2-gocswe": {
+      "name": "Reha Jhunjhunwala",
+      "company": "Whoop",
+      "role": "",
+      "channel": "Email",
+      "email": "",
+      "date": "2026-09-10",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "nudgedOn": [],
+      "closed": false,
+      "deleted": false,
+      "workspace": "",
+      "updated": "2026-09-10T20:15:18.074Z"
     }
   },
   "apps": {
