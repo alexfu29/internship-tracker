@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-09-10T21:35:21.344Z",
+  "updated": "2026-09-10T21:35:28.426Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -952,7 +952,8 @@
       "closed": true,
       "deleted": false,
       "workspace": "Hi Jack,\n\nI'm a mechanical engineering student at BU working on wearables and embedded systems. I'd love to connect and hear about you at Anduril Industries.\n\nWould you be down for a quick zoom meeting to connect?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
-      "updated": "2026-08-25T00:28:22.615Z"
+      "updated": "2026-09-10T21:35:28.426Z",
+      "withdrawnOn": "2026-09-10"
     },
     "msw8jzki-zm6w1e": {
       "name": "Katie Nielsen",
