@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-09-10T21:31:32.739Z",
+  "updated": "2026-09-10T21:31:40.565Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -270,7 +270,8 @@
       "nudgedOn": [],
       "closed": true,
       "deleted": false,
-      "updated": "2026-08-19T23:42:29.548Z"
+      "updated": "2026-09-10T21:31:40.565Z",
+      "withdrawnOn": "2026-09-10"
     },
     "mspe0nns-jhsg5e": {
       "name": "Ravi Singaraju",
