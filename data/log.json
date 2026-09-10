@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-09-10T21:32:54.865Z",
+  "updated": "2026-09-10T21:33:02.621Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -461,8 +461,9 @@
       "nudgedOn": [],
       "closed": true,
       "deleted": false,
-      "updated": "2026-08-19T23:42:31.394Z",
-      "workspace": ""
+      "updated": "2026-09-10T21:33:02.621Z",
+      "workspace": "",
+      "withdrawnOn": "2026-09-10"
     },
     "msqvonsn-18jx7i": {
       "name": "Daniel Kania",
