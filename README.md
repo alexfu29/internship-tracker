@@ -610,6 +610,9 @@ While an invitation is accepted, the 7-day nudge steps aside — the four-day cl
 has taken over, and two cards naming the same person is how you learn to ignore
 both.
 
+**Ignore** on this card silences *this* reminder and nothing else. See
+[Three Ignores, not one](#three-ignores-not-one).
+
 ### ↩ Worth withdrawing
 
 An invitation that is never accepted just sits there, and LinkedIn caps how many
@@ -637,6 +640,41 @@ holding a slot. Those are exactly the people you'd otherwise never think about
 again, so they stay listed (marked `dropped` or `ignored`) until you withdraw
 it on LinkedIn and tap **Withdrawn**. A **reply** or a **booked meeting** does
 clear the card: the request did its job.
+
+**Ignore** on this card silences *this* reminder and nothing else. See
+[Three Ignores, not one](#three-ignores-not-one).
+
+**Open profile** is a real link, not a button, so middle-click or ctrl-click
+loads it in a background tab. Withdrawing is a batch job — you work down the
+card opening one profile after another — and a button calling `window.open()`
+can only ever hand you a focused tab, which cost you a trip back to the tracker
+on every row. A plain click still opens a new tab, as before.
+
+### Three Ignores, not one
+
+Each of the three cards has its own **Ignore**, and each one silences only the
+card you pressed it on. They are separate flags (`muted`, `noteMuted`,
+`withdrawMuted`) because they are three separate things you can owe one person,
+and dismissing one says nothing about the others — you can decide a pending
+invitation isn't worth withdrawing and still want the 7-day nudge for that same
+person on that same day.
+
+| Card | Ignore sets | What still fires for that person |
+|---|---|---|
+| ⚠ Needs a nudge | `muted` | accepted-invite note, withdraw |
+| ✓ Accepted your invite | `noteMuted` | nudge, withdraw |
+| ↩ Worth withdrawing | `withdrawMuted` | nudge (if it ever applies), accepted-invite note |
+
+An Ignore filters the card's *list*; it is deliberately not folded into
+`needsWithdraw()` or `acceptNoteDue()`. Those predicates are what `needsNudge()`
+reads to know the advice has moved on from "send another note", so muting inside
+one of them would push the person straight back into the nudge card — dismissing
+a reminder would conjure up a different one.
+
+**Undoing it:** an ignored card is invisible by definition, so there's nothing
+left on the page to tap. The way back is the contact's own dialog, where
+**Note reminder off** and **Withdraw reminder off** sit in the Status toggles
+whether or not they're currently set.
 
 ### The chip order, fixed
 

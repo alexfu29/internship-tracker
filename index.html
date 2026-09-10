@@ -241,12 +241,19 @@
   .nudge-row .who { display: block; font-weight: 600; font-size: 0.92rem; }
   .nudge-row .meta { display: block; font-size: 0.78rem; opacity: 0.9; margin-top: 2px; }
   .nudge-row .acts { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; }
-  .nudge-row .acts button {
+  /* The `a` is not decoration: a real link is what makes middle-click and
+     ctrl-click open a background tab, which a <button> calling window.open()
+     can never do. So it has to look like the buttons it sits between. */
+  .nudge-row .acts button, .nudge-row .acts a {
     flex: 1 1 auto; min-height: 32px; padding: 4px 9px; font-size: 0.78rem;
     font-weight: 600; border-radius: 8px; cursor: pointer;
     border: 1px solid currentColor; background: transparent; color: inherit;
   }
-  .nudge-row .acts button:active { transform: scale(0.97); }
+  .nudge-row .acts a {
+    display: inline-flex; align-items: center; justify-content: center;
+    text-decoration: none; box-sizing: border-box;
+  }
+  .nudge-row .acts button:active, .nudge-row .acts a:active { transform: scale(0.97); }
 
   /* ---------- Stat tiles ---------- */
   /* auto-fit rather than a fixed 4, so the outcome tile joins the row on a
@@ -879,7 +886,8 @@
   .drawer .file-import { font-size: 0.82rem; }
   @media (prefers-reduced-motion: reduce) {
     .drawer, .modal, .ws-pop { transition: none; }
-    button:active, .nudge-row .acts button:active { transform: none; }
+    button:active, .nudge-row .acts button:active,
+    .nudge-row .acts a:active { transform: none; }
   }
 </style>
 </head>
@@ -1468,7 +1476,7 @@
      tell those apart from a change that genuinely didn't work. This string
      lives in the file being executed, so it cannot lie about which file that
      is. It's shown at the bottom of Settings. */
-  var APP_VERSION = "2026-09-10a";
+  var APP_VERSION = "2026-09-10b";
   var swReady = false, swCacheVersion = "", swNote = "";
 
   /* ============================================================
@@ -2044,6 +2052,20 @@
   // red card. Closing would file them away as over, and "Reminder sent" would
   // be a lie about something you didn't send — neither says "not this one".
   function isMuted(c) { return c.muted === true; }
+  /* `muted` above is the nudge card's Ignore. The other two cards get their
+     own flag rather than sharing that one, because these are three separate
+     things you can owe one person and dismissing one says nothing about the
+     others: you can decide a pending invitation isn't worth withdrawing and
+     still want the 7-day nudge for that same person on that same day.
+
+     Read by the two list functions and deliberately *not* by needsWithdraw()
+     or acceptNoteDue(). needsNudge() reads those predicates to know the
+     advice has moved on from "send another note" — so muting inside one of
+     them would push the person straight back into the nudge card, and
+     dismissing a reminder would conjure up a different one. Filtering the
+     list keeps it to the one thing that was asked for: this card, gone. */
+  function isNoteMuted(c) { return !!c && c.noteMuted === true; }
+  function isWithdrawMuted(c) { return !!c && c.withdrawMuted === true; }
   /* Two things that happen on LinkedIn and nowhere else.
 
      An invitation that is *accepted* is not a reply — they clicked a button,
@@ -2075,7 +2097,9 @@
     return ageDays(c.date) >= withdrawDays();
   }
   function withdrawList() {
-    return contacts().filter(needsWithdraw).sort(function (a, b) {
+    return contacts().filter(function (c) {
+      return needsWithdraw(c) && !isWithdrawMuted(c);
+    }).sort(function (a, b) {
       return ageDays(b.date) - ageDays(a.date);
     });
   }
@@ -2090,7 +2114,9 @@
     return ageDays(last) >= acceptNoteDays();
   }
   function acceptNoteList() {
-    return contacts().filter(acceptNoteDue).sort(function (a, b) {
+    return contacts().filter(function (c) {
+      return acceptNoteDue(c) && !isNoteMuted(c);
+    }).sort(function (a, b) {
       return ageDays(a.inviteAcceptedOn) - ageDays(b.inviteAcceptedOn);
     });
   }
@@ -2464,7 +2490,9 @@
     reminderCard("acceptMount", "note-card", "✓ Accepted your invite — send the note",
       acceptNoteList(),
       "They connected but haven't written. Copy the note, send it on LinkedIn, then tap " +
-      "<strong>Note sent</strong> — that buys another four days.",
+      "<strong>Note sent</strong> — that buys another four days. " +
+      "<strong>Ignore</strong> takes them off this card only: nudges and the withdraw " +
+      "card still work for the same person.",
       {
         meta: function (c) {
           var n = (c.nudgedOn || []).length;
@@ -2475,12 +2503,15 @@
         buttons: function (c) {
           return '<button data-act="copy" data-id="' + c.id + '">📋 Copy note</button>' +
             '<button data-act="nudged" data-id="' + c.id + '">Note sent</button>' +
-            '<button data-act="replied" data-id="' + c.id + '">They replied</button>';
+            '<button data-act="replied" data-id="' + c.id + '">They replied</button>' +
+            '<button data-act="mute" data-id="' + c.id + '">Ignore</button>';
         },
         run: function (act, c, btn) {
           if (act === "copy") { copyText(draftFor(c, followupKind(c)), btn); return; }
           if (act === "nudged") toggleRemindedToday(c);
           if (act === "replied") { c.responded = true; c.respondedOn = TODAY; }
+          // This card only. Undo it from the contact's own Status toggles.
+          if (act === "mute") c.noteMuted = true;
           touch(c); saveData(); render();
         }
       });
@@ -2492,7 +2523,9 @@
       "Three weeks with the invitation still pending. Withdrawing frees the slot — " +
       "it is not the same as <strong>Drop it</strong>, which files the person away here. " +
       "Dropped and ignored people stay on this list for that reason: the request is " +
-      "still pending on LinkedIn either way. Do it there, then tap <strong>Withdrawn</strong>.",
+      "still pending on LinkedIn either way. Do it there, then tap <strong>Withdrawn</strong>. " +
+      "<strong>Ignore</strong> takes them off this card only, and middle-click " +
+      "<strong>Open profile</strong> to load it in a background tab.",
       {
         meta: function (c) {
           // Says which of the two it is, so a name you thought you were done
@@ -2502,20 +2535,33 @@
             " days pending, no answer" + why;
         },
         buttons: function (c) {
-          return '<button data-act="profile" data-id="' + c.id + '">🔗 Open profile</button>' +
+          /* An <a>, not a button calling window.open(). Withdrawing is a
+             batch job — you work down the card opening one profile after
+             another — and a button can only ever hand you a focused tab, so
+             every row cost you a trip back to the tracker. A real link lets
+             middle-click and ctrl-click queue them up in background tabs,
+             which is the browser's own answer to exactly this. Plain click
+             still opens a new tab, as before.
+
+             Renders nothing when there's no usable URL, rather than the old
+             button that was always there and silently did nothing. */
+          var href = linkHref(c.email);
+          return (href
+            ? '<a href="' + escapeHtml(href) + '" target="_blank" rel="noopener noreferrer"' +
+              ' title="Open profile — middle-click or ctrl-click for a background tab">' +
+              '🔗 Open profile</a>'
+            : "") +
             '<button data-act="withdrawn" data-id="' + c.id + '">Withdrawn</button>' +
             '<button data-act="accepted" data-id="' + c.id + '">They accepted</button>' +
+            '<button data-act="mute" data-id="' + c.id + '">Ignore</button>' +
             (c.closed ? "" :
               '<button data-act="close" data-id="' + c.id + '">Drop it</button>');
         },
         run: function (act, c) {
-          if (act === "profile") {
-            var u = linkHref(c.email);
-            if (u) window.open(u, "_blank", "noopener,noreferrer");
-            return;
-          }
           if (act === "withdrawn") c.withdrawnOn = TODAY;
           if (act === "accepted") c.inviteAcceptedOn = TODAY;
+          // This card only. Undo it from the contact's own Status toggles.
+          if (act === "mute") c.withdrawMuted = true;
           if (act === "close") c.closed = true;
           touch(c); saveData(); render();
         }
@@ -3389,6 +3435,12 @@
     if (isContact && isLinkedInContact(e)) {
       html += toggleBtn("invite", inviteAccepted(e), "Invite accepted");
       html += toggleBtn("withdrawn", isWithdrawn(e), "Withdrawn");
+      /* Always shown, on or off. A card you dismissed is invisible by
+         definition — there is nothing left on the page to tap — so the
+         toggle has to be here whether or not it's currently set, or an
+         Ignore would be one-way. */
+      html += toggleBtn("mutenote", isNoteMuted(e), "Note reminder off");
+      html += toggleBtn("mutewd", isWithdrawMuted(e), "Withdraw reminder off");
     }
     if (isContact) html += toggleBtn("muted", isMuted(e), "Ignored");
     html += toggleBtn("close", !!e.closed, "Closed");
@@ -3462,6 +3514,10 @@
           if (live.withdrawnOn) live.inviteAcceptedOn = null;
         } else if (act === "muted") {
           live.muted = !live.muted;
+        } else if (act === "mutenote") {
+          live.noteMuted = !isNoteMuted(live);
+        } else if (act === "mutewd") {
+          live.withdrawMuted = !isWithdrawMuted(live);
         } else if (act === "close") {
           live.closed = !live.closed;
         }
