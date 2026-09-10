@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-09-10T20:13:56.707Z",
+  "updated": "2026-09-10T20:15:02.237Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -1198,7 +1198,11 @@
       "meetingOn": null,
       "closed": false,
       "deleted": false,
-      "updated": "2026-08-06T20:42:25.030Z"
+      "updated": "2026-09-10T20:15:02.237Z",
+      "coldEmailed": false,
+      "connected": false,
+      "outcome": "",
+      "workspace": ""
     },
     "mshzfjfp-37l3kx": {
       "company": "Medtronic",
