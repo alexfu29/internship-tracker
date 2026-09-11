@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-09-11T20:12:36.541Z",
+  "updated": "2026-09-11T20:12:42.992Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -2129,7 +2129,7 @@
       "outcome": "",
       "role": "",
       "date": "2026-09-11",
-      "link": "",
+      "link": "https://app.joinhandshake.com/job-search/11400356?page=2&per_page=25",
       "note": "",
       "responded": false,
       "respondedOn": null,
@@ -2137,7 +2137,7 @@
       "closed": false,
       "deleted": false,
       "workspace": "",
-      "updated": "2026-09-11T20:12:36.541Z"
+      "updated": "2026-09-11T20:12:42.992Z"
     }
   }
 }
