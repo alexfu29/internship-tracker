@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-09-12T22:28:10.479Z",
+  "updated": "2026-09-12T22:28:47.353Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -1613,8 +1613,8 @@
       "meetingOn": null,
       "closed": false,
       "deleted": false,
-      "updated": "2026-08-31T18:24:56.727Z",
-      "outcome": "",
+      "updated": "2026-09-12T22:28:47.353Z",
+      "outcome": "interview",
       "workspace": ""
     },
     "msqu50r3-qdtj5l": {
@@ -1946,7 +1946,7 @@
       "applied": true,
       "coldEmailed": false,
       "connected": false,
-      "outcome": "",
+      "outcome": "denied",
       "role": "engineering or sum",
       "date": "2026-09-04",
       "link": "https://pg.wd5.myworkdayjobs.com/en-US/1000/userHome",
@@ -1957,7 +1957,7 @@
       "closed": false,
       "deleted": false,
       "workspace": "",
-      "updated": "2026-09-05T21:48:47.855Z"
+      "updated": "2026-09-12T22:28:37.391Z"
     },
     "mtotniui-wz2kvt": {
       "company": "SharkNinja",
