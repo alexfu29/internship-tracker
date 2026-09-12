@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-09-12T22:27:44.524Z",
+  "updated": "2026-09-12T22:28:10.479Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -1694,7 +1694,7 @@
       "applied": true,
       "coldEmailed": true,
       "connected": false,
-      "outcome": "",
+      "outcome": "denied",
       "role": "Product Development Intern",
       "date": "2026-08-14",
       "link": "https://careers.caterpillar.com/en/jobs/r0000380479/2027-engineering-corporate-intern-program-product-development-track/",
@@ -1705,7 +1705,7 @@
       "closed": false,
       "deleted": false,
       "workspace": "",
-      "updated": "2026-08-16T01:16:04.262Z"
+      "updated": "2026-09-12T22:28:10.479Z"
     },
     "mt1vrkoq-igsn6q": {
       "company": "ONEOK Inc",
