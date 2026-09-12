@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-09-12T22:30:06.496Z",
+  "updated": "2026-09-12T22:41:50.985Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -2123,13 +2123,13 @@
     },
     "mtxe7pz1-9ejynq": {
       "company": "Force Factor",
-      "applied": false,
+      "applied": true,
       "coldEmailed": false,
       "connected": false,
       "outcome": "",
       "role": "",
       "date": "2026-09-11",
-      "link": "https://app.joinhandshake.com/job-search/11400356?page=2&per_page=25",
+      "link": "https://forcefactor.com/pages/job-openings?gh_jid=6167264004&gh_src=wkm8j0264us",
       "note": "",
       "responded": false,
       "respondedOn": null,
@@ -2137,7 +2137,7 @@
       "closed": false,
       "deleted": false,
       "workspace": "",
-      "updated": "2026-09-11T20:12:42.992Z"
+      "updated": "2026-09-12T22:41:50.985Z"
     }
   }
 }
