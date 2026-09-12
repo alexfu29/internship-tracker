@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-09-12T22:27:05.102Z",
+  "updated": "2026-09-12T22:27:44.524Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -1492,7 +1492,7 @@
       "meetingOn": null,
       "closed": false,
       "deleted": false,
-      "updated": "2026-08-20T18:43:40.102Z",
+      "updated": "2026-09-12T22:27:44.524Z",
       "outcome": "denied",
       "workspace": ""
     },
