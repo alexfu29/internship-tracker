@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-09-13T18:56:35.999Z",
+  "updated": "2026-09-13T18:56:45.706Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -2197,6 +2197,42 @@
       "deleted": false,
       "workspace": "",
       "updated": "2026-09-12T22:44:51.013Z"
+    },
+    "mu06dstt-hrq3pe": {
+      "company": "Dynocardia",
+      "applied": false,
+      "coldEmailed": false,
+      "connected": false,
+      "outcome": "",
+      "role": "",
+      "date": "2026-09-13",
+      "link": "",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "closed": false,
+      "deleted": false,
+      "workspace": "",
+      "updated": "2026-09-13T18:56:41.777Z"
+    },
+    "mu06dvuy-ijrah0": {
+      "company": "Biosens8",
+      "applied": false,
+      "coldEmailed": false,
+      "connected": false,
+      "outcome": "",
+      "role": "",
+      "date": "2026-09-13",
+      "link": "",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "closed": false,
+      "deleted": false,
+      "workspace": "",
+      "updated": "2026-09-13T18:56:45.706Z"
     }
   }
 }
