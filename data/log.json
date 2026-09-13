@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-09-13T00:44:50.931Z",
+  "updated": "2026-09-13T00:46:18.663Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -1255,8 +1255,8 @@
       "meetingOn": null,
       "closed": false,
       "deleted": false,
-      "updated": "2026-09-10T20:15:02.237Z",
-      "coldEmailed": false,
+      "updated": "2026-09-13T00:46:02.580Z",
+      "coldEmailed": true,
       "connected": false,
       "outcome": "",
       "workspace": ""
@@ -1305,7 +1305,11 @@
       "meetingOn": null,
       "closed": false,
       "deleted": false,
-      "updated": "2026-08-08T23:25:47.688Z"
+      "updated": "2026-09-13T00:46:16.493Z",
+      "coldEmailed": false,
+      "connected": false,
+      "outcome": "",
+      "workspace": ""
     },
     "msm07yr5-1n4opc": {
       "company": "Draper",
@@ -1328,7 +1332,7 @@
     "msm3oz66-fge3lm": {
       "company": "Marotta Controls",
       "applied": true,
-      "coldEmailed": false,
+      "coldEmailed": true,
       "connected": false,
       "role": "Space Engineer",
       "date": "2026-08-09",
@@ -1339,7 +1343,9 @@
       "meetingOn": null,
       "closed": false,
       "deleted": false,
-      "updated": "2026-08-09T17:52:55.566Z"
+      "updated": "2026-09-13T00:46:18.663Z",
+      "workspace": "",
+      "outcome": ""
     },
     "msm5iqub-fefj3g": {
       "company": "Beyond Reach",
