@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-09-13T18:56:45.706Z",
+  "updated": "2026-09-13T19:05:39.579Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -2164,7 +2164,7 @@
     },
     "mtyz2rw1-hd5b2r": {
       "company": "Stryker",
-      "applied": false,
+      "applied": true,
       "coldEmailed": false,
       "connected": false,
       "outcome": "",
@@ -2178,7 +2178,7 @@
       "closed": false,
       "deleted": false,
       "workspace": "",
-      "updated": "2026-09-12T22:44:23.857Z"
+      "updated": "2026-09-13T19:05:39.579Z"
     },
     "mtyz3cud-jue92u": {
       "company": "Curtiss-Wright",
@@ -2233,6 +2233,24 @@
       "deleted": false,
       "workspace": "",
       "updated": "2026-09-13T18:56:45.706Z"
+    },
+    "mu06p5do-0ky9gr": {
+      "company": "Headstrait",
+      "applied": false,
+      "coldEmailed": false,
+      "connected": false,
+      "outcome": "",
+      "role": "",
+      "date": "2026-09-13",
+      "link": "",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "closed": false,
+      "deleted": false,
+      "workspace": "",
+      "updated": "2026-09-13T19:05:31.260Z"
     }
   }
 }
