@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-09-13T19:05:39.579Z",
+  "updated": "2026-09-17T21:04:43.310Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -2251,6 +2251,24 @@
       "deleted": false,
       "workspace": "",
       "updated": "2026-09-13T19:05:31.260Z"
+    },
+    "mu60pulq-99zqma": {
+      "company": "General Dynamics Electric Boat",
+      "applied": false,
+      "coldEmailed": false,
+      "connected": false,
+      "outcome": "",
+      "role": "",
+      "date": "2026-09-17",
+      "link": "https://careers-gdeb.icims.com/jobs/search?ss=1&searchRelation=keyword_all&searchCategory=27767&searchPositionType=8710&mobile=true&width=430&height=742&bga=true&needsRedirect=false&jan1offset=-300&jun1offset=-240",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "closed": false,
+      "deleted": false,
+      "workspace": "",
+      "updated": "2026-09-17T21:04:43.310Z"
     }
   }
 }
