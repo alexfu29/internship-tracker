@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-09-17T21:17:47.000Z",
+  "updated": "2026-09-18T00:42:02.206Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -107,11 +107,12 @@
       "meetingOn": null,
       "nudgedOn": [
         "2026-08-13",
-        "2026-09-09"
+        "2026-09-09",
+        "2026-09-17"
       ],
       "closed": false,
       "deleted": false,
-      "updated": "2026-09-09T14:50:02.720Z",
+      "updated": "2026-09-18T00:41:56.385Z",
       "workspace": "Hi Alex,\n\nFollowing up on my note.\n\nI'd love to go over my resume to see how it can better align to theoretically fill a role on your team; I'm interested in your work that intersects engineering and physiology, something I'm pursuing.\n\nI'm available Tuesdays from 11-3, Wednesdays from 11-1 & 3-6, and Thursdays from 11-5.",
       "inviteAcceptedOn": "2026-08-17",
       "withdrawnOn": null
@@ -339,10 +340,11 @@
       "nudgedOn": [],
       "closed": false,
       "deleted": false,
-      "updated": "2026-08-25T00:28:42.420Z",
+      "updated": "2026-09-18T00:41:59.702Z",
       "workspace": "",
       "inviteAcceptedOn": "2026-08-17",
-      "withdrawnOn": null
+      "withdrawnOn": null,
+      "noteMuted": true
     },
     "msquokes-dmccix": {
       "name": "Terry Kirn",
@@ -707,10 +709,11 @@
       "closed": false,
       "deleted": false,
       "workspace": "Hi Richard,\n\nI recently applied to the Caterpillar Product Development Internship for 2027. I'd love to connect with you to learn more about you and the company culture.\n\nWould you be down for a quick zoom meeting to connect?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
-      "updated": "2026-08-25T00:28:39.320Z",
+      "updated": "2026-09-18T00:41:59.532Z",
       "inviteAcceptedOn": "2026-08-17",
       "withdrawnOn": null,
-      "muted": true
+      "muted": true,
+      "noteMuted": true
     },
     "msv1f8f9-w5mx2x": {
       "name": "Ella Conley",
@@ -779,12 +782,13 @@
       "meetingOn": null,
       "nudgedOn": [
         "2026-08-15",
-        "2026-09-09"
+        "2026-09-09",
+        "2026-09-17"
       ],
       "closed": false,
       "deleted": false,
       "workspace": "Hi Laura,\n\nI recently applied to the Lexington Medical Engineering Intern position for 2027. I'd love to connect with you to learn more about you and the company culture.\n\nWould you be down for a quick zoom meeting to connect?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
-      "updated": "2026-09-09T14:40:13.073Z",
+      "updated": "2026-09-18T00:41:52.976Z",
       "inviteAcceptedOn": "2026-08-24",
       "withdrawnOn": null
     },
@@ -915,9 +919,10 @@
       "closed": false,
       "deleted": false,
       "workspace": "Hi Yongning,\n\nI was looking at Linkedin and I saw that you work that Texas Instruments where I'd love to intern at, and also go to BU.\n\nWould you be down for a quick zoom meeting to connect to talk about your work and how BU helped you get there?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
-      "updated": "2026-08-21T22:44:58.755Z",
+      "updated": "2026-09-18T00:41:59.342Z",
       "inviteAcceptedOn": "2026-08-17",
-      "withdrawnOn": null
+      "withdrawnOn": null,
+      "noteMuted": true
     },
     "msw7yaaz-zet4ga": {
       "name": "Maha Noor",
@@ -1061,10 +1066,11 @@
       "closed": false,
       "deleted": false,
       "workspace": "Hi Janna,\n\nFollowing up on my note from Aug 17.\n\nI'm still very interested in Boeing and would love to hear about you whenever suits you.",
-      "updated": "2026-09-13T00:44:50.931Z",
+      "updated": "2026-09-18T00:41:59.155Z",
       "inviteAcceptedOn": "2026-08-19",
       "withdrawnOn": null,
-      "muted": false
+      "muted": false,
+      "noteMuted": true
     },
     "msxi8fhs-n58f8v": {
       "name": "Kelli Abramson",
@@ -1224,7 +1230,8 @@
       "closed": false,
       "deleted": false,
       "workspace": "Hi Reha,\n\n\n\nI was wondering how you were able to pivot from medicine to product management and medical consulting, something I'm interested in pursuing at BU, and wanted your insight and advice into the fields.\n\n\n\nWould you be down for a quick zoom meeting next week?\n\n\n\nI'm available Monday 10-1, Tuesday 11-3, Wednesday 9-1 & 3-6, and Thursday 11-1 & 3:30-6.",
-      "updated": "2026-09-10T20:22:56.268Z"
+      "updated": "2026-09-18T00:42:02.206Z",
+      "muted": true
     },
     "mtz3ylv4-hq9mgf": {
       "name": "Stacy L",
