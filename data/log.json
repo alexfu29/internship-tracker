@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-09-18T00:56:37.115Z",
+  "updated": "2026-09-18T22:19:48.476Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -2311,7 +2311,25 @@
       "closed": false,
       "deleted": false,
       "workspace": "",
-      "updated": "2026-09-18T00:56:37.115Z"
+      "updated": "2026-09-18T22:19:48.476Z"
+    },
+    "mu7iu7ho-77wz57": {
+      "company": "CHA Consulting",
+      "applied": true,
+      "coldEmailed": false,
+      "connected": false,
+      "outcome": "",
+      "role": "",
+      "date": "2026-09-18",
+      "link": "https://jobs-challp.icims.com/jobs/7798/mep-engineering-internships---summer-2027/job?mode=submit_apply",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "closed": false,
+      "deleted": false,
+      "workspace": "",
+      "updated": "2026-09-18T22:19:45.900Z"
     }
   }
 }
