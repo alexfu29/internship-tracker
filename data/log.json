@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-09-18T22:21:02.103Z",
+  "updated": "2026-09-18T22:25:46.556Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -1997,7 +1997,7 @@
       "outcome": "",
       "role": "",
       "date": "2026-09-05",
-      "link": "",
+      "link": "https://careers.sharkninja.com/search-jobs/?orgIds=47204&alcpm=3996063%2c6252001%2c6251999&ascf=%5b%7b%22Key%22%3a%22custom_fields.EmploymentType%22%2c%22Value%22%3a%22Intern%2fCo-Op%22%7d%5d",
       "note": "",
       "responded": false,
       "respondedOn": null,
@@ -2005,7 +2005,7 @@
       "closed": false,
       "deleted": false,
       "workspace": "",
-      "updated": "2026-09-05T20:14:52.458Z"
+      "updated": "2026-09-18T22:25:46.556Z"
     },
     "mtqj7dfg-vf1ncb": {
       "company": "Amgen",
