@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-09-18T00:45:03.897Z",
+  "updated": "2026-09-18T00:56:37.115Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -2294,6 +2294,24 @@
       "deleted": false,
       "workspace": "",
       "updated": "2026-09-17T21:17:47.000Z"
+    },
+    "mu6902kb-ot5fi3": {
+      "company": "Secretariat",
+      "applied": true,
+      "coldEmailed": false,
+      "connected": false,
+      "outcome": "",
+      "role": "",
+      "date": "2026-09-17",
+      "link": "https://job-boards.greenhouse.io/secretariatadvisorsllc/jobs/4399032009?gh_src=Handshake",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "closed": false,
+      "deleted": false,
+      "workspace": "",
+      "updated": "2026-09-18T00:56:37.115Z"
     }
   }
 }
