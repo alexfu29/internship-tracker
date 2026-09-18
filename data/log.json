@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-09-18T22:19:48.476Z",
+  "updated": "2026-09-18T22:21:02.103Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -2330,6 +2330,24 @@
       "deleted": false,
       "workspace": "",
       "updated": "2026-09-18T22:19:45.900Z"
+    },
+    "mu7ivuaf-0yyko2": {
+      "company": "Vertiv",
+      "applied": true,
+      "coldEmailed": false,
+      "connected": false,
+      "outcome": "",
+      "role": "",
+      "date": "2026-09-18",
+      "link": "",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "closed": false,
+      "deleted": false,
+      "workspace": "",
+      "updated": "2026-09-18T22:21:02.103Z"
     }
   }
 }
