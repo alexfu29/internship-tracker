@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-09-19T15:25:23.544Z",
+  "updated": "2026-09-19T19:02:54.193Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -2348,6 +2348,24 @@
       "deleted": false,
       "workspace": "",
       "updated": "2026-09-18T22:21:02.103Z"
+    },
+    "mu8r8w6p-x3ofxu": {
+      "company": "Intuitive",
+      "applied": true,
+      "coldEmailed": false,
+      "connected": false,
+      "outcome": "",
+      "role": "",
+      "date": "2026-09-19",
+      "link": "",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "closed": false,
+      "deleted": false,
+      "workspace": "",
+      "updated": "2026-09-19T19:02:54.193Z"
     }
   }
 }
