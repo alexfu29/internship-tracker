@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-09-19T15:23:22.747Z",
+  "updated": "2026-09-19T15:25:23.544Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -1241,14 +1241,14 @@
       "email": "https://www.linkedin.com/in/stacey-low-sl5/",
       "date": "2026-09-12",
       "note": "",
-      "responded": false,
-      "respondedOn": null,
+      "responded": true,
+      "respondedOn": "2026-09-18",
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
       "deleted": false,
       "workspace": "Hi Stacy,\n\nCongrats on SharkNinja! I'm also a MechE + minor in BME + tech innovation. I'd love to hear about your experience at BU over zoom.\n\nI'm free Mon 10-1, Wed 9-1 & 3-6, or Thu 11-6.",
-      "updated": "2026-09-13T01:01:07.504Z"
+      "updated": "2026-09-19T15:25:23.544Z"
     }
   },
   "apps": {
