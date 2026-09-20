@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-09-19T19:02:54.193Z",
+  "updated": "2026-09-20T22:27:31.615Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -2366,6 +2366,24 @@
       "deleted": false,
       "workspace": "",
       "updated": "2026-09-19T19:02:54.193Z"
+    },
+    "muadzw67-gf780m": {
+      "company": "Tensentric",
+      "applied": false,
+      "coldEmailed": false,
+      "connected": false,
+      "outcome": "",
+      "role": "",
+      "date": "2026-09-20",
+      "link": "https://tensentric.com/internships/",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "closed": false,
+      "deleted": false,
+      "workspace": "",
+      "updated": "2026-09-20T22:27:31.615Z"
     }
   }
 }
