@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-09-21T15:34:38.990Z",
+  "updated": "2026-09-21T19:21:51.547Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -2386,6 +2386,24 @@
       "deleted": false,
       "workspace": "",
       "updated": "2026-09-20T22:27:31.615Z"
+    },
+    "mubgfuxi-f6qxd3": {
+      "company": "Vast",
+      "applied": true,
+      "coldEmailed": false,
+      "connected": false,
+      "outcome": "",
+      "role": "",
+      "date": "2026-09-21",
+      "link": "https://job-boards.greenhouse.io/vast/jobs/4711400006/confirmation?gh_src=Handshake",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "closed": false,
+      "deleted": false,
+      "workspace": "",
+      "updated": "2026-09-21T16:23:41.910Z"
     }
   }
 }
