@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-09-22T18:55:41.930Z",
+  "updated": "2026-09-23T18:42:02.688Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -1993,7 +1993,7 @@
     },
     "mtotniui-wz2kvt": {
       "company": "SharkNinja",
-      "applied": false,
+      "applied": true,
       "coldEmailed": false,
       "connected": false,
       "outcome": "",
@@ -2007,7 +2007,7 @@
       "closed": false,
       "deleted": false,
       "workspace": "",
-      "updated": "2026-09-19T15:23:22.747Z"
+      "updated": "2026-09-23T18:42:02.688Z"
     },
     "mtqj7dfg-vf1ncb": {
       "company": "Amgen",
