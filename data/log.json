@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-09-23T18:42:18.683Z",
+  "updated": "2026-09-24T19:42:55.856Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -2158,7 +2158,7 @@
       "applied": true,
       "coldEmailed": false,
       "connected": false,
-      "outcome": "",
+      "outcome": "interview",
       "role": "",
       "date": "2026-09-11",
       "link": "https://forcefactor.com/pages/job-openings?gh_jid=6167264004&gh_src=wkm8j0264us",
@@ -2169,7 +2169,7 @@
       "closed": false,
       "deleted": false,
       "workspace": "",
-      "updated": "2026-09-12T22:41:50.985Z"
+      "updated": "2026-09-24T19:42:55.856Z"
     },
     "mtyz2rw1-hd5b2r": {
       "company": "Stryker",
