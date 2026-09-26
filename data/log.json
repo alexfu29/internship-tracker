@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-09-26T01:39:23.285Z",
+  "updated": "2026-09-26T19:13:15.554Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -790,9 +790,10 @@
       "closed": false,
       "deleted": false,
       "workspace": "Hi Laura,\n\nI recently applied to the Lexington Medical Engineering Intern position for 2027. I'd love to connect with you to learn more about you and the company culture.\n\nWould you be down for a quick zoom meeting to connect?\n\nI'm available daily after 6:30pm and Sundays after 2pm.",
-      "updated": "2026-09-21T15:34:35.422Z",
+      "updated": "2026-09-26T19:13:15.554Z",
       "inviteAcceptedOn": "2026-08-24",
-      "withdrawnOn": null
+      "withdrawnOn": null,
+      "noteMuted": true
     },
     "msv3ttu3-d17a2x": {
       "name": "Andrew Marecki",
