@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-09-24T19:42:55.856Z",
+  "updated": "2026-09-26T01:31:14.942Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -2404,6 +2404,24 @@
       "deleted": false,
       "workspace": "",
       "updated": "2026-09-21T16:23:41.910Z"
+    },
+    "muhprf5q-1vyvlm": {
+      "company": "p!ng",
+      "applied": true,
+      "coldEmailed": false,
+      "connected": false,
+      "outcome": "",
+      "role": "",
+      "date": "2026-09-25",
+      "link": "",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "closed": false,
+      "deleted": false,
+      "workspace": "",
+      "updated": "2026-09-26T01:31:14.942Z"
     }
   }
 }
