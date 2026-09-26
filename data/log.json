@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-09-26T19:13:15.554Z",
+  "updated": "2026-09-26T19:40:04.763Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -2459,6 +2459,24 @@
       "deleted": false,
       "workspace": "",
       "updated": "2026-09-26T01:39:23.285Z"
+    },
+    "muisnnyz-7mg2fa": {
+      "company": "Garmin",
+      "applied": true,
+      "coldEmailed": false,
+      "connected": false,
+      "outcome": "",
+      "role": "",
+      "date": "2026-09-26",
+      "link": "https://careers-garmin.icims.com/jobs/19911/mechanical-engineering-intern/job?mode=submit_apply",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "closed": false,
+      "deleted": false,
+      "workspace": "",
+      "updated": "2026-09-26T19:40:04.763Z"
     }
   }
 }
