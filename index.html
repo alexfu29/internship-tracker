@@ -842,6 +842,45 @@
   .chip.warning  .dot { background: var(--status-warning); }
   .chip.muted    .dot { background: transparent; box-shadow: 0 0 0 1px var(--baseline); }
 
+  /* Row tint: each row is washed in its own status dot's color, so the state
+     reads from across the room. Companies get the stronger wash, people a
+     lighter one. Muted rows (closed, withdrawn, ignored) have a hollow dot and
+     stay untinted. Skipped while pressed or dragged so that feedback shows. */
+  tbody tr.tone-good:not(:active):not(.dragging)     { background: color-mix(in srgb, var(--status-good) var(--tint-a), transparent); }
+  tbody tr.tone-critical:not(:active):not(.dragging) { background: color-mix(in srgb, var(--status-critical) var(--tint-a), transparent); }
+  tbody tr.tone-warning:not(:active):not(.dragging)  { background: color-mix(in srgb, var(--status-warning) var(--tint-a), transparent); }
+  tbody tr.tone-neutral:not(:active):not(.dragging)  { background: color-mix(in srgb, var(--baseline) var(--tint-a), transparent); }
+  table { --tint-a: 8%; }
+  table.companies { --tint-a: 15%; }
+
+  /* Priority 1/2/3: 1 is solid, 2 outlined, 3 faint — louder means higher. */
+  .pri {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 20px; height: 20px; padding: 0 5px; border-radius: 6px;
+    font-size: 0.74rem; font-weight: 700; font-variant-numeric: tabular-nums;
+    border: 1px solid transparent; line-height: 1;
+  }
+  .pri.p1 { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+  .pri.p2 { color: var(--accent); border-color: var(--accent); }
+  .pri.p3 { color: var(--text-muted); border-color: var(--baseline); }
+  .pri.p0 { color: var(--text-muted); font-weight: 400; }
+  th.pricol, td.pricol { text-align: center; padding-left: 4px; padding-right: 4px; }
+
+  /* company name + priority picker share one line in the form */
+  .name-pri { display: flex; gap: 7px; align-items: flex-end; }
+  .name-pri > .field:first-child { flex: 1 1 auto; min-width: 0; }
+  .name-pri > .field.pri-field { flex: 0 0 auto; }
+  .pri-seg { display: flex; gap: 4px; }
+  .pri-seg button {
+    width: 34px; min-height: var(--tap); padding: 0; margin: 0; border-radius: 8px;
+    border: 1px solid var(--border); background: var(--surface-2);
+    color: var(--text-secondary); font-size: 0.85rem; font-weight: 700;
+    font-family: inherit; cursor: pointer;
+  }
+  .pri-seg button.on[data-p="1"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+  .pri-seg button.on[data-p="2"] { color: var(--accent); border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+  .pri-seg button.on[data-p="3"] { color: var(--text-primary); border-color: var(--text-muted); box-shadow: inset 0 0 0 1px var(--text-muted); }
+
   /* ---------- Footer / drawer ---------- */
   footer.app-footer {
     text-align: center; font-size: 0.7rem; color: var(--text-muted);
@@ -1008,9 +1047,20 @@
     </form>
 
     <form class="logform" id="appForm" autocomplete="off">
-      <div class="field">
-        <label for="aCompany">Company</label>
-        <input type="text" id="aCompany" list="companyList">
+      <div class="name-pri">
+        <div class="field">
+          <label for="aCompany">Company</label>
+          <input type="text" id="aCompany" list="companyList">
+        </div>
+        <div class="field pri-field">
+          <label>Priority</label>
+          <!-- tap the lit one again to clear it; 1 = high, 3 = low -->
+          <div class="pri-seg" id="aPrioritySeg" role="group" aria-label="Priority">
+            <button type="button" data-p="1" title="High priority" aria-pressed="false">1</button>
+            <button type="button" data-p="2" title="Medium priority" aria-pressed="false">2</button>
+            <button type="button" data-p="3" title="Low priority" aria-pressed="false">3</button>
+          </div>
+        </div>
       </div>
       <div class="field">
         <label>Applied yet?</label>
@@ -1476,7 +1526,7 @@
      tell those apart from a change that genuinely didn't work. This string
      lives in the file being executed, so it cannot lie about which file that
      is. It's shown at the bottom of Settings. */
-  var APP_VERSION = "2026-09-10b";
+  var APP_VERSION = "2026-09-27";
   var swReady = false, swCacheVersion = "", swNote = "";
 
   /* ============================================================
@@ -1899,7 +1949,7 @@
      both tables have always opened with. An unrecognised value falls back to
      that default rather than to nothing, so a bad string can't leave you with
      an unsorted table and no arrow explaining why. */
-  var SORT_COLS = { name: "asc", date: "desc", status: "asc" };   // default direction each
+  var SORT_COLS = { name: "asc", date: "desc", status: "asc", priority: "asc" };   // default direction each
   function sortFor(kind) {
     var m = (SETTINGS.sortMode && SETTINGS.sortMode[kind]) || "";
     if (m === "custom") return { col: null, dir: "asc" };
@@ -1953,6 +2003,9 @@
               : sortText(a.e, kind) > sortText(b.e, kind) ? 1 : 0;
           } else if (s.col === "status") {
             d = statusRank(a.e) - statusRank(b.e);
+          } else if (s.col === "priority") {
+            // unset sorts after 3, so "1 first" keeps blanks at the bottom
+            d = (priorityOf(a.e) || 4) - (priorityOf(b.e) || 4);
           } else {
             // "" (no date) sorts before any real date, so newest-first puts
             // undated rows at the bottom — where liveList already had them.
@@ -2790,7 +2843,8 @@
   var SORT_HINT = {
     name: { asc: "A → Z", desc: "Z → A" },
     date: { asc: "Oldest first", desc: "Newest first" },
-    status: { asc: "No date, then shortest wait first", desc: "Longest wait first" }
+    status: { asc: "No date, then shortest wait first", desc: "Longest wait first" },
+    priority: { asc: "Priority 1 first", desc: "Priority 3 first" }
   };
   function wireSortHeaders(mountId, kind) {
     var s = sortFor(kind);
@@ -2839,7 +2893,9 @@
     });
     html += '</tr></thead><tbody>';
     rows.forEach(function (r) {
-      html += '<tr class="tappable' + (r.closed ? ' is-closed' : '') +
+      // tint the row in its status dot's color (see "Row tint" in the CSS)
+      var tone = statusOf(r, String(r.selectKey || "").charAt(0) === "c").tone;
+      html += '<tr class="tappable tone-' + tone + (r.closed ? ' is-closed' : '') +
         '" data-select="' + escapeHtml(r.selectKey) + '">';
       cols.forEach(function (c) { html += '<td class="' + (c.cls || "") + '">' + c.cell(r) + '</td>'; });
       html += '</tr>';
@@ -2879,10 +2935,14 @@
       { head: "Company", cls: "company", sort: archive ? null : "name", cell: function (r) {
           return '<div class="co-wrap">' + (archive ? "" : dragHandleHtml()) +
             '<span class="co-text">' +
-            '<span class="co-name">' + escapeHtml(companyOf(r)) + '</span>' +
-            (r.role ? '<span class="co-role">' + escapeHtml(r.role) + '</span>' : '') +
+            // The role stays off the overview so the list scans by company;
+            // it's in the tooltip and in the editor.
+            '<span class="co-name"' + (r.role ? ' title="' + escapeHtml(r.role) + '"' : '') + '>' +
+              escapeHtml(companyOf(r)) + '</span>' +
             '</span>' + flagDotsHtml(r) + '</div>';
         } },
+      { head: "Priority", cls: "pricol", sort: archive ? null : "priority",
+        cell: function (r) { return priorityHtml(r); } },
       { head: "Date", cls: "date", sort: archive ? null : "date",
         cell: function (r) { return fmtShort(r.date); } },
       { head: "Status", cls: "status", sort: archive ? null : "status",
@@ -3326,6 +3386,38 @@
     setRadio(appForm, "aCold", isColdEmailed(e) ? "yes" : "no");
     setRadio(appForm, "aConn", isConnected(e) ? "yes" : "no");
     setRadio(appForm, "aOutcome", outcomeOf(e) || "none");
+    setPriority(e.priority);
+  }
+
+  /* ---- priority picker (1 high, 3 low, blank = not set) ---- */
+  var prioritySeg = document.getElementById("aPrioritySeg");
+  function priorityOf(e) {
+    var p = Number(e && e.priority);
+    return (p === 1 || p === 2 || p === 3) ? p : 0;
+  }
+  function setPriority(v) {
+    var p = priorityOf({ priority: v });
+    prioritySeg.setAttribute("data-value", p ? String(p) : "");
+    prioritySeg.querySelectorAll("button").forEach(function (b) {
+      var on = Number(b.getAttribute("data-p")) === p;
+      b.classList.toggle("on", on);
+      b.setAttribute("aria-pressed", on ? "true" : "false");
+    });
+  }
+  function formPriority() {
+    return priorityOf({ priority: prioritySeg.getAttribute("data-value") }) || null;
+  }
+  prioritySeg.addEventListener("click", function (ev) {
+    var b = ev.target.closest && ev.target.closest("button[data-p]");
+    if (!b) return;
+    var p = b.getAttribute("data-p");
+    setPriority(prioritySeg.getAttribute("data-value") === p ? "" : p);
+  });
+  function priorityHtml(e) {
+    var p = priorityOf(e);
+    return p
+      ? '<span class="pri p' + p + '" title="Priority ' + p + (p === 1 ? " (high)" : p === 3 ? " (low)" : "") + '">' + p + '</span>'
+      : '<span class="pri p0" title="No priority set">—</span>';
   }
 
   /* Editing opens the very same form as adding, in the very same dialog —
@@ -3388,7 +3480,7 @@
       document.getElementById("cName").focus();
     } else {
       if (editSel) fillAppForm(editSel.e);
-      else { appForm.reset(); document.getElementById("aDate").value = TODAY; }
+      else { appForm.reset(); setPriority(""); document.getElementById("aDate").value = TODAY; }
       document.getElementById("aCompany").focus();
     }
     renderEditExtras();
@@ -3843,6 +3935,7 @@
     var outcomeEl = appForm.querySelector('input[name="aOutcome"]:checked');
     var fields = {
       company: document.getElementById("aCompany").value.trim(),
+      priority: formPriority(),
       applied: !!(appliedEl && appliedEl.value === "yes"),
       coldEmailed: !!(coldEl && coldEl.value === "yes"),
       connected: !!(connEl && connEl.value === "yes"),
