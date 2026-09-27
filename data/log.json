@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-09-27T20:29:18.915Z",
+  "updated": "2026-09-27T21:31:24.163Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -1774,7 +1774,7 @@
       "closed": false,
       "deleted": false,
       "workspace": "",
-      "updated": "2026-08-21T22:59:28.620Z"
+      "updated": "2026-09-27T21:31:24.163Z"
     },
     "mt3lmacy-mztaow": {
       "company": "Ryder",
@@ -2065,7 +2065,7 @@
       "updated": "2026-09-08T21:02:59.129Z"
     },
     "mtt5q03l-gzrz5e": {
-      "company": "Naval Surface Warfare Center Dahlgren Division (NSWCDD)",
+      "company": "(NSWCDD)",
       "applied": true,
       "coldEmailed": false,
       "connected": false,
@@ -2080,7 +2080,7 @@
       "closed": false,
       "deleted": false,
       "workspace": "",
-      "updated": "2026-09-08T21:12:06.655Z"
+      "updated": "2026-09-27T21:31:16.627Z"
     },
     "mtt5qbkc-4rj844": {
       "company": "Sylvamo Corporation",
