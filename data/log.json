@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-09-28T18:25:59.514Z",
+  "updated": "2026-09-28T18:26:33.755Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -2534,6 +2534,25 @@
       "workspace": "",
       "updated": "2026-09-27T21:44:05.358Z",
       "priority": null
+    },
+    "mulkwtqz-5ujdea": {
+      "company": "Rolls Royce",
+      "priority": 2,
+      "applied": false,
+      "coldEmailed": false,
+      "connected": false,
+      "outcome": "",
+      "role": "",
+      "date": "2026-09-28",
+      "link": "",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "closed": false,
+      "deleted": false,
+      "workspace": "",
+      "updated": "2026-09-28T18:26:33.755Z"
     }
   }
 }
