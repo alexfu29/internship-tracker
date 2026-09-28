@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-09-28T19:00:59.001Z",
+  "updated": "2026-09-28T19:01:34.114Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -2553,6 +2553,25 @@
       "deleted": false,
       "workspace": "",
       "updated": "2026-09-28T19:00:59.001Z"
+    },
+    "mulm5si7-fbloch": {
+      "company": "Sanofi",
+      "priority": 1,
+      "applied": true,
+      "coldEmailed": false,
+      "connected": false,
+      "outcome": "",
+      "role": "Medical PD",
+      "date": "2026-09-28",
+      "link": "https://app.joinhandshake.com/jobs/11488250",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "closed": false,
+      "deleted": false,
+      "workspace": "",
+      "updated": "2026-09-28T19:01:34.114Z"
     }
   }
 }
