@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-09-28T19:01:34.114Z",
+  "updated": "2026-09-28T19:03:09.842Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -1561,9 +1561,10 @@
       "meetingOn": null,
       "closed": false,
       "deleted": false,
-      "updated": "2026-09-12T22:27:05.102Z",
+      "updated": "2026-09-28T19:03:09.842Z",
       "workspace": "",
-      "outcome": "denied"
+      "outcome": "",
+      "priority": 1
     },
     "mspe3u8o-rils79": {
       "company": "Chamberlain Group",
