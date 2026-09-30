@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-09-30T22:20:16.725Z",
+  "updated": "2026-09-30T22:20:24.320Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -2611,6 +2611,25 @@
       "deleted": false,
       "workspace": "",
       "updated": "2026-09-30T22:20:16.725Z"
+    },
+    "muoo594w-hwo863": {
+      "company": "LapCorp",
+      "priority": null,
+      "applied": false,
+      "coldEmailed": false,
+      "connected": false,
+      "outcome": "",
+      "role": "",
+      "date": "2026-09-30",
+      "link": "handshake",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "closed": false,
+      "deleted": false,
+      "workspace": "",
+      "updated": "2026-09-30T22:20:24.320Z"
     }
   }
 }
