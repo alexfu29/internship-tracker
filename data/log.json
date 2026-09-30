@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-09-30T22:20:10.275Z",
+  "updated": "2026-09-30T22:20:16.725Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -2592,6 +2592,25 @@
       "deleted": false,
       "workspace": "",
       "updated": "2026-09-28T19:11:01.595Z"
+    },
+    "muoo539x-gs1d7o": {
+      "company": "JHU APL",
+      "priority": null,
+      "applied": false,
+      "coldEmailed": false,
+      "connected": false,
+      "outcome": "",
+      "role": "",
+      "date": "2026-09-30",
+      "link": "",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "closed": false,
+      "deleted": false,
+      "workspace": "",
+      "updated": "2026-09-30T22:20:16.725Z"
     }
   }
 }
