@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-09-30T22:20:24.320Z",
+  "updated": "2026-09-30T22:20:40.243Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -1561,7 +1561,7 @@
       "meetingOn": null,
       "closed": false,
       "deleted": false,
-      "updated": "2026-09-28T19:03:27.115Z",
+      "updated": "2026-09-30T22:20:40.243Z",
       "workspace": "",
       "outcome": "",
       "priority": 1
@@ -2595,7 +2595,7 @@
     },
     "muoo539x-gs1d7o": {
       "company": "JHU APL",
-      "priority": null,
+      "priority": 2,
       "applied": false,
       "coldEmailed": false,
       "connected": false,
@@ -2610,11 +2610,11 @@
       "closed": false,
       "deleted": false,
       "workspace": "",
-      "updated": "2026-09-30T22:20:16.725Z"
+      "updated": "2026-09-30T22:20:34.986Z"
     },
     "muoo594w-hwo863": {
-      "company": "LapCorp",
-      "priority": null,
+      "company": "LabCorp",
+      "priority": 2,
       "applied": false,
       "coldEmailed": false,
       "connected": false,
@@ -2629,7 +2629,7 @@
       "closed": false,
       "deleted": false,
       "workspace": "",
-      "updated": "2026-09-30T22:20:24.320Z"
+      "updated": "2026-09-30T22:20:32.192Z"
     }
   }
 }
