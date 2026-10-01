@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-10-01T20:25:09.874Z",
+  "updated": "2026-10-01T20:35:41.854Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -2689,6 +2689,25 @@
       "deleted": false,
       "workspace": "",
       "updated": "2026-10-01T20:24:50.830Z"
+    },
+    "mupzug7y-onouzf": {
+      "company": "look at RippleMatch",
+      "priority": null,
+      "applied": false,
+      "coldEmailed": false,
+      "connected": false,
+      "outcome": "",
+      "role": "",
+      "date": "2026-10-01",
+      "link": "",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "closed": false,
+      "deleted": false,
+      "workspace": "",
+      "updated": "2026-10-01T20:35:41.854Z"
     }
   }
 }
