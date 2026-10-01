@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-10-01T20:24:40.870Z",
+  "updated": "2026-10-01T20:24:50.830Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -2670,6 +2670,25 @@
       "deleted": false,
       "workspace": "",
       "updated": "2026-10-01T20:24:33.642Z"
+    },
+    "mupzghvy-bhpzi4": {
+      "company": "Sig Sauer",
+      "priority": 3,
+      "applied": false,
+      "coldEmailed": false,
+      "connected": false,
+      "outcome": "",
+      "role": "",
+      "date": "2026-10-01",
+      "link": "",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "closed": false,
+      "deleted": false,
+      "workspace": "",
+      "updated": "2026-10-01T20:24:50.830Z"
     }
   }
 }
