@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-10-01T20:22:16.933Z",
+  "updated": "2026-10-01T20:22:34.384Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -2146,16 +2146,16 @@
       "outcome": "",
       "role": "",
       "date": "2026-09-08",
-      "link": "",
-      "note": "",
+      "link": "https://bostonscientific.eightfold.ai/careers?domain=bostonscientific.com&hl=en&start=0&location=United+States&pid=563602813563486&sort_by=match&filter_include_remote=1&filter_include_relocation=0",
+      "note": "mention Pratik",
       "responded": false,
       "respondedOn": null,
       "meetingOn": null,
       "closed": false,
       "deleted": false,
       "workspace": "",
-      "updated": "2026-10-01T20:22:16.933Z",
-      "priority": null
+      "updated": "2026-10-01T20:22:34.384Z",
+      "priority": 1
     },
     "mtxe7pz1-9ejynq": {
       "company": "Force Factor",
