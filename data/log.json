@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-10-01T20:24:50.830Z",
+  "updated": "2026-10-01T20:25:09.874Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -1775,8 +1775,8 @@
       "closed": false,
       "deleted": false,
       "workspace": "",
-      "updated": "2026-10-01T20:02:34.907Z",
-      "priority": null
+      "updated": "2026-10-01T20:25:09.874Z",
+      "priority": 2
     },
     "mt3lmacy-mztaow": {
       "company": "Ryder",
