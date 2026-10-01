@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-10-01T00:07:50.442Z",
+  "updated": "2026-10-01T19:50:46.526Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -2630,6 +2630,25 @@
       "deleted": false,
       "workspace": "",
       "updated": "2026-09-30T22:20:32.192Z"
+    },
+    "mupy8ohq-z61kjs": {
+      "company": "Red Sox",
+      "priority": 2,
+      "applied": false,
+      "coldEmailed": false,
+      "connected": false,
+      "outcome": "",
+      "role": "",
+      "date": "2026-10-01",
+      "link": "https://jobs.lever.co/redsox",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "closed": false,
+      "deleted": false,
+      "workspace": "",
+      "updated": "2026-10-01T19:50:46.526Z"
     }
   }
 }
