@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-10-01T20:04:15.838Z",
+  "updated": "2026-10-01T20:22:16.933Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -2154,7 +2154,8 @@
       "closed": false,
       "deleted": false,
       "workspace": "",
-      "updated": "2026-09-08T21:21:49.235Z"
+      "updated": "2026-10-01T20:22:16.933Z",
+      "priority": null
     },
     "mtxe7pz1-9ejynq": {
       "company": "Force Factor",
