@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-10-01T20:35:41.854Z",
+  "updated": "2026-10-02T20:55:20.055Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -2708,6 +2708,25 @@
       "deleted": false,
       "workspace": "",
       "updated": "2026-10-01T20:35:41.854Z"
+    },
+    "murfzi68-t8uucw": {
+      "company": "Merck",
+      "priority": 1,
+      "applied": true,
+      "coldEmailed": false,
+      "connected": false,
+      "outcome": "",
+      "role": "",
+      "date": "2026-10-02",
+      "link": "https://msd.wd5.myworkdayjobs.com/en-US/SearchJobs/jobTasks/completed/application?utm_source=linkedin&utm_medium=phenom-feeds",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "closed": false,
+      "deleted": false,
+      "workspace": "",
+      "updated": "2026-10-02T20:55:20.055Z"
     }
   }
 }
