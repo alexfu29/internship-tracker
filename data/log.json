@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-10-02T20:55:20.055Z",
+  "updated": "2026-10-03T17:03:44.770Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -2727,6 +2727,25 @@
       "deleted": false,
       "workspace": "",
       "updated": "2026-10-02T20:55:20.055Z"
+    },
+    "musn5kzm-iwhkiy": {
+      "company": "Zoll",
+      "priority": 2,
+      "applied": true,
+      "coldEmailed": false,
+      "connected": false,
+      "outcome": "",
+      "role": "",
+      "date": "2026-10-03",
+      "link": "",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "closed": false,
+      "deleted": false,
+      "workspace": "",
+      "updated": "2026-10-03T17:03:44.770Z"
     }
   }
 }
