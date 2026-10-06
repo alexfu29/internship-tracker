@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-10-03T17:03:44.770Z",
+  "updated": "2026-10-06T13:16:13.654Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -2746,6 +2746,25 @@
       "deleted": false,
       "workspace": "",
       "updated": "2026-10-03T17:03:44.770Z"
+    },
+    "muwpb58y-p2t4n0": {
+      "company": "Vanderweil",
+      "priority": null,
+      "applied": true,
+      "coldEmailed": false,
+      "connected": false,
+      "outcome": "",
+      "role": "",
+      "date": "2026-10-06",
+      "link": "",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "closed": false,
+      "deleted": false,
+      "workspace": "",
+      "updated": "2026-10-06T13:15:08.242Z"
     }
   }
 }
