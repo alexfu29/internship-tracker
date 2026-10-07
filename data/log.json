@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-10-06T13:16:13.654Z",
+  "updated": "2026-10-07T14:11:15.514Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -1230,11 +1230,12 @@
       "respondedOn": null,
       "meetingOn": null,
       "nudgedOn": [],
-      "closed": false,
+      "closed": true,
       "deleted": false,
       "workspace": "Hi Reha,\n\n\n\nI was wondering how you were able to pivot from medicine to product management and medical consulting, something I'm interested in pursuing at BU, and wanted your insight and advice into the fields.\n\n\n\nWould you be down for a quick zoom meeting next week?\n\n\n\nI'm available Monday 10-1, Tuesday 11-3, Wednesday 9-1 & 3-6, and Thursday 11-1 & 3:30-6.",
-      "updated": "2026-09-18T00:42:02.206Z",
-      "muted": true
+      "updated": "2026-10-07T14:11:02.829Z",
+      "muted": true,
+      "withdrawMuted": true
     },
     "mtz3ylv4-hq9mgf": {
       "name": "Stacy L",
@@ -2753,7 +2754,7 @@
       "applied": true,
       "coldEmailed": false,
       "connected": false,
-      "outcome": "",
+      "outcome": "denied",
       "role": "",
       "date": "2026-10-06",
       "link": "",
@@ -2764,7 +2765,7 @@
       "closed": false,
       "deleted": false,
       "workspace": "",
-      "updated": "2026-10-06T13:15:08.242Z"
+      "updated": "2026-10-07T14:11:14.725Z"
     }
   }
 }
