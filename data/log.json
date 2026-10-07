@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-10-07T14:13:21.013Z",
+  "updated": "2026-10-07T14:13:32.180Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -1648,9 +1648,13 @@
       "meetingOn": null,
       "closed": false,
       "deleted": false,
-      "updated": "2026-09-22T18:55:41.930Z",
+      "updated": "2026-10-07T14:13:32.180Z",
       "outcome": "interview",
-      "workspace": ""
+      "workspace": "",
+      "priority": null,
+      "outcomes": [
+        "interview"
+      ]
     },
     "msqu50r3-qdtj5l": {
       "company": "Arco",
