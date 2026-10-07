@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-10-07T14:13:56.567Z",
+  "updated": "2026-10-07T14:30:59.444Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -1315,11 +1315,13 @@
       "meetingOn": null,
       "closed": false,
       "deleted": false,
-      "updated": "2026-08-14T23:58:07.513Z",
+      "updated": "2026-10-07T14:30:59.444Z",
       "connected": true,
       "coldEmailed": true,
       "outcome": "",
-      "workspace": ""
+      "workspace": "",
+      "priority": null,
+      "outcomes": []
     },
     "msl0573c-nasry3": {
       "company": "CarGill",
