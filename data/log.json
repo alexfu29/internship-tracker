@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-10-07T14:32:42.895Z",
+  "updated": "2026-10-07T14:33:25.071Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -1315,12 +1315,12 @@
       "meetingOn": null,
       "closed": false,
       "deleted": false,
-      "updated": "2026-10-07T14:32:42.895Z",
+      "updated": "2026-10-07T14:33:25.071Z",
       "connected": true,
       "coldEmailed": true,
       "outcome": "",
       "workspace": "",
-      "priority": null,
+      "priority": 1,
       "outcomes": []
     },
     "msl0573c-nasry3": {
