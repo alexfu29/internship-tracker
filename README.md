@@ -290,6 +290,26 @@ recommended for touch. That's the cost of the density, and it was asked for
 knowingly — the frequently-tapped things on a phone (table rows, the ＋ buttons,
 form inputs) are the ones kept largest.
 
+## Conference tabs
+
+A tab strip above the two tables: **All · MedTech · BMES**. It is a filter, not a
+copy. A row belongs to an event when it carries `events: ["mtc26"]` or
+`["bmes26"]`; a row without that list shows only under **All**, exactly as before.
+
+- **What a tab changes:** the two tables and their stat rows. **What it doesn't:**
+  reminders, accept/withdraw cards, the send queue and Find contacts still cover
+  everyone, so a red flag is never hidden by the open tab.
+- **Adding from a tab** tags the new row automatically. Tag an older row from the
+  **Event** toggles in its edit dialog.
+- **Target chips:** each event panel lists companies. Tapping one adds it to
+  Companies (not applied) tagged to the event, or just tags it if it's already in
+  your tracker (names match exactly, or as a prefix of 4+ characters).
+- **Where it's stored:** the tag rides in `data/log.json` with the row; the tab you
+  were last on is in `intern-settings` on that device. Row dragging is off inside
+  an event tab, because a drag would save the order of only some rows.
+- **To change the event list or targets:** edit the `EVENTS` array in section 2B of
+  `index.html`.
+
 ## Per-entry workspaces
 
 Every contact and every company has **its own workspace** — a bigger, free-form

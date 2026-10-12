@@ -930,6 +930,24 @@
     button:active, .nudge-row .acts button:active,
     .nudge-row .acts a:active { transform: none; }
   }
+
+  /* ---------- Conference tabs ---------- */
+  .ev-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin: 0 0 8px; }
+  .ev-tab { display: inline-flex; flex-direction: column; align-items: flex-start; gap: 1px;
+    padding: 6px 12px; min-height: 34px; border-radius: 8px; cursor: pointer;
+    border: 1px solid var(--border, #d0d5dd); background: transparent; color: inherit; font: inherit; font-weight: 600; }
+  .ev-tab .ev-n { font-size: 11px; font-weight: 400; opacity: .7; }
+  .ev-tab.on { background: var(--accent, #2563eb); border-color: var(--accent, #2563eb); color: var(--accent-ink, #fff); }
+  .ev-tab.on .ev-n { opacity: .9; }
+  .ev-panel .ev-info { margin: 4px 0 6px; padding-left: 18px; font-size: 13px; line-height: 1.45; }
+  .ev-targets { margin: 4px 0; }
+  .ev-targets summary { cursor: pointer; font-size: 13px; font-weight: 600; padding: 4px 0; }
+  .ev-targets .n, .ev-chip .n { font-weight: 400; opacity: .65; font-size: 11px; }
+  .ev-chips { display: flex; flex-wrap: wrap; gap: 5px; padding: 4px 0 6px; }
+  .ev-chip { padding: 4px 9px; min-height: 28px; border-radius: 999px; font: inherit; font-size: 12px; cursor: pointer;
+    border: 1px solid var(--border, #d0d5dd); background: transparent; color: inherit; }
+  .ev-chip.done { cursor: default; opacity: .6; display: inline-flex; align-items: center; }
+  body.ev-view .drag-handle { display: none; }
 </style>
 </head>
 <body>
@@ -954,6 +972,10 @@
   <div id="acceptMount"></div>
   <div id="withdrawMount"></div>
 
+  <!-- Conference tabs: a filter over the two tables below, never a copy of
+       them. "All" is the whole tracker exactly as it was. -->
+  <div class="ev-tabs" id="eventTabs" role="tablist" aria-label="Conference view"></div>
+  <div id="eventPanel"></div>
 
   <!-- Tables: contacts left, companies right on a wide screen; stacked below
        1040px. One page scroll moves both — neither column scrolls alone. -->
@@ -1528,7 +1550,7 @@
      tell those apart from a change that genuinely didn't work. This string
      lives in the file being executed, so it cannot lie about which file that
      is. It's shown at the bottom of Settings. */
-  var APP_VERSION = "2026-10-07";
+  var APP_VERSION = "2026-10-12";
   var swReady = false, swCacheVersion = "", swNote = "";
 
   /* ============================================================
@@ -2035,6 +2057,158 @@
   }
 
   function touch(entry) { entry.updated = new Date().toISOString(); }
+
+  /* ============================================================
+     2B. CONFERENCE TABS
+     An entry may carry `events: ["mtc26", "bmes26"]`. That is the whole
+     data change: one optional list on a row. A row without it belongs to no
+     event and shows only under "All", so nothing that was here before moves.
+     The tab you were last on lives in SETTINGS (this device, never synced).
+     The tab filters the two tables and their stat rows. It does NOT filter
+     reminders, the send queue or Find contacts — a red flag must never be
+     hidden by which tab happens to be open.
+     ============================================================ */
+  var EVENTS = [
+    {
+      id: "mtc26", short: "MedTech", name: "MedTech Conference",
+      when: "Oct 18–21", where: "Boston · BCEC",
+      info: [
+        'Exhibitor list and floor plan: <a href="https://medtech26.mapyourshow.com/8_0/explore/exhibitor-gallery.cfm?featured=false" target="_blank" rel="noopener">medtech26.mapyourshow.com</a> (371 exhibitors)',
+        "Student Pass: meetups, orientation, speed networking with recruiters, Career Hub. Not a career fair; recruiters aren't guaranteed",
+        "Ends Wed Oct 21, the day BMES starts: check whether the floor is open that day"
+      ],
+      targets: [
+        { group: "Wearables, sensing, non-invasive", names: ["iRhythm Technologies", "Dexcom", "Abbott", "Omnipod", "ZOLL", "ResMed", "Butterfly Network", "OmniBuds", "WearableDose", "iSono Health", "Sana Health", "Analog Devices", "maxon"] },
+        { group: "Design and engineering firms", names: ["Veranex", "Cambridge Design Partnership", "Bennu Product Development", "Priority Designs", "Cortex Design", "Simbex", "MIDI Medical Product Development", "Resonetics"] },
+        { group: "Large device makers", names: ["Boston Scientific", "Stryker", "Zimmer Biomet", "Smith+Nephew", "Edwards Lifesciences", "BD", "Baxter", "Terumo"] }
+      ]
+    },
+    {
+      id: "bmes26", short: "BMES", name: "BMES Nationals",
+      when: "Oct 21–24", where: "Orlando · World Center Marriott",
+      info: [
+        "Wed Oct 21: 6–7:30 pm Welcome Reception + Exhibit Hall",
+        "Thu Oct 22: Exhibit Hall 8–11 am and 12:15–4:30 pm; 7–10 pm hosted university receptions",
+        "Fri Oct 23: Exhibit Hall 8–11 am and 12–4:30 pm; Medtronic/BMES Student Design Competition 8:30 am–1:30 pm; Industry Mixer &amp; Panel 4:30–6 pm (ticketed)",
+        "Sat Oct 24: Exhibit Hall 9 am–12 pm",
+        "Program is marked preliminary on bmes.org; no exhibitor list is published yet"
+      ],
+      targets: [
+        { group: "Known so far", names: ["Medtronic"] }
+      ]
+    }
+  ];
+
+  function eventById(id) {
+    for (var i = 0; i < EVENTS.length; i++) if (EVENTS[i].id === id) return EVENTS[i];
+    return null;
+  }
+  // A saved tab that no longer exists falls back to All rather than to a blank page.
+  var ACTIVE_EVENT = eventById(SETTINGS.activeEvent) ? SETTINGS.activeEvent : "";
+
+  function inEvent(e, id) {
+    return !!(e && e.events && e.events.indexOf && e.events.indexOf(id) !== -1);
+  }
+  function inView(e) { return !ACTIVE_EVENT || inEvent(e, ACTIVE_EVENT); }
+  function toggleEventTag(entry, id) {
+    var list = (entry.events && entry.events.slice) ? entry.events.slice() : [];
+    var i = list.indexOf(id);
+    if (i === -1) list.push(id); else list.splice(i, 1);
+    entry.events = list;
+    touch(entry);
+  }
+  function normName(s) { return String(s || "").toLowerCase().replace(/[^a-z0-9]/g, ""); }
+  // Same company if the names match, or one is the other plus a suffix
+  // ("Stryker" / "Stryker Corporation"). Four characters minimum so "BD"
+  // can't swallow "BDO"; short names must match exactly.
+  function findAppByName(name) {
+    var n = normName(name), list = apps();
+    for (var i = 0; i < list.length; i++) {
+      var m = normName(list[i].company);
+      if (!m) continue;
+      if (m === n) return list[i];
+      if (n.length >= 4 && m.length >= 4 && (m.indexOf(n) === 0 || n.indexOf(m) === 0)) return list[i];
+    }
+    return null;
+  }
+  function addTarget(evId, name) {
+    var found = findAppByName(name);
+    if (found) {
+      var live = DATA.apps[found.id];
+      if (live && !inEvent(live, evId)) toggleEventTag(live, evId);
+    } else {
+      DATA.apps[newId()] = {
+        company: name, priority: null, applied: false, coldEmailed: false,
+        connected: false, outcome: "", outcomes: [], role: "", date: TODAY,
+        link: "", note: "", responded: false, respondedOn: null, meetingOn: null,
+        closed: false, deleted: false, workspace: "",
+        updated: new Date().toISOString(), events: [evId]
+      };
+    }
+    saveData();
+    render();
+  }
+
+  var EV_OPEN = {};
+  function renderEventTabs() {
+    var tabs = document.getElementById("eventTabs");
+    var panel = document.getElementById("eventPanel");
+    if (!tabs || !panel) return;
+    document.body.classList.toggle("ev-view", !!ACTIVE_EVENT);
+
+    var html = '<button type="button" role="tab" class="ev-tab' + (ACTIVE_EVENT ? "" : " on") +
+      '" data-ev="" aria-selected="' + (!ACTIVE_EVENT) + '">All</button>';
+    EVENTS.forEach(function (ev) {
+      var nc = allContacts().filter(function (c) { return inEvent(c, ev.id); }).length;
+      var na = apps().filter(function (a) { return inEvent(a, ev.id); }).length;
+      html += '<button type="button" role="tab" class="ev-tab' + (ACTIVE_EVENT === ev.id ? " on" : "") +
+        '" data-ev="' + ev.id + '" aria-selected="' + (ACTIVE_EVENT === ev.id) + '">' +
+        escapeHtml(ev.short) + '<span class="ev-n">' + nc + ' people · ' + na + ' cos</span></button>';
+    });
+    tabs.innerHTML = html;
+    tabs.querySelectorAll("button[data-ev]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        ACTIVE_EVENT = b.getAttribute("data-ev") || "";
+        SETTINGS.activeEvent = ACTIVE_EVENT;
+        saveSettings(SETTINGS);
+        render();
+      });
+    });
+
+    var ev = eventById(ACTIVE_EVENT);
+    if (!ev) { panel.innerHTML = ""; return; }
+
+    var p = '<section class="card ev-panel"><h2><span class="h-title">' + escapeHtml(ev.name) +
+      '</span><span class="count">' + escapeHtml(ev.when) + ' · ' + escapeHtml(ev.where) + '</span></h2>' +
+      '<ul class="ev-info">' + ev.info.map(function (t) { return "<li>" + t + "</li>"; }).join("") + '</ul>' +
+      '<p class="hint">Tables below show only what is tagged to this event. Anything you add here is tagged ' +
+      'automatically; tag an older row from its edit dialog. Reminders, the send queue and Find contacts still cover everyone.</p>';
+    ev.targets.forEach(function (g) {
+      p += '<details class="ev-targets" data-g="' + escapeHtml(ev.id + ":" + g.group) + '"' +
+        (EV_OPEN[ev.id + ":" + g.group] ? " open" : "") + '><summary>' + escapeHtml(g.group) + ' <span class="n">' + g.names.length + '</span></summary><div class="ev-chips">';
+      g.names.forEach(function (name) {
+        var found = findAppByName(name);
+        var tagged = found && inEvent(found, ev.id);
+        if (tagged) {
+          p += '<span class="ev-chip done" title="Already in this tab">✓ ' + escapeHtml(name) + '</span>';
+        } else {
+          p += '<button type="button" class="ev-chip" data-target="' + escapeHtml(name) + '" title="' +
+            (found ? "Already in your tracker: tag it to this event" : "Add to Companies, tagged to this event, not applied") +
+            '">＋ ' + escapeHtml(name) + (found ? ' <span class="n">in tracker</span>' : '') + '</button>';
+        }
+      });
+      p += '</div></details>';
+    });
+    p += '</section>';
+    panel.innerHTML = p;
+    // <details> would close on every repaint, so remember the ones you opened.
+    panel.querySelectorAll("details[data-g]").forEach(function (d) {
+      d.addEventListener("toggle", function () { EV_OPEN[d.getAttribute("data-g")] = d.open; });
+    });
+    panel.querySelectorAll("button[data-target]").forEach(function (b) {
+      b.addEventListener("click", function () { addTarget(ACTIVE_EVENT, b.getAttribute("data-target")); });
+    });
+  }
 
   /* ============================================================
      3. BANNERS
@@ -2658,7 +2832,7 @@
   }
 
   function renderStats() {
-    var cs = allContacts(), as = apps();
+    var cs = allContacts().filter(inView), as = apps().filter(inView);
 
     // "Contacted" is people you actually sent something to — a row with no
     // date is someone you found, not someone you wrote to.
@@ -2999,7 +3173,7 @@
   }
 
   function renderTables() {
-    var all = { contacts: contacts(), apps: apps() };
+    var all = { contacts: contacts().filter(inView), apps: apps().filter(inView) };
     var cs = applyOrder(all.contacts.filter(function (c) { return !c.closed; }), "contacts");
     var as = applyOrder(all.apps.filter(function (a) { return !a.closed; }), "apps");
     // Archives stay in date order — an archive is for finding things.
@@ -3019,9 +3193,9 @@
       all.apps.length ? as.length + " open" : "";
 
     document.getElementById("contactTableMount").innerHTML =
-      tableHtml(cs, contactCols(false), "No cold contacts logged yet.");
+      tableHtml(cs, contactCols(false), ACTIVE_EVENT ? "No contacts tagged to this event yet." : "No cold contacts logged yet.");
     document.getElementById("appTableMount").innerHTML =
-      tableHtml(as, appCols(false), "No companies logged yet.", "companies");
+      tableHtml(as, appCols(false), ACTIVE_EVENT ? "No companies tagged to this event yet." : "No companies logged yet.", "companies");
 
     document.getElementById("appLegend").innerHTML = as.length
       // The dots say two different things by position, so the legend has to
@@ -3055,8 +3229,12 @@
 
     wireSortHeaders("contactTableMount", "contacts");
     wireSortHeaders("appTableMount", "apps");
-    enableDrag("contactTableMount", "contacts");
-    enableDrag("appTableMount", "apps");
+    // Not in an event tab: a drag saves the order of the rows on screen, and
+    // here that would be only some of them.
+    if (!ACTIVE_EVENT) {
+      enableDrag("contactTableMount", "contacts");
+      enableDrag("appTableMount", "apps");
+    }
   }
 
   /* ---- "Copy AI prompt" for companies not applied to yet -------
@@ -3328,6 +3506,7 @@
 
   function render() {
     renderBanners();
+    renderEventTabs();
     renderStats();
     renderNudges();
     renderAcceptNotes();
@@ -3578,6 +3757,11 @@
     html += toggleBtn("close", !!e.closed, "Closed");
     html += '</div></div>';
 
+    // Which conference tabs this row shows under. Independent of everything above.
+    html += '<div class="upd-group"><span class="upd-group-label">Event</span><div class="upd-acts">' +
+      EVENTS.map(function (ev) { return toggleBtn("ev:" + ev.id, inEvent(e, ev.id), ev.short); }).join("") +
+      '</div></div>';
+
     html += '<div class="upd-group"><span class="upd-group-label">Actions</span>' +
       '<div class="upd-acts">' +
       actionBtn("workspace", "📝 Workspace" + (hasWorkspace(e) ? " ●" : ""));
@@ -3652,6 +3836,8 @@
           live.withdrawMuted = !isWithdrawMuted(live);
         } else if (act === "close") {
           live.closed = !live.closed;
+        } else if (act.indexOf("ev:") === 0) {
+          toggleEventTag(live, act.slice(3));
         }
         touch(live); saveData(); render();
       });
@@ -3960,6 +4146,7 @@
       fields.nudgedOn = []; fields.closed = false; fields.deleted = false;
       fields.workspace = pendingWorkspace();   // typed before the row existed
       fields.updated = new Date().toISOString();
+      if (ACTIVE_EVENT) fields.events = [ACTIVE_EVENT];   // added from an event tab
       DATA.contacts[newId()] = fields;
     }
     saveData();
@@ -3995,6 +4182,7 @@
       fields.closed = false; fields.deleted = false;
       fields.workspace = pendingWorkspace();   // typed before the row existed
       fields.updated = new Date().toISOString();
+      if (ACTIVE_EVENT) fields.events = [ACTIVE_EVENT];   // added from an event tab
       DATA.apps[newId()] = fields;
     }
     saveData();
