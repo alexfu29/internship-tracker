@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-10-12T02:08:44.296Z",
+  "updated": "2026-10-12T21:37:17.412Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -2838,6 +2838,26 @@
       "deleted": false,
       "workspace": "",
       "updated": "2026-10-09T22:22:11.932Z"
+    },
+    "mv5rw12c-v9bzvb": {
+      "company": "Lutron",
+      "priority": null,
+      "applied": true,
+      "coldEmailed": false,
+      "connected": false,
+      "outcome": "",
+      "outcomes": [],
+      "role": "",
+      "date": "2026-10-12",
+      "link": "https://studentopportunities-lutron.icims.com/jobs/5360/summer-2027---embedded-firmware-engineering-intern---boston%2c-ma/job?mode=submit_apply",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "closed": false,
+      "deleted": false,
+      "workspace": "",
+      "updated": "2026-10-12T21:37:17.412Z"
     }
   }
 }
