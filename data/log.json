@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-10-09T02:31:36.109Z",
+  "updated": "2026-10-12T02:08:44.296Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -2818,6 +2818,26 @@
       "deleted": false,
       "workspace": "",
       "updated": "2026-10-07T20:18:39.288Z"
+    },
+    "mv1j6864-59gm1n": {
+      "company": "Covestro",
+      "priority": null,
+      "applied": true,
+      "coldEmailed": false,
+      "connected": false,
+      "outcome": "",
+      "outcomes": [],
+      "role": "",
+      "date": "2026-10-09",
+      "link": "https://covestro.wd3.myworkdayjobs.com/en-US/cov_external/jobTasks/completed/application?gh_src=Handshake&iisn=Handshake&iis=Handshake&src=Handshake&source=Handshake&ref=Handshake&utm_medium=Handshake&referral=Handshake&utm_source=Handshake&__jvst=Handshake&__jvsd=Handshake&sourceDetails=Handshake&trid=Handshake&lever-source%5B%5D=Handshake&Source=Handshake&rb=Handshake&jobBoardSource=Handshake&channel=Handshake&rcid=Handshake",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "closed": false,
+      "deleted": false,
+      "workspace": "",
+      "updated": "2026-10-09T22:22:11.932Z"
     }
   }
 }
