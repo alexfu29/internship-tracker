@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-10-12T21:37:17.412Z",
+  "updated": "2026-10-12T21:45:12.491Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -2858,6 +2858,26 @@
       "deleted": false,
       "workspace": "",
       "updated": "2026-10-12T21:37:17.412Z"
+    },
+    "mv5s65bb-63vay0": {
+      "company": "Insmed",
+      "priority": 2,
+      "applied": true,
+      "coldEmailed": false,
+      "connected": false,
+      "outcome": "",
+      "outcomes": [],
+      "role": "",
+      "date": "2026-10-12",
+      "link": "https://insmed.wd504.myworkdayjobs.com/en-US/EXTERNAL/jobTasks/completed/application?iis=Handshake&iisn=Handshake",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "closed": false,
+      "deleted": false,
+      "workspace": "",
+      "updated": "2026-10-12T21:45:12.491Z"
     }
   }
 }
