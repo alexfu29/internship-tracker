@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-10-12T21:45:12.491Z",
+  "updated": "2026-10-14T22:52:16.928Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -2845,8 +2845,10 @@
       "applied": true,
       "coldEmailed": false,
       "connected": false,
-      "outcome": "",
-      "outcomes": [],
+      "outcome": "denied",
+      "outcomes": [
+        "denied"
+      ],
       "role": "",
       "date": "2026-10-12",
       "link": "https://studentopportunities-lutron.icims.com/jobs/5360/summer-2027---embedded-firmware-engineering-intern---boston%2c-ma/job?mode=submit_apply",
@@ -2857,7 +2859,7 @@
       "closed": false,
       "deleted": false,
       "workspace": "",
-      "updated": "2026-10-12T21:37:17.412Z"
+      "updated": "2026-10-14T22:52:16.928Z"
     },
     "mv5s65bb-63vay0": {
       "company": "Insmed",
