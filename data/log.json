@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-10-14T22:52:28.374Z",
+  "updated": "2026-10-15T13:42:30.667Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -2880,6 +2880,26 @@
       "deleted": false,
       "workspace": "",
       "updated": "2026-10-12T21:45:12.491Z"
+    },
+    "mv9l90jv-1zfcqw": {
+      "company": "Buro Happold",
+      "priority": null,
+      "applied": true,
+      "coldEmailed": false,
+      "connected": false,
+      "outcome": "",
+      "outcomes": [],
+      "role": "",
+      "date": "2026-10-15",
+      "link": "",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "closed": false,
+      "deleted": false,
+      "workspace": "",
+      "updated": "2026-10-15T13:42:30.667Z"
     }
   }
 }
