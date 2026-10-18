@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-10-18T20:45:15.305Z",
+  "updated": "2026-10-18T20:54:28.171Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -1327,7 +1327,7 @@
       "nudgedOn": [],
       "closed": false,
       "deleted": false,
-      "updated": "2026-10-18T17:44:50.490Z",
+      "updated": "2026-10-18T20:54:28.171Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -1759,7 +1759,7 @@
       "role": "Meeting Request",
       "channel": "Other",
       "email": "https://connect-v3.jujama.com/Attendee/Details?PersonId=2436713&from=MeetingBlast",
-      "date": "",
+      "date": "2026-10-18",
       "note": "CEO · MedTech portal: https://connect-v3.jujama.com/Attendee/AttendeeProfile?personId=2436713",
       "responded": false,
       "respondedOn": null,
@@ -1767,8 +1767,8 @@
       "nudgedOn": [],
       "closed": false,
       "deleted": false,
-      "updated": "2026-10-18T20:45:15.305Z",
-      "workspace": "Hi Ruben,\n\nI'm Alex Fu, a sophomore at BU interested in non-invasive MedTech and\nhuman-machine interaction. \n\nI'm at the MedTech conference this week. Later this week I'm attending the national BMES conference to present our team's project LymphSense, a $150 prototype targeting the diagnostic capability of $4,000 clinical devices to catch early-onset lymphedema. I was impressed by the efficacy and compactness of GRACE.\n\nI would love to meet with you to\nlearn more about how you got into MedTech, your recommendations for an aspiring student, and if there are any opportunities for the summer of 2027.\n\nLet me know what time and place works for you.\n\nBest,\nAlex Fu\n",
+      "updated": "2026-10-18T20:54:16.615Z",
+      "workspace": "Hi Ruben,\n\nI'm Alex Fu, a sophomore at BU interested in non-invasive MedTech and\nhuman-machine interaction. \n\nI'm at the MedTech conference this week. Later this week I'm attending the national BMES conference to present our team's project LymphSense, a $150 prototype targeting the diagnostic capability of $4,000 clinical devices to catch early-onset lymphedema. I was impressed by the efficacy and compactness of GRACE.\n\nI would love to meet with you anytime Monday 11-5 or Wednesday 9-11 to\nlearn more about how you got into MedTech, your recommendations for an aspiring student, and if there are any opportunities for the summer of 2027.\n\nLet me know what time and place works for you.\n\nBest,\nAlex Fu\n",
       "events": [
         "mtc26"
       ]
