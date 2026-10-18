@@ -1554,7 +1554,7 @@
      tell those apart from a change that genuinely didn't work. This string
      lives in the file being executed, so it cannot lie about which file that
      is. It's shown at the bottom of Settings. */
-  var APP_VERSION = "2026-10-18";
+  var APP_VERSION = "2026-10-18b";
   var swReady = false, swCacheVersion = "", swNote = "";
 
   /* ============================================================
@@ -1828,13 +1828,18 @@
       "Hi {first},\n" +
       "\n" +
       "I'm Alex Fu, a sophomore at BU interested in non-invasive MedTech and\n" +
-      "human-machine interaction. This week I'm attending the national biomedical\n" +
-      "engineering society conference to present our team's project LymphSense, a\n" +
-      "$100 dollar prototype targeting the diagnostic capability of $4000 clinical\n" +
-      "devices to catch early onset lymphedema. I was [notable]\n" +
+      "human-machine interaction.\n" +
       "\n" +
-      "I would love to meet with you sometime this Monday or Wednesday morning to\n" +
-      "connect and learn more about your industry.\n" +
+      "I'm at the MedTech conference this week. Later this week I'm attending the\n" +
+      "national BMES conference to present our team's project LymphSense, a $150\n" +
+      "prototype targeting the diagnostic capability of $4,000 clinical devices to\n" +
+      "catch early-onset lymphedema.\n" +
+      "\n" +
+      "I was [notable]\n" +
+      "\n" +
+      "I would love to meet with you sometime this Monday or Wednesday to learn more\n" +
+      "about how you got into MedTech, your recommendations for an aspiring student,\n" +
+      "and if there are any opportunities for the summer of 2027.\n" +
       "\n" +
       "Best,\n" +
       "Alex Fu"
@@ -5688,7 +5693,7 @@
       var next = {
         name: nameOf(c), company: c.company || "", channel: c.channel || "",
         to: t.via === "email" ? t.value : "",
-        profileUrl: t.via === "linkedin" ? t.value : "",
+        profileUrl: OB_PAGE_VIA[t.via] ? t.value : "",
         draftText: d.text, source: d.source,
         subject: s.subject, body: unwrapParagraphs(s.body)
       };
@@ -5777,6 +5782,14 @@
   // Which templates open with a Subject: line. The LinkedIn three don't —
   // a connection request has no subject field to put one in.
   var EMAIL_TPL_KINDS = { outreach: 1, outreachBU: 1, outreachField: 1, followup: 1 };
+  // Handles that are a page to open (copy the note, then open), not an inbox.
+  var OB_PAGE_VIA = { linkedin: 1, portal: 1 };
+  // What a row or card calls its channel. A meeting request is neither email
+  // nor LinkedIn, so it says so rather than borrowing one of their names.
+  function obViaLabel(kind, isEmail) {
+    if (kind === "meetingReq") return "Event app";
+    return isEmail ? "Email" : "LinkedIn";
+  }
 
   // A sign-off keeps the break after it, so the name stays on its own line.
   var OB_SIGNOFF = /^(best|thanks|thank you|regards|best regards|cheers|sincerely)[,!.]?$/i;
@@ -5805,6 +5818,8 @@
   // ♻ Repopulate. Two copies of this string would drift and the button would
   // quietly stop appearing.
   var OB_PLACEHOLDER_WHY = "the draft still has an unfilled [placeholder] in it";
+  // Placeholders the card warns about but the queue doesn't block on.
+  var OB_SOFT_PLACEHOLDER = ["[notable]"];
 
   // Which placeholders a draft still carries, named rather than counted —
   // "[internship]" tells you to go fill in the company's role; "1 placeholder"
@@ -5825,6 +5840,12 @@
     var isEmail = /\S+@\S+/.test(h);
     var isLi = /linkedin\.com\/in\//i.test(h);
     if (!h) return { ok: false, why: "no address or profile link on file" };
+    // A conference meeting request goes out in the event app, so its handle is
+    // that person's page there (where the Message button is), not an inbox.
+    if (isMeetingRequest(c)) {
+      if (/^https?:\/\//i.test(h)) return { ok: true, via: "portal", value: h };
+      return { ok: false, why: "a Meeting Request needs their event-app page URL as the handle" };
+    }
     if (isLinkedInContact(c)) {
       if (isLi) return { ok: true, via: "linkedin", value: h };
       if (isEmail) return { ok: false, why: "channel is LinkedIn but the handle is an email address" };
@@ -5854,14 +5875,18 @@
     var blockers = [];
     if (!t.ok) blockers.push(t.why);
     if (s.warn) blockers.push(s.warn);
-    if (OB_PLACEHOLDER.test(s.subject) || OB_PLACEHOLDER.test(s.body)) {
+    // [notable] is the line you write per company on the card itself, so it
+    // can't stop the row being staged. It still shows as unfilled on the card.
+    var blocking = missingPlaceholders(s.subject + "\n" + s.body)
+      .filter(function (p) { return OB_SOFT_PLACEHOLDER.indexOf(p) === -1; });
+    if (blocking.length) {
       blockers.push(OB_PLACEHOLDER_WHY);
     }
     return {
       id: c.id, contact: c, kind: kind, group: group,
       via: t.via || (isLinkedInContact(c) ? "linkedin" : "email"),
       to: t.via === "email" ? t.value : "",
-      profileUrl: t.via === "linkedin" ? t.value : "",
+      profileUrl: OB_PAGE_VIA[t.via] ? t.value : "",
       subject: s.subject, body: s.body, source: d.source, raw: d.text,
       blockers: blockers, use: blockers.length === 0, open: false
     };
@@ -5957,7 +5982,7 @@
           (r.use ? " checked" : "") + (blocked ? " disabled" : "") + ">" +
           '<span class="who"><span class="nm">' + escapeHtml(nameOf(c)) + "</span> " +
           '<span class="vb' + (r.via === "linkedin" ? "" : " ok") + '">' +
-          (r.via === "linkedin" ? "LinkedIn" : "Email") + "</span> " +
+          obViaLabel(r.kind, r.via === "email") + "</span> " +
           '<span class="vb none">' + escapeHtml(r.kind) + "</span>" +
           '<button type="button" class="ob-eye" data-eye="' + r.i + '">' +
           (r.open ? "▾ hide" : "👁 preview") + "</button>" +
@@ -6059,7 +6084,7 @@
       h += '<div class="dk-head"><span class="nm">' + escapeHtml(job.name || "(no name)") +
         '</span> <span class="ti">' + escapeHtml(job.company || "") + "</span> " +
         '<span class="vb' + (isEmail ? " ok" : "") + '">' +
-        (isEmail ? "Email" : "LinkedIn") + "</span> " +
+        obViaLabel(job.kind, isEmail) + "</span> " +
         '<span class="vb none">' + escapeHtml(job.kind) + "</span>" +
         (job.source === "workspace"
           ? ' <span class="ob-src">your Workspace text</span>' : "") +
@@ -6108,7 +6133,7 @@
               : "")
           : '<button type="button" class="secondary" id="dkBoth">📋🔗 Copy &amp; open</button>') +
         '<button type="button" class="secondary" id="dkOpen">' +
-        (isEmail ? "✉ Open compose" : "🔗 Open profile") + "</button>" +
+        (isEmail ? "✉ Open compose" : job.kind === "meetingReq" ? "🔗 Open their page" : "🔗 Open profile") + "</button>" +
         '<button type="button" class="secondary" id="dkRepop">♻ Repopulate</button>' +
         '<span class="dk-right">' +
         '<button type="button" class="primary" id="dkSent">✓ Sent — next</button>' +

@@ -1042,9 +1042,16 @@ already did the work of saying who you are.
 A contact whose role is exactly `Meeting Request` gets a ninth template,
 `meetingReq` (**Settings → Conference meeting request**), whatever its channel.
 It's written for the event app's meeting-request box, so it has no Subject line.
-It carries a literal `[notable]` for the one line you write per company; the
-send queue blocks on it like any other unfilled placeholder. Every other role
+It carries a literal `[notable]` for the one line you write per company. Unlike
+the other placeholders it doesn't stop a row being staged, because the card is
+where you write it; the card still flags it as unfilled. Every other role
 routes exactly as before, and follow-ups are unchanged.
+
+In the send queue a Meeting Request's handle is their page in the event app
+(e.g. `https://connect-v3.jujama.com/Attendee/Details?PersonId=…`), labelled
+**Event app**. **🔗 Open their page** opens it, so you can hit Message there and
+paste. A Meeting Request with anything other than a URL as its handle is blocked
+with a reason.
 
 #### The applied / not-applied fork is gone
 
