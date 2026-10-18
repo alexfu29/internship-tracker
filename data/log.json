@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-10-18T22:22:36.652Z",
+  "updated": "2026-10-18T22:22:52.699Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -3023,13 +3023,15 @@
       "email": "https://connect-v3.jujama.com/Attendee/Details?PersonId=2436599&from=MeetingBlast",
       "date": "",
       "note": "Vice President Cardiovascular Surgery · CE-hospital · MedTech portal: https://connect-v3.jujama.com/Attendee/AttendeeProfile?personId=2436599",
-      "responded": true,
-      "respondedOn": "2026-10-18",
+      "responded": false,
+      "respondedOn": null,
       "meetingOn": null,
-      "nudgedOn": [],
+      "nudgedOn": [
+        "2026-10-18"
+      ],
       "closed": false,
       "deleted": false,
-      "updated": "2026-10-18T22:22:36.652Z",
+      "updated": "2026-10-18T22:22:52.699Z",
       "workspace": "Hi Cynthia,\n\nI'm Alex Fu, a sophomore at BU interested in biomechanical engineering and\nclinical engineering.\n\nI'm at the MedTech conference this week. Later this week I'm attending the\nnational BMES conference to present our team's project LymphSense, a $150\nprototype targeting the diagnostic capability of $4,000 clinical devices to\ncatch early-onset lymphedema.\n\nI saw Getinge at the Biotech Conference and few weeks ago and would love to connect with you. I was only able to talk to the biotechnology department, so I’d love to learn more about your Medical Devices department.\n\nI would love to meet with you sometime this Monday or Wednesday to learn more\nabout how you got into the field, your recommendations for an aspiring student,\nand if there are any opportunities for the summer of 2027.\n\nBest,\nAlex Fu",
       "events": [
         "mtc26"
