@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-10-15T13:42:30.667Z",
+  "updated": "2026-10-18T17:19:03.295Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -1270,6 +1270,506 @@
       "deleted": false,
       "workspace": "",
       "updated": "2026-10-09T02:31:36.109Z"
+    },
+    "mve3b1q7-jssmw7": {
+      "name": "Chanda Owens",
+      "company": "iRhythm Technologies",
+      "role": "Meeting Request",
+      "channel": "Other",
+      "email": "",
+      "date": "",
+      "note": "SVP, Quality & Regulatory · MedTech portal: https://connect-v3.jujama.com/Attendee/AttendeeProfile?personId=2434256",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "nudgedOn": [],
+      "closed": false,
+      "deleted": false,
+      "updated": "2026-10-18T17:19:03.295Z",
+      "workspace": "",
+      "events": [
+        "mtc26"
+      ]
+    },
+    "mve3b1q8-vyd56t": {
+      "name": "Vesna Socava-Lile",
+      "company": "iRhythm Technologies",
+      "role": "Meeting Request",
+      "channel": "Other",
+      "email": "",
+      "date": "",
+      "note": "Regulatory Compliance · MedTech portal: https://connect-v3.jujama.com/Attendee/AttendeeProfile?personId=2438760",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "nudgedOn": [],
+      "closed": false,
+      "deleted": false,
+      "updated": "2026-10-18T17:19:03.296Z",
+      "workspace": "",
+      "events": [
+        "mtc26"
+      ]
+    },
+    "mve3b1q9-7nlrbv": {
+      "name": "Truman Pierson",
+      "company": "Theta Neurotech",
+      "role": "Meeting Request",
+      "channel": "Other",
+      "email": "",
+      "date": "",
+      "note": "Co-Founder & CEO · MedTech portal: https://connect-v3.jujama.com/Attendee/AttendeeProfile?personId=2415500",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "nudgedOn": [],
+      "closed": false,
+      "deleted": false,
+      "updated": "2026-10-18T17:19:03.297Z",
+      "workspace": "",
+      "events": [
+        "mtc26"
+      ]
+    },
+    "mve3b1qa-da91ps": {
+      "name": "Samara Barend",
+      "company": "AION Biosystems",
+      "role": "Meeting Request",
+      "channel": "Other",
+      "email": "",
+      "date": "",
+      "note": "CEO · MedTech portal: https://connect-v3.jujama.com/Attendee/AttendeeProfile?personId=2414948",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "nudgedOn": [],
+      "closed": false,
+      "deleted": false,
+      "updated": "2026-10-18T17:19:03.298Z",
+      "workspace": "",
+      "events": [
+        "mtc26"
+      ]
+    },
+    "mve3b1qb-mmdkpy": {
+      "name": "Oisín McGrath",
+      "company": "Galenband",
+      "role": "Meeting Request",
+      "channel": "Other",
+      "email": "",
+      "date": "",
+      "note": "Co-Founder · MedTech portal: https://connect-v3.jujama.com/Attendee/AttendeeProfile?personId=2415138",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "nudgedOn": [],
+      "closed": false,
+      "deleted": false,
+      "updated": "2026-10-18T17:19:03.299Z",
+      "workspace": "",
+      "events": [
+        "mtc26"
+      ]
+    },
+    "mve3b1qc-0j9trk": {
+      "name": "Eddie McDaid",
+      "company": "Galenband",
+      "role": "Meeting Request",
+      "channel": "Other",
+      "email": "",
+      "date": "",
+      "note": "CEO · MedTech portal: https://connect-v3.jujama.com/Attendee/AttendeeProfile?personId=2415137",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "nudgedOn": [],
+      "closed": false,
+      "deleted": false,
+      "updated": "2026-10-18T17:19:03.300Z",
+      "workspace": "",
+      "events": [
+        "mtc26"
+      ]
+    },
+    "mve3b1qd-btkg8p": {
+      "name": "John Grant",
+      "company": "Senphonix",
+      "role": "Meeting Request",
+      "channel": "Other",
+      "email": "",
+      "date": "",
+      "note": "Co-CEO · MedTech portal: https://connect-v3.jujama.com/Attendee/AttendeeProfile?personId=2415428",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "nudgedOn": [],
+      "closed": false,
+      "deleted": false,
+      "updated": "2026-10-18T17:19:03.301Z",
+      "workspace": "",
+      "events": [
+        "mtc26"
+      ]
+    },
+    "mve3b1qe-f15r89": {
+      "name": "Michael Haldane",
+      "company": "Senphonix",
+      "role": "Meeting Request",
+      "channel": "Other",
+      "email": "",
+      "date": "",
+      "note": "Co-CEO · MedTech portal: https://connect-v3.jujama.com/Attendee/AttendeeProfile?personId=2415429",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "nudgedOn": [],
+      "closed": false,
+      "deleted": false,
+      "updated": "2026-10-18T17:19:03.302Z",
+      "workspace": "",
+      "events": [
+        "mtc26"
+      ]
+    },
+    "mve3b1qf-xf61x5": {
+      "name": "Joe McClung",
+      "company": "Sensor Therapeutics",
+      "role": "Meeting Request",
+      "channel": "Other",
+      "email": "",
+      "date": "",
+      "note": "President & CEO · MedTech portal: https://connect-v3.jujama.com/Attendee/AttendeeProfile?personId=2423779",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "nudgedOn": [],
+      "closed": false,
+      "deleted": false,
+      "updated": "2026-10-18T17:19:03.303Z",
+      "workspace": "",
+      "events": [
+        "mtc26"
+      ]
+    },
+    "mve3b1qg-m4086x": {
+      "name": "Ben Carter",
+      "company": "OmniBuds",
+      "role": "Meeting Request",
+      "channel": "Other",
+      "email": "",
+      "date": "",
+      "note": "CEO · MedTech portal: https://connect-v3.jujama.com/Attendee/AttendeeProfile?personId=2415353",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "nudgedOn": [],
+      "closed": false,
+      "deleted": false,
+      "updated": "2026-10-18T17:19:03.304Z",
+      "workspace": "",
+      "events": [
+        "mtc26"
+      ]
+    },
+    "mve3b1qh-2t3t3u": {
+      "name": "James Stefansic",
+      "company": "OmniBuds",
+      "role": "Meeting Request",
+      "channel": "Other",
+      "email": "",
+      "date": "",
+      "note": "COO · MedTech portal: https://connect-v3.jujama.com/Attendee/AttendeeProfile?personId=2423797",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "nudgedOn": [],
+      "closed": false,
+      "deleted": false,
+      "updated": "2026-10-18T17:19:03.305Z",
+      "workspace": "",
+      "events": [
+        "mtc26"
+      ]
+    },
+    "mve3b1qi-0v9gkq": {
+      "name": "Jennifer Landis",
+      "company": "ZOLL",
+      "role": "Meeting Request",
+      "channel": "Other",
+      "email": "",
+      "date": "",
+      "note": "VP, Corporate Development & Strategy · MedTech portal: https://connect-v3.jujama.com/Attendee/AttendeeProfile?personId=2420635",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "nudgedOn": [],
+      "closed": false,
+      "deleted": false,
+      "updated": "2026-10-18T17:19:03.306Z",
+      "workspace": "",
+      "events": [
+        "mtc26"
+      ]
+    },
+    "mve3b1qj-k6ssr9": {
+      "name": "Richard Hanbury",
+      "company": "Sana Health",
+      "role": "Meeting Request",
+      "channel": "Other",
+      "email": "",
+      "date": "",
+      "note": "CEO · MedTech portal: https://connect-v3.jujama.com/Attendee/AttendeeProfile?personId=2438417",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "nudgedOn": [],
+      "closed": false,
+      "deleted": false,
+      "updated": "2026-10-18T17:19:03.307Z",
+      "workspace": "",
+      "events": [
+        "mtc26"
+      ]
+    },
+    "mve3b1qk-levdqe": {
+      "name": "Anna Lisa Somera",
+      "company": "Rhaeos",
+      "role": "Meeting Request",
+      "channel": "Other",
+      "email": "",
+      "date": "",
+      "note": "Founder & Chief Strategy Officer · MedTech portal: https://connect-v3.jujama.com/Attendee/AttendeeProfile?personId=2424242",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "nudgedOn": [],
+      "closed": false,
+      "deleted": false,
+      "updated": "2026-10-18T17:19:03.308Z",
+      "workspace": "",
+      "events": [
+        "mtc26"
+      ]
+    },
+    "mve3b1ql-a4j634": {
+      "name": "Karny Ilan",
+      "company": "Feminai",
+      "role": "Meeting Request",
+      "channel": "Other",
+      "email": "",
+      "date": "",
+      "note": "CEO · MedTech portal: https://connect-v3.jujama.com/Attendee/AttendeeProfile?personId=2415119",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "nudgedOn": [],
+      "closed": false,
+      "deleted": false,
+      "updated": "2026-10-18T17:19:03.309Z",
+      "workspace": "",
+      "events": [
+        "mtc26"
+      ]
+    },
+    "mve3b1qm-acbqre": {
+      "name": "Uroš Kuzmanovic",
+      "company": "BioSens8",
+      "role": "Meeting Request",
+      "channel": "Other",
+      "email": "",
+      "date": "",
+      "note": "CEO & Founder · MedTech portal: https://connect-v3.jujama.com/Attendee/AttendeeProfile?personId=2415010",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "nudgedOn": [],
+      "closed": false,
+      "deleted": false,
+      "updated": "2026-10-18T17:19:03.310Z",
+      "workspace": "",
+      "events": [
+        "mtc26"
+      ]
+    },
+    "mve3b1qn-9bgzyy": {
+      "name": "Neda Razavi",
+      "company": "iSono Health",
+      "role": "Meeting Request",
+      "channel": "Other",
+      "email": "",
+      "date": "",
+      "note": "CEO · MedTech portal: https://connect-v3.jujama.com/Attendee/AttendeeProfile?personId=2415214",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "nudgedOn": [],
+      "closed": false,
+      "deleted": false,
+      "updated": "2026-10-18T17:19:03.311Z",
+      "workspace": "",
+      "events": [
+        "mtc26"
+      ]
+    },
+    "mve3b1qo-xnooft": {
+      "name": "Zara Hashim-Naqvi",
+      "company": "iSono Health",
+      "role": "Meeting Request",
+      "channel": "Other",
+      "email": "",
+      "date": "",
+      "note": "Clinical Operations Lead · MedTech portal: https://connect-v3.jujama.com/Attendee/AttendeeProfile?personId=2434592",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "nudgedOn": [],
+      "closed": false,
+      "deleted": false,
+      "updated": "2026-10-18T17:19:03.312Z",
+      "workspace": "",
+      "events": [
+        "mtc26"
+      ]
+    },
+    "mve3b1qp-19s9ko": {
+      "name": "Clint Johnson",
+      "company": "Dexcom",
+      "role": "Meeting Request",
+      "channel": "Other",
+      "email": "",
+      "date": "",
+      "note": "Sr Manager, Talent Acquisition · MedTech portal: https://connect-v3.jujama.com/Attendee/AttendeeProfile?personId=2438378",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "nudgedOn": [],
+      "closed": false,
+      "deleted": false,
+      "updated": "2026-10-18T17:19:03.313Z",
+      "workspace": "",
+      "events": [
+        "mtc26"
+      ]
+    },
+    "mve3b1qq-v2ez0i": {
+      "name": "Mark Juravic",
+      "company": "Dexcom",
+      "role": "Meeting Request",
+      "channel": "Other",
+      "email": "",
+      "date": "",
+      "note": "Director of New Business Development · MedTech portal: https://connect-v3.jujama.com/Attendee/AttendeeProfile?personId=2436608",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "nudgedOn": [],
+      "closed": false,
+      "deleted": false,
+      "updated": "2026-10-18T17:19:03.314Z",
+      "workspace": "",
+      "events": [
+        "mtc26"
+      ]
+    },
+    "mve3b1qr-ifxtlk": {
+      "name": "Thomas Nichols",
+      "company": "Pretika (OptixDX)",
+      "role": "Meeting Request",
+      "channel": "Other",
+      "email": "",
+      "date": "",
+      "note": "CEO · MedTech portal: https://connect-v3.jujama.com/Attendee/AttendeeProfile?personId=2436710",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "nudgedOn": [],
+      "closed": false,
+      "deleted": false,
+      "updated": "2026-10-18T17:19:03.315Z",
+      "workspace": "",
+      "events": [
+        "mtc26"
+      ]
+    },
+    "mve3b1qs-gv913v": {
+      "name": "Curtis King",
+      "company": "RestorEAR Devices",
+      "role": "Meeting Request",
+      "channel": "Other",
+      "email": "",
+      "date": "",
+      "note": "CEO · MedTech portal: https://connect-v3.jujama.com/Attendee/AttendeeProfile?personId=2427307",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "nudgedOn": [],
+      "closed": false,
+      "deleted": false,
+      "updated": "2026-10-18T17:19:03.316Z",
+      "workspace": "",
+      "events": [
+        "mtc26"
+      ]
+    },
+    "mve3b1qt-2wjgk8": {
+      "name": "William Warner",
+      "company": "Dartmouth College",
+      "role": "Meeting Request",
+      "channel": "Other",
+      "email": "",
+      "date": "",
+      "note": "Postdoctoral Researcher · MedTech portal: https://connect-v3.jujama.com/Attendee/AttendeeProfile?personId=2452755",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "nudgedOn": [],
+      "closed": false,
+      "deleted": false,
+      "updated": "2026-10-18T17:19:03.317Z",
+      "workspace": "",
+      "events": [
+        "mtc26"
+      ]
+    },
+    "mve3b1qu-ff7f8d": {
+      "name": "Don Castle",
+      "company": "Dartmouth College",
+      "role": "Meeting Request",
+      "channel": "Other",
+      "email": "",
+      "date": "",
+      "note": "Director for Industry Partnerships · MedTech portal: https://connect-v3.jujama.com/Attendee/AttendeeProfile?personId=2429026",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "nudgedOn": [],
+      "closed": false,
+      "deleted": false,
+      "updated": "2026-10-18T17:19:03.318Z",
+      "workspace": "",
+      "events": [
+        "mtc26"
+      ]
+    },
+    "mve3b1qv-xuuizl": {
+      "name": "Ruben D Flores Saaib",
+      "company": "Regain BioMedicals",
+      "role": "Meeting Request",
+      "channel": "Other",
+      "email": "",
+      "date": "",
+      "note": "CEO · MedTech portal: https://connect-v3.jujama.com/Attendee/AttendeeProfile?personId=2436713",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "nudgedOn": [],
+      "closed": false,
+      "deleted": false,
+      "updated": "2026-10-18T17:19:03.319Z",
+      "workspace": "",
+      "events": [
+        "mtc26"
+      ]
     }
   },
   "apps": {

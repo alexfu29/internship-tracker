@@ -1037,6 +1037,15 @@ the draft follows; ♻ Repopulate rewrites an existing one to match.
 **Follow-ups are one each**, unchanged — by the time you're chasing, the opener
 already did the work of saying who you are.
 
+#### Conference meeting requests
+
+A contact whose role is exactly `Meeting Request` gets a ninth template,
+`meetingReq` (**Settings → Conference meeting request**), whatever its channel.
+It's written for the event app's meeting-request box, so it has no Subject line.
+It carries a literal `[notable]` for the one line you write per company; the
+send queue blocks on it like any other unfilled placeholder. Every other role
+routes exactly as before, and follow-ups are unchanged.
+
 #### The applied / not-applied fork is gone
 
 The LinkedIn opener used to have two versions and the **Companies** table chose
