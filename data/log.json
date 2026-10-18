@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-10-18T21:01:46.771Z",
+  "updated": "2026-10-18T21:02:11.141Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -1764,10 +1764,12 @@
       "responded": false,
       "respondedOn": null,
       "meetingOn": null,
-      "nudgedOn": [],
+      "nudgedOn": [
+        "2026-10-18"
+      ],
       "closed": false,
       "deleted": false,
-      "updated": "2026-10-18T20:54:16.615Z",
+      "updated": "2026-10-18T21:02:11.141Z",
       "workspace": "Hi Ruben,\n\nI'm Alex Fu, a sophomore at BU interested in non-invasive MedTech and\nhuman-machine interaction. \n\nI'm at the MedTech conference this week. Later this week I'm attending the national BMES conference to present our team's project LymphSense, a $150 prototype targeting the diagnostic capability of $4,000 clinical devices to catch early-onset lymphedema. I was impressed by the efficacy and compactness of GRACE.\n\nI would love to meet with you anytime Monday 11-5 or Wednesday 9-11 to\nlearn more about how you got into MedTech, your recommendations for an aspiring student, and if there are any opportunities for the summer of 2027.\n\nLet me know what time and place works for you.\n\nBest,\nAlex Fu\n",
       "events": [
         "mtc26"
