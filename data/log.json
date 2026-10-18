@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-10-18T21:28:05.997Z",
+  "updated": "2026-10-18T21:34:50.810Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -3170,6 +3170,266 @@
       "closed": false,
       "deleted": false,
       "updated": "2026-10-18T21:28:06.064Z",
+      "workspace": "",
+      "events": [
+        "mtc26"
+      ]
+    },
+    "mvecg000-liw9nu": {
+      "name": "Gavin Braithwaite",
+      "company": "Cambridge Polymer Group",
+      "role": "Meeting Request",
+      "channel": "Other",
+      "email": "https://connect-v3.jujama.com/Attendee/Details?PersonId=2435392&from=MeetingBlast",
+      "date": "",
+      "note": "CEO · Biomech · MedTech portal: https://connect-v3.jujama.com/Attendee/AttendeeProfile?personId=2435392",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "nudgedOn": [],
+      "closed": false,
+      "deleted": false,
+      "updated": "2026-10-18T21:34:50.880Z",
+      "workspace": "",
+      "events": [
+        "mtc26"
+      ]
+    },
+    "mvecg001-fn8lj0": {
+      "name": "Becky Bader",
+      "company": "Cambridge Polymer Group",
+      "role": "Meeting Request",
+      "channel": "Other",
+      "email": "https://connect-v3.jujama.com/Attendee/Details?PersonId=2435391&from=MeetingBlast",
+      "date": "",
+      "note": "Director of Regulatory Services · Biomech · MedTech portal: https://connect-v3.jujama.com/Attendee/AttendeeProfile?personId=2435391",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "nudgedOn": [],
+      "closed": false,
+      "deleted": false,
+      "updated": "2026-10-18T21:34:50.881Z",
+      "workspace": "",
+      "events": [
+        "mtc26"
+      ]
+    },
+    "mvecg002-k28fdc": {
+      "name": "David Gramse",
+      "company": "ATEC Spine",
+      "role": "Meeting Request",
+      "channel": "Other",
+      "email": "https://connect-v3.jujama.com/Attendee/Details?PersonId=2414978&from=MeetingBlast",
+      "date": "",
+      "note": "Sr. Director, Regulatory & Clinical Affairs · Biomech · MedTech portal: https://connect-v3.jujama.com/Attendee/AttendeeProfile?personId=2414978",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "nudgedOn": [],
+      "closed": false,
+      "deleted": false,
+      "updated": "2026-10-18T21:34:50.882Z",
+      "workspace": "",
+      "events": [
+        "mtc26"
+      ]
+    },
+    "mvecg003-dq5w3d": {
+      "name": "Sam Talwar",
+      "company": "CeramTec",
+      "role": "Meeting Request",
+      "channel": "Other",
+      "email": "https://connect-v3.jujama.com/Attendee/Details?PersonId=2421987&from=MeetingBlast",
+      "date": "",
+      "note": "Senior Business Development Manager · Biomech · MedTech portal: https://connect-v3.jujama.com/Attendee/AttendeeProfile?personId=2421987",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "nudgedOn": [],
+      "closed": false,
+      "deleted": false,
+      "updated": "2026-10-18T21:34:50.883Z",
+      "workspace": "",
+      "events": [
+        "mtc26"
+      ]
+    },
+    "mvecg004-6xqk4p": {
+      "name": "Roger Bagwell",
+      "company": "Actuated Medical",
+      "role": "Meeting Request",
+      "channel": "Other",
+      "email": "https://connect-v3.jujama.com/Attendee/Details?PersonId=2432598&from=MeetingBlast",
+      "date": "",
+      "note": "Director, Neural Device Ops, Co-Founder · Biomech · MedTech portal: https://connect-v3.jujama.com/Attendee/AttendeeProfile?personId=2432598",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "nudgedOn": [],
+      "closed": false,
+      "deleted": false,
+      "updated": "2026-10-18T21:34:50.884Z",
+      "workspace": "",
+      "events": [
+        "mtc26"
+      ]
+    },
+    "mvecg005-ksoaua": {
+      "name": "Maureen L. Mulvihill",
+      "company": "Actuated Medical",
+      "role": "Meeting Request",
+      "channel": "Other",
+      "email": "https://connect-v3.jujama.com/Attendee/Details?PersonId=2423775&from=MeetingBlast",
+      "date": "",
+      "note": "President and CEO · Biomech · MedTech portal: https://connect-v3.jujama.com/Attendee/AttendeeProfile?personId=2423775",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "nudgedOn": [],
+      "closed": false,
+      "deleted": false,
+      "updated": "2026-10-18T21:34:50.885Z",
+      "workspace": "",
+      "events": [
+        "mtc26"
+      ]
+    },
+    "mvecg006-m45261": {
+      "name": "Yi-Kai Lo",
+      "company": "ANEUVO",
+      "role": "Meeting Request",
+      "channel": "Other",
+      "email": "https://connect-v3.jujama.com/Attendee/Details?PersonId=2416407&from=MeetingBlast",
+      "date": "",
+      "note": "CEO · Biomech · MedTech portal: https://connect-v3.jujama.com/Attendee/AttendeeProfile?personId=2416407",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "nudgedOn": [],
+      "closed": false,
+      "deleted": false,
+      "updated": "2026-10-18T21:34:50.886Z",
+      "workspace": "",
+      "events": [
+        "mtc26"
+      ]
+    },
+    "mvecg007-rz8zo1": {
+      "name": "Thomas Mayer",
+      "company": "maxon",
+      "role": "Meeting Request",
+      "channel": "Other",
+      "email": "https://connect-v3.jujama.com/Attendee/Details?PersonId=2415275&from=MeetingBlast",
+      "date": "",
+      "note": "Head of Business Unit - Medical · Biomech · MedTech portal: https://connect-v3.jujama.com/Attendee/AttendeeProfile?personId=2415275",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "nudgedOn": [],
+      "closed": false,
+      "deleted": false,
+      "updated": "2026-10-18T21:34:50.887Z",
+      "workspace": "",
+      "events": [
+        "mtc26"
+      ]
+    },
+    "mvecg008-ko799r": {
+      "name": "Yan Zhao",
+      "company": "Drive Medical",
+      "role": "Meeting Request",
+      "channel": "Other",
+      "email": "https://connect-v3.jujama.com/Attendee/Details?PersonId=2415083&from=MeetingBlast",
+      "date": "",
+      "note": "CEO · CE-hospital · MedTech portal: https://connect-v3.jujama.com/Attendee/AttendeeProfile?personId=2415083",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "nudgedOn": [],
+      "closed": false,
+      "deleted": false,
+      "updated": "2026-10-18T21:34:50.888Z",
+      "workspace": "",
+      "events": [
+        "mtc26"
+      ]
+    },
+    "mvecg009-k4o0ne": {
+      "name": "Todd Konieczny",
+      "company": "Intertek",
+      "role": "Meeting Request",
+      "channel": "Other",
+      "email": "https://connect-v3.jujama.com/Attendee/Details?PersonId=2449610&from=MeetingBlast",
+      "date": "",
+      "note": "Regional Quality Manager · CE-hospital · MedTech portal: https://connect-v3.jujama.com/Attendee/AttendeeProfile?personId=2449610",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "nudgedOn": [],
+      "closed": false,
+      "deleted": false,
+      "updated": "2026-10-18T21:34:50.889Z",
+      "workspace": "",
+      "events": [
+        "mtc26"
+      ]
+    },
+    "mvecg00a-7tdl2r": {
+      "name": "Stephanie Pitts",
+      "company": "B. Braun",
+      "role": "Meeting Request",
+      "channel": "Other",
+      "email": "https://connect-v3.jujama.com/Attendee/Details?PersonId=2417010&from=MeetingBlast",
+      "date": "",
+      "note": "VP, Strategic Programs & Innovation · CE-hospital · MedTech portal: https://connect-v3.jujama.com/Attendee/AttendeeProfile?personId=2417010",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "nudgedOn": [],
+      "closed": false,
+      "deleted": false,
+      "updated": "2026-10-18T21:34:50.890Z",
+      "workspace": "",
+      "events": [
+        "mtc26"
+      ]
+    },
+    "mvecg00b-acfaeh": {
+      "name": "Andrea Pedroza",
+      "company": "Houston Methodist",
+      "role": "Meeting Request",
+      "channel": "Other",
+      "email": "https://connect-v3.jujama.com/Attendee/Details?PersonId=2415185&from=MeetingBlast",
+      "date": "",
+      "note": "Manager - Translational Development · CE-hospital · MedTech portal: https://connect-v3.jujama.com/Attendee/AttendeeProfile?personId=2415185",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "nudgedOn": [],
+      "closed": false,
+      "deleted": false,
+      "updated": "2026-10-18T21:34:50.891Z",
+      "workspace": "",
+      "events": [
+        "mtc26"
+      ]
+    },
+    "mvecg00c-btl9z1": {
+      "name": "Marija Buchholz",
+      "company": "NAMSA",
+      "role": "Meeting Request",
+      "channel": "Other",
+      "email": "https://connect-v3.jujama.com/Attendee/Details?PersonId=2414871&from=MeetingBlast",
+      "date": "",
+      "note": "EVP Global Clinical and Consulting Services · CE-field · MedTech portal: https://connect-v3.jujama.com/Attendee/AttendeeProfile?personId=2414871",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "nudgedOn": [],
+      "closed": false,
+      "deleted": false,
+      "updated": "2026-10-18T21:34:50.892Z",
       "workspace": "",
       "events": [
         "mtc26"

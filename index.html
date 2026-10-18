@@ -1554,7 +1554,7 @@
      tell those apart from a change that genuinely didn't work. This string
      lives in the file being executed, so it cannot lie about which file that
      is. It's shown at the bottom of Settings. */
-  var APP_VERSION = "2026-10-18c";
+  var APP_VERSION = "2026-10-18d";
   var swReady = false, swCacheVersion = "", swNote = "";
 
   /* ============================================================
@@ -2106,9 +2106,12 @@
         "Ends Wed Oct 21, the day BMES starts: check whether the floor is open that day"
       ],
       targets: [
-        { group: "Wearables, sensing, non-invasive", names: ["iRhythm Technologies", "Dexcom", "Abbott", "Omnipod", "ZOLL", "ResMed", "Butterfly Network", "OmniBuds", "WearableDose", "iSono Health", "Sana Health", "Analog Devices", "maxon"] },
-        { group: "Design and engineering firms", names: ["Veranex", "Cambridge Design Partnership", "Bennu Product Development", "Priority Designs", "Cortex Design", "Simbex", "MIDI Medical Product Development", "Resonetics"] },
-        { group: "Large device makers", names: ["Boston Scientific", "Stryker", "Zimmer Biomet", "Smith+Nephew", "Edwards Lifesciences", "BD", "Baxter", "Terumo"] }
+        // Biomechanics + clinical engineering focus (Oct 18). The earlier
+        // wearables picks are in MedTech/medtech-ranked.md if you want them back.
+        { group: "Orthopedics and spine", names: ["Stryker", "Zimmer Biomet", "Smith+Nephew", "Johnson & Johnson MedTech", "Arthrex", "Globus Medical", "CONMED", "ATEC Spine", "Atlas Spine", "CytexOrtho", "Ossio", "OrthoSens", "OrthoPreserve", "Miach Orthopaedics", "Hyalex Orthopaedics"] },
+        { group: "Surgical and rehab robotics", names: ["Intuitive Surgical", "Medtronic", "THINK Surgical", "Distalmotion", "Panda Surgical", "PathKeeper Surgical", "AiM Medical Robotics", "Myomo", "ATDev"] },
+        { group: "Design firms and test labs", names: ["Cambridge Design Partnership", "Simbex", "Veranex", "Cambridge Polymer Group", "MET Laboratories", "UL Solutions"] },
+        { group: "Clinical engineering (hospital and field)", names: ["STERIS", "GE HealthCare", "Philips", "Siemens Healthineers", "Baxter", "Getinge", "Boston Children's Hospital", "Mass General Brigham", "Beth Israel Lahey Health"] }
       ]
     },
     {
