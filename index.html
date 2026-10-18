@@ -1554,7 +1554,7 @@
      tell those apart from a change that genuinely didn't work. This string
      lives in the file being executed, so it cannot lie about which file that
      is. It's shown at the bottom of Settings. */
-  var APP_VERSION = "2026-10-18d";
+  var APP_VERSION = "2026-10-18e";
   var swReady = false, swCacheVersion = "", swNote = "";
 
   /* ============================================================
@@ -2122,10 +2122,13 @@
         "Thu Oct 22: Exhibit Hall 8–11 am and 12:15–4:30 pm; 7–10 pm hosted university receptions",
         "Fri Oct 23: Exhibit Hall 8–11 am and 12–4:30 pm; Medtronic/BMES Student Design Competition 8:30 am–1:30 pm; Industry Mixer &amp; Panel 4:30–6 pm (ticketed)",
         "Sat Oct 24: Exhibit Hall 9 am–12 pm",
-        "Program is marked preliminary on bmes.org; no exhibitor list is published yet"
+        "Biomech picks: Wed Orlando Health Jewett Orthopedic tour ($15); Fri 8:30 Cybersecurity is Patient Safety (Julian Goldman, MGB); Fri 2:00 Orthopedic Devices (clashes with the Exponent/Orthofix industry panel); Sat 8:30 Gait, 12:30 Human Movement, 2:30 Biomedical Robotics",
+        "Industry Panel &amp; Mixer (Fri 4:30) is marked sold out. No clinical engineering track; Stryker, Zimmer, J&amp;J, Smith+Nephew and Intuitive aren't exhibiting. Details: BMES/bmes-ranked-biomech.md"
       ],
       targets: [
-        { group: "Known so far", names: ["Medtronic"] }
+        // Biomechanics + clinical engineering focus (Oct 18).
+        { group: "Companies and sponsors", names: ["Exponent", "Biodynamic Research Corporation", "Medtronic", "Orthofix", "Orlando Health", "Nemours Children's Health", "KLS Martin Group"] },
+        { group: "Government and labs", names: ["NIBIB", "NIST", "Mayo Clinic"] }
       ]
     }
   ];
