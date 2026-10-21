@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-10-21T14:41:28.679Z",
+  "updated": "2026-10-21T14:41:56.184Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -5132,6 +5132,52 @@
       "deleted": false,
       "workspace": "",
       "updated": "2026-10-21T14:41:28.679Z",
+      "events": [
+        "mtc26"
+      ]
+    },
+    "mvi80dhy-54q0mh": {
+      "company": "Goddard",
+      "priority": null,
+      "applied": false,
+      "coldEmailed": false,
+      "connected": false,
+      "outcome": "",
+      "outcomes": [],
+      "role": "",
+      "date": "2026-10-21",
+      "link": "",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "closed": false,
+      "deleted": false,
+      "workspace": "",
+      "updated": "2026-10-21T14:41:48.118Z",
+      "events": [
+        "mtc26"
+      ]
+    },
+    "mvi80jq0-k6hfc1": {
+      "company": "GE HealthCare",
+      "priority": null,
+      "applied": false,
+      "coldEmailed": false,
+      "connected": false,
+      "outcome": "",
+      "outcomes": [],
+      "role": "",
+      "date": "2026-10-21",
+      "link": "",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "closed": false,
+      "deleted": false,
+      "workspace": "",
+      "updated": "2026-10-21T14:41:56.184Z",
       "events": [
         "mtc26"
       ]
