@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-10-21T17:28:42.697Z",
+  "updated": "2026-10-21T18:06:17.667Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -3916,10 +3916,11 @@
       "workspace": "",
       "inviteAcceptedOn": null,
       "withdrawnOn": null,
-      "updated": "2026-10-21T17:28:42.697Z",
+      "updated": "2026-10-21T18:05:54.100Z",
       "events": [
         "biotech1009"
-      ]
+      ],
+      "muted": true
     },
     "mvidz0tc-pa7xmn": {
       "name": "Perry Pascasio",
@@ -3938,10 +3939,11 @@
       "workspace": "",
       "inviteAcceptedOn": null,
       "withdrawnOn": null,
-      "updated": "2026-10-21T17:28:42.697Z",
+      "updated": "2026-10-21T18:05:54.461Z",
       "events": [
         "biotech1009"
-      ]
+      ],
+      "muted": true
     },
     "mvidz0td-43joih": {
       "name": "Pratik Deolasi",
@@ -3960,10 +3962,11 @@
       "workspace": "",
       "inviteAcceptedOn": null,
       "withdrawnOn": null,
-      "updated": "2026-10-21T17:28:42.697Z",
+      "updated": "2026-10-21T18:05:54.754Z",
       "events": [
         "biotech1009"
-      ]
+      ],
+      "muted": true
     },
     "mvidz0te-iwnvha": {
       "name": "Brett Amendola",
@@ -3982,10 +3985,11 @@
       "workspace": "",
       "inviteAcceptedOn": null,
       "withdrawnOn": null,
-      "updated": "2026-10-21T17:28:42.697Z",
+      "updated": "2026-10-21T18:05:55.003Z",
       "events": [
         "biotech1009"
-      ]
+      ],
+      "muted": true
     },
     "mvidz0tf-2sywdd": {
       "name": "Areeb Haddad",
@@ -3999,15 +4003,16 @@
       "respondedOn": null,
       "meetingOn": null,
       "nudgedOn": [],
-      "closed": false,
+      "closed": true,
       "deleted": false,
       "workspace": "",
       "inviteAcceptedOn": null,
       "withdrawnOn": null,
-      "updated": "2026-10-21T17:28:42.697Z",
+      "updated": "2026-10-21T18:06:10.745Z",
       "events": [
         "biotech1009"
-      ]
+      ],
+      "withdrawMuted": true
     },
     "mvidz0tg-lj6g6v": {
       "name": "Tyler Ly",
@@ -4021,15 +4026,16 @@
       "respondedOn": null,
       "meetingOn": null,
       "nudgedOn": [],
-      "closed": false,
+      "closed": true,
       "deleted": false,
       "workspace": "",
       "inviteAcceptedOn": null,
       "withdrawnOn": null,
-      "updated": "2026-10-21T17:28:42.697Z",
+      "updated": "2026-10-21T18:06:12.416Z",
       "events": [
         "biotech1009"
-      ]
+      ],
+      "withdrawMuted": true
     },
     "mvidz0th-t97gl7": {
       "name": "Keith Kreyling",
@@ -4043,15 +4049,16 @@
       "respondedOn": null,
       "meetingOn": null,
       "nudgedOn": [],
-      "closed": false,
+      "closed": true,
       "deleted": false,
       "workspace": "",
       "inviteAcceptedOn": null,
       "withdrawnOn": null,
-      "updated": "2026-10-21T17:28:42.697Z",
+      "updated": "2026-10-21T18:06:17.667Z",
       "events": [
         "biotech1009"
-      ]
+      ],
+      "withdrawMuted": true
     },
     "mvidz0ti-7ks30r": {
       "name": "Rick Liebold",
@@ -4065,15 +4072,16 @@
       "respondedOn": null,
       "meetingOn": null,
       "nudgedOn": [],
-      "closed": false,
+      "closed": true,
       "deleted": false,
       "workspace": "",
       "inviteAcceptedOn": null,
       "withdrawnOn": null,
-      "updated": "2026-10-21T17:28:42.697Z",
+      "updated": "2026-10-21T18:06:17.493Z",
       "events": [
         "biotech1009"
-      ]
+      ],
+      "withdrawMuted": true
     },
     "mvidz0tj-d6jd2n": {
       "name": "David Peterson",
@@ -4087,15 +4095,16 @@
       "respondedOn": null,
       "meetingOn": null,
       "nudgedOn": [],
-      "closed": false,
+      "closed": true,
       "deleted": false,
       "workspace": "",
       "inviteAcceptedOn": null,
       "withdrawnOn": null,
-      "updated": "2026-10-21T17:28:42.697Z",
+      "updated": "2026-10-21T18:06:17.402Z",
       "events": [
         "biotech1009"
-      ]
+      ],
+      "withdrawMuted": true
     },
     "mvidz0tk-a8zvys": {
       "name": "Anoop Pal, Ph.D.",
@@ -4109,15 +4118,16 @@
       "respondedOn": null,
       "meetingOn": null,
       "nudgedOn": [],
-      "closed": false,
+      "closed": true,
       "deleted": false,
       "workspace": "",
       "inviteAcceptedOn": null,
       "withdrawnOn": null,
-      "updated": "2026-10-21T17:28:42.697Z",
+      "updated": "2026-10-21T18:06:17.212Z",
       "events": [
         "biotech1009"
-      ]
+      ],
+      "withdrawMuted": true
     },
     "mvidz0tl-t8vbts": {
       "name": "Brandon Vail",
@@ -4131,15 +4141,16 @@
       "respondedOn": null,
       "meetingOn": null,
       "nudgedOn": [],
-      "closed": false,
+      "closed": true,
       "deleted": false,
       "workspace": "",
       "inviteAcceptedOn": null,
       "withdrawnOn": null,
-      "updated": "2026-10-21T17:28:42.697Z",
+      "updated": "2026-10-21T18:06:17.049Z",
       "events": [
         "biotech1009"
-      ]
+      ],
+      "withdrawMuted": true
     },
     "mvidz0tm-pn3g39": {
       "name": "Ben Weisburd",
@@ -4158,10 +4169,11 @@
       "workspace": "",
       "inviteAcceptedOn": "2026-10-06",
       "withdrawnOn": null,
-      "updated": "2026-10-21T17:28:42.697Z",
+      "updated": "2026-10-21T18:05:57.904Z",
       "events": [
         "sundai"
-      ]
+      ],
+      "noteMuted": true
     },
     "mvidz0tn-pq9ilk": {
       "name": "Devarsh Ranpara",
@@ -4180,10 +4192,11 @@
       "workspace": "",
       "inviteAcceptedOn": "2026-10-05",
       "withdrawnOn": null,
-      "updated": "2026-10-21T17:28:42.697Z",
+      "updated": "2026-10-21T18:05:58.153Z",
       "events": [
         "sundai"
-      ]
+      ],
+      "noteMuted": true
     },
     "mvidz0to-e6v5cw": {
       "name": "Erick Oh",
@@ -4202,10 +4215,11 @@
       "workspace": "",
       "inviteAcceptedOn": "2026-10-05",
       "withdrawnOn": null,
-      "updated": "2026-10-21T17:28:42.697Z",
+      "updated": "2026-10-21T18:05:58.336Z",
       "events": [
         "sundai"
-      ]
+      ],
+      "noteMuted": true
     },
     "mvidz0tp-9rmlpm": {
       "name": "Abbas Madani",
@@ -4224,10 +4238,11 @@
       "workspace": "",
       "inviteAcceptedOn": "2026-10-05",
       "withdrawnOn": null,
-      "updated": "2026-10-21T17:28:42.697Z",
+      "updated": "2026-10-21T18:05:58.582Z",
       "events": [
         "sundai"
-      ]
+      ],
+      "noteMuted": true
     },
     "mvidz0tq-ea6qc4": {
       "name": "Joseph Stevenson",
@@ -4246,10 +4261,11 @@
       "workspace": "",
       "inviteAcceptedOn": "2026-10-05",
       "withdrawnOn": null,
-      "updated": "2026-10-21T17:28:42.697Z",
+      "updated": "2026-10-21T18:05:58.774Z",
       "events": [
         "sundai"
-      ]
+      ],
+      "noteMuted": true
     },
     "mvidz0tr-i9nz43": {
       "name": "Sasa Phanitsombat",
@@ -4268,10 +4284,11 @@
       "workspace": "",
       "inviteAcceptedOn": "2026-10-05",
       "withdrawnOn": null,
-      "updated": "2026-10-21T17:28:42.697Z",
+      "updated": "2026-10-21T18:05:58.977Z",
       "events": [
         "sundai"
-      ]
+      ],
+      "noteMuted": true
     },
     "mvidz0ts-6ng7oi": {
       "name": "Jason Morris",
@@ -4290,10 +4307,11 @@
       "workspace": "",
       "inviteAcceptedOn": "2026-10-05",
       "withdrawnOn": null,
-      "updated": "2026-10-21T17:28:42.697Z",
+      "updated": "2026-10-21T18:05:59.165Z",
       "events": [
         "sundai"
-      ]
+      ],
+      "noteMuted": true
     },
     "mvidz0tt-tg2lqo": {
       "name": "Franco Miguel Valencia",
@@ -4312,10 +4330,11 @@
       "workspace": "",
       "inviteAcceptedOn": "2026-10-05",
       "withdrawnOn": null,
-      "updated": "2026-10-21T17:28:42.697Z",
+      "updated": "2026-10-21T18:05:59.689Z",
       "events": [
         "sundai"
-      ]
+      ],
+      "noteMuted": true
     },
     "mvidz0tu-u7ok16": {
       "name": "Volodymyr Iermolaiev",
@@ -4334,10 +4353,11 @@
       "workspace": "",
       "inviteAcceptedOn": "2026-10-05",
       "withdrawnOn": null,
-      "updated": "2026-10-21T17:28:42.697Z",
+      "updated": "2026-10-21T18:05:59.957Z",
       "events": [
         "sundai"
-      ]
+      ],
+      "noteMuted": true
     },
     "mvidz0tv-rsin1s": {
       "name": "Samarth Srinivas",
@@ -4356,10 +4376,11 @@
       "workspace": "",
       "inviteAcceptedOn": "2026-10-04",
       "withdrawnOn": null,
-      "updated": "2026-10-21T17:28:42.697Z",
+      "updated": "2026-10-21T18:06:00.140Z",
       "events": [
         "sundai"
-      ]
+      ],
+      "noteMuted": true
     },
     "mvidz0tw-nynep9": {
       "name": "Hunter Harris",
@@ -4378,10 +4399,11 @@
       "workspace": "",
       "inviteAcceptedOn": "2026-10-04",
       "withdrawnOn": null,
-      "updated": "2026-10-21T17:28:42.697Z",
+      "updated": "2026-10-21T18:06:00.335Z",
       "events": [
         "sundai"
-      ]
+      ],
+      "noteMuted": true
     },
     "mvidz0tx-civbyx": {
       "name": "Jessica Myles",
@@ -4400,10 +4422,11 @@
       "workspace": "",
       "inviteAcceptedOn": "2026-10-04",
       "withdrawnOn": null,
-      "updated": "2026-10-21T17:28:42.697Z",
+      "updated": "2026-10-21T18:06:00.536Z",
       "events": [
         "sundai"
-      ]
+      ],
+      "noteMuted": true
     },
     "mvidz0ty-bqa6i5": {
       "name": "Eshan Vishwakarma",
@@ -4422,10 +4445,11 @@
       "workspace": "",
       "inviteAcceptedOn": "2026-10-04",
       "withdrawnOn": null,
-      "updated": "2026-10-21T17:28:42.697Z",
+      "updated": "2026-10-21T18:06:00.721Z",
       "events": [
         "sundai"
-      ]
+      ],
+      "noteMuted": true
     },
     "mvidz0tz-ow4kk0": {
       "name": "Samat Zharassov",
@@ -4444,10 +4468,11 @@
       "workspace": "",
       "inviteAcceptedOn": "2026-10-04",
       "withdrawnOn": null,
-      "updated": "2026-10-21T17:28:42.697Z",
+      "updated": "2026-10-21T18:06:02.501Z",
       "events": [
         "sundai"
-      ]
+      ],
+      "noteMuted": true
     }
   },
   "apps": {
