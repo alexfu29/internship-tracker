@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-10-18T22:40:53.625Z",
+  "updated": "2026-10-21T14:41:28.679Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -5066,6 +5066,75 @@
       "deleted": false,
       "workspace": "",
       "updated": "2026-10-15T13:42:30.667Z"
+    },
+    "mvi7zrdq-x8hnti": {
+      "company": "Veranex",
+      "priority": null,
+      "applied": false,
+      "coldEmailed": false,
+      "connected": false,
+      "outcome": "",
+      "outcomes": [],
+      "role": "",
+      "date": "2026-10-21",
+      "link": "",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "closed": false,
+      "deleted": false,
+      "workspace": "",
+      "updated": "2026-10-21T14:41:19.454Z",
+      "events": [
+        "mtc26"
+      ]
+    },
+    "mvi7ztdg-2b3t7s": {
+      "company": "Simbex",
+      "priority": null,
+      "applied": false,
+      "coldEmailed": false,
+      "connected": false,
+      "outcome": "",
+      "outcomes": [],
+      "role": "",
+      "date": "2026-10-21",
+      "link": "",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "closed": false,
+      "deleted": false,
+      "workspace": "",
+      "updated": "2026-10-21T14:41:22.036Z",
+      "events": [
+        "mtc26"
+      ]
+    },
+    "mvi7zyhz-0n0i4k": {
+      "company": "BoneScore",
+      "priority": null,
+      "applied": false,
+      "coldEmailed": false,
+      "connected": false,
+      "outcome": "",
+      "outcomes": [],
+      "role": "",
+      "date": "2026-10-21",
+      "link": "",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "closed": false,
+      "deleted": false,
+      "workspace": "",
+      "updated": "2026-10-21T14:41:28.679Z",
+      "events": [
+        "mtc26"
+      ]
     }
   }
 }
