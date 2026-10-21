@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-10-21T18:24:05.394Z",
+  "updated": "2026-10-21T18:47:27.538Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -6287,6 +6287,26 @@
       "events": [
         "mtc26"
       ]
+    },
+    "mvigryfl-qqx91c": {
+      "company": "Emvolon",
+      "priority": null,
+      "applied": true,
+      "coldEmailed": false,
+      "connected": false,
+      "outcome": "",
+      "outcomes": [],
+      "role": "",
+      "date": "2026-10-21",
+      "link": "",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "closed": false,
+      "deleted": false,
+      "workspace": "",
+      "updated": "2026-10-21T18:47:16.766Z"
     }
   }
 }
