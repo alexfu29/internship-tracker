@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-10-21T18:06:55.569Z",
+  "updated": "2026-10-21T18:08:32.000Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -1326,8 +1326,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T20:54:28.171Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -1346,8 +1346,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T17:44:50.490Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -1366,8 +1366,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T17:44:50.490Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -1386,8 +1386,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T17:44:50.490Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -1406,8 +1406,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T17:44:50.490Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -1426,8 +1426,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T17:44:50.490Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -1446,8 +1446,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T17:44:50.490Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -1466,8 +1466,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T17:44:50.490Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -1486,8 +1486,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T17:44:50.490Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -1506,8 +1506,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T17:44:50.490Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -1526,8 +1526,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T17:44:50.490Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -1546,8 +1546,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T17:44:50.490Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -1566,8 +1566,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T17:44:50.490Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -1586,8 +1586,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T17:44:50.490Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -1606,8 +1606,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T17:44:50.490Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -1626,8 +1626,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T17:44:50.490Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -1646,8 +1646,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T17:44:50.490Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -1666,8 +1666,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T17:44:50.490Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -1686,8 +1686,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T17:44:50.490Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -1788,8 +1788,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:28:05.995Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -1808,8 +1808,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:28:05.996Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -1828,8 +1828,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:28:05.997Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -1848,8 +1848,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:28:05.998Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -1868,8 +1868,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:28:05.999Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -1888,8 +1888,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:28:06.000Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -1908,8 +1908,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:28:06.001Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -1928,8 +1928,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:28:06.002Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -1948,8 +1948,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:28:06.003Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -1968,8 +1968,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:28:06.004Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -1988,8 +1988,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:28:06.005Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -2008,8 +2008,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:28:06.006Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -2028,8 +2028,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:28:06.007Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -2048,8 +2048,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:28:06.008Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -2068,8 +2068,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:28:06.009Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -2088,8 +2088,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:28:06.010Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -2108,8 +2108,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:28:06.011Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -2128,8 +2128,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:28:06.012Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -2148,8 +2148,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:28:06.013Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -2168,8 +2168,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:28:06.014Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -2188,8 +2188,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:28:06.015Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -2208,8 +2208,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:28:06.016Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -2228,8 +2228,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:28:06.017Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -2248,8 +2248,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:28:06.018Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -2268,8 +2268,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:28:06.019Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -2288,8 +2288,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:28:06.020Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -2308,8 +2308,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:28:06.021Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -2328,8 +2328,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:28:06.022Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -2348,8 +2348,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:28:06.023Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -2368,8 +2368,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:28:06.024Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -2388,8 +2388,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:28:06.025Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -2408,8 +2408,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:28:06.026Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -2428,8 +2428,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:28:06.027Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -2448,8 +2448,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:28:06.028Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -2468,8 +2468,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:28:06.029Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -2488,8 +2488,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:28:06.030Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -2508,8 +2508,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:28:06.031Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -2528,8 +2528,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:28:06.032Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -2548,8 +2548,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:28:06.033Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -2568,8 +2568,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:28:06.034Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -2588,8 +2588,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:28:06.035Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -2608,8 +2608,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:28:06.036Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -2628,8 +2628,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:28:06.037Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -2648,8 +2648,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:28:06.038Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -2668,8 +2668,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:28:06.039Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -2688,8 +2688,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:28:06.040Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -2708,8 +2708,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:28:06.041Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -2728,8 +2728,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:28:06.042Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -2748,8 +2748,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:28:06.043Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -2768,8 +2768,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:28:06.044Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -2788,8 +2788,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:28:06.045Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -2828,8 +2828,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:28:06.047Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -2848,8 +2848,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:28:06.048Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -2868,8 +2868,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:28:06.049Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -2888,8 +2888,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:28:06.050Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -2908,8 +2908,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:28:06.051Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -2928,8 +2928,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:28:06.052Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -2948,8 +2948,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:28:06.053Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -2968,8 +2968,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:28:06.054Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -2988,8 +2988,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:28:06.055Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -3008,8 +3008,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:28:06.056Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -3050,8 +3050,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:28:06.058Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -3070,8 +3070,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:28:06.059Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -3090,8 +3090,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:28:06.060Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -3110,8 +3110,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:28:06.061Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -3130,8 +3130,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:28:06.062Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -3150,8 +3150,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:28:06.063Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -3170,8 +3170,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:28:06.064Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -3190,8 +3190,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:34:50.880Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -3210,8 +3210,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:34:50.881Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -3230,8 +3230,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:34:50.882Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -3250,8 +3250,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:34:50.883Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -3270,8 +3270,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:34:50.884Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -3290,8 +3290,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:34:50.885Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -3310,8 +3310,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:34:50.886Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -3350,8 +3350,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:34:50.888Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -3370,8 +3370,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:34:50.889Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -3390,8 +3390,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:34:50.890Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
@@ -3430,8 +3430,8 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
-      "updated": "2026-10-18T21:34:50.892Z",
+      "deleted": true,
+      "updated": "2026-10-21T18:08:32.000Z",
       "workspace": "",
       "events": [
         "mtc26"
