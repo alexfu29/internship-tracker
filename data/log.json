@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-10-21T18:53:11.814Z",
+  "updated": "2026-10-21T18:53:36.983Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -5309,7 +5309,9 @@
       "closed": false,
       "deleted": false,
       "workspace": "",
-      "updated": "2026-09-27T21:31:16.627Z"
+      "updated": "2026-10-21T18:53:32.122Z",
+      "priority": null,
+      "outcomes": []
     },
     "mtt5qbkc-4rj844": {
       "company": "Sylvamo Corporation",
@@ -6344,9 +6346,9 @@
       "respondedOn": null,
       "meetingOn": null,
       "closed": false,
-      "deleted": false,
+      "deleted": true,
       "workspace": "",
-      "updated": "2026-10-21T18:53:11.813Z"
+      "updated": "2026-10-21T18:53:36.983Z"
     },
     "mvigxs9d-n9xumo": {
       "company": "Pirouette Pharma",
