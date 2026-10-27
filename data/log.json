@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-10-21T18:53:29.067Z",
+  "updated": "2026-10-27T18:35:27.369Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -6969,6 +6969,26 @@
       "deleted": false,
       "workspace": "",
       "updated": "2026-10-21T18:51:43.823Z"
+    },
+    "mvr0zvak-jfpk7m": {
+      "company": "OrthoIQ",
+      "priority": 1,
+      "applied": true,
+      "coldEmailed": false,
+      "connected": false,
+      "outcome": "",
+      "outcomes": [],
+      "role": "",
+      "date": "2026-10-27",
+      "link": "handshake",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "closed": false,
+      "deleted": false,
+      "workspace": "",
+      "updated": "2026-10-27T18:35:27.369Z"
     }
   }
 }
