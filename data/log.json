@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-11-01T22:28:42.924Z",
+  "updated": "2026-11-01T22:28:47.911Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -7109,6 +7109,26 @@
       "deleted": false,
       "workspace": "",
       "updated": "2026-11-01T22:28:42.924Z"
+    },
+    "mvyejb1j-o3yc2u": {
+      "company": "shure incorporated",
+      "priority": null,
+      "applied": false,
+      "coldEmailed": false,
+      "connected": false,
+      "outcome": "",
+      "outcomes": [],
+      "role": "",
+      "date": "2026-11-01",
+      "link": "",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "closed": false,
+      "deleted": false,
+      "workspace": "",
+      "updated": "2026-11-01T22:28:47.911Z"
     }
   }
 }
