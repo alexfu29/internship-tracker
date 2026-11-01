@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-11-01T22:08:40.242Z",
+  "updated": "2026-11-01T22:28:32.268Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -7049,6 +7049,26 @@
       "deleted": false,
       "workspace": "",
       "updated": "2026-11-01T22:08:40.242Z"
+    },
+    "mvyeiyz0-dyzs8j": {
+      "company": "Delsys",
+      "priority": 1,
+      "applied": false,
+      "coldEmailed": false,
+      "connected": false,
+      "outcome": "",
+      "outcomes": [],
+      "role": "",
+      "date": "2026-11-01",
+      "link": "",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "closed": false,
+      "deleted": false,
+      "workspace": "",
+      "updated": "2026-11-01T22:28:32.268Z"
     }
   }
 }
