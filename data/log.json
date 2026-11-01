@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-10-27T18:37:59.620Z",
+  "updated": "2026-11-01T21:46:08.174Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -7009,6 +7009,26 @@
       "deleted": false,
       "workspace": "",
       "updated": "2026-10-27T18:37:59.620Z"
+    },
+    "mvyd0fxp-9rmodu": {
+      "company": "Hanwha Philly Shipyard",
+      "priority": 3,
+      "applied": true,
+      "coldEmailed": false,
+      "connected": false,
+      "outcome": "",
+      "outcomes": [],
+      "role": "",
+      "date": "2026-11-01",
+      "link": "hanshake",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "closed": false,
+      "deleted": false,
+      "workspace": "",
+      "updated": "2026-11-01T21:46:08.173Z"
     }
   }
 }
