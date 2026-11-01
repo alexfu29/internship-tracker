@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-11-01T22:28:59.173Z",
+  "updated": "2026-11-01T22:32:00.445Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -3542,7 +3542,7 @@
       "workspace": "",
       "inviteAcceptedOn": null,
       "withdrawnOn": null,
-      "updated": "2026-10-21T17:28:42.697Z",
+      "updated": "2026-11-01T22:32:00.445Z",
       "events": [
         "mtc26"
       ]
@@ -7189,6 +7189,26 @@
       "deleted": false,
       "workspace": "",
       "updated": "2026-11-01T22:28:59.173Z"
+    },
+    "mvyenes1-8xaxlt": {
+      "company": "Medpace",
+      "priority": null,
+      "applied": false,
+      "coldEmailed": false,
+      "connected": false,
+      "outcome": "",
+      "outcomes": [],
+      "role": "",
+      "date": "2026-11-01",
+      "link": "https://uscareers-medpace.icims.com/jobs/13027/spring-2027--imaging-intern---biomedical-engineering/job?mode=submit_apply",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "closed": false,
+      "deleted": false,
+      "workspace": "",
+      "updated": "2026-11-01T22:31:59.377Z"
     }
   }
 }
