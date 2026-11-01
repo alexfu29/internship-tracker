@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-11-01T22:28:51.272Z",
+  "updated": "2026-11-01T22:28:55.563Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -7149,6 +7149,26 @@
       "deleted": false,
       "workspace": "",
       "updated": "2026-11-01T22:28:51.272Z"
+    },
+    "mvyejgy3-iacm9p": {
+      "company": "werfen",
+      "priority": null,
+      "applied": false,
+      "coldEmailed": false,
+      "connected": false,
+      "outcome": "",
+      "outcomes": [],
+      "role": "",
+      "date": "2026-11-01",
+      "link": "",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "closed": false,
+      "deleted": false,
+      "workspace": "",
+      "updated": "2026-11-01T22:28:55.563Z"
     }
   }
 }
