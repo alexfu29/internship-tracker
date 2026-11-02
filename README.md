@@ -322,8 +322,10 @@ conference tab reads as who-is-who at a glance.
 - **Display only.** Drafts don't change: a peer gets the plain opener, like any
   hand-typed role.
 - **Set only on proof.** Nov 1: four tagged from headlines that say they're enrolled
-  (Arnav Gupta, Erick Oh, Samarth Srinivas, Jessica Myles). "Probably a student"
-  headlines were left untagged.
+  (Arnav Gupta, Erick Oh, Samarth Srinivas, Jessica Myles). Seven more whose
+  headlines point to a student were tagged at Alex's call (Raunak Subedi, Rasheed
+  Mustapha, Benjamin Bregman, Zachary Walton, Abbas Madani, Franco Miguel Valencia,
+  Eshan Vishwakarma).
 - **Code:** `isPeer()` / `peerTagHtml()` next to `MEETING_ROLE`, used once in
   `contactCols`; CSS `.peer-tag`.
 
