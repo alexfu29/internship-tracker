@@ -310,6 +310,23 @@ copy. A row belongs to an event when it carries `events: ["mtc26"]` or
 - **To change the event list or targets:** edit the `EVENTS` array in section 2B of
   `index.html`.
 
+### Peer: who's a student
+
+A contact whose role is exactly **`Peer`** (any case) is a student. The contact row
+shows a small blue **Peer** tag beside their name instead of the role text, so a
+conference tab reads as who-is-who at a glance.
+
+- **To mark someone:** open the row and type or pick `Peer` in **Their role** (the
+  field now suggests Peer, BU Eng, Field Eng and Meeting Request; anything typed
+  still goes in).
+- **Display only.** Drafts don't change: a peer gets the plain opener, like any
+  hand-typed role.
+- **Set only on proof.** Nov 1: four tagged from headlines that say they're enrolled
+  (Arnav Gupta, Erick Oh, Samarth Srinivas, Jessica Myles). "Probably a student"
+  headlines were left untagged.
+- **Code:** `isPeer()` / `peerTagHtml()` next to `MEETING_ROLE`, used once in
+  `contactCols`; CSS `.peer-tag`.
+
 ## Per-entry workspaces
 
 Every contact and every company has **its own workspace** — a bigger, free-form

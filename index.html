@@ -708,6 +708,12 @@
   td.company .co-wrap, td.who .co-wrap { display: flex; align-items: center; }
   td.who .co-name { font-weight: 600; color: var(--text-primary); }
   td.who .co-role { color: var(--text-secondary); font-size: 0.76rem; margin-left: 6px; }
+  /* Peer tag: a student, beside their name. Outline in the accent so it reads
+     in both themes without competing with the status chip. */
+  td.who .peer-tag {
+    margin-left: 6px; padding: 0 6px; border: 1px solid var(--accent); border-radius: 999px;
+    color: var(--accent); font-size: 0.68rem; font-weight: 600; vertical-align: 1px;
+  }
   td.who .co-text { overflow: hidden; text-overflow: ellipsis; min-width: 0; white-space: nowrap; }
 
   /* Grab bars, left of the name. The bars are drawn in CSS rather than set as
@@ -1035,7 +1041,7 @@
         </div>
         <div class="field">
           <label for="cRole">Their role <span class="opt">(optional)</span></label>
-          <input type="text" id="cRole">
+          <input type="text" id="cRole" list="roleList">
         </div>
       </div>
       <div class="field">
@@ -1147,6 +1153,13 @@
     <div id="editExtras"></div>
 
     <datalist id="companyList"></datalist>
+    <!-- Suggestions only: the role field still takes anything typed. -->
+    <datalist id="roleList">
+      <option value="Peer"></option>
+      <option value="BU Eng"></option>
+      <option value="Field Eng"></option>
+      <option value="Meeting Request"></option>
+    </datalist>
   </div>
 </aside>
 <!-- Workspace: one per contact and per company, opened by the 📝 next to that
@@ -1554,7 +1567,7 @@
      tell those apart from a change that genuinely didn't work. This string
      lives in the file being executed, so it cannot lie about which file that
      is. It's shown at the bottom of Settings. */
-  var APP_VERSION = "2026-10-21a";
+  var APP_VERSION = "2026-11-01a";
   var swReady = false, swCacheVersion = "", swNote = "";
 
   /* ============================================================
@@ -2527,6 +2540,13 @@
      before. */
   var MEETING_ROLE = "Meeting Request";
   function isMeetingRequest(c) { return String((c && c.role) || "").trim() === MEETING_ROLE; }
+  /* A `Peer` is a student: someone at your stage, not someone with a job to
+     offer. It is display only: the contact row shows a Peer tag in place of
+     the role text, so a conference list reads as who-is-who at a glance.
+     Drafts don't key off it; a peer gets the plain opener, like any
+     hand-typed role. Set only from a headline that says they're enrolled. */
+  function isPeer(c) { return String((c && c.role) || "").trim().toLowerCase() === "peer"; }
+  function peerTagHtml(c) { return isPeer(c) ? '<span class="peer-tag" title="Student">Peer</span>' : ""; }
   function firstContactKind(c) {
     if (isMeetingRequest(c)) return "meetingReq";
     var suffix = ROLE_TPL[String((c && c.role) || "").trim()] || "";
@@ -3156,9 +3176,9 @@
       { head: "Who", cls: "who", sort: archive ? null : "name", cell: function (r) {
           return '<div class="co-wrap">' + (archive ? "" : dragHandleHtml()) +
             '<span class="co-text">' +
-            '<span class="co-name">' + escapeHtml(nameOf(r)) + '</span>' +
-            (r.company || r.role
-              ? '<span class="co-role">' + escapeHtml([r.company, r.role].filter(Boolean).join(" · ")) + '</span>'
+            '<span class="co-name">' + escapeHtml(nameOf(r)) + '</span>' + peerTagHtml(r) +
+            (r.company || (r.role && !isPeer(r))
+              ? '<span class="co-role">' + escapeHtml([r.company, isPeer(r) ? "" : r.role].filter(Boolean).join(" · ")) + '</span>'
               : '') +
             '</span></div>';
         } },
