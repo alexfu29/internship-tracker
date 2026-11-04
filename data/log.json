@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-11-03T03:17:37.017Z",
+  "updated": "2026-11-04T15:03:07.116Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -7053,14 +7053,14 @@
     "mvyeiyz0-dyzs8j": {
       "company": "Delsys",
       "priority": 1,
-      "applied": false,
+      "applied": true,
       "coldEmailed": false,
       "connected": false,
       "outcome": "",
       "outcomes": [],
       "role": "",
       "date": "2026-11-01",
-      "link": "",
+      "link": "https://delsys.zohorecruit.com/jobs/Careers/701152000002175087/Mechanical-Engineer-Intern-?source=CareerSite",
       "note": "",
       "responded": false,
       "respondedOn": null,
@@ -7068,7 +7068,7 @@
       "closed": false,
       "deleted": false,
       "workspace": "",
-      "updated": "2026-11-03T03:17:37.017Z"
+      "updated": "2026-11-03T03:33:00.189Z"
     },
     "mvyej326-h333o1": {
       "company": "Rhaeos",
