@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-11-05T15:22:20.647Z",
+  "updated": "2026-11-05T15:43:57.632Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -7269,6 +7269,26 @@
       "deleted": false,
       "workspace": "",
       "updated": "2026-11-03T03:17:02.624Z"
+    },
+    "mw3pu37k-eoszzg": {
+      "company": "Smith + Nephew",
+      "priority": null,
+      "applied": false,
+      "coldEmailed": false,
+      "connected": false,
+      "outcome": "",
+      "outcomes": [],
+      "role": "",
+      "date": "2026-11-05",
+      "link": "",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "closed": false,
+      "deleted": false,
+      "workspace": "",
+      "updated": "2026-11-05T15:43:57.632Z"
     }
   }
 }
