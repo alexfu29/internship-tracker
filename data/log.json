@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-11-05T15:43:57.632Z",
+  "updated": "2026-11-05T15:44:10.962Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -7273,14 +7273,14 @@
     "mw3pu37k-eoszzg": {
       "company": "Smith + Nephew",
       "priority": null,
-      "applied": false,
+      "applied": true,
       "coldEmailed": false,
       "connected": false,
       "outcome": "",
       "outcomes": [],
       "role": "",
       "date": "2026-11-05",
-      "link": "",
+      "link": "https://smithnephew.wd5.myworkdayjobs.com/en-US/External/jobTasks/completed/application?source=LinkedIn",
       "note": "",
       "responded": false,
       "respondedOn": null,
@@ -7288,7 +7288,7 @@
       "closed": false,
       "deleted": false,
       "workspace": "",
-      "updated": "2026-11-05T15:43:57.632Z"
+      "updated": "2026-11-05T15:44:10.962Z"
     }
   }
 }
