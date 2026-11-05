@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-11-04T15:31:13.763Z",
+  "updated": "2026-11-05T15:21:52.570Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -3572,7 +3572,7 @@
     "mvidz0sw-1xjzqq": {
       "name": "Lauren Brenneman",
       "company": "",
-      "role": "",
+      "role": "Peer",
       "channel": "LinkedIn",
       "email": "",
       "date": "2026-10-21",
@@ -3586,7 +3586,7 @@
       "workspace": "",
       "inviteAcceptedOn": null,
       "withdrawnOn": null,
-      "updated": "2026-10-21T17:28:42.697Z",
+      "updated": "2026-11-05T15:21:52.569Z",
       "events": [
         "mtc26"
       ]
