@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-11-06T17:05:29.312Z",
+  "updated": "2026-11-06T18:09:08.004Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -6209,14 +6209,14 @@
     "mvi80jq0-k6hfc1": {
       "company": "GE HealthCare",
       "priority": null,
-      "applied": false,
+      "applied": true,
       "coldEmailed": false,
       "connected": false,
       "outcome": "",
       "outcomes": [],
       "role": "",
       "date": "2026-10-21",
-      "link": "",
+      "link": "https://careers.gehealthcare.com/global/en/applythankyou?status=offline-success&jobSeqNo=GEVGHLGLOBALR4043923EXTERNALENGLOBAL&jobTitle=Edison%20Engineering%20Development%20Program%20Internship%20-%20Hardware&jobId=R4043923&thankYouUri=MrNtW%2FAfnyAp0HrRbCwK5UtMtBrAv9O889UtGy6uZzKTNb%2FyYxOi1dUz6zb6kD%2B8vcDq0p38eWIN4YUdFcQ%3D&candidateHomeUrl=https://gehc.wd5.myworkdayjobs.com/GEHC_ExternalSite/login?Job_Application_ID=undefined&jobApplicationId=undefined&candidateId=undefined",
       "note": "mention Orrin Marcella",
       "responded": false,
       "respondedOn": null,
@@ -6224,7 +6224,7 @@
       "closed": false,
       "deleted": false,
       "workspace": "",
-      "updated": "2026-10-21T18:06:55.569Z",
+      "updated": "2026-11-06T18:09:08.004Z",
       "events": [
         "mtc26"
       ]
