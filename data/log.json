@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-11-06T16:33:53.794Z",
+  "updated": "2026-11-06T16:34:09.513Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -5266,7 +5266,7 @@
       "applied": true,
       "coldEmailed": false,
       "connected": false,
-      "outcome": "",
+      "outcome": "denied",
       "role": "",
       "date": "2026-09-06",
       "link": "https://jj.wd5.myworkdayjobs.com/en-US/JJ/userHome",
@@ -5277,7 +5277,11 @@
       "closed": false,
       "deleted": false,
       "workspace": "",
-      "updated": "2026-09-07T01:50:27.594Z"
+      "updated": "2026-11-06T16:34:09.513Z",
+      "priority": null,
+      "outcomes": [
+        "denied"
+      ]
     },
     "mtt5oy7t-7vws82": {
       "company": "Trinity Life Sciences",
