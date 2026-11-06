@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-11-06T18:11:03.041Z",
+  "updated": "2026-11-06T18:13:15.778Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -5931,7 +5931,8 @@
       "closed": false,
       "deleted": false,
       "workspace": "",
-      "updated": "2026-10-01T20:24:50.830Z"
+      "updated": "2026-11-06T18:13:02.422Z",
+      "outcomes": []
     },
     "mupzug7y-onouzf": {
       "company": "look at RippleMatch",
@@ -7100,7 +7101,7 @@
     },
     "mvyej770-3lqg4e": {
       "company": "Tulip",
-      "priority": null,
+      "priority": 2,
       "applied": false,
       "coldEmailed": false,
       "connected": false,
@@ -7116,7 +7117,7 @@
       "closed": false,
       "deleted": false,
       "workspace": "",
-      "updated": "2026-11-06T18:11:03.041Z"
+      "updated": "2026-11-06T18:13:12.111Z"
     },
     "mvyejb1j-o3yc2u": {
       "company": "shure incorporated",
@@ -7216,7 +7217,7 @@
       "closed": false,
       "deleted": false,
       "workspace": "",
-      "updated": "2026-11-01T22:31:59.377Z"
+      "updated": "2026-11-06T18:13:15.778Z"
     },
     "mvyeua0j-oj67xe": {
       "company": "The Aerospace Corp",
