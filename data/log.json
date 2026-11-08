@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-11-08T18:40:09.827Z",
+  "updated": "2026-11-08T18:44:37.885Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -3451,10 +3451,10 @@
       "nudgedOn": [],
       "closed": false,
       "deleted": false,
-      "workspace": "",
+      "workspace": "Hi Mark! It was great to meet you at the MedTech conference and try out ",
       "inviteAcceptedOn": "2026-11-08",
       "withdrawnOn": null,
-      "updated": "2026-11-08T18:40:09.827Z",
+      "updated": "2026-11-08T18:44:37.885Z",
       "events": [
         "mtc26"
       ]
