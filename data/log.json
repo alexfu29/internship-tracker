@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-11-08T18:00:10.146Z",
+  "updated": "2026-11-08T18:39:25.866Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -3748,7 +3748,7 @@
     "mvidz0t4-4zebgh": {
       "name": "Andria Chen",
       "company": "Boston Scientific",
-      "role": "",
+      "role": "Peer",
       "channel": "LinkedIn",
       "email": "",
       "date": "2026-10-20",
@@ -3762,7 +3762,7 @@
       "workspace": "",
       "inviteAcceptedOn": "2026-10-20",
       "withdrawnOn": null,
-      "updated": "2026-11-02T03:42:17.876Z",
+      "updated": "2026-11-08T18:39:25.866Z",
       "events": [
         "mtc26"
       ]
