@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-11-10T18:07:00.676Z",
+  "updated": "2026-11-10T18:20:13.551Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -7110,14 +7110,14 @@
     "mvyej326-h333o1": {
       "company": "Rhaeos",
       "priority": null,
-      "applied": false,
+      "applied": true,
       "coldEmailed": false,
       "connected": false,
       "outcome": "",
       "outcomes": [],
       "role": "",
       "date": "2026-11-01",
-      "link": "",
+      "link": "email",
       "note": "",
       "responded": false,
       "respondedOn": null,
@@ -7125,7 +7125,7 @@
       "closed": false,
       "deleted": false,
       "workspace": "",
-      "updated": "2026-11-01T22:28:37.566Z"
+      "updated": "2026-11-10T18:20:13.551Z"
     },
     "mvyej770-3lqg4e": {
       "company": "Tulip",
