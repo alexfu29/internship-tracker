@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-11-08T20:29:29.004Z",
+  "updated": "2026-11-10T18:07:00.676Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -1287,11 +1287,12 @@
       ],
       "closed": false,
       "deleted": false,
-      "updated": "2026-10-18T20:45:12.951Z",
+      "updated": "2026-11-10T18:06:55.342Z",
       "workspace": "Hi Chanda,\n\nI'm Alex Fu, a sophomore at BU interested in non-invasive MedTech and\nhuman-machine interaction. \n\nI'm at the MedTech conference this week. Later this week I'm attending the national BMES conference to present our team's project LymphSense, a $150 prototype targeting the diagnostic capability of $4,000 clinical devices to catch early-onset lymphedema. \n\nI was impressed with your focus on data analysis and PCB recycling, and using the hardware as that channel between patient and business.\n\nI would love to meet with you anytime this Monday 11-5 or Wednesday 9-11 to\nlearn more about how you got into MedTech, your recommendations for an aspiring student, and if there are any opportunities for the summer of 2027.\n\nLet me know what time and place works for you.\n\nBest,\nAlex Fu\n",
       "events": [
         "mtc26"
-      ]
+      ],
+      "muted": true
     },
     "mve3b1q8-vyd56t": {
       "name": "Vesna Socava-Lile",
@@ -1307,11 +1308,12 @@
       "nudgedOn": [],
       "closed": false,
       "deleted": false,
-      "updated": "2026-10-18T20:33:43.980Z",
+      "updated": "2026-11-10T18:06:55.548Z",
       "workspace": "",
       "events": [
         "mtc26"
-      ]
+      ],
+      "muted": true
     },
     "mve3b1q9-7nlrbv": {
       "name": "Truman Pierson",
@@ -1707,11 +1709,12 @@
       "nudgedOn": [],
       "closed": false,
       "deleted": false,
-      "updated": "2026-10-18T21:26:45.237Z",
+      "updated": "2026-11-10T18:06:54.937Z",
       "workspace": "Hi Curtis,\n\nI'm Alex Fu, a sophomore at BU interested in biomechanical engineering and human-machine interaction. \n\nI'm at the MedTech conference this week. Later this week I'm attending the national BMES conference to present our team's project LymphSense, a $150 prototype targeting the diagnostic capability of $4,000 clinical devices to catch early-onset lymphedema. \n\nI appreciated the visualizations of the impact of Rebound and its simple, intuitive design.\n\nI would love to meet with you anytime this Monday 11-5 or Wednesday 9-11 to\nlearn more about how you got into MedTech, your recommendations for an aspiring student, and if there are any opportunities for the summer of 2027.\n\nLet me know what time and place works for you.\n\nBest,\nAlex Fu\n",
       "events": [
         "mtc26"
-      ]
+      ],
+      "muted": true
     },
     "mve3b1qt-2wjgk8": {
       "name": "William Warner",
@@ -1769,11 +1772,12 @@
       ],
       "closed": false,
       "deleted": false,
-      "updated": "2026-10-18T21:02:11.141Z",
+      "updated": "2026-11-10T18:06:55.155Z",
       "workspace": "Hi Ruben,\n\nI'm Alex Fu, a sophomore at BU interested in non-invasive MedTech and\nhuman-machine interaction. \n\nI'm at the MedTech conference this week. Later this week I'm attending the national BMES conference to present our team's project LymphSense, a $150 prototype targeting the diagnostic capability of $4,000 clinical devices to catch early-onset lymphedema. I was impressed by the efficacy and compactness of GRACE.\n\nI would love to meet with you anytime Monday 11-5 or Wednesday 9-11 to\nlearn more about how you got into MedTech, your recommendations for an aspiring student, and if there are any opportunities for the summer of 2027.\n\nLet me know what time and place works for you.\n\nBest,\nAlex Fu\n",
       "events": [
         "mtc26"
-      ]
+      ],
+      "muted": true
     },
     "mvec7bl7-xnfvjc": {
       "name": "Roma Perez",
@@ -3476,10 +3480,11 @@
       "workspace": "",
       "inviteAcceptedOn": null,
       "withdrawnOn": null,
-      "updated": "2026-10-21T17:28:42.697Z",
+      "updated": "2026-11-10T18:06:56.091Z",
       "events": [
         "mtc26"
-      ]
+      ],
+      "muted": true
     },
     "mvidz0ss-wf1i1o": {
       "name": "Valentina Méndez Lancheros",
@@ -3498,10 +3503,11 @@
       "workspace": "",
       "inviteAcceptedOn": null,
       "withdrawnOn": null,
-      "updated": "2026-10-21T17:28:42.697Z",
+      "updated": "2026-11-10T18:06:56.232Z",
       "events": [
         "mtc26"
-      ]
+      ],
+      "muted": true
     },
     "mvidz0st-17lwew": {
       "name": "Kira Watkins",
@@ -3520,10 +3526,11 @@
       "workspace": "",
       "inviteAcceptedOn": null,
       "withdrawnOn": null,
-      "updated": "2026-10-21T17:28:42.697Z",
+      "updated": "2026-11-10T18:06:56.356Z",
       "events": [
         "mtc26"
-      ]
+      ],
+      "muted": true
     },
     "mvidz0su-x2n4if": {
       "name": "Trisha Bouthot",
@@ -3542,10 +3549,11 @@
       "workspace": "",
       "inviteAcceptedOn": null,
       "withdrawnOn": null,
-      "updated": "2026-11-05T15:22:05.446Z",
+      "updated": "2026-11-10T18:06:55.733Z",
       "events": [
         "mtc26"
-      ]
+      ],
+      "muted": true
     },
     "mvidz0sv-74ahc9": {
       "name": "Michele Visser",
@@ -3564,10 +3572,11 @@
       "workspace": "",
       "inviteAcceptedOn": null,
       "withdrawnOn": null,
-      "updated": "2026-10-21T17:28:42.697Z",
+      "updated": "2026-11-10T18:06:56.482Z",
       "events": [
         "mtc26"
-      ]
+      ],
+      "muted": true
     },
     "mvidz0sw-1xjzqq": {
       "name": "Lauren Brenneman",
@@ -3586,10 +3595,11 @@
       "workspace": "",
       "inviteAcceptedOn": null,
       "withdrawnOn": null,
-      "updated": "2026-11-05T15:21:52.569Z",
+      "updated": "2026-11-10T18:06:55.919Z",
       "events": [
         "mtc26"
-      ]
+      ],
+      "muted": true
     },
     "mvidz0sx-jodtsx": {
       "name": "Miranda Kolias",
@@ -3608,10 +3618,11 @@
       "workspace": "",
       "inviteAcceptedOn": null,
       "withdrawnOn": null,
-      "updated": "2026-10-21T17:28:42.697Z",
+      "updated": "2026-11-10T18:06:56.620Z",
       "events": [
         "mtc26"
-      ]
+      ],
+      "muted": true
     },
     "mvidz0sy-xwtu1d": {
       "name": "Rubén Darío Flores Saaib",
@@ -3630,10 +3641,11 @@
       "workspace": "",
       "inviteAcceptedOn": null,
       "withdrawnOn": null,
-      "updated": "2026-10-21T17:28:42.697Z",
+      "updated": "2026-11-10T18:07:00.676Z",
       "events": [
         "mtc26"
-      ]
+      ],
+      "withdrawMuted": true
     },
     "mvidz0sz-1d2o18": {
       "name": "Arnav Gupta",
@@ -3652,10 +3664,11 @@
       "workspace": "",
       "inviteAcceptedOn": null,
       "withdrawnOn": null,
-      "updated": "2026-11-02T03:46:28.000Z",
+      "updated": "2026-11-10T18:07:00.552Z",
       "events": [
         "mtc26"
-      ]
+      ],
+      "withdrawMuted": true
     },
     "mvidz0t0-050x0a": {
       "name": "Orrin Marcella",
@@ -3674,10 +3687,11 @@
       "workspace": "",
       "inviteAcceptedOn": "2026-10-21",
       "withdrawnOn": null,
-      "updated": "2026-11-02T03:41:12.103Z",
+      "updated": "2026-11-10T18:06:58.014Z",
       "events": [
         "mtc26"
-      ]
+      ],
+      "noteMuted": true
     },
     "mvidz0t1-grcks9": {
       "name": "Raunak Subedi",
@@ -3696,10 +3710,11 @@
       "workspace": "",
       "inviteAcceptedOn": "2026-10-21",
       "withdrawnOn": null,
-      "updated": "2026-11-02T03:51:26.000Z",
+      "updated": "2026-11-10T18:06:57.644Z",
       "events": [
         "mtc26"
-      ]
+      ],
+      "noteMuted": true
     },
     "mvidz0t2-5xw5dp": {
       "name": "Zachary Walton",
@@ -3718,10 +3733,11 @@
       "workspace": "",
       "inviteAcceptedOn": "2026-10-21",
       "withdrawnOn": null,
-      "updated": "2026-11-02T03:51:26.000Z",
+      "updated": "2026-11-10T18:06:57.767Z",
       "events": [
         "mtc26"
-      ]
+      ],
+      "noteMuted": true
     },
     "mvidz0t3-oimpnc": {
       "name": "Scott Gaines, PhD",
@@ -3740,10 +3756,11 @@
       "workspace": "",
       "inviteAcceptedOn": "2026-10-21",
       "withdrawnOn": null,
-      "updated": "2026-11-02T03:41:17.283Z",
+      "updated": "2026-11-10T18:06:57.887Z",
       "events": [
         "mtc26"
-      ]
+      ],
+      "noteMuted": true
     },
     "mvidz0t4-4zebgh": {
       "name": "Andria Chen",
@@ -3762,10 +3779,11 @@
       "workspace": "",
       "inviteAcceptedOn": "2026-10-20",
       "withdrawnOn": null,
-      "updated": "2026-11-08T18:39:25.866Z",
+      "updated": "2026-11-10T18:06:58.139Z",
       "events": [
         "mtc26"
-      ]
+      ],
+      "noteMuted": true
     },
     "mvidz0t5-er7reo": {
       "name": "Rasheed Mustapha",
@@ -3784,10 +3802,11 @@
       "workspace": "",
       "inviteAcceptedOn": "2026-10-20",
       "withdrawnOn": null,
-      "updated": "2026-11-02T03:51:26.000Z",
+      "updated": "2026-11-10T18:06:58.263Z",
       "events": [
         "mtc26"
-      ]
+      ],
+      "noteMuted": true
     },
     "mvidz0t6-xglvco": {
       "name": "Tiffany Talbott, MBA, SHRM-SCP",
@@ -3806,10 +3825,11 @@
       "workspace": "",
       "inviteAcceptedOn": "2026-10-20",
       "withdrawnOn": null,
-      "updated": "2026-10-21T17:28:42.697Z",
+      "updated": "2026-11-10T18:06:58.513Z",
       "events": [
         "mtc26"
-      ]
+      ],
+      "noteMuted": true
     },
     "mvidz0t7-y0uxe9": {
       "name": "Benjamin Bregman",
@@ -3828,10 +3848,11 @@
       "workspace": "",
       "inviteAcceptedOn": "2026-10-20",
       "withdrawnOn": null,
-      "updated": "2026-11-02T03:51:26.000Z",
+      "updated": "2026-11-10T18:06:58.390Z",
       "events": [
         "mtc26"
-      ]
+      ],
+      "noteMuted": true
     },
     "mvidz0t8-tg61iq": {
       "name": "Supraj Mudda",
@@ -3850,10 +3871,11 @@
       "workspace": "",
       "inviteAcceptedOn": "2026-10-19",
       "withdrawnOn": null,
-      "updated": "2026-11-05T15:22:20.647Z",
+      "updated": "2026-11-10T18:06:58.638Z",
       "events": [
         "mtc26"
-      ]
+      ],
+      "noteMuted": true
     },
     "mvidz0t9-kncof1": {
       "name": "Curtis King",
@@ -3872,10 +3894,11 @@
       "workspace": "",
       "inviteAcceptedOn": "2026-10-19",
       "withdrawnOn": null,
-      "updated": "2026-10-21T17:28:42.697Z",
+      "updated": "2026-11-10T18:06:58.762Z",
       "events": [
         "mtc26"
-      ]
+      ],
+      "noteMuted": true
     },
     "mvidz0ta-wpv0s9": {
       "name": "Richard Cha",
@@ -3894,10 +3917,11 @@
       "workspace": "",
       "inviteAcceptedOn": "2026-10-18",
       "withdrawnOn": null,
-      "updated": "2026-10-21T17:28:42.697Z",
+      "updated": "2026-11-10T18:06:58.901Z",
       "events": [
         "mtc26"
-      ]
+      ],
+      "noteMuted": true
     },
     "mvidz0tb-fuu8ym": {
       "name": "Nate Aune",
@@ -3916,11 +3940,12 @@
       "workspace": "",
       "inviteAcceptedOn": null,
       "withdrawnOn": null,
-      "updated": "2026-10-21T18:05:54.100Z",
+      "updated": "2026-11-10T18:07:00.426Z",
       "events": [
         "biotech1009"
       ],
-      "muted": true
+      "muted": true,
+      "withdrawMuted": true
     },
     "mvidz0tc-pa7xmn": {
       "name": "Perry Pascasio",
@@ -3939,11 +3964,12 @@
       "workspace": "",
       "inviteAcceptedOn": null,
       "withdrawnOn": null,
-      "updated": "2026-10-21T18:05:54.461Z",
+      "updated": "2026-11-10T18:07:00.303Z",
       "events": [
         "biotech1009"
       ],
-      "muted": true
+      "muted": true,
+      "withdrawMuted": true
     },
     "mvidz0td-43joih": {
       "name": "Pratik Deolasi",
@@ -3962,11 +3988,12 @@
       "workspace": "",
       "inviteAcceptedOn": null,
       "withdrawnOn": null,
-      "updated": "2026-10-21T18:05:54.754Z",
+      "updated": "2026-11-10T18:07:00.180Z",
       "events": [
         "biotech1009"
       ],
-      "muted": true
+      "muted": true,
+      "withdrawMuted": true
     },
     "mvidz0te-iwnvha": {
       "name": "Brett Amendola",
@@ -3980,16 +4007,17 @@
       "respondedOn": null,
       "meetingOn": null,
       "nudgedOn": [],
-      "closed": false,
+      "closed": true,
       "deleted": false,
       "workspace": "",
       "inviteAcceptedOn": null,
       "withdrawnOn": null,
-      "updated": "2026-10-21T18:05:55.003Z",
+      "updated": "2026-11-10T18:06:59.153Z",
       "events": [
         "biotech1009"
       ],
-      "muted": true
+      "muted": true,
+      "withdrawMuted": true
     },
     "mvidz0tf-2sywdd": {
       "name": "Areeb Haddad",
