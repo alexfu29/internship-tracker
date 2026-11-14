@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-11-14T20:45:25.305Z",
+  "updated": "2026-11-14T21:54:32.881Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -7350,6 +7350,26 @@
       "deleted": false,
       "workspace": "",
       "updated": "2026-11-08T17:59:14.317Z"
+    },
+    "mwgy1abn-mm3jxu": {
+      "company": "Fiskars",
+      "priority": 2,
+      "applied": true,
+      "coldEmailed": false,
+      "connected": false,
+      "outcome": "",
+      "outcomes": [],
+      "role": "",
+      "date": "2026-11-14",
+      "link": "",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "closed": false,
+      "deleted": false,
+      "workspace": "",
+      "updated": "2026-11-14T21:54:32.881Z"
     }
   }
 }
