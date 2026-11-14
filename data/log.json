@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-11-10T18:20:13.551Z",
+  "updated": "2026-11-14T18:07:03.656Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -5005,7 +5005,7 @@
       "applied": true,
       "coldEmailed": false,
       "connected": false,
-      "outcome": "",
+      "outcome": "denied",
       "role": "Engineering Intern",
       "date": "2026-08-20",
       "link": "https://oneok.wd1.myworkdayjobs.com/en-US/ONEOK_Early_Careers/jobTasks/completed/application?source=Handshake",
@@ -5016,7 +5016,11 @@
       "closed": false,
       "deleted": false,
       "workspace": "",
-      "updated": "2026-08-20T18:55:23.838Z"
+      "updated": "2026-11-14T18:07:03.656Z",
+      "priority": null,
+      "outcomes": [
+        "denied"
+      ]
     },
     "mt27yek9-c3e55a": {
       "company": "GE aero (manufacturing + engines)",
