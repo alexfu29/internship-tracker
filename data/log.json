@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-11-14T18:07:03.656Z",
+  "updated": "2026-11-14T20:45:25.305Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -7119,17 +7119,17 @@
       "connected": false,
       "outcome": "",
       "outcomes": [],
-      "role": "",
+      "role": "R&D Engineering Intern",
       "date": "2026-11-01",
-      "link": "email",
-      "note": "",
+      "link": "https://www.rhaeos.com/careers/",
+      "note": "emailed",
       "responded": false,
       "respondedOn": null,
       "meetingOn": null,
       "closed": false,
       "deleted": false,
       "workspace": "",
-      "updated": "2026-11-10T18:20:13.551Z"
+      "updated": "2026-11-10T18:20:37.992Z"
     },
     "mvyej770-3lqg4e": {
       "company": "Tulip",
