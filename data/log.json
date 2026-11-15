@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-11-15T01:29:29.570Z",
+  "updated": "2026-11-15T02:39:41.712Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -7370,6 +7370,26 @@
       "deleted": false,
       "workspace": "",
       "updated": "2026-11-14T21:57:51.034Z"
+    },
+    "mwh881ao-y2m61o": {
+      "company": "EastPenn",
+      "priority": null,
+      "applied": true,
+      "coldEmailed": false,
+      "connected": false,
+      "outcome": "",
+      "outcomes": [],
+      "role": "",
+      "date": "2026-11-14",
+      "link": "https://careers-eastpennmanufacturing.icims.com/jobs/30445/tech-center-design-engineer--intern-%28summer-2027%29/job?mode=submit_apply",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "closed": false,
+      "deleted": false,
+      "workspace": "",
+      "updated": "2026-11-15T02:39:41.712Z"
     }
   }
 }
