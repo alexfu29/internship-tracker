@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-11-15T01:22:27.524Z",
+  "updated": "2026-11-15T01:29:29.570Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -3475,12 +3475,12 @@
       "respondedOn": null,
       "meetingOn": null,
       "nudgedOn": [],
-      "closed": false,
+      "closed": true,
       "deleted": false,
       "workspace": "",
       "inviteAcceptedOn": null,
       "withdrawnOn": null,
-      "updated": "2026-11-10T18:06:56.091Z",
+      "updated": "2026-11-15T01:29:29.570Z",
       "events": [
         "mtc26"
       ],
