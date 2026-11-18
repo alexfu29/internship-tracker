@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-11-18T20:58:56.138Z",
+  "updated": "2026-11-18T20:59:23.917Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -3597,7 +3597,7 @@
       "workspace": "",
       "inviteAcceptedOn": null,
       "withdrawnOn": "2026-11-17",
-      "updated": "2026-11-17T14:55:03.138Z",
+      "updated": "2026-11-18T20:59:23.917Z",
       "events": [
         "mtc26"
       ],
@@ -5701,7 +5701,9 @@
       "closed": false,
       "deleted": false,
       "workspace": "",
-      "updated": "2026-09-26T01:32:23.979Z"
+      "updated": "2026-11-18T20:59:17.516Z",
+      "priority": null,
+      "outcomes": []
     },
     "muhpsi7t-2b4o07": {
       "company": "Festo",
@@ -5719,7 +5721,9 @@
       "closed": false,
       "deleted": false,
       "workspace": "",
-      "updated": "2026-09-26T01:32:25.923Z"
+      "updated": "2026-11-18T20:59:13.866Z",
+      "priority": null,
+      "outcomes": []
     },
     "muhq1vyt-9owswo": {
       "company": "Werfen",
