@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-11-19T14:33:15.505Z",
+  "updated": "2026-11-19T15:26:44.351Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -7461,6 +7461,26 @@
       "deleted": false,
       "workspace": "",
       "updated": "2026-11-17T14:55:11.826Z"
+    },
+    "mwnpdv9b-wgimse": {
+      "company": "UFP",
+      "priority": null,
+      "applied": true,
+      "coldEmailed": false,
+      "connected": false,
+      "outcome": "",
+      "outcomes": [],
+      "role": "",
+      "date": "2026-11-19",
+      "link": "https://workforcenow.adp.com/mascsr/applicant/mdf/recruitment/postLogin.html?cid=0b601efe-9205-48f2-87ef-b5c154dd0364&ccId=9200153100763_2&lang=en_US&source=LI&selectedMenuKey=CurrentOpenings&jobId=970397&jobId=970397&requisitionId=9201855770704_51&params=jobId&OTP_login=true",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "closed": false,
+      "deleted": false,
+      "workspace": "",
+      "updated": "2026-11-19T15:26:44.351Z"
     }
   }
 }
