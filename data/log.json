@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-11-18T21:56:51.641Z",
+  "updated": "2026-11-19T14:33:15.505Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -4585,11 +4585,15 @@
       "meetingOn": null,
       "closed": false,
       "deleted": false,
-      "updated": "2026-09-13T00:46:16.493Z",
+      "updated": "2026-11-19T14:33:15.505Z",
       "coldEmailed": false,
       "connected": false,
-      "outcome": "",
-      "workspace": ""
+      "outcome": "denied",
+      "workspace": "",
+      "priority": null,
+      "outcomes": [
+        "denied"
+      ]
     },
     "msm07yr5-1n4opc": {
       "company": "Draper",
