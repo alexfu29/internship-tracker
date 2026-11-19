@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-11-19T21:12:50.227Z",
+  "updated": "2026-11-19T21:46:18.000Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -4609,9 +4609,10 @@
       "meetingOn": null,
       "closed": false,
       "deleted": false,
-      "updated": "2026-08-21T00:57:29.005Z",
+      "updated": "2026-11-19T21:46:18.000Z",
       "workspace": "",
-      "outcome": "denied"
+      "outcome": "denied",
+      "priority": 1
     },
     "msm3oz66-fge3lm": {
       "company": "Marotta Controls",
@@ -4782,9 +4783,10 @@
       "meetingOn": null,
       "closed": false,
       "deleted": false,
-      "updated": "2026-09-12T22:27:44.524Z",
+      "updated": "2026-11-19T21:46:18.000Z",
       "outcome": "denied",
-      "workspace": ""
+      "workspace": "",
+      "priority": 1
     },
     "mspe3k0u-0l9dzy": {
       "company": "Boeing",
@@ -4923,16 +4925,17 @@
       "connected": false,
       "role": "Lubricants Intern",
       "date": "2026-08-12",
-      "link": "",
+      "link": "https://job-boards.greenhouse.io/arco/jobs/4469761009",
       "note": "check handshake",
       "responded": false,
       "respondedOn": null,
       "meetingOn": null,
       "closed": false,
       "deleted": false,
-      "updated": "2026-09-03T01:13:52.362Z",
+      "updated": "2026-11-19T21:46:18.000Z",
       "outcome": "",
-      "workspace": ""
+      "workspace": "",
+      "priority": 2
     },
     "msqu74dq-1nzj1d": {
       "company": "Polise Consulting Engineers, P.C.",
@@ -4966,9 +4969,10 @@
       "meetingOn": null,
       "closed": false,
       "deleted": false,
-      "updated": "2026-10-21T18:53:29.067Z",
+      "updated": "2026-11-19T21:46:18.000Z",
       "workspace": "",
-      "outcome": ""
+      "outcome": "",
+      "priority": 2
     },
     "msqvsziz-b76el2": {
       "company": "Welkin Mechanical",
@@ -5161,9 +5165,9 @@
       "coldEmailed": false,
       "connected": false,
       "outcome": "",
-      "role": "",
+      "role": "SULI Summer 2027 - closes 6 Jan 2027, 5:00 PM ET",
       "date": "2026-09-03",
-      "link": "",
+      "link": "https://science.osti.gov/wdts/suli",
       "note": "",
       "responded": false,
       "respondedOn": null,
@@ -5171,7 +5175,8 @@
       "closed": false,
       "deleted": false,
       "workspace": "",
-      "updated": "2026-09-03T20:10:21.207Z"
+      "updated": "2026-11-19T21:46:18.000Z",
+      "priority": 2
     },
     "mtlym590-ia6jnr": {
       "company": "NASA OSTEM Internships",
@@ -5197,9 +5202,9 @@
       "coldEmailed": false,
       "connected": false,
       "outcome": "",
-      "role": "",
+      "role": "SULI Summer 2027 - closes 6 Jan 2027, 5:00 PM ET",
       "date": "2026-09-03",
-      "link": "",
+      "link": "https://science.osti.gov/wdts/suli",
       "note": "",
       "responded": false,
       "respondedOn": null,
@@ -5207,7 +5212,8 @@
       "closed": false,
       "deleted": false,
       "workspace": "",
-      "updated": "2026-09-06T20:06:05.671Z"
+      "updated": "2026-11-19T21:46:18.000Z",
+      "priority": 2
     },
     "mtlymeaf-laxiby": {
       "company": "Moderna",
@@ -5215,7 +5221,7 @@
       "coldEmailed": false,
       "connected": false,
       "outcome": "",
-      "role": "",
+      "role": "Applied Technologies Intern Summer 2027 (R19734) - Norwood MA",
       "date": "2026-09-03",
       "link": "https://modernatx.wd1.myworkdayjobs.com/en-US/M_tx/userHome",
       "note": "",
@@ -5225,7 +5231,8 @@
       "closed": false,
       "deleted": false,
       "workspace": "",
-      "updated": "2026-09-05T21:56:08.235Z"
+      "updated": "2026-11-19T21:46:18.000Z",
+      "priority": 1
     },
     "mtlymhog-spfvap": {
       "company": "FormLabs",
@@ -5233,9 +5240,9 @@
       "coldEmailed": false,
       "connected": false,
       "outcome": "",
-      "role": "",
+      "role": "Mechanical Engineering Intern Summer 2027 (8199928)",
       "date": "2026-09-03",
-      "link": "",
+      "link": "https://boards.greenhouse.io/formlabs",
       "note": "",
       "responded": false,
       "respondedOn": null,
@@ -5243,7 +5250,8 @@
       "closed": false,
       "deleted": false,
       "workspace": "",
-      "updated": "2026-09-03T20:10:43.840Z"
+      "updated": "2026-11-19T21:46:18.000Z",
+      "priority": 1
     },
     "mtne8etz-uwtuga": {
       "company": "Proctor + Gamble",
@@ -5419,7 +5427,7 @@
       "coldEmailed": false,
       "connected": false,
       "outcome": "",
-      "role": "",
+      "role": "AI Engineering Intern (636752) - Marlborough MA; not mechanical",
       "date": "2026-09-08",
       "link": "https://bostonscientific.eightfold.ai/careers?domain=bostonscientific.com&hl=en&start=0&location=United+States&pid=563602813563486&sort_by=match&filter_include_remote=1&filter_include_relocation=0",
       "note": "mention Pratik, Andria Chen",
@@ -5429,7 +5437,7 @@
       "closed": false,
       "deleted": false,
       "workspace": "",
-      "updated": "2026-10-21T17:28:42.697Z",
+      "updated": "2026-11-19T21:46:18.000Z",
       "priority": 1
     },
     "mtxe7pz1-9ejynq": {
@@ -5461,9 +5469,9 @@
       "coldEmailed": false,
       "connected": false,
       "outcome": "",
-      "role": "",
+      "role": "Summer 2027 Internship - Mechanical Engineer (R573345)",
       "date": "2026-09-12",
-      "link": "",
+      "link": "https://stryker.wd1.myworkdayjobs.com/en-US/StrykerCareers?q=intern",
       "note": "",
       "responded": false,
       "respondedOn": null,
@@ -5471,7 +5479,8 @@
       "closed": false,
       "deleted": false,
       "workspace": "",
-      "updated": "2026-09-13T19:05:39.579Z"
+      "updated": "2026-11-19T21:46:18.000Z",
+      "priority": 1
     },
     "mtyz3cud-jue92u": {
       "company": "Curtiss-Wright",
@@ -5659,7 +5668,7 @@
       "coldEmailed": false,
       "connected": false,
       "outcome": "",
-      "role": "",
+      "role": "2027 Summer Internship - Boulder CO - deadline 30 Nov",
       "date": "2026-09-20",
       "link": "https://tensentric.com/internships/",
       "note": "",
@@ -5669,7 +5678,8 @@
       "closed": false,
       "deleted": false,
       "workspace": "",
-      "updated": "2026-09-20T22:27:31.615Z"
+      "updated": "2026-11-19T21:46:18.000Z",
+      "priority": 2
     },
     "mubgfuxi-f6qxd3": {
       "company": "Vast",
@@ -5735,9 +5745,9 @@
       "coldEmailed": false,
       "connected": false,
       "outcome": "",
-      "role": "",
+      "role": "R&D Systems Hardware Engineering Co-Op (11153) - Bedford MA",
       "date": "2026-09-25",
-      "link": "",
+      "link": "https://careers-werfen.icims.com/jobs/11153/job",
       "note": "",
       "responded": false,
       "respondedOn": null,
@@ -5745,8 +5755,8 @@
       "closed": false,
       "deleted": false,
       "workspace": "",
-      "updated": "2026-09-28T18:25:59.514Z",
-      "priority": null
+      "updated": "2026-11-19T21:46:18.000Z",
+      "priority": 1
     },
     "muisnnyz-7mg2fa": {
       "company": "Garmin",
@@ -5888,9 +5898,9 @@
       "coldEmailed": false,
       "connected": false,
       "outcome": "",
-      "role": "",
+      "role": "2027 Internships - Laurel MD, $22.60-47.95/hr, rolling",
       "date": "2026-09-30",
-      "link": "",
+      "link": "https://careers.jhuapl.edu/",
       "note": "",
       "responded": false,
       "respondedOn": null,
@@ -5898,7 +5908,7 @@
       "closed": false,
       "deleted": false,
       "workspace": "",
-      "updated": "2026-09-30T22:20:34.986Z"
+      "updated": "2026-11-19T21:46:18.000Z"
     },
     "muoo594w-hwo863": {
       "company": "LabCorp",
@@ -5945,9 +5955,9 @@
       "coldEmailed": false,
       "connected": false,
       "outcome": "",
-      "role": "",
+      "role": "Summer 2027 Engineering Internship (3E22166EFB / 8818ED5F72) - deadline 18 Dec",
       "date": "2026-10-01",
-      "link": "",
+      "link": "https://apply.workable.com/thorlabs/",
       "note": "mention perry",
       "responded": false,
       "respondedOn": null,
@@ -5955,7 +5965,7 @@
       "closed": false,
       "deleted": false,
       "workspace": "",
-      "updated": "2026-10-01T20:24:33.642Z"
+      "updated": "2026-11-19T21:46:18.000Z"
     },
     "mupzghvy-bhpzi4": {
       "company": "Sig Sauer",
@@ -6160,15 +6170,15 @@
     },
     "mvi7zrdq-x8hnti": {
       "company": "Veranex",
-      "priority": null,
+      "priority": 2,
       "applied": false,
       "coldEmailed": false,
       "connected": false,
       "outcome": "",
       "outcomes": [],
-      "role": "",
+      "role": "Electrical Engineer Intern 2027 (req 709) - Providence RI",
       "date": "2026-10-21",
-      "link": "",
+      "link": "https://jobs.dayforcehcm.com/en-US/veranex/CANDIDATEPORTAL/jobs/4643",
       "note": "mention Michele Visser",
       "responded": false,
       "respondedOn": null,
@@ -6176,7 +6186,7 @@
       "closed": false,
       "deleted": false,
       "workspace": "",
-      "updated": "2026-10-21T18:06:49.199Z",
+      "updated": "2026-11-19T21:46:18.000Z",
       "events": [
         "mtc26"
       ]
@@ -6644,7 +6654,7 @@
     },
     "mvigxs9p-fv8q0a": {
       "company": "Smith+Nephew",
-      "priority": null,
+      "priority": 1,
       "applied": true,
       "coldEmailed": false,
       "connected": false,
@@ -6652,7 +6662,7 @@
       "outcomes": [],
       "role": "Intern Mechanical Engineering",
       "date": "2026-09-18",
-      "link": "",
+      "link": "https://smithnephew.wd5.myworkdayjobs.com/External/job/Mansfield-MA/Intern-Mechanical-Engineering_R92958",
       "note": "Applied via Handshake · Pittsburgh, PA",
       "responded": false,
       "respondedOn": null,
@@ -6660,7 +6670,7 @@
       "closed": false,
       "deleted": false,
       "workspace": "",
-      "updated": "2026-11-19T15:31:56.820Z"
+      "updated": "2026-11-19T21:46:18.000Z"
     },
     "mvigxs9q-j2t4dk": {
       "company": "Under Armour",
@@ -7110,7 +7120,7 @@
       "connected": false,
       "outcome": "",
       "outcomes": [],
-      "role": "",
+      "role": "Mechanical Engineer Intern - Natick MA, $28-32/hr",
       "date": "2026-11-01",
       "link": "https://delsys.zohorecruit.com/jobs/Careers/701152000002175087/Mechanical-Engineer-Intern-?source=CareerSite",
       "note": "",
@@ -7120,7 +7130,7 @@
       "closed": false,
       "deleted": false,
       "workspace": "",
-      "updated": "2026-11-03T03:33:00.189Z"
+      "updated": "2026-11-19T21:46:18.000Z"
     },
     "mvyej326-h333o1": {
       "company": "Rhaeos",
@@ -7164,15 +7174,15 @@
     },
     "mvyejb1j-o3yc2u": {
       "company": "shure incorporated",
-      "priority": null,
+      "priority": 2,
       "applied": false,
       "coldEmailed": false,
       "connected": false,
       "outcome": "",
       "outcomes": [],
-      "role": "",
+      "role": "Tool Engineering Intern Summer 2027 (5001) - Niles IL, $23-43/hr",
       "date": "2026-11-01",
-      "link": "",
+      "link": "https://careersus-shure.icims.com/jobs/5001/tool-engineering-intern/job",
       "note": "",
       "responded": false,
       "respondedOn": null,
@@ -7180,19 +7190,19 @@
       "closed": false,
       "deleted": false,
       "workspace": "",
-      "updated": "2026-11-01T22:28:47.911Z"
+      "updated": "2026-11-19T21:46:18.000Z"
     },
     "mvyejdmw-0hyf8g": {
       "company": "merck",
-      "priority": null,
+      "priority": 1,
       "applied": false,
       "coldEmailed": false,
       "connected": false,
       "outcome": "",
       "outcomes": [],
-      "role": "",
+      "role": "2027 Future Talent - Device Development, Systems & Human Factors Co-op (R422538)",
       "date": "2026-11-01",
-      "link": "",
+      "link": "https://msd.wd5.myworkdayjobs.com/en-US/SearchJobs",
       "note": "",
       "responded": false,
       "respondedOn": null,
@@ -7200,7 +7210,7 @@
       "closed": false,
       "deleted": false,
       "workspace": "",
-      "updated": "2026-11-06T18:16:29.944Z"
+      "updated": "2026-11-19T21:46:18.000Z"
     },
     "mvyejgy3-iacm9p": {
       "company": "werfen",
@@ -7424,15 +7434,15 @@
     },
     "mwh8witt-b7siwr": {
       "company": "MBTA",
-      "priority": null,
+      "priority": 1,
       "applied": false,
       "coldEmailed": false,
       "connected": false,
       "outcome": "",
       "outcomes": [],
-      "role": "",
+      "role": "Engineering internships - Summer 2027 reqs expected Mar-May 2027; set job alert now",
       "date": "2026-11-14",
-      "link": "",
+      "link": "https://www.governmentjobs.com/careers/mbtama/intern",
       "note": "",
       "responded": false,
       "respondedOn": null,
@@ -7440,7 +7450,7 @@
       "closed": false,
       "deleted": false,
       "workspace": "",
-      "updated": "2026-11-15T02:58:44.177Z"
+      "updated": "2026-11-19T21:46:18.000Z"
     },
     "mwktdln6-gtvwsb": {
       "company": "Amazon",
@@ -7481,6 +7491,101 @@
       "deleted": false,
       "workspace": "",
       "updated": "2026-11-19T15:26:44.351Z"
+    },
+    "1a1f5c657c1-zzx09r": {
+      "company": "Analog Devices",
+      "applied": false,
+      "role": "Biomedical Engineering Intern (R267570) - Wilmington MA",
+      "date": "2026-11-19",
+      "link": "https://analogdevices.wd1.myworkdayjobs.com/External",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "closed": false,
+      "deleted": false,
+      "updated": "2026-11-19T21:46:18.000Z",
+      "coldEmailed": false,
+      "connected": false,
+      "outcome": "",
+      "workspace": "",
+      "priority": 1
+    },
+    "1a1f5c657c1-knupnf": {
+      "company": "Vertex Pharmaceuticals",
+      "applied": false,
+      "role": "Summer Intern 2027, Material Science (REQ-31308) - deadline 15 Jan",
+      "date": "2026-11-19",
+      "link": "https://vrtx.wd501.myworkdayjobs.com/Vertex_Careers",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "closed": false,
+      "deleted": false,
+      "updated": "2026-11-19T21:46:18.000Z",
+      "coldEmailed": false,
+      "connected": false,
+      "outcome": "",
+      "workspace": "",
+      "priority": 1
+    },
+    "1a1f5c657c1-a1c8db": {
+      "company": "DuPont",
+      "applied": false,
+      "role": "2027 Summer Intern Engineering (250296W) - Pennsauken NJ",
+      "date": "2026-11-19",
+      "link": "https://dupont.wd5.myworkdayjobs.com/Jobs",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "closed": false,
+      "deleted": false,
+      "updated": "2026-11-19T21:46:18.000Z",
+      "coldEmailed": false,
+      "connected": false,
+      "outcome": "",
+      "workspace": "",
+      "priority": 1
+    },
+    "1a1f5c657c1-l4sd9m": {
+      "company": "Globus Medical",
+      "applied": false,
+      "role": "2027 Co-Op/Internship Project Engineer (JR108109) - Audubon PA",
+      "date": "2026-11-19",
+      "link": "https://globusmedical.wd5.myworkdayjobs.com/GMED_Careers",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "closed": false,
+      "deleted": false,
+      "updated": "2026-11-19T21:46:18.000Z",
+      "coldEmailed": false,
+      "connected": false,
+      "outcome": "",
+      "workspace": "",
+      "priority": 2
+    },
+    "1a1f5c657c1-0cxbc5": {
+      "company": "Motorola Solutions",
+      "applied": false,
+      "role": "Quality & Process Engineer Summer Internship 2027 (R68673) - Elgin IL",
+      "date": "2026-11-19",
+      "link": "https://motorolasolutions.wd5.myworkdayjobs.com/Careers",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "closed": false,
+      "deleted": false,
+      "updated": "2026-11-19T21:46:18.000Z",
+      "coldEmailed": false,
+      "connected": false,
+      "outcome": "",
+      "workspace": "",
+      "priority": 2
     }
   }
 }
