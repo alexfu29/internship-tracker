@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-11-20T02:18:19.630Z",
+  "updated": "2026-11-20T02:21:15.476Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -4507,6 +4507,24 @@
         "sundai"
       ],
       "noteMuted": true
+    },
+    "mwocrk8x-w3xot7": {
+      "name": "Tyler Ly",
+      "company": "",
+      "role": "",
+      "channel": "Email",
+      "email": "Tyler.Ly@maxongroup.com",
+      "date": "2026-11-19",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "nudgedOn": [],
+      "closed": false,
+      "deleted": false,
+      "workspace": "",
+      "updated": "2026-11-20T02:21:15.476Z",
+      "starred": true
     }
   },
   "apps": {
