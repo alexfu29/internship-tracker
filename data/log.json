@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-11-20T21:57:54.916Z",
+  "updated": "2026-11-20T21:58:18.037Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -16,8 +16,8 @@
       "nudgedOn": [],
       "closed": false,
       "deleted": false,
-      "updated": "2026-11-20T21:57:54.916Z",
-      "workspace": "Meeting 11/18- Ask him what?\n\nJust a coffee chat ig. About my tissueguard experience\n\nAsk about coffee chatting and usefulness of it, MBTA HR said not really useful",
+      "updated": "2026-11-20T21:58:18.037Z",
+      "workspace": "",
       "inviteAcceptedOn": "2026-08-17",
       "withdrawnOn": null,
       "starred": false,
@@ -25,8 +25,8 @@
       "meetings": [
         {
           "id": "mwpisrxg-auwdmj",
-          "date": "2026-11-20",
-          "note": ""
+          "date": "2026-11-19",
+          "note": "Meeting 11/18- Ask him what?\n\nJust a coffee chat ig. About my tissueguard experience\n\nAsk about coffee chatting and usefulness of it, MBTA HR said not really useful\n\n--\n"
         }
       ]
     },
