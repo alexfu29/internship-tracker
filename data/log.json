@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-11-19T22:01:16.528Z",
+  "updated": "2026-11-20T02:15:37.900Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -3689,11 +3689,12 @@
       "workspace": "",
       "inviteAcceptedOn": "2026-10-21",
       "withdrawnOn": null,
-      "updated": "2026-11-10T18:06:58.014Z",
+      "updated": "2026-11-20T02:15:37.900Z",
       "events": [
         "mtc26"
       ],
-      "noteMuted": true
+      "noteMuted": true,
+      "starred": true
     },
     "mvidz0t1-grcks9": {
       "name": "Raunak Subedi",
