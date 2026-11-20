@@ -1598,6 +1598,9 @@ the top of the contact's edit menu; both stay in sync.
   channel is still stored and still editable in the contact's edit menu.
 - On a phone, the company name in the companies table is capped at **23vw**
   (was 34vw — two-thirds as wide); longer names end in "…".
+- Cut by another two-thirds, now on computers too: phone cap **15vw**, and a
+  new computer cap of **203px** (the column was ~304px with no cap before).
+  Set on `td.company` in `index.html`.
 - The 8 contacts with role **Meeting Request** were removed (marked
   `deleted: true` in `data/log.json`, the same tombstone the Delete button
   uses, so they can be brought back by flipping it to `false`).
