@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-11-20T02:26:27.544Z",
+  "updated": "2026-11-20T02:45:52.972Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -7607,12 +7607,13 @@
       "meetingOn": null,
       "closed": false,
       "deleted": false,
-      "updated": "2026-11-19T21:46:18.000Z",
+      "updated": "2026-11-20T02:45:52.972Z",
       "coldEmailed": false,
       "connected": false,
       "outcome": "",
       "workspace": "",
-      "priority": 2
+      "priority": 2,
+      "outcomes": []
     },
     "1a1f5c657c1-0cxbc5": {
       "company": "Motorola Solutions",
