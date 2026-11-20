@@ -1596,10 +1596,12 @@ the top of the contact's edit menu; both stay in sync.
 ### Show Connected (2026-11-20)
 
 - **Show Connected** button next to "People contacted" adds a **●** column:
-  blue dot = connected, gray outline = not. The dot is display-only (not a
-  button). Tap again ("Hide Connected") to remove the column.
-- "Connected" = LinkedIn invite accepted **or** they replied
-  (`isConnected` in `index.html`).
+  blue dot = connected, gray outline = not. Tap again ("Hide Connected") to
+  remove the column.
+- **Connected is manual** (changed 2026-11-20): tap a contact's dot to turn
+  it on/off, or use the **Connected** toggle in the contact's edit menu.
+  Stored as `connected: true` on the contact and synced. It is linked to
+  nothing else (not invite-accepted, not replied). Everyone started off.
 - The **●** header uses the same 4-tap cycle as ★. Only one of ★ / ● is
   active at a time; within a group rows keep their current order.
 - Both the button state and the cycle step live in `intern-settings` (this

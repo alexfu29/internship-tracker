@@ -717,6 +717,8 @@
   .conn-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%;
     border: 1.5px solid #a8a8a8; box-sizing: border-box; vertical-align: middle; }
   .conn-dot.on { background: var(--accent); border-color: var(--accent); }
+  .conn-btn { background: none; border: 0; padding: 4px; cursor: pointer; line-height: 0; }
+  .conn-btn:focus-visible { outline: 2px solid var(--accent); border-radius: 4px; }
   td.conncol, th.conncol { width: 1%; padding-left: 2px; padding-right: 2px; text-align: center; }
   th.flagcol { cursor: pointer; user-select: none; white-space: nowrap; }
   th.flagcol.active { color: var(--accent); }
@@ -1587,7 +1589,7 @@
      tell those apart from a change that genuinely didn't work. This string
      lives in the file being executed, so it cannot lie about which file that
      is. It's shown at the bottom of Settings. */
-  var APP_VERSION = "2026-11-20a";
+  var APP_VERSION = "2026-11-20b";
   var swReady = false, swCacheVersion = "", swNote = "";
 
   /* ============================================================
@@ -3214,9 +3216,16 @@
      Tap the ★ or ● header: 1st = those rows first, 2nd = only those,
      3rd = only the others, 4th = back to normal. One at a time. Stored
      in SETTINGS (this device only), never in the synced data.
-     "Connected" = LinkedIn invite accepted, or they replied.
+     "Connected" is a manual on/off you set yourself (stored as
+     `connected`), linked to nothing else.
      ---------------------------------------------------------------- */
-  function isConnected(e) { return inviteAccepted(e) || !!(e && e.responded); }
+  function isConnected(e) { return !!(e && e.connected); }
+  function toggleConnected(id) {
+    var e = DATA.contacts[id];
+    if (!e || e.deleted) return;
+    e.connected = !e.connected;
+    touch(e); saveData(); render();
+  }
   var FLAG_TESTS = { star: isStarred, conn: isConnected };
   var FLAG_STEP_MARK = { 1: "↓", 2: "only", 3: "not" };
   var FLAG_STEP_HINT = { 1: "first", 2: "only", 3: "hidden" };
@@ -3240,8 +3249,10 @@
   }
   function connDotHtml(e) {
     var on = isConnected(e);
-    return '<span class="conn-dot' + (on ? ' on' : '') + '" title="' +
-      (on ? 'Connected' : 'Not connected') + '"></span>';
+    return '<button type="button" class="conn-btn" data-conn="' + escapeHtml(e.id) +
+      '" aria-pressed="' + on + '" title="' + (on ? 'Connected — tap to unmark' : 'Tap to mark connected') +
+      '" aria-label="' + (on ? 'Unmark connected' : 'Mark connected') + '">' +
+      '<span class="conn-dot' + (on ? ' on' : '') + '"></span></button>';
   }
   function wireFlagHeaders(mountId) {
     var v = flagView();
@@ -3394,6 +3405,8 @@
         if (ev.target.closest && ev.target.closest(".drag-handle")) return;
         var star = ev.target.closest && ev.target.closest(".star-btn");
         if (star) { toggleStar(star.getAttribute("data-star")); return; }
+        var conn = ev.target.closest && ev.target.closest(".conn-btn");
+        if (conn) { toggleConnected(conn.getAttribute("data-conn")); return; }
         // Letting go of a drag fires a click on the row you dropped.
         if (Date.now() - dragEndedAt < 400) return;
         var key = tr.getAttribute("data-select");
@@ -3919,6 +3932,7 @@
     // form itself, so only what the form can't say goes here.
     html += '<div class="upd-group"><span class="upd-group-label">Status</span>' +
       '<div class="upd-acts">' + toggleBtn("replied", !!e.responded, "Replied");
+    if (isContact) html += toggleBtn("connected", isConnected(e), "Connected");
     if (isContact) html += toggleBtn("nudged", remindedToday(e), "Reminder sent");
     // LinkedIn-only states. Accepting an invitation is not replying, and
     // withdrawing one is not dropping the person — see the two cards.
@@ -4002,6 +4016,8 @@
         if (act === "replied") {
           live.responded = !live.responded;
           live.respondedOn = live.responded ? TODAY : null;
+        } else if (act === "connected") {
+          live.connected = !live.connected;
         } else if (act === "nudged") {
           toggleRemindedToday(live);
         } else if (act === "invite") {
