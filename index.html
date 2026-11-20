@@ -707,6 +707,12 @@
   }
   td.company .co-wrap, td.who .co-wrap { display: flex; align-items: center; }
   td.who .co-name { font-weight: 600; color: var(--text-primary); }
+  /* Star a contact: gray outline off, yellow filled on. Tap toggles it. */
+  .star-btn { background: none; border: 0; padding: 0 4px; margin: 0 2px 0 0;
+    font-size: 1.05rem; line-height: 1; cursor: pointer; color: #a8a8a8; }
+  .star-btn.on { color: #f2b705; }
+  .star-btn:focus-visible { outline: 2px solid var(--accent); border-radius: 4px; }
+  .upd-meta .star-btn { font-size: 1.4rem; vertical-align: middle; margin-right: 6px; }
   td.who .co-role { color: var(--text-secondary); font-size: 0.76rem; margin-left: 6px; }
   /* Peer tag: a student, beside their name. Outline in the accent so it reads
      in both themes without competing with the status chip. */
@@ -1567,7 +1573,7 @@
      tell those apart from a change that genuinely didn't work. This string
      lives in the file being executed, so it cannot lie about which file that
      is. It's shown at the bottom of Settings. */
-  var APP_VERSION = "2026-11-01a";
+  var APP_VERSION = "2026-11-19a";
   var swReady = false, swCacheVersion = "", swNote = "";
 
   /* ============================================================
@@ -3171,10 +3177,25 @@
      table below it are the same table, not two that can drift apart. The
      archive drops the drag handle and the sortable header: it's a place to
      look something up, not a list you keep in an order. */
+  /* ---- Star: a per-contact on/off flag (stored as `starred`) ---- */
+  function isStarred(e) { return !!(e && e.starred); }
+  function starBtnHtml(e, id) {
+    var on = isStarred(e);
+    return '<button type="button" class="star-btn' + (on ? ' on' : '') + '" data-star="' +
+      escapeHtml(id || e.id) + '" aria-pressed="' + on + '" title="' + (on ? 'Unstar' : 'Star') +
+      '" aria-label="' + (on ? 'Unstar contact' : 'Star contact') + '">' + (on ? '★' : '☆') + '</button>';
+  }
+  function toggleStar(id) {
+    var e = DATA.contacts[id];
+    if (!e || e.deleted) return;
+    e.starred = !e.starred;
+    touch(e); saveData(); render();
+  }
+
   function contactCols(archive) {
     return [
       { head: "Who", cls: "who", sort: archive ? null : "name", cell: function (r) {
-          return '<div class="co-wrap">' + (archive ? "" : dragHandleHtml()) +
+          return '<div class="co-wrap">' + (archive ? "" : dragHandleHtml()) + starBtnHtml(r) +
             '<span class="co-text">' +
             '<span class="co-name">' + escapeHtml(nameOf(r)) + '</span>' + peerTagHtml(r) +
             (r.company || (r.role && !isPeer(r))
@@ -3290,6 +3311,8 @@
         // open the posting, not hijack it into opening the entry.
         if (ev.target.closest && ev.target.closest("a")) return;
         if (ev.target.closest && ev.target.closest(".drag-handle")) return;
+        var star = ev.target.closest && ev.target.closest(".star-btn");
+        if (star) { toggleStar(star.getAttribute("data-star")); return; }
         // Letting go of a drag fires a click on the row you dropped.
         if (Date.now() - dragEndedAt < 400) return;
         var key = tr.getAttribute("data-select");
@@ -3801,7 +3824,7 @@
     var isContact = editingEntry.bag === "contacts";
     var st = statusOf(e, isContact);
 
-    var html = '<div class="upd-meta">' + chipHtml(st) + '</div>';
+    var html = '<div class="upd-meta">' + (isContact ? starBtnHtml(e, editingEntry.id) : '') + chipHtml(st) + '</div>';
     html += '<div class="field wide" style="margin-top:10px">' +
       '<label for="updMeeting">Meeting date <span class="opt">(blank = no meeting)</span></label>' +
       '<input type="date" id="updMeeting" value="' + escapeHtml(e.meetingOn || "") + '"></div>';
@@ -3846,6 +3869,11 @@
 
     editExtras.innerHTML = html;
     editExtras.className = "open";
+
+    var modalStar = editExtras.querySelector(".star-btn");
+    if (modalStar) modalStar.addEventListener("click", function () {
+      toggleStar(modalStar.getAttribute("data-star"));
+    });
 
     editExtras.querySelector("#updMeeting").addEventListener("change", function () {
       var live = editEntry();

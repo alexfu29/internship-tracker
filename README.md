@@ -1577,6 +1577,18 @@ The company row itself is untouched: **Cold emails sent** stays at *no*, because
 it still is. Running it twice on one company skips names already on your list and
 tells you how many.
 
+## Starring a contact
+
+Each contact row has a **☆ star** before the name. Tap it to star (turns
+**yellow ★**), tap again to unstar (back to **gray ☆**). The same star sits at
+the top of the contact's edit menu; both stay in sync.
+
+- Stored as `starred: true` on the contact, so it syncs like any other field.
+  Old contacts have no `starred` and read as off.
+- Tapping the row star toggles only the star — it doesn't open the edit menu.
+- Code: `isStarred` / `starBtnHtml` / `toggleStar`, just above `contactCols`
+  in `index.html`; styles under `.star-btn`.
+
 ## It opens with no connection
 
 The data was always local — `localStorage`, no backend. The *app* wasn't: losing
