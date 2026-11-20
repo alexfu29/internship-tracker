@@ -1607,6 +1607,8 @@ the top of the contact's edit menu; both stay in sync.
 - Both the button state and the cycle step live in `intern-settings` (this
   device only, never synced). Drag-to-reorder is off while a ★/● filter is on.
 - Code: the "Star / Connected header cycle" block just above `contactCols`.
+- **Update:** the ● column is now **always shown**; the Show/Hide Connected
+  button was removed.
 
 ### Meetings for connected contacts (2026-11-20)
 
