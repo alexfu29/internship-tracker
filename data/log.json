@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-11-20T03:34:59.292Z",
+  "updated": "2026-11-20T20:57:37.618Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -7672,6 +7672,26 @@
       "deleted": false,
       "workspace": "",
       "updated": "2026-11-20T03:34:58.005Z"
+    },
+    "mwofeo96-3nhef5": {
+      "company": "Danaher",
+      "priority": null,
+      "applied": true,
+      "coldEmailed": false,
+      "connected": false,
+      "outcome": "",
+      "outcomes": [],
+      "role": "",
+      "date": "2026-11-19",
+      "link": "",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "closed": false,
+      "deleted": false,
+      "workspace": "",
+      "updated": "2026-11-20T03:35:11.946Z"
     }
   }
 }
