@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-11-20T02:51:49.874Z",
+  "updated": "2026-11-20T02:53:02.001Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -4545,6 +4545,24 @@
       "events": [
         "biotech1009"
       ],
+      "starred": true
+    },
+    "mwodwelz-cn46nr": {
+      "name": "Sean Tseng",
+      "company": "Werfen",
+      "role": "",
+      "channel": "LinkedIn",
+      "email": "https://www.linkedin.com/in/sean-tseng-7452a1179/",
+      "date": "2026-11-19",
+      "note": "massrobotics connect",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "nudgedOn": [],
+      "closed": false,
+      "deleted": false,
+      "workspace": "",
+      "updated": "2026-11-20T02:53:02.001Z",
       "starred": true
     }
   },
