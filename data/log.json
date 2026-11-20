@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-11-20T02:48:57.434Z",
+  "updated": "2026-11-20T02:49:53.236Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -7238,7 +7238,7 @@
     },
     "mvyejdmw-0hyf8g": {
       "company": "merck",
-      "priority": 1,
+      "priority": 2,
       "applied": false,
       "coldEmailed": false,
       "connected": false,
@@ -7254,7 +7254,7 @@
       "closed": false,
       "deleted": false,
       "workspace": "",
-      "updated": "2026-11-20T02:48:57.434Z"
+      "updated": "2026-11-20T02:49:53.236Z"
     },
     "mvyejgy3-iacm9p": {
       "company": "werfen",
