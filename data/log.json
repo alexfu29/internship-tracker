@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-11-20T02:15:37.900Z",
+  "updated": "2026-11-20T02:15:57.294Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -3460,10 +3460,11 @@
       "workspace": "Hi Mark! It was great to meet you at the MedTech conference and try out the finger-based blood pressure cuff.\n\nI'm personally very interested in medtech product management and start-up environments. I'd love to meet on zoom to talk about your pathway from energy to medtech and any advice you had for a student looking to get into product management in medtech.\n\nI'm free after 8:30pm Tuesday, after 7:30pm Wednesday, and Thursday 2-6:30pm & after 8:30pm.\n\nBest,\nAlex Fu",
       "inviteAcceptedOn": "2026-11-08",
       "withdrawnOn": null,
-      "updated": "2026-11-17T14:54:56.576Z",
+      "updated": "2026-11-20T02:15:49.012Z",
       "events": [
         "mtc26"
-      ]
+      ],
+      "starred": true
     },
     "mvidz0sr-ayn7hm": {
       "name": "Hans Mische",
@@ -3847,11 +3848,11 @@
       "meetingOn": null,
       "nudgedOn": [],
       "closed": false,
-      "deleted": false,
+      "deleted": true,
       "workspace": "",
       "inviteAcceptedOn": "2026-10-20",
       "withdrawnOn": null,
-      "updated": "2026-11-10T18:06:58.390Z",
+      "updated": "2026-11-20T02:15:57.294Z",
       "events": [
         "mtc26"
       ],
