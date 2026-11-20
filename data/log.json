@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-11-20T21:26:02.950Z",
+  "updated": "2026-11-20T21:26:28.169Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -16,11 +16,11 @@
       "nudgedOn": [],
       "closed": false,
       "deleted": false,
-      "updated": "2026-11-20T21:26:02.950Z",
+      "updated": "2026-11-20T21:26:28.169Z",
       "workspace": "Meeting 11/18- Ask him what?\n\nJust a coffee chat ig. About my tissueguard experience\n\nAsk about coffee chatting and usefulness of it, MBTA HR said not really useful",
       "inviteAcceptedOn": "2026-08-17",
       "withdrawnOn": null,
-      "starred": true,
+      "starred": false,
       "connected": true
     },
     "mshkbbji-or84t1": {
@@ -4566,6 +4566,24 @@
       "workspace": "",
       "updated": "2026-11-20T02:53:02.001Z",
       "starred": true
+    },
+    "mwpho7h0-i15frk": {
+      "name": "Nina Pierce",
+      "company": "Dynocardia",
+      "role": "",
+      "channel": "Email",
+      "email": "",
+      "date": "2026-11-20",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "nudgedOn": [],
+      "closed": false,
+      "deleted": false,
+      "workspace": "",
+      "updated": "2026-11-20T21:26:26.516Z",
+      "connected": true
     }
   },
   "apps": {
