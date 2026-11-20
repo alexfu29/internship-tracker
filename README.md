@@ -1608,6 +1608,25 @@ the top of the contact's edit menu; both stay in sync.
   device only, never synced). Drag-to-reorder is off while a ★/● filter is on.
 - Code: the "Star / Connected header cycle" block just above `contactCols`.
 
+### Meetings for connected contacts (2026-11-20)
+
+A blue dot means "someone I want to keep meeting with". For those contacts:
+
+- The edit menu swaps **Date contacted** for a **Meetings** list. The top
+  line still says when you first contacted them (and the last contact).
+  The date field is only hidden, so saving never loses it.
+- Each meeting = a **date** + **📝 Meeting notes**. Notes open in a popup on
+  the right (where the workspace sits) and save as you type; a `●` on the
+  button means that meeting has notes. **＋ Add meeting** adds one dated
+  today; **✕** removes one (asks first if it has notes).
+- **Reach back out** card: a connected contact with no contact for **30
+  days** (latest of date contacted and meeting dates) shows up in a blue
+  card at the top. **＋ Met today** logs a meeting and clears it. The 30 is a
+  setting ("Remind me to reach back out…", default 30).
+- Stored as `meetings: [{id, date, note}]` on the contact; synced.
+- The older single **Meeting date** field is unchanged.
+- Code: the "Meetings" block above `toggleConnected` in `index.html`.
+
 ### Contacts table changes (2026-11-19)
 
 - The **How** column (Email / LinkedIn) is gone from the contacts table. The
@@ -1692,6 +1711,7 @@ quietly, and everything except offline mode works as before.
 | Nudge after N days of silence | 7 | the red **Needs a nudge** card |
 | Note N days after an invite is accepted | 4 | the green **Accepted your invite** card |
 | Suggest withdrawing after N days pending | 21 | the amber **Worth withdrawing** card |
+| Reach back out to connected contacts after N days | 30 | the blue **Reach back out** card |
 | BU alumni to find | 4 | 🔍 Find contacts |
 | Engineers in my field to find | 1 | 🔍 Find contacts |
 | What counts as my field | mechanical, biomedical, biosensor, wearable, human-machine interaction, human factors | see below |

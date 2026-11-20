@@ -717,6 +717,14 @@
   .conn-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%;
     border: 1.5px solid #a8a8a8; box-sizing: border-box; vertical-align: middle; }
   .conn-dot.on { background: var(--accent); border-color: var(--accent); }
+  /* Meetings list (connected contacts, in the edit menu) */
+  .mt-contacted { font-size: 0.8rem; color: var(--text-secondary); margin: 2px 0 6px; }
+  .mt-row { display: flex; align-items: center; gap: 6px; margin: 4px 0; }
+  .mt-row input[type="date"] { flex: 0 1 160px; }
+  .mt-row .tgl.mt-open { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+  .mt-empty { font-size: 0.8rem; color: var(--text-muted); margin: 2px 0 6px; }
+  .card.rc-card { border-left: 4px solid var(--accent); }
+  .card.rc-card > h2 { color: var(--accent); }
   .conn-btn { background: none; border: 0; padding: 4px; cursor: pointer; line-height: 0; }
   .conn-btn:focus-visible { outline: 2px solid var(--accent); border-radius: 4px; }
   td.conncol, th.conncol { width: 1%; padding-left: 2px; padding-right: 2px; text-align: center; }
@@ -998,6 +1006,7 @@
   <div id="nudgeMount"></div>
   <div id="acceptMount"></div>
   <div id="withdrawMount"></div>
+  <div id="reconnectMount"></div>
 
   <!-- Conference tabs: a filter over the two tables below, never a copy of
        them. "All" is the whole tracker exactly as it was. -->
@@ -1187,6 +1196,18 @@
 <!-- Workspace: one per contact and per company, opened by the 📝 next to that
      entry's name. A small popup on the right rather than a full-height drawer —
      it's meant to sit beside what you're looking at, not replace it. -->
+<!-- Meeting notes: one per meeting on a connected contact. Opens on the right
+     beside the edit dialog, in the workspace's spot (the workspace steps aside). -->
+<aside class="ws-pop mt-pop" id="meetingNotesPanel" aria-hidden="true" aria-label="Meeting notes">
+  <div class="ws-pop-head">
+    <h2 id="meetingNotesTitle">Meeting notes</h2>
+    <button type="button" class="icon-btn" id="meetingNotesClose" aria-label="Close meeting notes">✕</button>
+  </div>
+  <div class="ws-pop-body">
+    <textarea id="meetingNotesText" aria-label="Notes for this meeting"></textarea>
+    <div class="ws-foot"><span class="ws-saved">Saves as you type</span></div>
+  </div>
+</aside>
 <aside class="ws-pop" id="workspacePanel" aria-hidden="true" aria-label="Workspace">
   <div class="ws-pop-head">
     <h2 id="workspaceTitle">Workspace</h2>
@@ -1502,6 +1523,10 @@
     <span style="color:var(--text-muted)">(default 21)</span></label>
   <input type="number" id="withdrawDaysInput" min="1" max="365" step="1" placeholder="21">
 
+  <label for="reconnectDaysInput">Remind me to reach back out to connected contacts after this many days
+    <span style="color:var(--text-muted)">(default 30)</span></label>
+  <input type="number" id="reconnectDaysInput" min="1" max="365" step="1" placeholder="30">
+
   <!-- A save button beside the numbers it saves. The one at the top of the
        drawer already saved these, but it is a long scroll away from here, so
        typing a number and seeing no button next to it reads as "there is
@@ -1589,7 +1614,7 @@
      tell those apart from a change that genuinely didn't work. This string
      lives in the file being executed, so it cannot lie about which file that
      is. It's shown at the bottom of Settings. */
-  var APP_VERSION = "2026-11-20b";
+  var APP_VERSION = "2026-11-20c";
   var swReady = false, swCacheVersion = "", swNote = "";
 
   /* ============================================================
@@ -1629,6 +1654,7 @@
     { key: "nudgeDays",      id: "nudgeDaysInput" },
     { key: "acceptNoteDays", id: "acceptNoteDaysInput" },
     { key: "withdrawDays",   id: "withdrawDaysInput" },
+    { key: "reconnectDays",  id: "reconnectDaysInput" },
     { key: "buPicks",        id: "buPicksInput" },
     { key: "fieldPicks",     id: "fieldPicksInput" }
   ];
@@ -1640,6 +1666,7 @@
   function nudgeDays()      { return numSet("nudgeDays", 7, 1, 365); }
   function withdrawDays()   { return numSet("withdrawDays", 21, 1, 365); }
   function acceptNoteDays() { return numSet("acceptNoteDays", 4, 1, 365); }
+  function reconnectDays()  { return numSet("reconnectDays", 30, 1, 365); }
   function buPicks()        { return numSet("buPicks", 4, 1, 12); }
   function fieldPicks()     { return numSet("fieldPicks", 1, 0, 12); }
   function fieldTerms() {
@@ -3220,6 +3247,155 @@
      `connected`), linked to nothing else.
      ---------------------------------------------------------------- */
   function isConnected(e) { return !!(e && e.connected); }
+  /* ---- Meetings: only on connected contacts ---------------------
+     e.meetings = [{ id, date: "YYYY-MM-DD", note }]. Synced with the
+     contact like any other field. "Last contact" is the latest of the
+     date contacted and every meeting date.
+     ---------------------------------------------------------------- */
+  function meetingsOf(e) { return (e && Array.isArray(e.meetings)) ? e.meetings : []; }
+  function lastContactYmd(e) {
+    var best = parseYmd(e.date) ? e.date : "";
+    meetingsOf(e).forEach(function (m) { if (parseYmd(m.date) && m.date > best) best = m.date; });
+    return best;
+  }
+  function reconnectList() {
+    return contacts().filter(function (c) {
+      if (c.closed || !isConnected(c)) return false;
+      var last = lastContactYmd(c);
+      return !!last && ageDays(last) >= reconnectDays();
+    }).sort(function (a, b) { return lastContactYmd(a) < lastContactYmd(b) ? -1 : 1; });
+  }
+  function renderReconnectList() {
+    reminderCard("reconnectMount", "rc-card", "● Reach back out to your connected contacts",
+      reconnectList(),
+      "Connected contacts with no contact in " + reconnectDays() + "+ days. " +
+      "Tap a name to open them, then <strong>＋ Add meeting</strong> once you've met or talked.",
+      {
+        meta: function (c) {
+          var last = lastContactYmd(c);
+          return "last contact " + fmtShort(last) + " · " + ageDays(last) + " days ago";
+        },
+        buttons: function (c) {
+          return '<button data-act="met" data-id="' + c.id + '">＋ Met today</button>';
+        },
+        run: function (act, c) {
+          if (act === "met") {
+            if (!Array.isArray(c.meetings)) c.meetings = [];
+            c.meetings.push({ id: newId(), date: TODAY, note: "" });
+          }
+          touch(c); saveData(); render();
+        }
+      });
+  }
+
+  var mtPop = document.getElementById("meetingNotesPanel");
+  var mtText = document.getElementById("meetingNotesText");
+  var mtTitle = document.getElementById("meetingNotesTitle");
+  var mtOpenFor = null;   // { id: contact id, mid: meeting id }
+  var mtTimer = null;
+  function mtMeeting() {
+    if (!mtOpenFor) return null;
+    var e = DATA.contacts[mtOpenFor.id];
+    if (!e || e.deleted) return null;
+    return meetingsOf(e).filter(function (m) { return m.id === mtOpenFor.mid; })[0] || null;
+  }
+  // Writes without re-rendering, so typing never loses focus.
+  function flushMeetingNotes() {
+    clearTimeout(mtTimer);
+    var m = mtMeeting();
+    if (!m || m.note === mtText.value) return;
+    m.note = mtText.value;
+    touch(DATA.contacts[mtOpenFor.id]); saveData();
+  }
+  function openMeetingNotes(id, mid) {
+    flushMeetingNotes();
+    if (wsPop.classList.contains("open")) { flushWorkspace(); hideWorkspace(); }
+    mtOpenFor = { id: id, mid: mid };
+    var m = mtMeeting();
+    if (!m) { mtOpenFor = null; return; }
+    mtText.value = m.note || "";
+    mtTitle.textContent = nameOf(DATA.contacts[id]) + " · " + (parseYmd(m.date) ? fmtShort(m.date) : "no date");
+    mtPop.classList.add("open");
+    mtPop.setAttribute("aria-hidden", "false");
+    document.body.classList.add("ws-side");
+  }
+  function closeMeetingNotes(noRender) {
+    if (!mtOpenFor) return;
+    flushMeetingNotes();
+    mtOpenFor = null;
+    mtPop.classList.remove("open");
+    mtPop.setAttribute("aria-hidden", "true");
+    if (!wsPop.classList.contains("open")) document.body.classList.remove("ws-side");
+    if (!noRender) render();
+  }
+  mtText.addEventListener("input", function () {
+    clearTimeout(mtTimer);
+    mtTimer = setTimeout(flushMeetingNotes, 400);
+  });
+  document.getElementById("meetingNotesClose").addEventListener("click", function () { closeMeetingNotes(); });
+
+  // The Meetings block in the edit menu. Returns HTML; wired by wireMeetings.
+  function meetingsHtml(e, id) {
+    var list = meetingsOf(e).slice().sort(function (a, b) {
+      var x = String(a.date || ""), y = String(b.date || "");
+      return x < y ? 1 : x > y ? -1 : 0;   // newest first
+    });
+    var html = '<div class="upd-group"><span class="upd-group-label">Meetings</span>' +
+      '<div class="mt-contacted">Contacted: ' + (parseYmd(e.date) ? escapeHtml(fmtShort(e.date)) : "no date") +
+      (list.length ? ' · last contact ' + escapeHtml(fmtShort(lastContactYmd(e))) : '') + '</div>';
+    if (!list.length) html += '<div class="mt-empty">No meetings yet.</div>';
+    list.forEach(function (m) {
+      var open = mtOpenFor && mtOpenFor.id === id && mtOpenFor.mid === m.id;
+      html += '<div class="mt-row">' +
+        '<input type="date" data-mt-date="' + escapeHtml(m.id) + '" value="' + escapeHtml(m.date || "") + '" aria-label="Meeting date">' +
+        '<button type="button" class="tgl' + (open ? ' mt-open' : '') + '" data-mt-notes="' + escapeHtml(m.id) + '">📝 Meeting notes' +
+          ((m.note || "").trim() ? ' ●' : '') + '</button>' +
+        '<button type="button" class="tgl" data-mt-del="' + escapeHtml(m.id) + '" aria-label="Remove meeting">✕</button></div>';
+    });
+    html += '<div class="upd-acts"><button type="button" class="tgl" data-mt-add="1">＋ Add meeting</button></div></div>';
+    return html;
+  }
+  function wireMeetings(root, id) {
+    function live() { var e = DATA.contacts[id]; return e && !e.deleted ? e : null; }
+    function find(e, mid) { return meetingsOf(e).filter(function (m) { return m.id === mid; })[0]; }
+    root.querySelectorAll("[data-mt-add]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        var e = live(); if (!e) return;
+        if (!Array.isArray(e.meetings)) e.meetings = [];
+        e.meetings.push({ id: newId(), date: TODAY, note: "" });
+        touch(e); saveData(); render();
+      });
+    });
+    root.querySelectorAll("input[data-mt-date]").forEach(function (inp) {
+      inp.addEventListener("change", function () {
+        var e = live(); if (!e) return;
+        var m = find(e, inp.getAttribute("data-mt-date")); if (!m) return;
+        m.date = inp.value || "";
+        touch(e); saveData(); render();
+      });
+    });
+    root.querySelectorAll("[data-mt-notes]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        var mid = b.getAttribute("data-mt-notes");
+        if (mtOpenFor && mtOpenFor.id === id && mtOpenFor.mid === mid) { closeMeetingNotes(); return; }
+        openMeetingNotes(id, mid);
+        renderEditExtras();
+        mtText.focus();
+      });
+    });
+    root.querySelectorAll("[data-mt-del]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        var e = live(); if (!e) return;
+        var mid = b.getAttribute("data-mt-del");
+        var m = find(e, mid); if (!m) return;
+        if ((m.note || "").trim() && !confirm("Remove this meeting and its notes?")) return;
+        if (mtOpenFor && mtOpenFor.mid === mid) closeMeetingNotes(true);
+        e.meetings = meetingsOf(e).filter(function (x) { return x.id !== mid; });
+        touch(e); saveData(); render();
+      });
+    });
+  }
+
   function toggleConnected(id) {
     var e = DATA.contacts[id];
     if (!e || e.deleted) return;
@@ -3703,6 +3879,7 @@
     renderNudges();
     renderAcceptNotes();
     renderWithdrawList();
+    renderReconnectList();
     renderCompanyList();
     renderOutboxBtn();
     renderTables();
@@ -3919,11 +4096,23 @@
 
   function renderEditExtras() {
     var e = editEntry();
-    if (!e) { editExtras.innerHTML = ""; editExtras.className = ""; return; }
+    var cDateField = document.getElementById("cDate").closest(".field");
+    if (!e) {
+      editExtras.innerHTML = ""; editExtras.className = "";
+      cDateField.style.display = "";
+      closeMeetingNotes(true);
+      return;
+    }
     var isContact = editingEntry.bag === "contacts";
+    // Connected contacts: the Meetings list replaces "Date contacted" (the
+    // field stays in the form, hidden, so saving never loses the date).
+    var showMeetings = isContact && isConnected(e);
+    cDateField.style.display = showMeetings ? "none" : "";
+    if (!showMeetings || (mtOpenFor && mtOpenFor.id !== editingEntry.id)) closeMeetingNotes(true);
     var st = statusOf(e, isContact);
 
     var html = '<div class="upd-meta">' + (isContact ? starBtnHtml(e, editingEntry.id) : '') + chipHtml(st) + '</div>';
+    if (showMeetings) html += meetingsHtml(e, editingEntry.id);
     html += '<div class="field wide" style="margin-top:10px">' +
       '<label for="updMeeting">Meeting date <span class="opt">(blank = no meeting)</span></label>' +
       '<input type="date" id="updMeeting" value="' + escapeHtml(e.meetingOn || "") + '"></div>';
@@ -3969,6 +4158,8 @@
 
     editExtras.innerHTML = html;
     editExtras.className = "open";
+
+    if (showMeetings) wireMeetings(editExtras, editingEntry.id);
 
     var modalStar = editExtras.querySelector(".star-btn");
     if (modalStar) modalStar.addEventListener("click", function () {
@@ -7205,7 +7396,8 @@
     render();
     document.getElementById("numsStatus").textContent =
       "Saved. Nudge at " + nudgeDays() + " days, note " + acceptNoteDays() +
-      " days after an accept, withdraw at " + withdrawDays() + " days; finding " +
+      " days after an accept, withdraw at " + withdrawDays() + " days, reach back out at " +
+      reconnectDays() + " days; finding " +
       buPicks() + " BU alumni and " + fieldPicks() + " in my field.";
   });
 
