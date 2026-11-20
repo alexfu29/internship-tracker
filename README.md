@@ -1588,6 +1588,19 @@ the top of the contact's edit menu; both stay in sync.
 - Tapping the row star toggles only the star — it doesn't open the edit menu.
 - Code: `isStarred` / `starBtnHtml` / `toggleStar`, just above `contactCols`
   in `index.html`; styles under `.star-btn`.
+- **Sort by star:** the star now has its own first column. Tap the **★**
+  header to put starred people first, again for unstarred first, a third
+  time to go back to your own order (same as the other sortable headers).
+
+### Contacts table changes (2026-11-19)
+
+- The **How** column (Email / LinkedIn) is gone from the contacts table. The
+  channel is still stored and still editable in the contact's edit menu.
+- On a phone, the company name in the companies table is capped at **23vw**
+  (was 34vw — two-thirds as wide); longer names end in "…".
+- The 8 contacts with role **Meeting Request** were removed (marked
+  `deleted: true` in `data/log.json`, the same tombstone the Delete button
+  uses, so they can be brought back by flipping it to `false`).
 
 ## It opens with no connection
 

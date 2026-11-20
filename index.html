@@ -711,6 +711,7 @@
   .star-btn { background: none; border: 0; padding: 0 4px; margin: 0 2px 0 0;
     font-size: 1.05rem; line-height: 1; cursor: pointer; color: #a8a8a8; }
   .star-btn.on { color: #f2b705; }
+  td.starcol, th.starcol { width: 1%; padding-left: 2px; padding-right: 2px; text-align: center; }
   .star-btn:focus-visible { outline: 2px solid var(--accent); border-radius: 4px; }
   .upd-meta .star-btn { font-size: 1.4rem; vertical-align: middle; margin-right: 6px; }
   td.who .co-role { color: var(--text-secondary); font-size: 0.76rem; margin-left: 6px; }
@@ -758,7 +759,7 @@
      date, status and the posting all stay on screen — a truncated name beats
      having to scroll sideways to find the link */
   @media (max-width: 620px) {
-    td.company { max-width: 34vw; }
+    td.company { max-width: 23vw; }   /* was 34vw; cut to 2/3 */
     table.companies td, table.companies th { padding-left: 5px; padding-right: 5px; }
     td.linkcol .cell-link a .lbl { display: none; }
   }
@@ -1573,7 +1574,7 @@
      tell those apart from a change that genuinely didn't work. This string
      lives in the file being executed, so it cannot lie about which file that
      is. It's shown at the bottom of Settings. */
-  var APP_VERSION = "2026-11-19a";
+  var APP_VERSION = "2026-11-19b";
   var swReady = false, swCacheVersion = "", swNote = "";
 
   /* ============================================================
@@ -2020,7 +2021,7 @@
      both tables have always opened with. An unrecognised value falls back to
      that default rather than to nothing, so a bad string can't leave you with
      an unsorted table and no arrow explaining why. */
-  var SORT_COLS = { name: "asc", date: "desc", status: "asc", priority: "asc" };   // default direction each
+  var SORT_COLS = { name: "asc", date: "desc", status: "asc", priority: "asc", star: "desc" };   // default direction each
   function sortFor(kind) {
     var m = (SETTINGS.sortMode && SETTINGS.sortMode[kind]) || "";
     if (m === "custom") return { col: null, dir: "asc" };
@@ -2074,6 +2075,8 @@
               : sortText(a.e, kind) > sortText(b.e, kind) ? 1 : 0;
           } else if (s.col === "status") {
             d = statusRank(a.e) - statusRank(b.e);
+          } else if (s.col === "star") {
+            d = (isStarred(a.e) ? 1 : 0) - (isStarred(b.e) ? 1 : 0);
           } else if (s.col === "priority") {
             // unset sorts after 3, so "1 first" keeps blanks at the bottom
             d = (priorityOf(a.e) || 4) - (priorityOf(b.e) || 4);
@@ -3114,7 +3117,8 @@
     name: { asc: "A → Z", desc: "Z → A" },
     date: { asc: "Oldest first", desc: "Newest first" },
     status: { asc: "No date, then shortest wait first", desc: "Longest wait first" },
-    priority: { asc: "Priority 1 first", desc: "Priority 3 first" }
+    priority: { asc: "Priority 1 first", desc: "Priority 3 first" },
+    star: { asc: "Unstarred first", desc: "Starred first" }
   };
   function wireSortHeaders(mountId, kind) {
     var s = sortFor(kind);
@@ -3194,17 +3198,16 @@
 
   function contactCols(archive) {
     return [
+      { head: "★", cls: "starcol", sort: archive ? null : "star",
+        cell: function (r) { return starBtnHtml(r); } },
       { head: "Who", cls: "who", sort: archive ? null : "name", cell: function (r) {
-          return '<div class="co-wrap">' + (archive ? "" : dragHandleHtml()) + starBtnHtml(r) +
+          return '<div class="co-wrap">' + (archive ? "" : dragHandleHtml()) +
             '<span class="co-text">' +
             '<span class="co-name">' + escapeHtml(nameOf(r)) + '</span>' + peerTagHtml(r) +
             (r.company || (r.role && !isPeer(r))
               ? '<span class="co-role">' + escapeHtml([r.company, isPeer(r) ? "" : r.role].filter(Boolean).join(" · ")) + '</span>'
               : '') +
             '</span></div>';
-        } },
-      { head: "How", cell: function (r) {
-          return '<span class="sub-cell">' + escapeHtml(r.channel || "—") + '</span>';
         } },
       { head: "Sent", cls: "date", sort: archive ? null : "date",
         cell: function (r) { return fmtShort(r.date); } },
