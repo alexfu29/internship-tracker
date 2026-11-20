@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-11-20T20:57:48.377Z",
+  "updated": "2026-11-20T21:22:16.264Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -3623,11 +3623,12 @@
       "workspace": "",
       "inviteAcceptedOn": null,
       "withdrawnOn": "2026-11-17",
-      "updated": "2026-11-17T14:55:01.850Z",
+      "updated": "2026-11-20T21:22:16.264Z",
       "events": [
         "mtc26"
       ],
-      "muted": true
+      "muted": true,
+      "starred": false
     },
     "mvidz0sy-xwtu1d": {
       "name": "Rubén Darío Flores Saaib",
