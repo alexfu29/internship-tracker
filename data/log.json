@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-11-20T02:16:11.465Z",
+  "updated": "2026-11-20T02:17:13.594Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -16,10 +16,11 @@
       "nudgedOn": [],
       "closed": false,
       "deleted": false,
-      "updated": "2026-11-18T21:50:25.581Z",
+      "updated": "2026-11-20T02:17:13.593Z",
       "workspace": "Meeting 11/18- Ask him what?\n\nJust a coffee chat ig. About my tissueguard experience\n\nAsk about coffee chatting and usefulness of it, MBTA HR said not really useful",
       "inviteAcceptedOn": "2026-08-17",
-      "withdrawnOn": null
+      "withdrawnOn": null,
+      "starred": true
     },
     "mshkbbji-or84t1": {
       "name": "Corin Williams",
@@ -341,7 +342,7 @@
       "nudgedOn": [],
       "closed": false,
       "deleted": false,
-      "updated": "2026-09-18T00:41:59.702Z",
+      "updated": "2026-11-20T02:17:08.695Z",
       "workspace": "",
       "inviteAcceptedOn": "2026-08-17",
       "withdrawnOn": null,
