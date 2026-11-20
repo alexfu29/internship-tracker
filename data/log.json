@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-11-20T02:23:05.513Z",
+  "updated": "2026-11-20T02:26:27.544Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -4525,6 +4525,27 @@
       "workspace": "",
       "updated": "2026-11-20T02:21:15.476Z",
       "starred": true
+    },
+    "mwocy2dw-znw4kf": {
+      "name": "Hans Mische",
+      "company": "",
+      "role": "",
+      "channel": "LinkedIn",
+      "email": "https://www.linkedin.com/in/hans-mische/",
+      "date": "2026-11-19",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "nudgedOn": [],
+      "closed": false,
+      "deleted": false,
+      "workspace": "",
+      "updated": "2026-11-20T02:26:18.859Z",
+      "events": [
+        "biotech1009"
+      ],
+      "starred": true
     }
   },
   "apps": {
@@ -6324,7 +6345,7 @@
       "closed": false,
       "deleted": false,
       "workspace": "",
-      "updated": "2026-10-21T14:42:09.798Z",
+      "updated": "2026-11-20T02:24:37.258Z",
       "events": [
         "mtc26"
       ]
