@@ -1588,9 +1588,23 @@ the top of the contact's edit menu; both stay in sync.
 - Tapping the row star toggles only the star — it doesn't open the edit menu.
 - Code: `isStarred` / `starBtnHtml` / `toggleStar`, just above `contactCols`
   in `index.html`; styles under `.star-btn`.
-- **Sort by star:** the star now has its own first column. Tap the **★**
-  header to put starred people first, again for unstarred first, a third
-  time to go back to your own order (same as the other sortable headers).
+- **Sort / filter by star:** the star has its own first column. Tapping the
+  **★** header cycles: 1st = starred first, 2nd = only starred, 3rd = only
+  unstarred, 4th = back to normal. The header turns blue with `↓` / `only` /
+  `not` while it's on.
+
+### Show Connected (2026-11-20)
+
+- **Show Connected** button next to "People contacted" adds a **●** column:
+  blue dot = connected, gray outline = not. The dot is display-only (not a
+  button). Tap again ("Hide Connected") to remove the column.
+- "Connected" = LinkedIn invite accepted **or** they replied
+  (`isConnected` in `index.html`).
+- The **●** header uses the same 4-tap cycle as ★. Only one of ★ / ● is
+  active at a time; within a group rows keep their current order.
+- Both the button state and the cycle step live in `intern-settings` (this
+  device only, never synced). Drag-to-reorder is off while a ★/● filter is on.
+- Code: the "Star / Connected header cycle" block just above `contactCols`.
 
 ### Contacts table changes (2026-11-19)
 

@@ -711,6 +711,16 @@
   .star-btn { background: none; border: 0; padding: 0 4px; margin: 0 2px 0 0;
     font-size: 1.05rem; line-height: 1; cursor: pointer; color: #a8a8a8; }
   .star-btn.on { color: #f2b705; }
+  /* Show Connected: second header button sits beside ＋, not split from it */
+  .conn-toggle + .add-btn { margin-left: 0; }
+  /* Connected dot: display only. Blue = connected, gray outline = not. */
+  .conn-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%;
+    border: 1.5px solid #a8a8a8; box-sizing: border-box; vertical-align: middle; }
+  .conn-dot.on { background: var(--accent); border-color: var(--accent); }
+  td.conncol, th.conncol { width: 1%; padding-left: 2px; padding-right: 2px; text-align: center; }
+  th.flagcol { cursor: pointer; user-select: none; white-space: nowrap; }
+  th.flagcol.active { color: var(--accent); }
+  th.flagcol .flag-step { margin-left: 2px; font-size: 0.72rem; }
   td.starcol, th.starcol { width: 1%; padding-left: 2px; padding-right: 2px; text-align: center; }
   .star-btn:focus-visible { outline: 2px solid var(--accent); border-radius: 4px; }
   .upd-meta .star-btn { font-size: 1.4rem; vertical-align: middle; margin-right: 6px; }
@@ -1000,6 +1010,7 @@
     <div class="stats" id="statsContacts"></div>
     <section class="card">
       <h2><span class="h-title">People contacted</span><span class="count" id="contactCount"></span>
+        <button type="button" class="add-btn conn-toggle" id="btnShowConnected">Show Connected</button>
         <button type="button" class="add-btn" id="btnShowContact">＋ Cold contact</button></h2>
       <div id="outboxMount"></div>
       <div class="table-scroll" id="contactTableMount"></div>
@@ -1576,7 +1587,7 @@
      tell those apart from a change that genuinely didn't work. This string
      lives in the file being executed, so it cannot lie about which file that
      is. It's shown at the bottom of Settings. */
-  var APP_VERSION = "2026-11-19c";
+  var APP_VERSION = "2026-11-20a";
   var swReady = false, swCacheVersion = "", swNote = "";
 
   /* ============================================================
@@ -2023,7 +2034,7 @@
      both tables have always opened with. An unrecognised value falls back to
      that default rather than to nothing, so a bad string can't leave you with
      an unsorted table and no arrow explaining why. */
-  var SORT_COLS = { name: "asc", date: "desc", status: "asc", priority: "asc", star: "desc" };   // default direction each
+  var SORT_COLS = { name: "asc", date: "desc", status: "asc", priority: "asc" };   // ★ and ● use their own cycle (wireFlagHeaders)   // default direction each
   function sortFor(kind) {
     var m = (SETTINGS.sortMode && SETTINGS.sortMode[kind]) || "";
     if (m === "custom") return { col: null, dir: "asc" };
@@ -3163,8 +3174,9 @@
     if (!rows.length) return '<p class="empty">' + escapeHtml(emptyMsg) + '</p>';
     var html = '<table class="' + (cls || "") + '"><thead><tr>';
     cols.forEach(function (c) {
-      html += '<th class="' + (c.cls || "") + (c.sort ? " sortcol" : "") + '"' +
-        (c.sort ? ' data-sort="' + c.sort + '"' : "") + ">" +
+      html += '<th class="' + (c.cls || "") + (c.sort ? " sortcol" : "") + (c.flag ? " flagcol" : "") + '"' +
+        (c.sort ? ' data-sort="' + c.sort + '"' : "") +
+        (c.flag ? ' data-flag="' + c.flag + '"' : "") + ">" +
         escapeHtml(c.head) + "</th>";
     });
     html += '</tr></thead><tbody>';
@@ -3198,10 +3210,74 @@
     touch(e); saveData(); render();
   }
 
+  /* ---- Star / Connected header cycle (contacts table) -----------
+     Tap the ★ or ● header: 1st = those rows first, 2nd = only those,
+     3rd = only the others, 4th = back to normal. One at a time. Stored
+     in SETTINGS (this device only), never in the synced data.
+     "Connected" = LinkedIn invite accepted, or they replied.
+     ---------------------------------------------------------------- */
+  function isConnected(e) { return inviteAccepted(e) || !!(e && e.responded); }
+  var FLAG_TESTS = { star: isStarred, conn: isConnected };
+  var FLAG_STEP_MARK = { 1: "↓", 2: "only", 3: "not" };
+  var FLAG_STEP_HINT = { 1: "first", 2: "only", 3: "hidden" };
+  function showConnected() { return !!SETTINGS.showConnected; }
+  function flagView() {
+    var v = SETTINGS.contactFlagView;
+    if (!v || !FLAG_TESTS[v.col] || !(v.step >= 1 && v.step <= 3)) return null;
+    if (v.col === "conn" && !showConnected()) return null;
+    return v;
+  }
+  function setFlagView(v) { SETTINGS.contactFlagView = v; saveSettings(SETTINGS); }
+  function applyFlagView(list) {
+    var v = flagView();
+    if (!v) return list;
+    var t = FLAG_TESTS[v.col];
+    if (v.step === 2) return list.filter(function (e) { return t(e); });
+    if (v.step === 3) return list.filter(function (e) { return !t(e); });
+    // step 1: flagged rows first, each group keeps the order it had
+    return list.filter(function (e) { return t(e); })
+      .concat(list.filter(function (e) { return !t(e); }));
+  }
+  function connDotHtml(e) {
+    var on = isConnected(e);
+    return '<span class="conn-dot' + (on ? ' on' : '') + '" title="' +
+      (on ? 'Connected' : 'Not connected') + '"></span>';
+  }
+  function wireFlagHeaders(mountId) {
+    var v = flagView();
+    document.querySelectorAll("#" + mountId + " th[data-flag]").forEach(function (th) {
+      var col = th.getAttribute("data-flag");
+      var step = v && v.col === col ? v.step : 0;
+      var label = col === "star" ? "Starred" : "Connected";
+      th.innerHTML = escapeHtml(th.textContent) +
+        (step ? '<span class="flag-step">' + FLAG_STEP_MARK[step] + '</span>' : '');
+      th.classList.toggle("active", !!step);
+      th.setAttribute("title", step
+        ? label + " " + FLAG_STEP_HINT[step] + (step === 3 ? " — tap for normal" : " — tap again")
+        : "Tap: " + label.toLowerCase() + " first");
+      th.addEventListener("click", function () {
+        var next = step + 1;
+        setFlagView(next > 3 ? null : { col: col, step: next });
+        render();
+      });
+    });
+  }
+  function setShowConnected(on) {
+    SETTINGS.showConnected = !!on;
+    var v = SETTINGS.contactFlagView;
+    if (!on && v && v.col === "conn") SETTINGS.contactFlagView = null;
+    saveSettings(SETTINGS);
+    render();
+  }
+
   function contactCols(archive) {
     return [
-      { head: "★", cls: "starcol", sort: archive ? null : "star",
-        cell: function (r) { return starBtnHtml(r); } },
+      { head: "★", cls: "starcol", flag: archive ? null : "star",
+        cell: function (r) { return starBtnHtml(r); } }
+    ].concat(showConnected() ? [
+      { head: "●", cls: "conncol", flag: archive ? null : "conn",
+        cell: function (r) { return connDotHtml(r); } }
+    ] : []).concat([
       { head: "Who", cls: "who", sort: archive ? null : "name", cell: function (r) {
           return '<div class="co-wrap">' + (archive ? "" : dragHandleHtml()) +
             '<span class="co-text">' +
@@ -3215,7 +3291,7 @@
         cell: function (r) { return fmtShort(r.date); } },
       { head: "Status", sort: archive ? null : "status",
         cell: function (r) { return chipHtml(statusOf(r, true)); } }
-    ];
+    ]);
   }
   // One line per company: name + role + the two flag dots, then date and
   // status packed left, with the link column absorbing the slack so the
@@ -3270,7 +3346,7 @@
 
   function renderTables() {
     var all = { contacts: contacts().filter(inView), apps: apps().filter(inView) };
-    var cs = applyOrder(all.contacts.filter(function (c) { return !c.closed; }), "contacts");
+    var cs = applyFlagView(applyOrder(all.contacts.filter(function (c) { return !c.closed; }), "contacts"));
     var as = applyOrder(all.apps.filter(function (a) { return !a.closed; }), "apps");
     // Archives stay in date order — an archive is for finding things.
     var csClosed = all.contacts.filter(function (c) { return !!c.closed; });
@@ -3289,7 +3365,7 @@
       all.apps.length ? as.length + " open" : "";
 
     document.getElementById("contactTableMount").innerHTML =
-      tableHtml(cs, contactCols(false), ACTIVE_EVENT ? "No contacts tagged to this event yet." : "No cold contacts logged yet.");
+      tableHtml(cs, contactCols(false), flagView() ? "No contacts match this ★/● filter — tap the header to move on." : ACTIVE_EVENT ? "No contacts tagged to this event yet." : "No cold contacts logged yet.");
     document.getElementById("appTableMount").innerHTML =
       tableHtml(as, appCols(false), ACTIVE_EVENT ? "No companies tagged to this event yet." : "No companies logged yet.", "companies");
 
@@ -3326,11 +3402,16 @@
     });
 
     wireSortHeaders("contactTableMount", "contacts");
+    wireFlagHeaders("contactTableMount");
+    var connBtn = document.getElementById("btnShowConnected");
+    connBtn.textContent = showConnected() ? "Hide Connected" : "Show Connected";
+    connBtn.classList.toggle("on", showConnected());
     wireSortHeaders("appTableMount", "apps");
     // Not in an event tab: a drag saves the order of the rows on screen, and
     // here that would be only some of them.
     if (!ACTIVE_EVENT) {
-      enableDrag("contactTableMount", "contacts");
+      // Filtered by ★/●: a drag would save the order of only the rows shown.
+      if (!flagView()) enableDrag("contactTableMount", "contacts");
       enableDrag("appTableMount", "apps");
     }
   }
@@ -3979,6 +4060,9 @@
   }
 
   btnShowContact.addEventListener("click", function () { toggleForm("contact"); });
+  document.getElementById("btnShowConnected").addEventListener("click", function () {
+    setShowConnected(!showConnected());
+  });
   btnShowApp.addEventListener("click", function () { toggleForm("app"); });
   document.getElementById("logPanelClose").addEventListener("click", closeLogPanel);
   logOverlay.addEventListener("click", saveAndCloseLogPanel);
