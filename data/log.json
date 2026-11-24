@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-11-20T21:58:56.855Z",
+  "updated": "2026-11-24T14:56:48.396Z",
   "contacts": {
     "msgrf9ch-0mgzqu": {
       "name": "Brannon McBride",
@@ -7719,6 +7719,26 @@
       "deleted": false,
       "workspace": "",
       "updated": "2026-11-20T03:35:11.946Z"
+    },
+    "mwutimto-9a0lqu": {
+      "company": "Axoft",
+      "priority": null,
+      "applied": false,
+      "coldEmailed": false,
+      "connected": false,
+      "outcome": "",
+      "outcomes": [],
+      "role": "",
+      "date": "2026-11-24",
+      "link": "",
+      "note": "",
+      "responded": false,
+      "respondedOn": null,
+      "meetingOn": null,
+      "closed": false,
+      "deleted": false,
+      "workspace": "",
+      "updated": "2026-11-24T14:56:48.396Z"
     }
   }
 }
